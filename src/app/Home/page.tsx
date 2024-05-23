@@ -1,6 +1,5 @@
 import { CardBox } from "../components/Card/card";
 import { GlobeDemo } from "../components/Globe/globe";
-import Scroll from "../components/Scroll/scroll";
 import { InfiniteMovingCardsDemo } from "../components/Testimonial/testimonial";
 import ImageSider from "./Imageslider";
 // import Welcome from "./welcome";

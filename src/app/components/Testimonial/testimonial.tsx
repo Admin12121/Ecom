@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { InfiniteMovingCards } from "./cards";
-import { user } from "@nextui-org/react";
 
 interface direction {
     direction?: any;

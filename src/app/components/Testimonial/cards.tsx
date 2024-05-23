@@ -1,6 +1,7 @@
+"use client"
 import { cn } from "./cn";
 import React, { useEffect, useState } from "react";
-import {User, Link} from "@nextui-org/react";
+import {User} from "@nextui-org/react";
 
 export const InfiniteMovingCards = ({
   items,

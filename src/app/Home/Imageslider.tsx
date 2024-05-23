@@ -1,3 +1,4 @@
+"use client"
 import React, { useState , useEffect} from 'react';
 import {Image} from "@nextui-org/react";
 import NextImage from "next/image";
