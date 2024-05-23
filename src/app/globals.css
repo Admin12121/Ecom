@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -30,4 +30,67 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+} */
+nav{
+  header{
+    min-width: 100vw;
+  }
+}
+.main-contant{
+  nav{
+    header{
+      min-width:unset;
+    }
+  }
+}
+a{
+  text-decoration: none;
+  color: #fff;
+}
+
+body{
+  overflow-x: hidden;
+}
+/* width */
+.main-contant-items::-webkit-scrollbar {
+display: none;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 7px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+  background: #000000;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  background:  rgb(255 255 255 / .1);
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+  background: #202022;
+  }
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
