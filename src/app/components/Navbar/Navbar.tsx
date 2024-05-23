@@ -9,7 +9,7 @@ import { CardModal } from "./CardModal";
 import {PlaceholdersAndVanishInput} from "../SearchBox/Search"
 import Link from 'next/link'
 
-export default function Home() {
+export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 

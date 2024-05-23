@@ -1,5 +1,5 @@
 "use client"
-import React, { useState , useEffect} from 'react';
+import React, { useState , useEffect, useCallback } from 'react';
 import {Image} from "@nextui-org/react";
 import NextImage from "next/image";
 
@@ -22,17 +22,17 @@ export default function  ImageSider () {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     const isFirstSlide = currentIndex === 0;
     const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
     setCurrentIndex(newIndex);
-  };
+  }, [currentIndex, slides.length]);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     const isLastSlide = currentIndex === slides.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
-  };
+  }, [currentIndex, slides.length]);
 
   useEffect(() => {
     if (!isHovered) {

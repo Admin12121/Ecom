@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { useParams } from "next/navigation";
-import NextImage from "next/image";
 import { Image } from "@nextui-org/react";
 import Header from "../Header/Header";
 
@@ -40,7 +39,7 @@ const data = [
   },
 ];
 
-export default function product() {
+export default function Product() {
   const params = useParams<{ id: string }>();
   const id = params.id;
   const filteredData = data.filter((event: any) => event.id.toString() === id);

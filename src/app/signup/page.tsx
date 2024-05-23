@@ -4,7 +4,7 @@ import { SparklesCore } from "./sparkles";
 import {Card, CardHeader, Input, CardBody, Checkbox,  CardFooter, Button, Link, Divider , Image} from "@nextui-org/react";
 import { AcmeLogo } from "../components/Navbar/AcmeLogo";
 
-const Login = () => {
+const Signup = () => {
   return (
     <div className="h-[40rem] w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
       <div className="w-[100vw] h-[100vh] relative">
@@ -81,4 +81,4 @@ const Login = () => {
   );
 }
 
-export default Login;
+export default Signup;

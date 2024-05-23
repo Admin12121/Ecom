@@ -4,7 +4,7 @@ import Sidebar from './Sidebar/Sidebar'
 import Content from './Content/Content'
 import { useState } from 'react'
 
-const page = () => {
+const Category = () => {
   const [product, SetProduct] = useState<boolean>(false)
   const [productState, setProductState] = useState<{ isActive: boolean, selectedId: number | null }>({ isActive: false, selectedId: null });
 
@@ -18,4 +18,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Category
