@@ -415,14 +415,14 @@ export function GlobeDemo() {
             We sell Statues worldwide
           </h2>
           <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
-          Discover our store's exquisite collection of precious statues. We offer worldwide shipping, bringing divine art and spirituality to your doorstep. :)
+            Discover our store&apos;s exquisite collection of precious statues. We offer worldwide shipping, bringing divine art and spirituality to your doorstep. :)
           </p>
         </motion.div>
         <div className="absolute w-full bottom-0 inset-x-0 h-60 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
-            <div className="absolute w-3/6 top-0 max-lg:relative max-lg:w-full right-0 -bottom-20 h-72 md:h-full z-10">
-              <World data={sampleArcs} globeConfig={globeConfig} />
-            </div>
+        <div className="absolute w-3/6 top-0 max-lg:relative max-lg:w-full right-0 -bottom-20 h-72 md:h-full z-10">
+          <World data={sampleArcs} globeConfig={globeConfig} />
         </div>
+      </div>
     </div>
-  );
+  );  
 }
