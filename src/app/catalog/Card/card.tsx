@@ -57,7 +57,7 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState})
           opacity,
           background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255,255,255,.25), transparent 40%)`,
         }}></span>
-            <Link href={`/catalog/${id}`} className="relative mx-4 -mt-6 h-56 top-[-100px] rounded-xl bg-blue-gray-500 bg-clip-border " >
+            <Link href={`/catalog/${id}`} className="relative mx-4 -mt-6 h-56 flex justify-center top-[-100px] rounded-xl bg-blue-gray-500 bg-clip-border " >
                 <Image
                     isBlurred
                     // as={NextImage}
