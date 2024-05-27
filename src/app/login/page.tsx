@@ -1,8 +1,11 @@
 "use client";
 import React from "react";
 import { SparklesCore } from "./sparkles";
-import FormTab from "./Form";
 import { ReactLenis, useLenis } from 'lenis/react'
+import dynamic from 'next/dynamic';
+
+// Import FormTab component dynamically
+const FormTab = dynamic(() => import('./Form'), { ssr: false });
 const Signup = () => {
 
   return (
