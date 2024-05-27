@@ -43,7 +43,7 @@ export const Login: React.FC<Props> = ({ isOpen, onOpenChange }) => {
   }, [server_error]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(process.env.BACKEND_DOMAIN);
+    console.log(process.env.NEXT_PUBLIC_BACKEND_DOMAIN);
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const data = new FormData(formElement);

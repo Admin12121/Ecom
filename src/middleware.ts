@@ -1,19 +1,22 @@
-// middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { parse } from 'cookie';
 
 export function middleware(request: NextRequest) {
-  const protectedPath = '/data';
+  const protectedPaths = ['/catalogd', '/login'];
 
-  if (request.nextUrl.pathname === protectedPath) {
+  if (protectedPaths.includes(request.nextUrl.pathname)) {
     const cookieHeader = request.headers.get('cookie');
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const access_token = cookies.access_token || "";
     const refresh_token = cookies.refresh_token || "";
 
-    if (!access_token || !refresh_token) {
-      return NextResponse.redirect(new URL('/signup', request.url));
+    if (request.nextUrl.pathname === '/catalog' && (!access_token || !refresh_token)) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    if (request.nextUrl.pathname === '/login' && (access_token && refresh_token)) {
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
@@ -21,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/catalog',
+  unstable_runtimeJS: false,
 };

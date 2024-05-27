@@ -3,24 +3,12 @@ import { getToken } from "./LocalStorageServices";
 
 export const userAuthapi = createApi({
   reducerPath: "userAuthapi",
-  baseQuery: fetchBaseQuery({ baseUrl: `http://localhost:8000/` }),
+  baseQuery: fetchBaseQuery({ baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}` }),
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (user) => {
         return {
-          url: "accounts/user_register/",
-          method: "POST",
-          body: user,
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
-    }),
-    registerAdmin: builder.mutation({
-      query: (user) => {
-        return {
-          url: "accounts/admin_register/",
+          url: "api/accounts/user_register/",
           method: "POST",
           body: user,
           headers: {
@@ -32,7 +20,7 @@ export const userAuthapi = createApi({
     loginUser: builder.mutation({
       query: (user) => {
         return {
-          url: "auth/token/",
+          url: "api/accounts/login/",
           method: "POST",
           body: user,
           headers: {
@@ -630,7 +618,6 @@ export const userAuthapi = createApi({
 
 export const {
   useRegisterUserMutation,
-  useRegisterAdminMutation,
   useLoginUserMutation,
   useGetLoggedUserQuery,
   useGetUserProfileQuery,

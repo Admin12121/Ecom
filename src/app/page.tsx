@@ -1,6 +1,7 @@
 "use client"
-import HomePage from "./Home/page";1
+import HomePage from "./Home/page";
 import { ReactLenis, useLenis } from 'lenis/react'
+
 
 export default function Home() {
 

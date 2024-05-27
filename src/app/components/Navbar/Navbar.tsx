@@ -1,6 +1,6 @@
 "use client"
-import { useState } from "react";
-import {Navbar,Badge, NavbarBrand,NavbarMenuToggle,Input, NavbarContent,useDisclosure, NavbarItem, NavbarMenu,NavbarMenuItem, Button, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu} from "@nextui-org/react";
+import { useState , useEffect} from "react";
+import {Navbar,Badge, NavbarBrand,NavbarMenuToggle,Input, NavbarContent,useDisclosure, NavbarItem, NavbarMenu,NavbarMenuItem, Button, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, User} from "@nextui-org/react";
 import {ChevronDown, SearchIcon, Lock, Activity, Flash, Server, TagUser, Scale} from "./Icons";
 import { AcmeLogo } from "./AcmeLogo";
 import  { Login }  from "../Login/Login"
@@ -8,11 +8,29 @@ import { CartIcon } from "./CartIcon";
 import { CardModal } from "./CardModal";
 import {PlaceholdersAndVanishInput} from "../SearchBox/Search"
 import Link from 'next/link'
-
+import { getToken } from '@/lib/store/Service/LocalStorageServices';
+import { useDispatch } from "react-redux";
+import { toast } from 'sonner';
+import { unSetUserToken } from '@/lib/store/Feature/authSlice';
+import { removeToken } from '@/lib/store/Service/LocalStorageServices';
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [logoutTrigger, setLogoutTrigger] = useState<number>(0);
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    const { access_token } = getToken();
+    setIsLoggedIn(!!access_token);
+  }, [logoutTrigger]);
 
+  const handleLogout = () => {
+    dispatch(unSetUserToken());
+    removeToken();
+    toast.success("Logged out")
+    setLogoutTrigger(prev => prev + 1);
+  };
   const icons = {
     chevron: <ChevronDown fill="currentColor" height={16} width={16} />,
     scale: (
@@ -193,19 +211,58 @@ export default function Nav() {
               </Link>
             </NavbarItem>
           </NavbarContent>
-          <NavbarItem className="hidden lg:flex">
-            <Link href="#" color="secondary" onClick={onOpen}>
-              Login
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-             <Link href="/signup">
-              Sign Up
-             </Link>
-            {/* <Button as={Link} color="secondary" href="#" variant="flat">
-            </Button> */}
-          </NavbarItem>
+          {!isLoggedIn && (<>
+            {/* <NavbarItem className="hidden lg:flex">
+              <Link href="#" color="secondary" onClick={onOpen}>
+                Login
+              </Link>
+            </NavbarItem> */}
+            <NavbarItem>
+              <Link href="/login">
+                Sign Up
+              </Link>
+            </NavbarItem>
+          </>)}
              <AddtoCart/>
+             {isLoggedIn && (<>
+              <div className="flex items-center gap-4">
+                <Dropdown placement="bottom-start">
+                  <DropdownTrigger>
+                    <User
+                      as="button"
+                      avatarProps={{
+                        isBordered: true,
+                        src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
+                      }}
+                      className="transition-transform"
+                      description="@tonyreichert"
+                      name="Tony Reichert"
+                    />
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="User Actions" variant="flat">
+                    <DropdownItem key="profile" className="h-14 gap-2">
+                      <p className="font-bold">Signed in as</p>
+                      <p className="font-bold">@tonyreichert</p>
+                    </DropdownItem>
+                    <DropdownItem key="settings">
+                      My Settings
+                    </DropdownItem>
+                    <DropdownItem key="team_settings">Team Settings</DropdownItem>
+                    <DropdownItem key="analytics">
+                      Analytics
+                    </DropdownItem>
+                    <DropdownItem key="system">System</DropdownItem>
+                    <DropdownItem key="configurations">Configurations</DropdownItem>
+                    <DropdownItem key="help_and_feedback">
+                      Help & Feedback
+                    </DropdownItem>
+                    <DropdownItem key="logout" color="danger" onPress={handleLogout}>
+                      Log Out
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+             </>)}
         </NavbarContent>
         <NavbarMenu  className="overflow-hidden">
           {menuItems.map((item, index) => (
