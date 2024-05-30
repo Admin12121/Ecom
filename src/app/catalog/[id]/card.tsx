@@ -16,6 +16,8 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName}) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
 
+  console.log(clasName)
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current || isFocused) return;
 
@@ -55,7 +57,7 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName}) => {
           opacity,
           background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255,255,255,.25), transparent 40%)`,
         }}></span>
-            <Link href={`/catalog/${id}`} className="relative mx-4 -mt-6 h-56 top-[-50px] rounded-xl bg-blue-gray-500 bg-clip-border " >
+            <Link href={`/catalog/${id}`} className="relative mx-4 -mt-6 h-56 top-[-50px] rounded-xl bg-blue-gray-500 bg-clip-border flex justify-center" >
                 <Image
                     isBlurred
                     // as={NextImage}

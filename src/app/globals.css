@@ -1,6 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+:root {
+	--x: 0;
+	--y: 0;
+  }
+  
 /* 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -93,4 +100,19 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+
+.slick-slider{
+  height: 100%;
+  width: 100%;
+  overflow-y: unset;
+}
+.slick-list{
+  overflow: unset;
+  padding-top: 70px;
+}
+.slick-track{
+  display: flex;
+  gap: 15px;
 }

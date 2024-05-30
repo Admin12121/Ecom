@@ -19,6 +19,7 @@ import { ReactLenis, useLenis } from "lenis/react";
 import NextImage from "next/image";
 import Review_data from "./Tab";
 import { CardBox } from "./card";
+import Slider from "react-slick";
 const data = [
   {
     id: 1,
@@ -68,6 +69,28 @@ export default function Product() {
 
   setProductViewTransition(filteredData[0].id);
   defineElement(lottie.loadAnimation);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 4000,
+    autoplaySpeed: 4000,
+    cssEase: "linear",
+    pauseOnHover: true,
+    arrows:false,
+    responsive:[
+      {
+        breakpoint :1540,
+        settings:{
+          slidesToShow: 5,
+        },
+      },
+    ]
+  };
+
   return (
     <>
       <ReactLenis
@@ -76,7 +99,7 @@ export default function Product() {
       >
         <div className="w-[100vw] min-h-[100vh] flex flex-col">
           <Header id={id} />
-          <div className="relative flex gap-5 h-[90vh] p-10 w-[100vw] rounded-xl bg-blue-gray-500 bg-clip-border  justify-between">
+          <div className="relative flex gap-5 h-[90vh] p-10 w-[100vw] rounded-xl bg-blue-gray-500 bg-clip-border justify-between">
             <div className="flex flex-col gap-2">
               <Image
                 isBlurred
@@ -134,7 +157,7 @@ export default function Product() {
               </span>
             </div>
             <div className="flex flex-row h-4/5">
-              <Card className="min-w-[600px] max-w-[700px] bg-transparent border-none">
+              <Card className=" mmd:min-w-[600px] max-w-[700px] bg-transparent border-none">
                 <CardHeader className="flex gap-3 justify-between">
                   <div className="flex gap-3 items-center">
                     <Image
@@ -211,13 +234,15 @@ export default function Product() {
           <div className="min-h-[50vh] max-w-[50%] p-10">
             <Review_data/>
           </div>
-          <div className="flex gap-4 h-[50vh] items-center p-10">
-            {data.map(({img, id}:{img:string, id: number},index)=>(
-            <>
-            <div key={index}> 
-                <CardBox id={id}  image={img}/>
-              </div>
-            </>))}
+          <div className="flex gap-4 h-[60vh] w-full items-center p-10">
+            <Slider {...settings}>
+              {data.map(({img, id}:{img:string, id: number},index)=>(
+                <>
+                <div key={index}> 
+                  <CardBox id={id} clasName={`${index % 2 === 0 ? "bg-neutral-950" : ""}`}  image={img}/>
+                </div>
+              </>))}
+            </Slider>
           </div>
         </div>
       </ReactLenis>

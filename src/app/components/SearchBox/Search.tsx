@@ -1,6 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation'
+import {  Autocomplete,  AutocompleteSection,  AutocompleteItem} from "@nextui-org/react";
+import {animals} from "./data";
+import {Listbox, ListboxItem} from "@nextui-org/react";
+import {ListboxWrapper} from "./Auto"
 import { cn } from "./cn";
 export function PlaceholdersAndVanishInput({
   placeholders,
@@ -157,7 +161,9 @@ export function PlaceholdersAndVanishInput({
     router.push('/catalog')
     onSubmit && onSubmit(e);
   };
+  const filteredAnimals = animals.filter(animal => animal.value.includes(value));
   return (
+    <span className="relative w-full">
     <form
       className={cn(
         "w-full  relative max-w-xl mx-auto hidden sm:flex bg-default-400/20 dark:bg-default-500/20 h-[40px] min-w-[350px] rounded-lg overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
@@ -188,7 +194,6 @@ export function PlaceholdersAndVanishInput({
           animating && "text-transparent dark:text-transparent"
         )}
       />
-
       <button
         disabled={!value}
         type="submit"
@@ -255,5 +260,16 @@ export function PlaceholdersAndVanishInput({
         </AnimatePresence>
       </div>
     </form>
+    { value && filteredAnimals.length > 0 && <ListboxWrapper>
+        <Listbox
+          aria-label="Actions"
+          onAction={()=>{router.push('/catalog');setValue('')}}
+        >
+            {filteredAnimals.map((animal) => (
+            <ListboxItem key={animal.value}>{animal.label}</ListboxItem>
+            ))}
+        </Listbox>
+    </ListboxWrapper>}
+    </span>
   );
 }

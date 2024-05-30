@@ -1,9 +1,9 @@
-export default function Star() {
+export default function Star({size}:{size?:string}) {
   return (
     <>
       <svg
-        width="20px"
-        height="20px"
+        width={`${size ? size : "20px"}`}
+        height={`${size ? size : "20px"}`}
         viewBox="0 0 24 24"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"

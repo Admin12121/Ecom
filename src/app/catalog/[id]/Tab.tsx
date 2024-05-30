@@ -1,5 +1,6 @@
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-
+import { Tabs, Tab, Card, CardBody,CardFooter,Pagination, Button } from "@nextui-org/react";
+import DropDown from "./DropDown";
+import ReviewCard from "./ReviewCard";
 export default function Review_data() {
   return (
     <>
@@ -16,13 +17,19 @@ export default function Review_data() {
             </Card>
           </Tab>
           <Tab key="review" title="Reviews">
-            <Card className="min-h-[60vh]">
-              <CardBody>
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-                dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur.
+            <Card className="min-h-[60vh] max-h-[80vh] overflow-hidden overflow-y-auto">
+              <CardBody className="flex gap-3 items-start justify-start flex-col">
+              <DropDown/>
+              <ReviewCard/>
+              <ReviewCard/>
+              <ReviewCard/>
               </CardBody>
+              <CardFooter className="gap-3 justify-center">
+                <Pagination
+                  total={10}
+                  color="secondary"
+                />
+              </CardFooter>
             </Card>
           </Tab>
           <Tab key="discussion" title="Discussion">

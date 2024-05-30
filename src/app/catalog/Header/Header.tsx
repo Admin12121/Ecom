@@ -41,7 +41,7 @@ const Header: React.FC<ContentProps> = ({id}) => {
           {id && <BreadcrumbItem>{id}</BreadcrumbItem>}
         </Breadcrumbs>
       </NavbarBrand>
-     {!id && <NavbarContent justify="end">
+     {!id && <NavbarContent justify="end" className="max-sm:hidden">
         <NavbarItem className="flex items-center gap-4">
             <p>Short by : </p>
           <Dropdown >

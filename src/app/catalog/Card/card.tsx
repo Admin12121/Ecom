@@ -52,12 +52,12 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState})
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           // onClick={() => setProductState({ isActive: true, selectedId: id })}
-          className={`relative flex w-80 flex-col rounded-xl h-[355px] ${clasName ? clasName : "" } text-white shadow-md `}>
+          className={`relative flex w-80 flex-col rounded-xl h-[355px] justify-end ${clasName ? clasName : "" } text-white shadow-md `}>
         <span className="pointer-events-none absolute rounded-xl -inset-px opacity-0 transition duration-500" style={{
           opacity,
           background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255,255,255,.25), transparent 40%)`,
         }}></span>
-            <Link href={`/catalog/${id}`} className="relative mx-4 -mt-6 h-56 flex justify-center top-[-100px] rounded-xl bg-blue-gray-500 bg-clip-border " >
+            <Link href={`/catalog/${id}`} className="mx-4 -mt-6 w-[288px] flex justify-center h-[350px] absolute top-[-100px] rounded-xl bg-blue-gray-500 bg-clip-border " >
                 <Image
                     isBlurred
                     // as={NextImage}

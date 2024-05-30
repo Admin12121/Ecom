@@ -1,5 +1,6 @@
 import { CardBox } from "../components/Card/card";
 import { GlobeDemo } from "../components/Globe/globe";
+import Parallex from "../components/Prallex/Parallex";
 import { InfiniteMovingCardsDemo } from "../components/Testimonial/testimonial";
 import ImageSider from "./Imageslider";
 // import Welcome from "./welcome";
@@ -10,7 +11,8 @@ export default function HomePage() {
     <>
     <div className="relative h-full min-h-[100vh]">
       <div className="absolute flex-col inset-0 h-full w-full items-center dark:bg-black justify-center flex bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]">
-        <ImageSider/>
+        {/* <ImageSider/> */}
+        <Parallex/>
       </div>
     </div>
     <div className="relative min-h-[100vh]  flex-col flex items-center justify-center pt-5">

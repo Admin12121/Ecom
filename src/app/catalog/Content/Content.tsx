@@ -54,7 +54,7 @@ const Content: React.FC<ContentProps> = ({ productState, setProductState }) => {
           {!productState.isActive && data.map(({img, id}:{img:string, id: number},index)=>{
             return(
               <div key={index}> 
-                <CardBox setProductState={setProductState} id={id}  image={img}/>
+                <CardBox setProductState={setProductState} id={id} clasName={`${index % 2 === 0 ? "bg-neutral-950" : ""}`} image={img}/>
               </div>
             )
           })}
