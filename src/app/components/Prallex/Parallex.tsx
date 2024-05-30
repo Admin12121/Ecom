@@ -1,3 +1,4 @@
+"use client"
 import { useEffect } from "react";
 import gsap from "gsap";
 import styles from "./ParallaxCard.module.css";
