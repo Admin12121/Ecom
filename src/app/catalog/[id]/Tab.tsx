@@ -7,7 +7,7 @@ export default function Review_data() {
       <div className="flex w-full flex-col">
         <Tabs size="md" variant="light" aria-label="Options">
           <Tab key="details" title="Details">
-            <Card className="min-h-[60vh]">
+            <Card className="min-h-[60vh] bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black">
               <CardBody>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
@@ -17,7 +17,7 @@ export default function Review_data() {
             </Card>
           </Tab>
           <Tab key="review" title="Reviews">
-            <Card className="min-h-[60vh] max-h-[80vh] overflow-hidden overflow-y-auto">
+            <Card className="min-h-[60vh] max-h-[80vh] overflow-hidden overflow-y-auto bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black">
               <CardBody className="flex gap-3 items-start justify-start flex-col">
               <DropDown/>
               <ReviewCard/>
@@ -33,7 +33,7 @@ export default function Review_data() {
             </Card>
           </Tab>
           <Tab key="discussion" title="Discussion">
-            <Card className="min-h-[60vh]">
+            <Card className="min-h-[60vh] bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black">
               <CardBody>
                 Excepteur sint occaecat cupidatat non proident, sunt in culpa
                 qui officia deserunt mollit anim id est laborum.
