@@ -1,6 +1,6 @@
 "use client"
 // import HomePage from "./Home/page";
-import Curve from "./components/Animation/page";
+import Curve from "./components/Animation/Animation";
 import dynamic from "next/dynamic";
 import { ReactLenis, useLenis } from 'lenis/react'
 const HomePage = dynamic(() => import("./Home/page"), {
