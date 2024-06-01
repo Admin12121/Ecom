@@ -1,6 +1,17 @@
-import { Tabs, Tab, Card, CardBody,CardFooter,Pagination, Button } from "@nextui-org/react";
+import {
+  Tabs,
+  Tab,
+  Card,
+  CardBody,
+  CardFooter,
+  Pagination,
+  Chip,
+  Textarea,
+  Button,
+} from "@nextui-org/react";
 import DropDown from "./DropDown";
 import ReviewCard from "./ReviewCard";
+import Comments from "./Comments";
 export default function Review_data() {
   return (
     <>
@@ -19,25 +30,36 @@ export default function Review_data() {
           <Tab key="review" title="Reviews">
             <Card className="min-h-[60vh] max-h-[80vh] overflow-hidden overflow-y-auto bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black">
               <CardBody className="flex gap-3 items-start justify-start flex-col">
-              <DropDown/>
-              <ReviewCard/>
-              <ReviewCard/>
-              <ReviewCard/>
+                <DropDown />
+                <ReviewCard />
+                <ReviewCard />
+                <ReviewCard />
               </CardBody>
               <CardFooter className="gap-3 justify-center">
-                <Pagination
-                  total={10}
-                  color="secondary"
-                />
+                <Pagination total={10} color="secondary" />
               </CardFooter>
             </Card>
           </Tab>
           <Tab key="discussion" title="Discussion">
-            <Card className="min-h-[60vh] bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black">
-              <CardBody>
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                qui officia deserunt mollit anim id est laborum.
+            <Card className="min-h-[60vh] max-h-[80vh] overflow-hidden overflow-y-auto bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black">
+              <CardBody className="flex gap-3 items-start justify-start flex-col">
+                <Chip radius="sm">Discussion</Chip>
+                <Comments />
+                <Comments />
+                {/* <Comments/> */}
               </CardBody>
+              <CardFooter className="gap-3 justify-center flex-col">
+                <Pagination total={10} color="secondary" />
+                <form action="" className="flex flex-col justify-end items-end gap-2 w-full">
+                <Textarea
+                  label="Your Message"
+                  classNames={{
+                    input: "min-h-[40px] w-full",
+                  }}
+                  />
+                <Button radius="sm" color="secondary">Comment</Button>
+                </form>
+              </CardFooter>
             </Card>
           </Tab>
         </Tabs>

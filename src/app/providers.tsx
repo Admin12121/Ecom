@@ -4,6 +4,8 @@ import {NextUIProvider} from '@nextui-org/react'
 import { Provider } from 'react-redux'
 import { store, AppStore } from '@/lib/store/store'
 import { Toaster } from "sonner";
+// import Curve from "./components/Animation/page";
+
 export function Providers({children}: { children: React.ReactNode }) {
   const storeRef = useRef<AppStore>()
   if (!storeRef.current) {

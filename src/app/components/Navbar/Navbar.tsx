@@ -206,7 +206,7 @@ export default function Nav() {
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="#">
+              <Link color="foreground" href="/contact">
                 Contact Us
               </Link>
             </NavbarItem>

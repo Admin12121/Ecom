@@ -10,7 +10,7 @@ export default function HomePage() {
     return (
     <>
     <div className="relative h-full min-h-[100vh]">
-      <div className="absolute flex-col inset-0 h-full w-full items-center dark:bg-black justify-center flex bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]">
+      <div className="absolute flex-col inset-0 h-full w-full items-center dark:bg-black justify-center flex bg-white bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px]">
         {/* <ImageSider/> */}
         <Parallex/>
       </div>
