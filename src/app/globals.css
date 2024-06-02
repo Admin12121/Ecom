@@ -62,6 +62,8 @@ body{
 .main-contant-items::-webkit-scrollbar {
 display: none;
 }
+
+
 ::-webkit-scrollbar {
   width: 8px;
   border-radius: 7px;
@@ -70,22 +72,22 @@ display: none;
   /* Track */
   ::-webkit-scrollbar-track {
   background: #000000;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
   background:  rgb(255 255 255 / .1);
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-  background: #202022;
+    background: #202022;
   }
-
-html.lenis, html.lenis body {
-  height: auto;
-}
-
+  
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+  
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
@@ -115,4 +117,12 @@ html.lenis, html.lenis body {
 .slick-track{
   display: flex;
   gap: 15px;
+}
+
+.slick-slide{
+  min-width: 250px;
+}
+
+.discription_scroll::-webkit-scrollbar {
+  display: none;
 }

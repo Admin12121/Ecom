@@ -21,14 +21,8 @@ export default function Comments() {
         </p>
       </CardBody>
       <CardFooter className="gap-3">
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">4</p>
-          <img style={{width:"18px", height:"18px", filter:"invert(1)",cursor:"pointer"}} src="/like_skull.svg" alt="" />
-        </div>
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">97.1K</p>
-          <p className="text-default-400 text-small"></p>
-          <img style={{width:"18px", height:"18px", filter:"invert(1)", cursor:"pointer"}} src="/dislike_skull.svg" alt="" />
+        <div className="flex gap-1 cursor-pointer">
+          <p className="font-semibold text-default-400 text-small">reply</p>
         </div>
       </CardFooter>
     </Card>

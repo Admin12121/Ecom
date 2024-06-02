@@ -1,5 +1,5 @@
 import React from "react";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem, CheckboxGroup, Checkbox, Slider, SliderValue } from "@nextui-org/react";
 
 const Sidebar = () => {
     const itemClasses = {
@@ -11,7 +11,7 @@ const Sidebar = () => {
       };
    const defaultContent =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, ";
-
+    const [value, setValue] = React.useState<SliderValue>([100, 300]);
   return (
     <div className="min-w-[350px] w-[20%] py-10  pl-5 flex min-h-[100vh] h-full flex-col gap-5 max-llg:hidden">
         <h1 className="text-lg">Category</h1>
@@ -26,7 +26,46 @@ const Sidebar = () => {
             </g>
         </svg>} 
         aria-label="All products" title="All products">
-          {defaultContent}
+          <span className="flex flex-col gap-3">
+              <CheckboxGroup
+                  color="secondary"
+                  label="Product Type"
+                  defaultValue={["all"]}
+                >
+                  <Checkbox value="all">All</Checkbox>
+                  <Checkbox value="fullgold">Full Gold Coted</Checkbox>
+                  <Checkbox value="halfgold">Half Gold Coted</Checkbox>
+                  <Checkbox value="brass">Brass</Checkbox>
+                  <Checkbox value="copper">Copper</Checkbox>
+              </CheckboxGroup>
+              <CheckboxGroup
+                  color="secondary"
+                  label="Select size"
+                  defaultValue={["12", "13"]}
+                >
+                  <Checkbox value="12">0 - 12 Inches</Checkbox>
+                  <Checkbox value="24">13 - 24 Inches</Checkbox>
+                  <Checkbox value="36">25 - 36 Inches</Checkbox>
+                  <Checkbox value="48">37 - 48 Inches</Checkbox>
+                  <Checkbox value="100">48 - Higher Inches</Checkbox>
+              </CheckboxGroup>
+              <div className="flex flex-col gap-2 w-full h-full max-w-md items-start justify-center">
+                <Slider 
+                  label="Select a budget"
+                  formatOptions={{style: "currency", currency: "USD"}}
+                  step={10}
+                  maxValue={1000}
+                  color="secondary"
+                  minValue={0}
+                  value={value} 
+                  onChange={setValue}
+                  className="max-w-md"
+                />
+                <p className="text-default-500 font-medium text-small">
+                  Selected budget: {Array.isArray(value) && value.map((b) => `$${b}`).join(" – ")}
+                </p>
+              </div>
+          </span>
         </AccordionItem>
         <AccordionItem key="2" 
             startContent={ <svg width="24px"  height="24px"  viewBox="0 0 24 24"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
