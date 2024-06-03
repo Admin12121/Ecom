@@ -12,14 +12,13 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from 'next/navigation'
 import { useEffect,useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { setUserToken } from "@/lib/store/Feature/authSlice";
-import { getToken, storeToken } from "@/lib/store/Service/LocalStorageServices";
-import { useLoginUserMutation, useRegisterUserMutation } from "@/lib/store/Service/User_Auth_Api";
+import { getToken } from "@/lib/store/Service/LocalStorageServices";
+import {useRegisterUserMutation } from "@/lib/store/Service/User_Auth_Api";
 import { toast } from "sonner";
 import { Player } from '@lordicon/react';
 import lottie from "lottie-web";
 import { defineElement } from "@lordicon/element";
+import useAuth  from '@/context/AuthContext';
 
 interface Token {
   access_token: string;
@@ -31,11 +30,10 @@ export default function FormTab() {
     const playerRef = useRef<Player>(null);
     const [selected, setSelected] = useState<string | number>("login");
     const [accepted, setAccepted] = useState<boolean>(false);
-    const [loginUser] = useLoginUserMutation();
+    const [called, setCalled] = useState<boolean>(false);
+    const {isLoggedIn, handleLogin } = useAuth();
     const [serverError, setServerError] = useState<any>({});
     const [RegisterUser, { isLoading }] = useRegisterUserMutation();
-
-    const dispatch = useDispatch();
 
     useEffect(() => {
       const { access_token }: { access_token: any } = getToken();
@@ -43,6 +41,16 @@ export default function FormTab() {
         router.push('/');
       }
     }, []);
+
+    useEffect(()=>{
+      if(called){
+        if(isLoggedIn){
+          router.push(`/`)
+          setCalled(false)
+        }
+      }
+    },[called,isLoggedIn])
+
     useEffect(() => {
       if (Object.keys(serverError).length > 0) {
         const errorKey = Object.keys(serverError)[0];
@@ -52,6 +60,7 @@ export default function FormTab() {
         }
       }
     }, [serverError]);
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const formElement = e.currentTarget;
@@ -59,24 +68,11 @@ export default function FormTab() {
 
       if (selected === "login") {
           const actualData = {
-              email_or_username: formData.get("username"),
-              password: formData.get("password"),
+              email_or_username: formData.get("username") as string,
+              password: formData.get("password") as string,
           };
-          const res = await loginUser(actualData);
-          if (res.error) {
-              const errorData = res.error as { data?: { error_description?: string } };
-              if (errorData.data && 'error_description' in errorData.data) {
-                  toast.error(errorData.data.error_description);
-              }
-          }
-          if (res.data) {
-              const token: Token = res.data as Token;
-              storeToken(res.data);
-              const { access_token }: { access_token: any } = getToken();
-              dispatch(setUserToken({ access_token }));
-              toast.success("Login successful");
-              router.push('/');
-          }
+          handleLogin(actualData)
+          setCalled(true)
       } else if (selected === "sign-up") {
           const actualData = {
               first_name: formData.get("first_name"),

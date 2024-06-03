@@ -121,6 +121,7 @@ display: none;
 
 .slick-slide{
   min-width: 250px;
+  max-width: 300px;
 }
 
 .discription_scroll::-webkit-scrollbar {

@@ -8,29 +8,25 @@ import { CartIcon } from "./CartIcon";
 import { CardModal } from "./CardModal";
 import {PlaceholdersAndVanishInput} from "../SearchBox/Search"
 import Link from 'next/link'
-import { getToken } from '@/lib/store/Service/LocalStorageServices';
-import { useDispatch } from "react-redux";
-import { toast } from 'sonner';
-import { unSetUserToken } from '@/lib/store/Feature/authSlice';
-import { removeToken } from '@/lib/store/Service/LocalStorageServices';
+import useAuth  from '@/context/AuthContext';
+import { useRouter } from 'next/navigation'
+
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [logoutTrigger, setLogoutTrigger] = useState<number>(0);
-  const dispatch = useDispatch();
-  
-  useEffect(() => {
-    const { access_token } = getToken();
-    setIsLoggedIn(!!access_token);
-  }, [logoutTrigger]);
+  const { isLoggedIn, handleLogout } = useAuth();
+  const router = useRouter()
+  const [called, setCalled] = useState<boolean>(false);
 
-  const handleLogout = () => {
-    dispatch(unSetUserToken());
-    removeToken();
-    toast.success("Logged out")
-    setLogoutTrigger(prev => prev + 1);
-  };
+  useEffect(()=>{
+    if(called){
+      if(!isLoggedIn){
+        router.push(`/login`)
+        setCalled(false)
+      }
+    }
+  },[called,isLoggedIn])
+
   const icons = {
     chevron: <ChevronDown fill="currentColor" height={16} width={16} />,
     scale: (
@@ -244,10 +240,10 @@ export default function Nav() {
                       <p className="font-bold">Signed in as</p>
                       <p className="font-bold">@tonyreichert</p>
                     </DropdownItem>
+                    <DropdownItem key="profile" onPress={() => {router.push("/user/profile")}}>Profile</DropdownItem>
                     <DropdownItem key="settings">
                       My Settings
                     </DropdownItem>
-                    <DropdownItem key="team_settings">Team Settings</DropdownItem>
                     <DropdownItem key="analytics">
                       Analytics
                     </DropdownItem>
@@ -256,7 +252,7 @@ export default function Nav() {
                     <DropdownItem key="help_and_feedback">
                       Help & Feedback
                     </DropdownItem>
-                    <DropdownItem key="logout" color="danger" onPress={handleLogout}>
+                    <DropdownItem key="logout" color="danger" onPress={() =>{handleLogout();setCalled(true)}}>
                       Log Out
                     </DropdownItem>
                   </DropdownMenu>
