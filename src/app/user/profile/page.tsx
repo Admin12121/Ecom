@@ -1,49 +1,14 @@
 "use client";
 import {
-  Tabs,
-  Tab,
-  Card,
-  CardBody,
   Listbox,
   ListboxItem,
   Accordion,
   AccordionItem,
 } from "@nextui-org/react";
 import { ReactLenis, useLenis } from "lenis/react";
-import { useRef, useState } from "react";
+import { BentoGridSecondDemo } from "./utils/profile";
+
 const Profile = () => {
-  const divRef = useRef<HTMLDivElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current || isFocused) return;
-
-    const div = divRef.current;
-    const rect = div.getBoundingClientRect();
-
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    setOpacity(1);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    setOpacity(0);
-  };
-
-  const handleMouseEnter = () => {
-    setOpacity(1);
-  };
-
-  const handleMouseLeave = () => {
-    setOpacity(0);
-  };
-
   const defaultContent =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
@@ -62,50 +27,30 @@ const Profile = () => {
                 title="Manage Account"
               >
                 <Listbox aria-label="Actions" onAction={(key) => alert(key)}>
-                  <ListboxItem key="new">New file</ListboxItem>
-                  <ListboxItem key="copy">Copy link</ListboxItem>
-                  <ListboxItem key="edit">Edit file</ListboxItem>
-                  <ListboxItem
-                    key="delete"
-                    className="text-danger"
-                    color="danger"
-                  >
-                    Delete file
-                  </ListboxItem>
+                  <ListboxItem key="new">My Profile</ListboxItem>
+                  <ListboxItem key="copy">Address Book</ListboxItem>
+                  <ListboxItem key="edit">My Payment Option</ListboxItem>
                 </Listbox>
               </AccordionItem>
-              <AccordionItem
-                key="2"
-                aria-label="Accordion 2"
-                title="Accordion 2"
-              >
-                {defaultContent}
+              <AccordionItem key="2" aria-label="Accordion 2" title="My Orders">
+                <Listbox aria-label="Actions" onAction={(key) => alert(key)}>
+                  <ListboxItem key="new">My Orders</ListboxItem>
+                  <ListboxItem key="copy">My Cancellations</ListboxItem>
+                </Listbox>
               </AccordionItem>
               <AccordionItem
                 key="3"
                 aria-label="Accordion 3"
-                title="Accordion 3"
+                title="My Reviews"
               >
-                {defaultContent}
+                <Listbox aria-label="Actions" onAction={(key) => alert(key)}>
+                  <ListboxItem key="new">My Reviews</ListboxItem>
+                </Listbox>
               </AccordionItem>
             </Accordion>
           </span>
-          <span
-            ref={divRef}
-            onMouseMove={handleMouseMove}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className="relative w-[75%] overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-950 p-8"
-          >
-            {/* <div
-            className="pointer-events-none absolute -inset-px opacity-0 transition duration-500"
-            style={{
-              opacity,
-              background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255,255,255,.25), transparent 40%)`,
-            }}
-          /> */}
+          <span className="relative w-[75%] overflow-hidden  p-3">
+            <BentoGridSecondDemo />
           </span>
         </section>
       </ReactLenis>

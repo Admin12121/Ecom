@@ -1,31 +1,58 @@
-"use client"
-import { useState , useEffect} from "react";
-import {Navbar,Badge, NavbarBrand,NavbarMenuToggle,Input, NavbarContent,useDisclosure, NavbarItem, NavbarMenu,NavbarMenuItem, Button, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, User} from "@nextui-org/react";
-import {ChevronDown, SearchIcon, Lock, Activity, Flash, Server, TagUser, Scale} from "./Icons";
+"use client";
+import { useState, useEffect } from "react";
+import {
+  Navbar,
+  Badge,
+  NavbarBrand,
+  NavbarMenuToggle,
+  Input,
+  NavbarContent,
+  useDisclosure,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  Button,
+  DropdownItem,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  Avatar,
+  User,
+} from "@nextui-org/react";
+import {
+  ChevronDown,
+  SearchIcon,
+  Lock,
+  Activity,
+  Flash,
+  Server,
+  TagUser,
+  Scale,
+} from "./Icons";
 import { AcmeLogo } from "./AcmeLogo";
-import  { Login }  from "../Login/Login"
+import { Login } from "../Login/Login";
 import { CartIcon } from "./CartIcon";
 import { CardModal } from "./CardModal";
-import {PlaceholdersAndVanishInput} from "../SearchBox/Search"
-import Link from 'next/link'
-import useAuth  from '@/context/AuthContext';
-import { useRouter } from 'next/navigation'
+import { PlaceholdersAndVanishInput } from "../SearchBox/Search";
+import Link from "next/link";
+import useAuth from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { isLoggedIn, handleLogout } = useAuth();
-  const router = useRouter()
+  const router = useRouter();
   const [called, setCalled] = useState<boolean>(false);
 
-  useEffect(()=>{
-    if(called){
-      if(!isLoggedIn){
-        router.push(`/login`)
-        setCalled(false)
+  useEffect(() => {
+    if (called) {
+      if (!isLoggedIn) {
+        router.push(`/login`);
+        setCalled(false);
       }
     }
-  },[called,isLoggedIn])
+  }, [called, isLoggedIn]);
 
   const icons = {
     chevron: <ChevronDown fill="currentColor" height={16} width={16} />,
@@ -105,14 +132,21 @@ export default function Nav() {
   };
   return (
     <>
-      <Navbar className="bg-background/20 z-50" onMenuOpenChange={setIsMenuOpen}>
+      <Navbar
+        className="bg-background/20 z-50"
+        onMenuOpenChange={setIsMenuOpen}
+      >
         <NavbarContent>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="sm:hidden"
           />
           <NavbarBrand className="max-w-[150px]">
-            <Link href="/" aria-current="page" className="flex items-center justify-center">
+            <Link
+              href="/"
+              aria-current="page"
+              className="flex items-center justify-center"
+            >
               <AcmeLogo />
               <p className="font-bold text-foreground">E-com</p>
             </Link>
@@ -133,7 +167,7 @@ export default function Nav() {
           <PlaceholdersAndVanishInput
             placeholders={placeholders}
             onSubmit={onSubmit}
-            />
+          />
         </NavbarContent>
         <NavbarContent justify="end">
           <NavbarContent className="hidden mmd:flex gap-4" justify="center">
@@ -207,60 +241,77 @@ export default function Nav() {
               </Link>
             </NavbarItem>
           </NavbarContent>
-          {!isLoggedIn && (<>
-            {/* <NavbarItem className="hidden lg:flex">
+          {!isLoggedIn && (
+            <>
+              {/* <NavbarItem className="hidden lg:flex">
               <Link href="#" color="secondary" onClick={onOpen}>
                 Login
               </Link>
             </NavbarItem> */}
-            <NavbarItem>
-              <Link href="/login">
-                Sign Up
-              </Link>
-            </NavbarItem>
-          </>)}
-             <AddtoCart/>
-             {isLoggedIn && (<>
+              <NavbarItem>
+                <Link href="/login">Sign Up</Link>
+              </NavbarItem>
+            </>
+          )}
+          <AddtoCart />
+          {isLoggedIn && (
+            <>
               <div className="flex items-center gap-4">
                 <Dropdown placement="bottom-start">
                   <DropdownTrigger>
-                    <User
-                      as="button"
-                      avatarProps={{
-                        isBordered: true,
-                        src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-                      }}
-                      className="transition-transform"
-                      description="@tonyreichert"
-                      name="Tony Reichert"
-                    />
+                    <span className="flex gap-2">
+                      <Avatar
+                        radius="md"
+                        className="cursor-pointer"
+                        src="https://i.pravatar.cc/150?u=a042f81f4e29026024d"
+                      />
+                      <span className="flex flex-col cursor-pointer text-xs justify-center">
+                        <p>Admin</p>
+                        <p className="text-default-500">admin@gmail.com</p>
+                      </span>
+                    </span>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="User Actions" variant="flat">
                     <DropdownItem key="profile" className="h-14 gap-2">
                       <p className="font-bold">Signed in as</p>
                       <p className="font-bold">@tonyreichert</p>
                     </DropdownItem>
-                    <DropdownItem key="profile" onPress={() => {router.push("/user/profile")}}>Profile</DropdownItem>
-                    <DropdownItem key="settings">
-                      My Settings
+                    <DropdownItem
+                      key="profile"
+                      onPress={() => {
+                        router.push("/user/profile");
+                      }}
+                    >
+                      Settings
                     </DropdownItem>
-                    <DropdownItem key="analytics">
-                      Analytics
+                    <DropdownItem key="configurations">
+                       My Wishlist
                     </DropdownItem>
-                    <DropdownItem key="system">System</DropdownItem>
-                    <DropdownItem key="configurations">Configurations</DropdownItem>
-                    <DropdownItem key="help_and_feedback">
+                    <DropdownItem
+                      key="help_and_feedback"
+                      onPress={() => {
+                        router.push("/help");
+                      }}
+                    >
                       Help & Feedback
                     </DropdownItem>
-                    <DropdownItem key="logout" color="danger" onPress={() =>{handleLogout();setCalled(true)}}>
+                    <DropdownItem
+                      key="logout"
+                      color="danger"
+                      onPress={() => {
+                        handleLogout();
+                        setCalled(true);
+                      }}
+                    >
                       Log Out
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>
-             </>)}
+            </>
+          )}
         </NavbarContent>
-        <NavbarMenu  className="overflow-hidden">
+        <NavbarMenu className="overflow-hidden">
           {menuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
@@ -285,17 +336,16 @@ export default function Nav() {
   );
 }
 
-
-const AddtoCart = () =>{
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  return(
+const AddtoCart = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  return (
     <>
       <NavbarItem className="cursor-pointer" onClick={onOpen}>
         <Badge color="danger" content={0} shape="circle">
-              <CartIcon size={30} />
+          <CartIcon size={30} />
         </Badge>
       </NavbarItem>
-      <CardModal isOpen={isOpen} onClose={onClose}/>
+      <CardModal isOpen={isOpen} onClose={onClose} />
     </>
-  )
-}
+  );
+};

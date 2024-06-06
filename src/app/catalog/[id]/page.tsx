@@ -8,11 +8,11 @@ import {
   CardBody,
   CardFooter,
   Divider,
-  Link,
   Image,
   Button,
   Chip,
 } from "@nextui-org/react";
+import Link from 'next/link'
 import lottie from "lottie-web";
 import { defineElement } from "@lordicon/element";
 import Star from "./star";
@@ -87,8 +87,8 @@ export default function Product() {
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 4000,
-    autoplaySpeed: 4000,
+    speed: 5000,
+    autoplaySpeed: 5000,
     cssEase: "linear",
     pauseOnHover: true,
     arrows: false,
@@ -308,7 +308,11 @@ export default function Product() {
           <div className="min-h-[50vh] mmd:max-w-[50%] p-10">
             <Review_data />
           </div>
-          <div className="flex gap-4 h-[60vh] w-full items-center p-10">
+          <div className="flex gap-4 h-[60vh] w-full items-center p-10 flex-col">
+            <span className="flex w-full justify-between">
+              <h1>You may Also Like</h1>
+              <Link href="/catalog" color="foreground">View All</Link>
+            </span>
             <Slider {...settings}>
               {data.map(({ img, id }: { img: string; id: number }, index) => (
                 <>
