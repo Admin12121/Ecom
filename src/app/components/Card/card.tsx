@@ -5,6 +5,7 @@ import {Button} from "@nextui-org/react";
 import {Image} from "@nextui-org/react";
 import {Chip} from "@nextui-org/react";
 import {HeartIcon} from './HeartIcon';
+import { useCart } from '@/context/CartState';
 interface Image {
   image?: string;
   clasName?: string;

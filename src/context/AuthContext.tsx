@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (res.data) {
-        const token = res.data;
+        const token = res.data?.token;
         storeToken(token);
         dispatch(setUserToken(token));
         toast.success("Login successful");

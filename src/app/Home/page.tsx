@@ -1,12 +1,14 @@
+import { Button } from "@nextui-org/react";
 import { CardBox } from "../components/Card/card";
 import { GlobeDemo } from "../components/Globe/globe";
 import Parallex from "../components/Prallex/Parallex";
 import { InfiniteMovingCardsDemo } from "../components/Testimonial/testimonial";
 import ImageSider from "./Imageslider";
+import { useRouter } from "next/navigation";
 // import Welcome from "./welcome";
 
 export default function HomePage() {
-
+  const router = useRouter();
     return (
     <>
     <div className="relative h-full min-h-[100vh]">
@@ -28,6 +30,9 @@ export default function HomePage() {
        <CardBox image="/product.png" clasName="bg-neutral-950" />
        <CardBox image="/product1.png" />
       </div> 
+      <div className="flex">
+        <Button onPress={()=>router.push(`/catalog`)}>Explore more</Button>
+      </div>
     </div>
       <GlobeDemo/>
       {/* <Scroll/> */}

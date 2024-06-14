@@ -1,15 +1,15 @@
 import Cookies from 'js-cookie';
 
 interface Token {
-  access_token: string;
-  refresh_token: string;
+  access: string;
+  refresh: string;
 }
 
 const storeToken = (value: Token): void => {
   if (value) {
-    const { access_token, refresh_token } = value;
-    Cookies.set('access_token', access_token);
-    Cookies.set('refresh_token', refresh_token);
+    const { access, refresh } = value;
+    Cookies.set('access_token', access);
+    Cookies.set('refresh_token', refresh);
   }
 };
 

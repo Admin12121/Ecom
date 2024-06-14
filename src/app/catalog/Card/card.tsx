@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import {Button} from "@nextui-org/react";
 import {Image} from "@nextui-org/react";
 import Link  from "next/link";
+import { useCart } from '@/context/CartState';
 
 interface Image {
   id: number;
@@ -12,6 +13,7 @@ interface Image {
 }
 
 export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState}) => {
+  const {addToCart} = useCart();
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -43,6 +45,7 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState})
   const handleMouseLeave = () => {
     setOpacity(0);
   };
+
   return (
         <div
           ref={divRef}
@@ -89,15 +92,13 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState})
                 </span>
             </div>
             <div className="p-6 pt-0 flex justify-between items-center">
-
-                <Button color="secondary" className="cursor-pointer " variant="bordered">
+                <Button color="secondary" className="cursor-pointer " onClick={(event) => addToCart(id, event)} variant="bordered">
                   Add to Cart
                 </Button>  
                 <Button color="secondary" className="cursor-pointer ">
                   Buy Now
                 </Button>  
             </div>
-
         </div>  
     )
 }

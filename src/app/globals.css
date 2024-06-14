@@ -127,3 +127,22 @@ display: none;
 .discription_scroll::-webkit-scrollbar {
   display: none;
 }
+
+.container_background{    /* Basic dimensions and centering */
+  background-color: transparent;
+  background-image: radial-gradient(#cdcdcd8a .5px, #ffffff 1px);
+  background-size: 15px 15px;
+}
+
+.product__dot {
+  position: absolute;
+  background-color: #0000006e;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  z-index: 1000;
+  top: -300px;
+  left: 50px;
+  position: absolute;
+  transition: transform 0.5s ease-in-out;
+}

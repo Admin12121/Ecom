@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Navbar,
   Badge,
@@ -29,6 +29,8 @@ import {
   TagUser,
   Scale,
 } from "./Icons";
+import { useCart } from '@/context/CartState';
+import { AnimatePresence } from 'framer-motion';
 import { AcmeLogo } from "./AcmeLogo";
 import { Login } from "../Login/Login";
 import { CartIcon } from "./CartIcon";
@@ -37,6 +39,7 @@ import { PlaceholdersAndVanishInput } from "../SearchBox/Search";
 import Link from "next/link";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Cart from "../Cart/Cart";
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -279,7 +282,7 @@ export default function Nav() {
                     <DropdownItem
                       key="profile"
                       onPress={() => {
-                        router.push("/user/profile");
+                        router.push("/settings");
                       }}
                     >
                       Settings
@@ -337,15 +340,22 @@ export default function Nav() {
 }
 
 const AddtoCart = () => {
+  const { counter } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  console.log(counter)
   return (
     <>
-      <NavbarItem className="cursor-pointer" onClick={onOpen}>
-        <Badge color="danger" content={0} shape="circle">
-          <CartIcon size={30} />
+      <NavbarItem onClick={() => {setIsActive(!isActive)}} className="cursor-pointer z-[100]" >
+        <Badge color="secondary" id="js-shopping-bag-counter" content={counter} shape="circle">
+          <CartIcon  size={30} />
         </Badge>
       </NavbarItem>
       <CardModal isOpen={isOpen} onClose={onClose} />
+      <AnimatePresence mode="wait">
+      {isActive && <Cart setIsActive={setIsActive} isActive={isActive}/>}
+    </AnimatePresence>
     </>
   );
 };
