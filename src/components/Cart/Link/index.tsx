@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { slide, scale } from '../anim';
 import {Card,CardHeader, CardBody, Image} from "@nextui-org/react";
 
-export default function Index({data,  setSelectedIndicator}) {
+export default function Index({data, setSelectedIndicator}:{data:any,setSelectedIndicator:any }) {
   
     const { title, href, index} = data;
   
