@@ -233,8 +233,8 @@ export default function Nav() {
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <NavbarItem isActive>
-              <Link href="#" aria-current="page">
+            <NavbarItem>
+              <Link color="foreground" href="#">
                 Our Story
               </Link>
             </NavbarItem>
@@ -343,8 +343,7 @@ const AddtoCart = () => {
   const { counter } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isActive, setIsActive] = useState<boolean>(false);
-  const counterRef = useRef<HTMLSpanElement>(null);
-  console.log(counter)
+  
   return (
     <>
       <NavbarItem onClick={() => {setIsActive(!isActive)}} className="cursor-pointer z-[100]" >

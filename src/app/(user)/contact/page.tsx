@@ -13,7 +13,7 @@ import {
   Textarea,
   Button,
 } from "@nextui-org/react";
-import { AcmeLogo } from "../components/Navbar/AcmeLogo";
+import { AcmeLogo } from "@/components/Navbar/AcmeLogo";
 
 const Category = () => {
   return (

@@ -1,6 +1,7 @@
 "use client"
 import { useEffect } from "react";
 import gsap from "gsap";
+import NextImage from "next/image";
 import styles from "./ParallaxCard.module.css";
 export default function Parallex() {
   useEffect(() => {

@@ -3,8 +3,11 @@ import { ReactLenis, useLenis } from 'lenis/react'
 import Sidebar from './Sidebar/Sidebar'
 import Content from './Content/Content'
 import { useState } from 'react'
+import { Login } from "@/components/Login/Login";
+import { useCart } from '@/context/CartState';
 
 const Category = () => {
+  const { isOpen, onOpenChange } = useCart();
   const [product, SetProduct] = useState<boolean>(false)
   const [productState, setProductState] = useState<{ isActive: boolean, selectedId: number | null }>({ isActive: false, selectedId: null });
 
@@ -14,6 +17,7 @@ const Category = () => {
       {!productState.isActive && <Sidebar />}
          <Content productState={productState} setProductState={setProductState}/> 
       </div>
+      <Login isOpen={isOpen} onOpenChange={onOpenChange}/>
     </ReactLenis>
   )
 }

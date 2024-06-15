@@ -1,4 +1,4 @@
-import { CardBox } from '@/app/catalog/Card/card'
+import { CardBox } from '../Card/card'
 import React from 'react'
 import Header from '../Header/Header'
 

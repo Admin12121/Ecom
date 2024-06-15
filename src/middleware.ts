@@ -7,8 +7,8 @@ export function middleware(request: NextRequest) {
   
   const cookieHeader = request.headers.get('cookie');
   const cookies = cookieHeader ? parse(cookieHeader) : {};
-  const access_token = cookies.access || null;
-  const refresh_token = cookies.refresh || null;
+  const access_token = cookies.access_token || null;
+  const refresh_token = cookies.refresh_token || null;
 
 
   if (request.nextUrl.pathname === '/login' && (access_token || refresh_token)) {

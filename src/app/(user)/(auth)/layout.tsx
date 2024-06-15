@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Navbar from "@/components/Navbar/Navbar";
-import { Footer } from "@/components/Footer/footer";
+import UserSidebar from "../../../../components/UserSidebar/usersidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ecom",
+  title: "Profile",
   description: "",
 };
 
@@ -15,9 +14,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
-      <Navbar />
-      {children}
-      <Footer />
+      <section className="p-5 flex min-h-[100vh]">
+        <UserSidebar />
+        {children}
+      </section>
     </>
   );
 }

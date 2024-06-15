@@ -77,15 +77,15 @@ export const  CardBox:React.FC<Image> = ({image, clasName}) => {
                 </Button>    
               </span>
               <span className="flex gap-2">
-                <Chip radius="sm" color="secondary">Full Gold Coted</Chip>
-                <Chip radius="sm" color="secondary">Premium</Chip>
+                <Chip radius="sm" color="default">Full Gold Coted</Chip>
+                <Chip radius="sm" color="default">Premium</Chip>
               </span>
-                <p className="block mt-2 font-sans text-base font-light leading-relaxed text-inherit antialiased">
+                <p className="block mt-2 font-sans text-base font-light leading-relaxed text-inherit antialiased text-gray-500">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Id voluptatem obcaecati ad natus ex! Corporis,
                 </p>
             </div>
             <div className="p-6 pt-0 flex justify-between items-center">
-                <span className="cursor-pointer">
+                <span className="cursor-pointer text-gray-300">
                   रू  120000
                 </span>
 

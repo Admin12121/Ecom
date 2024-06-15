@@ -78,7 +78,7 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState})
                 </h5>
               </span>
                 <span className="cursor-pointer right-0 relative h-[15px] flex">
-                  <p className="flex gap-1">
+                  <p className="flex gap-1 text-gray-300">
                   <svg width="20px"  height="20px"  viewBox="0 0 24 24"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                     <g id="Iconly/Bold/Star" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                         <g id="Star" transform="translate(1.999624, 2.500100)" fill="orange"  fillRule="nonzero">
@@ -88,7 +88,7 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName, setProductState})
                 </svg>
                 5.0{`(1.5k review)`}
                   </p>
-                  <p className="absolute right-0">रू  120000</p>
+                  <p className="absolute right-0 text-gray-300">रू  120000</p>
                 </span>
             </div>
             <div className="p-6 pt-0 flex justify-between items-center">

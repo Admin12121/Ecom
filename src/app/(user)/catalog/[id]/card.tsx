@@ -16,8 +16,6 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName}) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
 
-  console.log(clasName)
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current || isFocused) return;
 
@@ -75,7 +73,7 @@ export const  CardBox:React.FC<Image> = ({image, id, clasName}) => {
                 </h5>
               </span>
                 <span className="cursor-pointer right-0 relative h-[15px] flex flex-col">
-                  <p className="flex gap-1">
+                  <p className="flex gap-1 text-gray-500">
                         <svg width="20px"  height="20px"  viewBox="0 0 24 24"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                           <g id="Iconly/Bold/Star" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                               <g id="Star" transform="translate(1.999624, 2.500100)" fill="orange"  fillRule="nonzero">

@@ -25,7 +25,7 @@ export default function Index() {
 <svg className={styles.svgCurve} xmlns="http://www.w3.org/2000/svg">
     <defs>
         <radialGradient id="gradient" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5">
-            <stop offset="50%" stop-color="#18181b" />
+            <stop offset="50%" stop-color="#000" />
             <stop offset="100%" stop-color="#000" />
         </radialGradient>
     </defs>

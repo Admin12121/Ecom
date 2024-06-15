@@ -1,8 +1,8 @@
 import { Button } from "@nextui-org/react";
-import { CardBox } from "../components/Card/card";
-import { GlobeDemo } from "../components/Globe/globe";
-import Parallex from "../components/Prallex/Parallex";
-import { InfiniteMovingCardsDemo } from "../components/Testimonial/testimonial";
+import { CardBox } from "@/components/Card/card";
+import { GlobeDemo } from "@/components/Globe/globe";
+import Parallex from "@/components/Prallex/Parallex";
+import { InfiniteMovingCardsDemo } from "@/components/Testimonial/testimonial";
 import ImageSider from "./Imageslider";
 import { useRouter } from "next/navigation";
 // import Welcome from "./welcome";
@@ -19,10 +19,10 @@ export default function HomePage() {
     </div>
     <div className="relative min-h-[100vh]  flex-col flex items-center justify-center pt-5">
       <div className="w-full px-40 h-96 flex flex-col items-center justify-center text-center">
-        <h1>Welcome to our Store</h1>
-        <p>We take much joy and happiness in bringing wonderfully hand-curated Buddhist statues to Vajrayana practitioners.
+        <h1 className="text-2xl">Welcome to our Store</h1>
+        <p className="text-gray-500 text-lg">We take much joy and happiness in bringing wonderfully hand-curated Buddhist statues to Vajrayana practitioners.
             Buddhist statues with accurate iconography and details from the trans-Himalayan culture that has been dominant for more than 1400 years.</p>
-        <p>Explore our Handmade Statue Collection Categories.</p>
+        <p className="text-gray-500 text-lg">Explore our Handmade Statue Collection Categories.</p>
       </div>
       <div className="w-full flex-row flex p-8 items-center justify-center flex-wrap gap-x-10 gap-y-32">
        <CardBox image="/product.png" clasName="bg-neutral-950" />

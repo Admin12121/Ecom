@@ -250,6 +250,7 @@ export default function Product() {
                 <CardFooter className="gap-5">
                   <Button
                     color="default"
+                    variant="shadow"
                     className="w-full h-[50px]"
                     startContent={
                       <lord-icon
@@ -267,7 +268,8 @@ export default function Product() {
                     Add to Card
                   </Button>
                   <Button
-                    color="default"
+                    color="secondary"
+                    variant="shadow"
                     className="w-full h-[50px]"
                     startContent={
                       <lord-icon

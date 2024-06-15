@@ -5,22 +5,27 @@ import { Provider } from "react-redux";
 // import { AuthProvider } from "@/context/AuthContext";
 import { store, AppStore } from "@/lib/store/store";
 import { Toaster } from "sonner";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
+import { CartProvider } from "@/context/CartState";
 // import Curve from "./components/Animation/page";
-const AuthProvider = dynamic(() => import('@/context/AuthContext').then(mod => mod.AuthProvider), { ssr: false });
+
+const AuthProvider = dynamic(
+  () => import("@/context/AuthContext").then((mod) => mod.AuthProvider),
+  { ssr: false }
+);
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const storeRef = useRef<AppStore>();
   if (!storeRef.current) {
-    // Create the store instance the first time this renders
     storeRef.current = store();
   }
+
   return (
     <NextUIProvider>
       <Toaster closeButton position="top-right" />
       <Provider store={storeRef.current}>
         <AuthProvider>
-          {children}
+          <CartProvider>{children}</CartProvider>
         </AuthProvider>
       </Provider>
     </NextUIProvider>
