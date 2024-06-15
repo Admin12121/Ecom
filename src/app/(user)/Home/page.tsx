@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@nextui-org/react";
 import { CardBox } from "@/components/Card/card";
 import { GlobeDemo } from "@/components/Globe/globe";
