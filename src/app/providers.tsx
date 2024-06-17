@@ -2,7 +2,9 @@
 import { useRef } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { Provider } from "react-redux";
-// import { AuthProvider } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProviderProps } from "next-themes/dist/types";
 import { store, AppStore } from "@/lib/store/store";
 import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
@@ -13,21 +15,27 @@ const AuthProvider = dynamic(
   () => import("@/context/AuthContext").then((mod) => mod.AuthProvider),
   { ssr: false }
 );
-
-export function Providers({ children }: { children: React.ReactNode }) {
+export interface ProvidersProps {
+  children: React.ReactNode;
+  themeProps?: ThemeProviderProps;
+}
+export function Providers({ children, themeProps }: ProvidersProps) {
+  const router = useRouter();
   const storeRef = useRef<AppStore>();
   if (!storeRef.current) {
     storeRef.current = store();
   }
 
   return (
-    <NextUIProvider>
-      <Toaster closeButton position="top-right" />
-      <Provider store={storeRef.current}>
-        <AuthProvider>
-          <CartProvider>{children}</CartProvider>
-        </AuthProvider>
-      </Provider>
+    <NextUIProvider navigate={router.push}>
+      <NextThemesProvider {...themeProps}>
+        <Toaster closeButton position="top-right" />
+        <Provider store={storeRef.current}>
+          <AuthProvider>
+            <CartProvider>{children}</CartProvider>
+          </AuthProvider>
+        </Provider>
+      </NextThemesProvider>
     </NextUIProvider>
   );
 }
