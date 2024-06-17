@@ -129,7 +129,7 @@ const AddProduct = () => {
   );
 };
 
-export const animals = [
+const animals = [
   { key: "brass", label: "Brass" },
   { key: "silver", label: "Silver" },
   { key: "halfgold", label: "Half Gold" },
