@@ -1,18 +1,12 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import { Button } from "@nextui-org/button";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
+import { Card, CardHeader, CardBody} from "@nextui-org/card";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/breadcrumbs";
 import { Select, SelectItem } from "@nextui-org/react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@nextui-org/react";
 import { Input, Textarea } from "@nextui-org/input";
 import { useRouter } from "next/navigation";
-const page = () => {
+const AddProduct = () => {
   const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
   const router = useRouter();
   const selectedValue = useMemo(
@@ -142,4 +136,4 @@ export const animals = [
   { key: "fullgold", label: "Full gold" },
 ];
 
-export default page;
+export default AddProduct;

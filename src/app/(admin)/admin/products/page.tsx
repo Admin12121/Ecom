@@ -44,7 +44,7 @@ const data: Event[] = [
 ];
 import { useRouter } from "next/navigation";
 import Add_icon from "@/components/Admin/icons/add-icon";
-const page = () => {
+const Product = () => {
   const router = useRouter();
   return (
     <>
@@ -79,4 +79,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Product;
