@@ -2,11 +2,10 @@ export default function FilterIcon({filter,SetFilter}:{filter?:boolean, SetFilte
   return (
     <>
   {filter ? <svg
-        width="20px"
-        height="20px"
+        width="24px"
+        height="24px"
         viewBox="0 0 24 24"
         version="1.1"
-        onClick={() => SetFilter(!filter)}
         className="cursor-pointer"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -29,7 +28,7 @@ export default function FilterIcon({filter,SetFilter}:{filter?:boolean, SetFilte
         </g>
       </svg>
       :
-      <svg width="20px" onClick={() => SetFilter(!filter)}  className="cursor-pointer"  height="20px"  viewBox="0 0 24 24"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+      <svg width="24px"  className="cursor-pointer"  height="24px"  viewBox="0 0 24 24"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
           <g id="Iconly/Light/Filter" stroke="#fff"  strokeWidth="1.5"  fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round">
               <g id="Filter" transform="translate(4.000000, 4.500000)" stroke="#fff"  strokeWidth="1.5" >
                   <line x1="6.33015655" y1="12.0929063" x2="0.0294393477" y2="12.0929063" id="Stroke-1"></line>

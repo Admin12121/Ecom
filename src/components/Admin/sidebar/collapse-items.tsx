@@ -29,7 +29,7 @@ export const CollapseItems = ({ icon, items, title, href }: Props) => {
           title={
             <div className="flex flex-row gap-2">
               <span>{icon}</span>
-              <span>{title}</span>
+              <span className="max-2xl:hidden">{title}</span>
             </div>
           }
         >

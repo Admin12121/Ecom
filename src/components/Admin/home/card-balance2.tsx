@@ -5,7 +5,7 @@ import { ProductIcon } from "../icons/products-icon";
 
 export const CardBalance2 = () => {
   return (
-    <Card className="xl:max-w-sm bg-default-50 rounded-3xl shadow-md px-3 w-full h-[250px] ">
+    <Card className="bg-default-50 rounded-3xl shadow-md px-3 w-full h-[250px] ">
       <CardBody className="py-5 overflow-hidden">
         <div className="flex gap-2.5">
           <SalesIcon />

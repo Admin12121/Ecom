@@ -143,12 +143,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     cardClone.style.height = `${cardRect.height}px`;
     cardClone.style.transition = 'width 1s ease-in-out, height 1s ease-in-out, border-radius 1s ease-in-out, top 1s ease-in-out, left 1s ease-in-out, background-color 1s ease-in-out, opacity 1s ease-in-out';
     cardClone.style.zIndex = '1000';
-
+    
     document.body.appendChild(cardClone);
-
+    
     const mainContentClone = cardClone.querySelector('.main-content') as HTMLElement;
+    const imageClone = mainContentClone.querySelector('.animation-background') as HTMLElement;
+    imageClone.style.display = "none";
     mainContentClone.style.opacity = '1';
-    mainContentClone.style.transition = 'transform 1s ease-in-out, opacity 1s ease-in-out';
+    mainContentClone.style.position = 'relative';
+    mainContentClone.style.transition = 'transform 1s ease-in-out, opacity 1s ease-in-out, top 1s ease-in-out';
+    mainContentClone.style.top = '0px';
     
     requestAnimationFrame(() => {
       cardClone.style.width = '20px';
@@ -156,8 +160,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       cardClone.style.borderRadius = '50%';
       cardClone.style.backgroundColor = '#8c52c5';
       cardClone.style.color = 'transparent';
-      // mainContentClone.style.transform = 'scale(0)';
+      mainContentClone.style.transform = 'scale(0)';
       mainContentClone.style.opacity = '0';
+      mainContentClone.style.top = '250px';
       
       moveDotToTarget(cardClone).then(() => {
         cardClone.style.opacity = '0';

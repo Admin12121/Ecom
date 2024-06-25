@@ -68,7 +68,7 @@ export const CardBox: React.FC<Image> = ({
     >
       <span className="main-content">
         <span
-          className="pointer-events-none absolute rounded-xl -inset-px opacity-0 transition duration-500"
+          className="pointer-events-none animation-background absolute rounded-xl -inset-px opacity-0 transition duration-500"
           style={{
             opacity,
             background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255,255,255,.25), transparent 40%)`,
@@ -76,11 +76,10 @@ export const CardBox: React.FC<Image> = ({
         ></span>
         <Link
           href={`/catalog/${id}`}
-          className="mx-4 -mt-6 w-[288px] flex justify-center h-[350px] absolute top-[-100px] rounded-xl bg-blue-gray-500 bg-clip-border "
+          className="mx-4 -mt-6 w-[288px] flex justify-center h-[350px] relative rounded-xl bg-blue-gray-500 bg-clip-border "
         >
           <Image
             isBlurred
-            // as={NextImage}
             width={400}
             height={200}
             src={image}

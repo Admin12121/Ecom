@@ -30,6 +30,7 @@ const config: Config = {
       'sm': '660px',
       'max-sm': {'max': '639px'},
       'md': '768px',
+      'custom-md': { 'min': '800px', 'max': '1100px' },
       'mmd' : '1000px',
       'mid-mmd': {'max': '900px'},
       'max-mmd': {'max': '1000px'},
@@ -38,6 +39,7 @@ const config: Config = {
       'max-llg': {'max': '1120px'},
       'xxl': '1200px',
       'xl': '1280px',
+      'max-2xl': {'max': '1400px'},
       '2xl': '1536px',
     }
   },

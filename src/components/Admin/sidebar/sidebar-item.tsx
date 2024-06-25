@@ -28,12 +28,12 @@ export const SidebarItem = ({ icon, title, isActive, href = "" }: Props) => {
           isActive
             ? "bg-secondary text-white"
             : "hover:bg-default-100",
-          "flex gap-2 w-full min-h-[44px] h-full items-center px-3.5 rounded-xl cursor-pointer transition-all duration-150 active:scale-[0.98]"
+          "flex gap-2 w-full min-h-[44px] h-full items-center px-3.5 rounded-xl cursor-pointer transition-all duration-150 active:scale-[0.98] max-2xl:items-center max-2xl:justify-center"
         )}
         onClick={handleClick}
       >
         {icon}
-        <span className={`${isActive ? "text-white" : "text-default-900 "} `}>{title}</span>
+        <span className={`${isActive ? "text-white" : "text-default-900 "} max-2xl:hidden`}>{title}</span>
       </div>
     </NextLink>
   );

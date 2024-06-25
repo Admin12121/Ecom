@@ -5,7 +5,7 @@ import {Avatar, AvatarGroup} from "@nextui-org/avatar";
 
 export const CardBalance1 = () => {
   return (
-    <Card className="xl:max-w-sm bg-neutral-950 rounded-3xl shadow-md px-3 w-full h-[250px]">
+    <Card className="bg-neutral-950 rounded-3xl shadow-md px-3 w-full h-[250px]">
       <CardBody className="py-5 overflow-hidden">
         <div className="flex gap-2.5">
           <Community />

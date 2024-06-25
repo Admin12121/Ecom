@@ -24,9 +24,9 @@ export const CompaniesDropdown = () => {
   });
   return (
       <span className="cursor-pointer">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           {company.logo}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 max-2xl:hidden">
             <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
               {company.name}
             </h3>

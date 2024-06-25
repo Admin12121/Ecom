@@ -4,7 +4,7 @@ import RevinueIcon from "../icons/revinue-Icon";
 
 export const CardBalance3 = () => {
   return (
-    <Card className="xl:max-w-sm bg-neutral-950 rounded-3xl shadow-md px-3 w-full h-[250px]">
+    <Card className="bg-neutral-950 rounded-3xl shadow-md px-3 w-full h-[250px]">
       <CardBody className="py-5">
         <div className="flex gap-2.5">
           <RevinueIcon />
