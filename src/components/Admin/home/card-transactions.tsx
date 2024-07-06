@@ -3,25 +3,25 @@ import React from "react";
 
 const items = [
   {
-    name: "Jose Perez",
+    name: "Jose Perez1",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
     amount: "4500 USD",
     date: "9/20/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Jose Perez2",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
     amount: "4500 USD",
     date: "9/20/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Jose Perez3",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
     amount: "4500 USD",
     date: "9/20/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Jose Perez4",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
     amount: "4500 USD",
     date: "9/20/2021",

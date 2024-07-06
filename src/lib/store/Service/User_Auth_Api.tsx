@@ -8,7 +8,7 @@ export const userAuthapi = createApi({
     registerUser: builder.mutation({
       query: (user) => {
         return {
-          url: "api/accounts/user_register/",
+          url: "api/accounts/users/",
           method: "POST",
           body: user,
           headers: {
@@ -20,11 +20,24 @@ export const userAuthapi = createApi({
     loginUser: builder.mutation({
       query: (user) => {
         return {
-          url: "api/accounts/login/",
+          url: "api/accounts/users/login/",
           method: "POST",
           body: user,
           headers: {
             "Content-type": "application/json",
+          },
+        };
+      },
+    }),
+    userdevice: builder.mutation({
+      query: (user) => {
+        const {access_token} = getToken();
+        return {
+          url: "api/accounts/users/device/",
+          method: "POST",
+          body: user,
+          headers: {
+            authorization: `Bearer ${access_token}`,
           },
         };
       },
@@ -228,13 +241,12 @@ export const userAuthapi = createApi({
       },
     }),
     categoryView: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
+      query: () => {
         return {
-          url: `products/category/?store=${storeCode}`,
+          url: `api/products/categories/`,
           method: "GET",
           headers: {
-            authorization: `Bearer ${access_token}`,
+            "Content-type": "application/json",
           },
         };
       },
@@ -243,7 +255,7 @@ export const userAuthapi = createApi({
       query: (actualData) => {
         const { access_token } = getToken();
         return {
-          url: `products/category/`,
+          url: `api/products/categories/`,
           method: "POST",
           body: actualData,
           headers: {
@@ -293,7 +305,7 @@ export const userAuthapi = createApi({
       query: (actualData) => {
         const { access_token } = getToken();
         return {
-          url: `products/subcategory/`,
+          url: `api/products/subcategories/`,
           method: "POST",
           body: actualData,
           headers: {
@@ -619,6 +631,7 @@ export const userAuthapi = createApi({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useUserdeviceMutation,
   useGetLoggedUserQuery,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,

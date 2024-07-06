@@ -19,7 +19,7 @@ import { Player } from '@lordicon/react';
 import lottie from "lottie-web";
 import { defineElement } from "@lordicon/element";
 import useAuth  from '@/context/AuthContext';
-
+import {Avatar, AvatarIcon} from "@nextui-org/react";
 interface Token {
   access_token: string;
   refresh_token: string;
@@ -31,7 +31,7 @@ export default function FormTab() {
     const [selected, setSelected] = useState<string | number>("login");
     const [accepted, setAccepted] = useState<boolean>(false);
     const [called, setCalled] = useState<boolean>(false);
-    const {isLoggedIn, handleLogin } = useAuth();
+    const {isLoggedIn, handleLogin, userLogin, setuserLogin } = useAuth();
     const [serverError, setServerError] = useState<any>({});
     const [RegisterUser, { isLoading }] = useRegisterUserMutation();
 
@@ -68,7 +68,7 @@ export default function FormTab() {
 
       if (selected === "login") {
           const actualData = {
-              email_or_username: formData.get("username") as string,
+              email: userLogin?.email ? userLogin.email : formData.get("username") as string,
               password: formData.get("password") as string,
           };
           handleLogin(actualData)
@@ -97,13 +97,13 @@ export default function FormTab() {
           }
       }
   };
-  
+
   defineElement(lottie.loadAnimation);
   return (
     <>
       <Card className="h-full">
         <CardBody className="overflow-hidden">
-          <Tabs
+          { !userLogin ? <Tabs
             fullWidth
             size="lg"
             aria-label="Tabs form"
@@ -273,7 +273,46 @@ export default function FormTab() {
                 </Button>}
               </form>
             </Tab>
-          </Tabs>
+          </Tabs> : 
+            <form className="flex flex-col gap-4 py-5" onSubmit={handleSubmit}>
+
+                  <div className="flex items-center justify-center flex-col gap-5">
+                    <Avatar
+                      icon={<AvatarIcon />}
+                      classNames={{
+                        base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] w-20 h-20 text-large",
+                        icon: "text-black/80",
+                      }}
+                      src={userLogin.profile}
+                    />
+                    <span className="items-center flex flex-col">
+                      <h1>Log in as {userLogin.name}</h1>
+                      <p>{userLogin.email} <span onClick={()=>{setuserLogin(null)}} className="text-xs text-sky-600 cursor-pointer"> Not you ?</span></p>
+                    </span>
+                  </div>
+
+              <Input label="Password" name="password" type="password" isRequired/>
+              <div className="flex py-2 px-1 justify-between">
+                <Checkbox
+                  defaultSelected
+                  color="default"
+                  classNames={{
+                    label: "text-small",
+                  }}
+                >
+                  Remember me
+                </Checkbox>
+                <Link color="primary" href="#" size="sm">
+                  Forgot password?
+                </Link>
+              </div>
+              <Button color="secondary" size="lg" type="submit" variant="shadow">
+                Sign in
+              </Button>
+
+            </form>
+          }
+
         </CardBody>
       </Card>
     </>
