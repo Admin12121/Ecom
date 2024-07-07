@@ -11,7 +11,7 @@ import { useForm, useFieldArray, Form } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DeleteIcon from "@/components/Admin/icons/deleteIcon";
-import {useCategoryViewQuery, useAddCategoryMutation, useAddsubCategoryMutation} from "@/lib/store/Service/User_Auth_Api"
+import {useCategoryViewQuery, useAddCategoryMutation, useAddsubCategoryMutation, useProductsRegistrationMutation} from "@/lib/store/Service/User_Auth_Api"
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 
 
@@ -32,8 +32,8 @@ const schema = yup.object().shape({
   productName: yup.string().required("Product name is required"),
   description: yup.string().required("Description is required"),
   isMultiVariant: yup.boolean().required("Product Type is required"),
-  category: yup.string().required("Category is required"),
-  subCategory: yup.string().required("Sub Category is required"),
+  category: yup.number().required("Category is required"),
+  subCategory: yup.number().required("Sub Category is required"),
   basePrice: yup.number().when("isMultiVariant", {
     is: false,
     then: (schema) =>
@@ -98,8 +98,8 @@ interface FormValues {
   productName: string;
   description: string;
   isMultiVariant: boolean;
-  category: string;
-  subCategory: string;
+  category: number;
+  subCategory: number;
   basePrice?: number | null | undefined;
   stock?: number | null | undefined;
   discount?: number | null | undefined;
@@ -143,7 +143,7 @@ const AddProduct = () => {
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { data, error, isLoading , refetch } = useCategoryViewQuery({});
+  const { data, refetch } = useCategoryViewQuery({});
   const { isOpen, onOpen, onOpenChange ,onClose} = useDisclosure();
 
   const [getcategory, setGetCategory] = useState<GetCategory[]>([])
@@ -158,8 +158,10 @@ const AddProduct = () => {
     subcategory: "",
   });
 
-  const [addcategory, isloading] = useAddCategoryMutation();
+  const [addcategory] = useAddCategoryMutation();
   const [addsubcategory] = useAddsubCategoryMutation();
+  const [addProduct, isloading] = useProductsRegistrationMutation();
+
   useEffect(()=>{
     if(data){
       setGetCategory(data)
@@ -285,12 +287,15 @@ const AddProduct = () => {
 
   useEffect(() => {
     if (selectedCategory) {
-      const selectedCat = getcategory.find(cat => cat.id.toString() === selectedCategory);
+      const selectedCat = getcategory.find(cat => String(cat.id) === String(selectedCategory));
+      console.log('selectedCat:', selectedCat);
       setGetSubCategory(selectedCat ? selectedCat.subcategories : []);
     } else {
       setGetSubCategory([]);
     }
-  }, [selectedCategory, getcategory]);  
+  }, [selectedCategory, getcategory]);
+  
+  
 
   const onSubmit = async (data: FormValues) => {
     // Clean up the data before submission
@@ -312,14 +317,14 @@ const AddProduct = () => {
     }
   // Prepare form data
     const formData = new FormData();
-    formData.append('productName', cleanedData.productName);
+    formData.append('product_name', cleanedData.productName);
     formData.append('description', cleanedData.description);
-    formData.append('isMultiVariant', cleanedData.isMultiVariant.toString());
-    formData.append('category', cleanedData.category);
-    formData.append('subCategory', cleanedData.subCategory);
+    formData.append('is_multi_variant', cleanedData.isMultiVariant.toString());
+    formData.append('category', cleanedData.category.toString());
+    formData.append('subcategory', cleanedData.subCategory.toString());
 
     if (!cleanedData.isMultiVariant) {
-      formData.append('basePrice', cleanedData.basePrice!.toString());
+      formData.append('price', cleanedData.basePrice!.toString());
       formData.append('stock', cleanedData.stock!.toString());
       formData.append('discount', cleanedData.discount!.toString());
     } else {
@@ -337,13 +342,17 @@ const AddProduct = () => {
       formData.append(`images[${index}]`, image);
     });
     try{
-      const res = await axios.post("http://127.0.0.1:8000/api/products/products/", formData);
-      console.log("Success : ", res?.data);
+      // const res = await axios.post("http://127.0.0.1:8000/api/products/products/", formData);
+      const res = await addProduct(formData);
+      if(res.data){
+        toast.success("Product saved successfully!");
+      }else if (res.error){
+        toast.error("Fail to Save Product");
+      }
     }catch(error:any){
       console.log("Error", error.message);
     }
 
-    toast.success("Product saved successfully!");
   };
 
 
@@ -424,7 +433,6 @@ const AddProduct = () => {
     }
   };
 
-  console.log(getsubcategory.length !== 0)
 
   return (
     <>

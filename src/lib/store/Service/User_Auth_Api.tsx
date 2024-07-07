@@ -140,36 +140,11 @@ export const userAuthapi = createApi({
         };
       },
     }),
-    storeRegistration: builder.mutation({
-      query: ({ formData }) => {
-        const { access_token } = getToken();
-        return {
-          url: "store/register_store/",
-          method: "POST",
-          body: formData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    getStaffUser: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `accounts/users/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
     productsRegistration: builder.mutation({
       query: ( actualData ) => {
         const { access_token } = getToken();
         return {
-          url: "products/products/",
+          url: "api/products/products/",
           method: "POST",
           body: actualData,
           headers: {
@@ -182,45 +157,7 @@ export const userAuthapi = createApi({
       query: ({storeCode,id}) => {
         const { access_token } = getToken();
         return {
-          url: `products/products/?store=${storeCode}${id ? `&id=${id}`: ""}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    lowstockproductsView: builder.query({
-      query: ({storeCode}) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/lowstockproducts/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    updatelowstockproducts: builder.mutation({
-      query: ({actualData, id, varient}) => {
-        console.log(varient)
-        const { access_token } = getToken();
-        return {
-          url: `products/lowstockproducts/?${varient ? `varient=data&` : ""}id=${id}`,
-          method: "PATCH",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    expiredproductsView: builder.query({
-      query: ({storeCode}) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/expiredproducts/?store=${storeCode}`,
+          url: `products/products/${id ? `&id=${id}`: ""}`,
           method: "GET",
           headers: {
             authorization: `Bearer ${access_token}`,
@@ -389,118 +326,6 @@ export const userAuthapi = createApi({
         };
       },
     }),
-    brandView: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/brand/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    AddBrand: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/brand/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    UpdateBrand: builder.mutation({
-      query: ({NewFormData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/brand/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    DeleteBrand: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/brand/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    foreignkeyView: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/foreignkey/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    customerView: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `store/customers/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    Addcustomer: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `store/customers/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    Updatecustomer: builder.mutation({
-      query: ({NewFormData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `store/customers/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    Deletecustomer: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `store/customers/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
     RedeemCodeView: builder.mutation({
       query: ({storeCode,code}) => {
         const { access_token } = getToken();
@@ -640,13 +465,8 @@ export const {
   useResetPasswordMutation,
   useRegistrationMutation,
   useRefreshaccess_tokenTokenMutation,
-  useStoreRegistrationMutation,
-  useGetStaffUserQuery,
   useProductsRegistrationMutation,
   useProductsViewQuery,
-  useLowstockproductsViewQuery,
-  useUpdatelowstockproductsMutation,
-  useExpiredproductsViewQuery,
   useDeleteproductsMutation,
   useCategoryViewQuery,
   useAddCategoryMutation,
@@ -660,15 +480,6 @@ export const {
   useAddsubsubCategoryMutation, 
   useDeletesubsubCategoryMutation, 
   useUpgradesubsubCategoryMutation,
-  useBrandViewQuery,
-  useAddBrandMutation,
-  useUpdateBrandMutation,
-  useDeleteBrandMutation,
-  useForeignkeyViewQuery,
-  useCustomerViewQuery,
-  useAddcustomerMutation,
-  useUpdatecustomerMutation,
-  useDeletecustomerMutation,
   useRedeemCodeViewMutation,
   useAddRedeemCodeMutation,
   useDeleteRedeemCodeMutation,
