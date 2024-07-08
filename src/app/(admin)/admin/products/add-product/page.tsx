@@ -160,7 +160,7 @@ const AddProduct = () => {
 
   const [addcategory] = useAddCategoryMutation();
   const [addsubcategory] = useAddsubCategoryMutation();
-  const [addProduct, isloading] = useProductsRegistrationMutation();
+  const [addProduct, {isLoading}] = useProductsRegistrationMutation();
 
   useEffect(()=>{
     if(data){
@@ -263,6 +263,7 @@ const AddProduct = () => {
     setError,
     clearErrors,
     control,
+    reset,
   } = useForm<FormValues>({
     resolver: yupResolver<FormValues>(schema),
   });
@@ -345,6 +346,7 @@ const AddProduct = () => {
       // const res = await axios.post("http://127.0.0.1:8000/api/products/products/", formData);
       const res = await addProduct(formData);
       if(res.data){
+        reset();
         toast.success("Product saved successfully!");
       }else if (res.error){
         toast.error("Fail to Save Product");
@@ -445,7 +447,7 @@ const AddProduct = () => {
               </BreadcrumbItem>
               <BreadcrumbItem>Add Products</BreadcrumbItem>
             </Breadcrumbs>
-            <Button color="secondary" type="submit">
+            <Button color="secondary" type="submit" isLoading={isLoading}>
               Save Product
             </Button>
           </span>

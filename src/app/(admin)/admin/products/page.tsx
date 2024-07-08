@@ -2,13 +2,14 @@
 import Productcard from "@/components/Admin/products/card";
 import React from "react";
 import { Button } from "@nextui-org/react";
+import {useProductsViewQuery} from "@/lib/store/Service/User_Auth_Api"
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/breadcrumbs";
 interface Event {
   id: number;
   img: string;
 }
 
-const data: Event[] = [
+const deta: Event[] = [
   {
     id: 1,
     img: "/product1.png",
@@ -46,6 +47,8 @@ import { useRouter } from "next/navigation";
 import Add_icon from "@/components/Admin/icons/add-icon";
 const Product = () => {
   const router = useRouter();
+  const {data, isLoading} = useProductsViewQuery({})
+  console.log(data)
   return (
     <>
       <div className="pt-0 px-5 flex flex-col gap-5 h-[90vh] scroll">
@@ -63,7 +66,7 @@ const Product = () => {
           </Button>
         </span>
         <span className=" flex flex-wrap gap-3 justify-center pb-5">
-          {data.map(({ img, id }: { img: string; id: number }, index) => {
+          {deta.map(({ img, id }: { img: string; id: number }, index:any) => {
             return (
               <Productcard
                 key={index}

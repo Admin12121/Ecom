@@ -157,7 +157,7 @@ export const userAuthapi = createApi({
       query: ({storeCode,id}) => {
         const { access_token } = getToken();
         return {
-          url: `products/products/${id ? `&id=${id}`: ""}`,
+          url: `api/products/products/${id ? `${id}/`: ""}`,
           method: "GET",
           headers: {
             authorization: `Bearer ${access_token}`,
