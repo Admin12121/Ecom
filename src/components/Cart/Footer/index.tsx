@@ -12,7 +12,7 @@ export default function index({isActive,setIsActive}:{setIsActive:any, isActive:
         <Button className='w-full' size="lg" variant="ghost">VIEW CART</Button>
         <Button className='w-full' size="lg">CHECK OUT</Button>
       </span>
-      <Link href="/catalog" onClick={()=>setIsActive(()=>!isActive)} className='text-lg'>OR CONTINUE SHOPPING</Link>
+      <Link href="/collections" onClick={()=>setIsActive(()=>!isActive)} className='text-lg'>OR CONTINUE SHOPPING</Link>
     </div>
   )
 }

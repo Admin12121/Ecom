@@ -1,16 +1,29 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { getToken, removeToken, storeToken } from "@/lib/store/Service/LocalStorageServices";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import {
+  getToken,
+  removeToken,
+  storeToken,
+} from "@/lib/store/Service/LocalStorageServices";
 import { useDispatch } from "react-redux";
 import { unSetUserToken, setUserToken } from "@/lib/store/Feature/authSlice";
 import { toast } from "sonner";
-import { useLoginUserMutation,useUserdeviceMutation } from "@/lib/store/Service/User_Auth_Api";
-import axios from 'axios';
+import {
+  useLoginUserMutation,
+  useUserdeviceMutation,
+} from "@/lib/store/Service/User_Auth_Api";
+import axios from "axios";
 
 interface User {
   email: string;
-  name : string;
-  profile: any; 
+  name: string;
+  profile: any;
 }
 interface CurrencyData {
   buy: string;
@@ -30,12 +43,16 @@ interface AuthContextType {
   userLogin: User | null;
   setuserLogin: any;
   isLoggedIn: boolean;
-  liveratedata : CurrencyDataArray | null ,
-  handleLogin: (credentials: { email: string; password: string }) => Promise<void>;
+  liveratedata: CurrencyDataArray | null;
+  handleLogin: (credentials: {
+    email: string;
+    password: string;
+    remember: boolean;
+  }) => Promise<void>;
   handleLogout: () => void;
-  handleSelectionChange: (e:any) => void;
-  selectedcurrency: number | null;
+  handleSelectionChange: (e: any) => void;
   selectedcurrencyiso: string;
+  convertPrice: (price: number) => { convertedPrice: number; symbol: string };
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,19 +63,21 @@ interface DeviceDetails {
   ip_address?: string;
 }
 
-const getDeviceDetails = (): Omit<DeviceDetails, 'ip_address'> => {
-  const device_type = /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+const getDeviceDetails = (): Omit<DeviceDetails, "ip_address"> => {
+  const device_type = /Mobi|Android/i.test(navigator.userAgent)
+    ? "Mobile"
+    : "Desktop";
   const device_os = navigator.platform;
 
-  return { device_type, device_os};
+  return { device_type, device_os };
 };
 
 const getSymbol = (iso3: string) => {
   const symbols: { [key: string]: string } = {
-    "INR": "₹",
-    "USD": "$",
-    "CNY": "¥",
-    "AUD": "A$"
+    INR: "₹",
+    USD: "$",
+    CNY: "¥",
+    AUD: "A$",
   };
   return symbols[iso3] || "";
 };
@@ -69,86 +88,104 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loginUser] = useLoginUserMutation();
   const [userDevice] = useUserdeviceMutation();
   const [userLogin, setuserLogin] = useState<User | null>(null);
-  const [deviceDetails, setDeviceDetails] = useState<DeviceDetails | null>(null);
-  const [liveratedata , setLiveRateData] = useState<CurrencyDataArray | null>(null)
-  const [reloaddata, setreloaddata] = useState<boolean>(false)
-  const [selectedcurrency, setSelectedCurrency] = useState<number | null>(null);
-  const [selectedcurrencyiso, setSelectedCurrencyiso] = useState<string>('');
-
+  const [deviceDetails, setDeviceDetails] = useState<DeviceDetails | null>(
+    null
+  );
+  const [liveratedata, setLiveRateData] = useState<CurrencyDataArray | null>(
+    null
+  );
+  const [reloaddata, setreloaddata] = useState<boolean>(false);
+  const [selectedcurrency, setSelectedCurrency] = useState<{
+    sell: number;
+    symbol: string;
+  } | null>(null);
+  const [selectedcurrencyiso, setSelectedCurrencyiso] = useState<string>("");
 
   const handleSelectionChange = (e: any) => {
     const selectedIso3 = e.target.value;
     if (selectedIso3 && liveratedata) {
-      const selectedCurrency = liveratedata.find(currency => currency.iso3 === selectedIso3);
+      const selectedCurrency = liveratedata.find(
+        (currency) => currency.iso3 === selectedIso3
+      );
       if (selectedCurrency) {
-        setSelectedCurrencyiso(selectedIso3)
-        setSelectedCurrency(parseFloat(selectedCurrency.sell));
-      }
-    }
-  };
-  
-
-  console.log(selectedcurrency)
-
-  const liverate = async () => {
-    try {
-      const res = await axios.get('https://www.nrb.org.np/api/forex/v1/app-rate');
-      if (res.data) {
-        const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
-        const filteredData = res.data.filter((currency: CurrencyData) =>
-          requiredCurrencies.includes(currency.iso3)
-        );
-  
-        const filteredDataWithSymbols = filteredData.map((currency: CurrencyData) => {
-          if (currency.iso3 === "INR") {
-            return {
-              ...currency,
-              unit: 1,
-              buy: (parseFloat(currency.buy) / currency.unit).toFixed(2),
-              sell: (parseFloat(currency.sell) / currency.unit).toFixed(2),
-              symbol: getSymbol(currency.iso3)
-            };
-          }
-          return {
-            ...currency,
-            symbol: getSymbol(currency.iso3)
-          };
+        setSelectedCurrencyiso(selectedIso3);
+        setSelectedCurrency({
+          sell: parseFloat(selectedCurrency.sell),
+          symbol: selectedCurrency.symbol,
         });
-
-        const nepaliRupee = {
-          iso3: "NPR",
-          name: "Nepali Rupee",
-          unit: 1,
-          buy: "1.00",
-          sell: "1.00",
-          date: new Date().toISOString().split('T')[0],
-          published_on: new Date().toISOString(),
-          modified_on: new Date().toISOString(),
-          symbol: "रु"
-        };
-  
-        const finalData = [...filteredDataWithSymbols, nepaliRupee];
-        setSelectedCurrency(parseFloat(nepaliRupee.sell));
-        setSelectedCurrencyiso(nepaliRupee.iso3)
-        setLiveRateData(finalData);
-      } else {
-        setreloaddata(!reloaddata);
       }
-    } catch (error) {
-      console.error('Error fetching live rate data:', error);
-      setreloaddata(!reloaddata);
     }
   };
 
   useEffect(() => {
+    const liverate = async () => {
+      try {
+        const res = await axios.get(
+          "https://www.nrb.org.np/api/forex/v1/app-rate"
+        );
+        if (res.data) {
+          const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
+          const filteredData = res.data.filter((currency: CurrencyData) =>
+            requiredCurrencies.includes(currency.iso3)
+          );
+
+          const filteredDataWithSymbols = filteredData.map(
+            (currency: CurrencyData) => {
+              if (currency.iso3 === "INR") {
+                return {
+                  ...currency,
+                  unit: 1,
+                  buy: (parseFloat(currency.buy) / currency.unit).toFixed(2),
+                  sell: (parseFloat(currency.sell) / currency.unit).toFixed(2),
+                  symbol: getSymbol(currency.iso3),
+                };
+              }
+              return {
+                ...currency,
+                symbol: getSymbol(currency.iso3),
+              };
+            }
+          );
+
+          const nepaliRupee = {
+            iso3: "NPR",
+            name: "Nepali Rupee",
+            unit: 1,
+            buy: "1.00",
+            sell: "1.00",
+            date: new Date().toISOString().split("T")[0],
+            published_on: new Date().toISOString(),
+            modified_on: new Date().toISOString(),
+            symbol: "रु",
+          };
+
+          const finalData = [...filteredDataWithSymbols, nepaliRupee];
+          setSelectedCurrency({
+            sell: parseFloat(nepaliRupee.sell),
+            symbol: nepaliRupee.symbol,
+          });
+          setSelectedCurrencyiso(nepaliRupee.iso3);
+          setLiveRateData(finalData);
+        } else {
+          setreloaddata(!reloaddata);
+        }
+      } catch (error) {
+        console.error("Error fetching live rate data:", error);
+        setreloaddata(!reloaddata);
+      }
+    };
+    liverate();
+  }, [reloaddata]);
+
+  useEffect(() => {
     const details = getDeviceDetails();
-    axios.get('https://api64.ipify.org?format=json')
-      .then(response => {
+    axios
+      .get("https://api64.ipify.org?format=json")
+      .then((response) => {
         const ip_address = response.data.ip;
         setDeviceDetails({ ...details, ip_address });
       })
-      .catch(error => console.error('Error fetching IP address:', error));
-      liverate()
+      .catch((error) => console.error("Error fetching IP address:", error));
   }, [reloaddata]);
 
   useEffect(() => {
@@ -163,19 +200,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const sendDeviceDetailsToApi = async(deviceDetails:DeviceDetails) => {
+  const sendDeviceDetailsToApi = async (deviceDetails: DeviceDetails) => {
     if (deviceDetails) {
-      try{
+      try {
         const res = await userDevice(deviceDetails);
-        console.log(res)
-      }catch (error) {
-        toast.error("An error occurred while trying to log in. Please try again later.");
+        console.log(res);
+      } catch (error) {
+        toast.error(
+          "An error occurred while trying to log in. Please try again later."
+        );
         console.error("Login error:", error);
       }
     }
   };
 
-  const handleLogin = async (credentials: { email: string; password: string;  }) => {
+  const handleLogin = async (credentials: {
+    email: string;
+    password: string;
+    remember: boolean;
+  }) => {
     try {
       const deviceDetails = await getDeviceDetails();
 
@@ -195,35 +238,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             user?: User;
           };
         };
-  
+
         if (error.data) {
           const { errors, error: errorMsg, user } = error.data;
-  
+
           if (errors) {
-            const errorMessages = errors.non_field_errors || errors.user || errors.email || ["An unknown error occurred"];
+            const errorMessages = errors.non_field_errors ||
+              errors.user ||
+              errors.email || ["An unknown error occurred"];
             toast.error(errorMessages[0]);
           } else if (errorMsg) {
             toast.error(errorMsg);
             setuserLogin(user || null);
           }
-  
+
           return;
         }
       }
 
       if (res.data) {
         const token = res.data?.token;
-        storeToken(token);
-        dispatch(setUserToken(token));
+        const remember = credentials.remember;
+        const newtoken = { ...token, remember };
+        storeToken(newtoken);
+        dispatch(setUserToken(newtoken));
         toast.success("Login successful");
         setIsLoggedIn(true);
-        if(deviceDetails){
+        if (deviceDetails) {
           sendDeviceDetailsToApi(deviceDetails);
         }
       }
-
     } catch (error) {
-      toast.error("An error occurred while trying to log in. Please try again later.");
+      toast.error(
+        "An error occurred while trying to log in. Please try again later."
+      );
       console.error("Login error:", error);
     }
   };
@@ -232,19 +280,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     dispatch(unSetUserToken());
     removeToken();
     toast.success("Logged out");
-    setuserLogin(null)
+    setuserLogin(null);
     setIsLoggedIn(false);
   };
 
-
+  const convertPrice = (
+    price: number
+  ): { convertedPrice: number; symbol: string } => {
+    if (selectedcurrency) {
+      const convertedPrice = parseFloat(
+        (price / selectedcurrency.sell).toFixed(2)
+      );
+      return { convertedPrice, symbol: selectedcurrency.symbol };
+    }
+    return { convertedPrice: price, symbol: "" };
+  };
 
   return (
-    <AuthContext.Provider value={{setuserLogin, userLogin, isLoggedIn, handleLogin, handleLogout , liveratedata, handleSelectionChange, selectedcurrency, selectedcurrencyiso}}>
+    <AuthContext.Provider
+      value={{
+        setuserLogin,
+        userLogin,
+        isLoggedIn,
+        handleLogin,
+        handleLogout,
+        liveratedata,
+        handleSelectionChange,
+        selectedcurrencyiso,
+        convertPrice,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
-
 
 const useAuth = () => {
   const context = useContext(AuthContext);

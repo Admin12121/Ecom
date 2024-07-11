@@ -1,17 +1,44 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Image } from "@nextui-org/react";
+import { MdOutlineViewInAr } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineDelete } from "react-icons/ai";
+import { useTheme as useNextTheme } from 'next-themes';
+import useAuth from  "@/context/AuthContext"
+import { FormData , Variant} from "@/types/product";
 interface ImageProps {
-  id: number;
-  image?: string;
+  products: FormData;
   clasName?: string;
+
 }
 
-const Productcard: React.FC<ImageProps> = ({ image, id, clasName }) => {
+interface Price {
+  convertedPrice: number;
+  symbol : string;
+}
+
+const Productcard: React.FC<ImageProps> = ({ products, clasName }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
+  const [dark ,setDark] =useState<boolean>(false)
+  const { resolvedTheme } = useNextTheme();
+  const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
+
+  const {convertPrice} = useAuth()
+
+  useEffect(()=>{
+    setDark(resolvedTheme === 'dark')
+  },[resolvedTheme])
+
+
+  useEffect(() => {
+    if (products.variants) {
+      setVariantsData(products.variants);
+    }
+  }, [products.variants]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current || isFocused) return;
@@ -40,18 +67,44 @@ const Productcard: React.FC<ImageProps> = ({ image, id, clasName }) => {
     setOpacity(0);
   };
 
+  const {product_name, images} = products
+
+  const getVariantData = (
+    variantsdata: Variant[] | Variant | null,
+    key: keyof Variant,
+    index: number = 0
+  ): any => {
+    if (Array.isArray(variantsdata)) {
+      return variantsdata.length > 0 ? variantsdata[index][key] : null;
+    } else if (variantsdata) {
+      return variantsdata[key];
+    }
+    return null;
+  };
+
+  const { convertedPrice, symbol } = convertPrice(getVariantData(variantsdata, 'price')) //  getVariantData(variants, 'size', 2); // if want to extract data from specific index when variant is in array
+  const truncateText = (text: string, maxLength: number): string => {
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+  
   return (
     <article
-    ref={divRef}
-    onMouseMove={handleMouseMove}
-    onFocus={handleFocus}
-    onBlur={handleBlur}
-    onMouseEnter={handleMouseEnter}
-    onMouseLeave={handleMouseLeave}
-    className={`relative flex w-80 flex-col rounded-xl h-[355px] justify-end ${
-      clasName ? clasName : ""
-    } text-white shadow-md clone_element`}
-  >
+      ref={divRef}
+      onMouseMove={handleMouseMove}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`relative flex w-80 flex-col rounded-xl h-[355px] justify-end admin-view ${
+        clasName ? clasName : ""
+      } text-white shadow-md clone_element`}
+    >
+      <div className="multi-button">
+        <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`}><MdOutlineViewInAr color={`${dark ? "#fff" : "#000"}`}/></button>
+        <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} ><FiEdit color={`${dark ? "#fff" : "#000"}`}/></button>
+        <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} ><AiOutlineDelete color={`${dark ? "#fff" : "#000"}`}/></button>
+        <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} ></button>
+      </div>
       <span
         className="pointer-events-none absolute rounded-xl -inset-px opacity-0 transition duration-500"
         style={{
@@ -64,21 +117,19 @@ const Productcard: React.FC<ImageProps> = ({ image, id, clasName }) => {
       >
         <Image
           isBlurred
-          src={image}
+          src={images[0]?.image}
           alt="Product Image"
           className="object-contain cursor-pointer h-[250px]"
         />
       </span>
 
-      <div className={`p-4 flex flex-col items-center ${ clasName ? "" : "text-default-900" }`}>
-        <a href="#">
-          <h3 className="text-lg font-light ">
-            Finding the Journey
-          </h3>
-        </a>
-        <p className="mt-2 line-clamp-3 text-xl font-semibold">
-          $599
-        </p>
+      <div
+        className={`p-4 flex flex-col items-center ${
+          clasName ? "" : "text-default-900"
+        }`}
+      >
+          <h3 className="text-lg font-light ">{truncateText(product_name, 25)}</h3>
+        <p className="mt-2 line-clamp-3 text-lg font-semibold">{symbol} {convertedPrice}</p>
       </div>
     </article>
   );

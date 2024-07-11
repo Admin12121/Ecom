@@ -4,9 +4,7 @@ import { CardBox } from "@/components/Card/card";
 import { GlobeDemo } from "@/components/Globe/globe";
 import Parallex from "@/components/Prallex/Parallex";
 import { InfiniteMovingCardsDemo } from "@/components/Testimonial/testimonial";
-import ImageSider from "./Imageslider";
 import { useRouter } from "next/navigation";
-// import Welcome from "./welcome";
 
 export default function HomePage() {
   const router = useRouter();
@@ -32,7 +30,7 @@ export default function HomePage() {
        <CardBox image="/product1.png" />
       </div> 
       <div className="flex">
-        <Button onPress={()=>router.push(`/catalog`)}>Explore more</Button>
+        <Button onPress={()=>router.push(`/collections`)}>Explore more</Button>
       </div>
     </div>
       <GlobeDemo/>

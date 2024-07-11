@@ -9,6 +9,7 @@ import { store, AppStore } from "@/lib/store/store";
 import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
 import { CartProvider } from "@/context/CartState";
+import {Spinner} from "@nextui-org/react";
 // import Curve from "./components/Animation/page";
 
 const AuthProvider = dynamic(
@@ -29,7 +30,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <NextUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
-        <Toaster closeButton position="top-right" />
+        <Toaster icons={{ loading: <Spinner size="sm" color="secondary"/>,}} invert={true} pauseWhenPageIsHidden={true} theme="system" position="top-right" />
         <Provider store={storeRef.current}>
           <AuthProvider>
             <CartProvider>{children}</CartProvider>

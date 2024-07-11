@@ -21,7 +21,7 @@ export function PlaceholdersAndVanishInput({
     const startAnimation = () => {
       const interval = setInterval(() => {
         setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
-      }, 1500);
+      }, 2000);
       return () => clearInterval(interval);
     };
 
@@ -158,7 +158,7 @@ export function PlaceholdersAndVanishInput({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     vanishAndSubmit();
-    router.push('/catalog')
+    router.push(`/collections/${value}`)
     onSubmit && onSubmit(e);
   };
   const filteredAnimals = animals.filter(animal => animal.value.includes(value));
@@ -263,7 +263,7 @@ export function PlaceholdersAndVanishInput({
     { value && filteredAnimals.length > 0 && <ListboxWrapper>
         <Listbox
           aria-label="Actions"
-          onAction={()=>{router.push('/catalog');setValue('')}}
+          onAction={()=>{router.push('/collections');setValue('')}}
         >
             {filteredAnimals.map((animal) => (
             <ListboxItem key={animal.value}>{animal.label}</ListboxItem>

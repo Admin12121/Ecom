@@ -27,6 +27,7 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import DynamicForm from "@/context/FormHandler"
+import { FormValues } from "@/types/product";
 
 const schema = yup.object().shape({
   productName: yup.string().required("Product name is required"),
@@ -94,23 +95,6 @@ const schema = yup.object().shape({
   }),
 });
 
-interface FormValues {
-  productName: string;
-  description: string;
-  isMultiVariant: boolean;
-  category: number;
-  subCategory: number;
-  basePrice?: number | null | undefined;
-  stock?: number | null | undefined;
-  discount?: number | null | undefined;
-  variants?: Array<{
-    size: string;
-    price: number;
-    stock: number;
-    discount?: number;
-  }>; 
-}
-
 interface Category {
   category: string;
 }
@@ -169,7 +153,7 @@ const AddProduct = () => {
   },[data, refetch])
 
   const validateFile = (file: File): boolean => {
-    const isValidSize = file.size <= 10 * 1024 * 1024;
+    const isValidSize = file.size <= 50 * 1024 * 1024;
     const isValidType = file.type === "image/png";
     return isValidSize && isValidType;
   };
@@ -297,11 +281,11 @@ const AddProduct = () => {
   }, [selectedCategory, getcategory]);
   
   
-
+  
   const onSubmit = async (data: FormValues) => {
     // Clean up the data before submission
     const cleanedData = { ...data };
-
+    
     if (data.isMultiVariant) {
       // Remove single variant fields if isMultiVariant is true
       delete cleanedData.basePrice;
@@ -316,6 +300,10 @@ const AddProduct = () => {
       toast.error("At least 2 images are required");
       return;
     }
+    
+    const toastId = toast.loading('Preparing data...',{
+      position: 'top-center',
+    });
   // Prepare form data
     const formData = new FormData();
     formData.append('product_name', cleanedData.productName);
@@ -339,20 +327,53 @@ const AddProduct = () => {
       });
     }
 
+    try{
+      setTimeout(() => {
+        toast.loading('Uploading Product Details...', {
+          id: toastId,
+          position: 'top-center',
+        });
+      }, 500);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     productImages.forEach((image, index) => {
       formData.append(`images[${index}]`, image);
     });
-    try{
-      // const res = await axios.post("http://127.0.0.1:8000/api/products/products/", formData);
+
+      toast.loading('Uploading Product Details...', {
+        id: toastId,
+        position: 'top-center',
+      });
+      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      
+      toast.loading('Compressing Images...', {
+        id: toastId,
+        position: 'top-center',
+      });
       const res = await addProduct(formData);
+
       if(res.data){
         reset();
-        toast.success("Product saved successfully!");
+        setImages([]);
+        setProductImages([]);
+        toast.success('Product saved successfully!', {
+          id: toastId,
+          position: 'top-center',
+        });
       }else if (res.error){
-        toast.error("Fail to Save Product");
+        toast.error('Failed to save product', {
+          id: toastId,
+          position: 'top-center',
+        });
       }
     }catch(error:any){
       console.log("Error", error.message);
+      toast.error('Error saving product', {
+        id: toastId,
+        position: 'top-center',
+      });
     }
 
   };

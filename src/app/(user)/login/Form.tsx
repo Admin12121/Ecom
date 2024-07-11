@@ -33,6 +33,7 @@ export default function FormTab() {
     const [called, setCalled] = useState<boolean>(false);
     const {isLoggedIn, handleLogin, userLogin, setuserLogin } = useAuth();
     const [serverError, setServerError] = useState<any>({});
+    const [remember, setRemember] = useState<boolean>(false);    
     const [RegisterUser, { isLoading }] = useRegisterUserMutation();
 
     useEffect(() => {
@@ -40,7 +41,7 @@ export default function FormTab() {
       if (access_token) {
         router.push('/');
       }
-    }, []);
+    }, [router]);
 
     useEffect(()=>{
       if(called){
@@ -49,7 +50,7 @@ export default function FormTab() {
           setCalled(false)
         }
       }
-    },[called,isLoggedIn])
+    },[called,isLoggedIn, router])
 
     useEffect(() => {
       if (Object.keys(serverError).length > 0) {
@@ -70,6 +71,7 @@ export default function FormTab() {
           const actualData = {
               email: userLogin?.email ? userLogin.email : formData.get("username") as string,
               password: formData.get("password") as string,
+              remember : remember
           };
           handleLogin(actualData)
           setCalled(true)
@@ -116,8 +118,8 @@ export default function FormTab() {
                 <Input label="Password" name="password" type="password" isRequired/>
                 <div className="flex py-2 px-1 justify-between">
                   <Checkbox
-                    defaultSelected
-                    color="default"
+                    isSelected={remember} onValueChange={setRemember}
+                    color="secondary"
                     classNames={{
                       label: "text-small",
                     }}

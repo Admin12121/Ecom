@@ -154,10 +154,10 @@ export const userAuthapi = createApi({
       },
     }),
     productsView: builder.query({
-      query: ({storeCode,id}) => {
+      query: ({productslug,id}) => {
         const { access_token } = getToken();
         return {
-          url: `api/products/products/${id ? `${id}/`: ""}`,
+          url: `api/products/products/${id ? `${id}/`: ""}${productslug ? `?productslug=${productslug}` : ''}`,
           method: "GET",
           headers: {
             authorization: `Bearer ${access_token}`,

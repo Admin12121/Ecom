@@ -24,7 +24,7 @@ export const TableWrapper = () => {
     const end = start + rowsPerPage;
 
     return users.slice(start, end);
-  }, [page, users]);
+  }, [page]);
   return (
     <div className=" w-full flex flex-col gap-1 ">
       <Table

@@ -197,3 +197,65 @@ img {
   font-size: 16px;
   color: #333;
 }
+
+.admin-view  .multi-button {
+  z-index: -9;
+  opacity: 0;
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  border-radius: 100%;
+  width: 0rem;
+  height: 0rem;
+  transform: translate(-50%, -50%);
+  transition: 0.25s cubic-bezier(0.25, 0, 0, 1);
+}
+.admin-view  .multi-button button {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 100%;
+  /* background: #9353d3; */
+  /* background: rgb(10, 10, 10); */
+  color: #000;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: 0.25s cubic-bezier(0.25, 0, 0, 1);
+  box-shadow: 0 0 0rem -0.25rem var(--background);
+}
+
+.admin-view  .multi-button button:hover {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.admin-view  .multi-button button svg{
+  transition: 0.25s cubic-bezier(0.25, 0, 0, 1);
+}
+.admin-view  .multi-button button:hover svg{
+  scale: 1.3;
+}
+.admin-view .multi-button button:first-child:nth-last-child(4):nth-child(1), .admin-view  .multi-button button:first-child:nth-last-child(4) ~ *:nth-child(1) {
+  left: 62.5%;
+  top: 18.75%;
+}
+.admin-view .multi-button button:first-child:nth-last-child(4):nth-child(2), .admin-view  .multi-button button:first-child:nth-last-child(4) ~ *:nth-child(2) {
+  left: 37.5%;
+  top: 18.75%;
+}
+.admin-view .multi-button button:first-child:nth-last-child(4):nth-child(3), .admin-view  .multi-button button:first-child:nth-last-child(4) ~ *:nth-child(3) {
+  left: 18.75%;
+  top: 37.5%;
+}
+.admin-view .multi-button button:first-child:nth-last-child(4):nth-child(4), .admin-view  .multi-button button:first-child:nth-last-child(4) ~ *:nth-child(4) {
+  left: 18.75%;
+  top: 62.5%;
+}
+.admin-view:hover .multi-button, .admin-view .multi-button:focus-within {
+  width: 10rem;
+  height: 10rem;
+  z-index: 9;
+  opacity: 1;
+}

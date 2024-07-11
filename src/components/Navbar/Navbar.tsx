@@ -41,6 +41,7 @@ import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Cart from "../Cart/Cart";
 import {Select, SelectItem} from "@nextui-org/react";
+import { NotificationsDropdown } from "../Admin/navbar/notifications-dropdown";
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -56,7 +57,7 @@ export default function Nav() {
         setCalled(false);
       }
     }
-  }, [called, isLoggedIn]);
+  }, [called, isLoggedIn, router]);
 
   const icons = {
     chevron: <ChevronDown fill="currentColor" height={16} width={16} />,
@@ -124,11 +125,26 @@ export default function Nav() {
   ];
 
   const placeholders = [
-    "What is what?",
-    "Who is what?",
-    "Where is what?",
-    "Write a Javascript method to reverse a string",
-    "How to assemble your own PC?",
+    "Enlightened Buddha statues",
+    "Lotus Buddha sculpture",
+    "Bodhisattva figurines",
+    "Zen garden decor",
+    "Meditating monk statues",
+    "Tibetan prayer wheels",
+    "Golden Pagoda sculptures",
+    "Incense holders",
+    "Mala beads and bracelets",
+    "Thangka paintings",
+    "Buddhist ritual items",
+    "Zen garden accessories",
+    "Tibetan singing bowls",
+    "Mudra hand gestures",
+    "Buddhist prayer flags",
+    "Enlightenment artwork",
+    "Buddhist meditation aids",
+    "Dharma teachings",
+    "Buddhist wisdom books",
+    "Sacred Bodhi tree art"
   ];
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -198,7 +214,7 @@ export default function Nav() {
               >
                 <DropdownItem
                   key="autoscaling"
-                  href="catalog"
+                  href="collections"
                   description="ACME scales apps to meet user demand, automagically, based on load."
                   startContent={icons.scale}
                 >
@@ -300,7 +316,7 @@ export default function Nav() {
               </Link>
             </NavbarItem>
           </NavbarContent>
-          {!isLoggedIn && (
+          {!isLoggedIn ? (
             <>
               {/* <NavbarItem className="hidden lg:flex">
               <Link href="#" color="secondary" onClick={onOpen}>
@@ -311,7 +327,9 @@ export default function Nav() {
                 <Link href="/login">Sign Up</Link>
               </NavbarItem>
             </>
-          )}
+          ):
+          <NotificationsDropdown/>
+          }
           <AddtoCart />
           {isLoggedIn && (
             <>
