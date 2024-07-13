@@ -36,8 +36,7 @@ export default function Cart({setIsActive, isActive}:{isActive:boolean, setIsAct
                     <div className={styles.header}>
                         <p className='text-lg'>Shopping Cart</p>
                     </div>
-                    {isLoggedIn &&
-                      navItems.map( (data, index) => {
+                    {navItems.map( (data, index) => {
                         return <Link key={index} data={{...data, index}}  setSelectedIndicator={setSelectedIndicator}></Link>
                       })
                     }

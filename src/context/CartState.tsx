@@ -93,7 +93,7 @@
 // };
 
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode , useEffect} from 'react';
 import useAuth from "@/context/AuthContext";
 import { useDisclosure } from "@nextui-org/react";
 
@@ -123,7 +123,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const { isLoggedIn } = useAuth();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    setCounter(cartItems.length);
+  }, []);
+
   const addToCart = async (id: number, event: React.MouseEvent<HTMLButtonElement>) => {
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+ 
     const buttonElement = event.target as HTMLElement;
     const cardElement = buttonElement.closest('.clone_element') as HTMLElement;
 
@@ -168,7 +175,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         cardClone.style.opacity = '0';
         cardClone.addEventListener('transitionend', () => {
           cardClone.remove();
-          incrementCounter();
+          if (!cartItems.includes(id)) {
+            cartItems.push(id);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            setCounter(cartItems.length);
+          }   
         }, { once: true });
       });
     });

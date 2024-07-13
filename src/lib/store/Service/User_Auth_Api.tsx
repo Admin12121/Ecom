@@ -154,13 +154,14 @@ export const userAuthapi = createApi({
       },
     }),
     productsView: builder.query({
-      query: ({productslug,id}) => {
+      query: ({productslug,id , search}) => {
         const { access_token } = getToken();
         return {
-          url: `api/products/products/${id ? `${id}/`: ""}${productslug ? `?productslug=${productslug}` : ''}`,
+          url: `api/products/products/${id ? `${id}/`: ""}${productslug ? `?productslug=${productslug}` : ''}${search ? `?search=${search}` : ``}`,
           method: "GET",
           headers: {
-            authorization: `Bearer ${access_token}`,
+            // authorization: `Bearer ${access_token}`,
+            "Content-type": "application/json",
           },
         };
       },
@@ -276,56 +277,6 @@ export const userAuthapi = createApi({
         };
       },
     }),
-    subsubCategoryView: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subsubcategory/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    AddsubsubCategory: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subsubcategory/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    deletesubsubCategory: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subsubcategory/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    upgradesubsubCategory: builder.mutation({
-      query: ({NewFormData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subsubcategory/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
     RedeemCodeView: builder.mutation({
       query: ({storeCode,code}) => {
         const { access_token } = getToken();
@@ -376,80 +327,6 @@ export const userAuthapi = createApi({
         };
       },
     }),
-    AddInvoice: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/sales/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    GetInvoiceData: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/sales/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    dailyInvoiceData: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/sales/?store=${storeCode}&current=current_date`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    dailyHoldInvoiceData: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/sales/?store=${storeCode}&hold=current_date`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    creditsData: builder.query({
-      query: ({storeCode,code}) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/credits/?store=${storeCode}${code ? `&code=${code}` : ``}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
-    ClearCredit: builder.mutation({
-      query: ({actualData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/sales/?id=${id}`,
-          method: "PATCH",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
-    }),
   }),
 });
 
@@ -476,18 +353,8 @@ export const {
   useAddsubCategoryMutation, 
   useDeletesubCategoryMutation, 
   useUpgradesubCategoryMutation,
-  useSubsubCategoryViewQuery,
-  useAddsubsubCategoryMutation, 
-  useDeletesubsubCategoryMutation, 
-  useUpgradesubsubCategoryMutation,
   useRedeemCodeViewMutation,
   useAddRedeemCodeMutation,
   useDeleteRedeemCodeMutation,
   useUpdateRedeemCodeMutation,
-  useAddInvoiceMutation,
-  useGetInvoiceDataQuery,
-  useDailyInvoiceDataQuery,
-  useDailyHoldInvoiceDataQuery,
-  useCreditsDataQuery,
-  useClearCreditMutation,
 } = userAuthapi;

@@ -1,9 +1,26 @@
 "use client"
-import { useEffect } from "react";
+import React, { ReactNode,useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import NextImage from "next/image";
 import styles from "./ParallaxCard.module.css";
+import {Image} from "@nextui-org/react";
+
+const IMG_PADDING = 12;
+
 export default function Parallex() {
+
+  const targetRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["end end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+  const opacity = useTransform(scrollYProgress, [1, 0], [0, 1]);
+
   useEffect(() => {
     const UPDATE = ({ x, y }: { x: number; y: number }) => {
       gsap.set(document.documentElement, {
@@ -20,13 +37,20 @@ export default function Parallex() {
   }, []);
   return (
     <>
-      <article className={styles.article}>
+      <motion.article className={styles.article} 
+        ref={targetRef} 
+        style={{
+          opacity,
+          height: `calc(90vh - ${IMG_PADDING * 2}px)`,
+          top: IMG_PADDING,
+          scale,
+        }}>          
         <img
           style={{ width: "120%" }}
           src="https://assets.codepen.io/605876/osaka-sky.jpeg"
           alt=""
         />
-        <h3>Nepal</h3>
+        <motion.h3 >Nepal</motion.h3>
         <img className={`${styles.parallax}`} src="temp-min.png" alt="" />
         <div className={styles.blur}>
           <img src="temp-min.png" alt="" />
@@ -51,7 +75,7 @@ export default function Parallex() {
           </p>
           <p>Kathmandu Nepal</p>
         </div>
-      </article>
+      </motion.article>
     </>
   );
 }

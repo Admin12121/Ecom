@@ -16,6 +16,7 @@ export interface FormValues {
   }
 
   export interface FormData {
+    id: number;
     product_name: string;
     description: string;    
     productslug:string;

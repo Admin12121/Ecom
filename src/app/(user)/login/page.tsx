@@ -23,7 +23,7 @@ const Signup = () => {
           <div className="absolute inset-0 w-full h-full bg-black flex items-center justify-center [mask-image:radial-gradient(600px_350px_at_top,transparent_20%,white)]"></div>
         </div>
         <div className="wrapper absolute ">
-          <div className="flex flex-col w-full min-w-[480px] min-h-[550px] ">
+          <div className="flex flex-col w-full min-w-[480px] min-h-[550px] max-sm:min-w-[400px]">
             <FormTab/>
           </div>
         </div>

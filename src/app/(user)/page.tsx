@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { ReactLenis, useLenis } from 'lenis/react'
 import { Login } from "@/components/Login/Login";
 import { useCart } from '@/context/CartState';
-const HomePage = dynamic(() => import("./Home/page"), {
+const HomePage = dynamic(() => import("../../components/Home/Home"), {
   ssr: false,  // Disable server-side rendering
 });
 export default function Home() {

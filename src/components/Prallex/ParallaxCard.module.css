@@ -1,13 +1,13 @@
 /* components/ParallaxCard.module.css */
 
 .article {
-	width: 90vw;
-	height: 90vh;
+	width: 95vw;
+	height: 50vh;
 	aspect-ratio: 2 / 1.1;
 	min-height: 330px;
 	position: relative;
 	overflow: hidden;
-	border-radius: 4em;
+	border-radius: 14px;
 	max-width: calc(100% - 2rem);
 	background: hsl(0 0% 50%);
   }

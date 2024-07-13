@@ -1,30 +1,28 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef,useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
 import { Image } from "@nextui-org/react";
 import Link from "next/link";
 import { useCart } from "@/context/CartState";
+import { FormData, Variant } from "@/types/product";
+import useAuth from  "@/context/AuthContext"
 
 interface Image {
-  id: number;
-  image?: string;
+  product?:FormData;
   clasName?: string;
-  setProductState: React.Dispatch<
-    React.SetStateAction<{ isActive: boolean; selectedId: number | null }>
-  >;
 }
 
 export const CardBox: React.FC<Image> = ({
-  image,
-  id,
+  product,
   clasName,
-  setProductState,
 }) => {
   const { addToCart } = useCart();
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
+  const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
+  const {convertPrice} = useAuth()
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current || isFocused) return;
@@ -53,6 +51,28 @@ export const CardBox: React.FC<Image> = ({
     setOpacity(0);
   };
 
+  useEffect(() => {
+    if (product?.variants) {
+      setVariantsData(product!.variants);
+    }
+  }, [product?.variants]);
+
+  const getVariantData = (
+    variantsdata: Variant[] | Variant | null,
+    key: keyof Variant,
+    index: number = 0
+  ): any => {
+    if (Array.isArray(variantsdata)) {
+      return variantsdata.length > 0 ? variantsdata[index][key] : null;
+    } else if (variantsdata) {
+      return variantsdata[key];
+    }
+    return null;
+  };
+  const { convertedPrice, symbol } = convertPrice(getVariantData(variantsdata, 'price'))
+  const truncateText = (text: string, maxLength: number): string => {
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
   return (
     <div
       ref={divRef}
@@ -61,7 +81,6 @@ export const CardBox: React.FC<Image> = ({
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      // onClick={() => setProductState({ isActive: true, selectedId: id })}
       className={`relative flex w-80 flex-col rounded-xl h-[355px] justify-end ${
         clasName ? clasName : ""
       } text-white shadow-md clone_element`}
@@ -75,14 +94,14 @@ export const CardBox: React.FC<Image> = ({
           }}
         ></span>
         <Link
-          href={`/products/${id}`}
+          href={`/products/${product?.productslug}`}
           className="mx-4 -mt-6 w-[288px] flex justify-center h-[350px] relative rounded-xl bg-blue-gray-500 bg-clip-border "
         >
           <Image
             isBlurred
             width={400}
             height={200}
-            src={image}
+            src={product?.images[0].image}
             alt="NextUI Album Cover"
             className="object-contain cursor-pointer h-[350px] top-0"
           />
@@ -90,7 +109,7 @@ export const CardBox: React.FC<Image> = ({
         <div className="p-6">
           <span className="mb-2 flex justify-between items-center">
             <h5 className=" block font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
-              Tailwind card
+            {truncateText(product!.product_name, 25)}
             </h5>
           </span>
           <span className="cursor-pointer right-0 relative h-[15px] flex">
@@ -122,14 +141,14 @@ export const CardBox: React.FC<Image> = ({
               </svg>
               5.0{`(1.5k review)`}
             </p>
-            <p className="absolute right-0 text-gray-300">रू 120000</p>
+            <p className="absolute right-0 text-gray-300">{symbol} {convertedPrice}</p>
           </span>
         </div>
         <div className="p-6 pt-0 flex justify-between items-center">
           <Button
             color="secondary"
             className="cursor-pointer "
-            onClick={(event) => addToCart(id, event)}
+            onClick={(event) => addToCart(product!.id, event)}
             variant="bordered"
           >
             Add to Cart

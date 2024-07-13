@@ -26,7 +26,7 @@ const Product = () => {
   );
 
   useEffect(()=>{
-    SetProducts(data)
+    SetProducts(data?.results)
   },[data])
 
   const selectedValue = useMemo(
@@ -82,7 +82,7 @@ const Product = () => {
               </Button>
           </span>
         </span>
-        <span className=" flex flex-wrap gap-3 justify-center pb-5">
+        <span className=" flex flex-wrap gap-3 justify-center py-5 ">
           {products && products.map((products, index:any) => {
             return (
               <Productcard

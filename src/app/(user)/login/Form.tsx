@@ -20,6 +20,7 @@ import lottie from "lottie-web";
 import { defineElement } from "@lordicon/element";
 import useAuth  from '@/context/AuthContext';
 import {Avatar, AvatarIcon} from "@nextui-org/react";
+import { signIn } from 'next-auth/react';
 interface Token {
   access_token: string;
   refresh_token: string;
@@ -142,6 +143,7 @@ export default function FormTab() {
                   variant="bordered"
                   className="text-white"
                   size="lg"
+                  onClick={() => signIn('google')}
                   startContent={
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

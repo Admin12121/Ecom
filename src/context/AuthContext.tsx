@@ -19,6 +19,8 @@ import {
   useUserdeviceMutation,
 } from "@/lib/store/Service/User_Auth_Api";
 import axios from "axios";
+import { useSession, signOut  } from 'next-auth/react';
+
 
 interface User {
   email: string;
@@ -53,6 +55,7 @@ interface AuthContextType {
   handleSelectionChange: (e: any) => void;
   selectedcurrencyiso: string;
   convertPrice: (price: number) => { convertedPrice: number; symbol: string };
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -84,6 +87,7 @@ const getSymbol = (iso3: string) => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { data: session, status } = useSession();  
   const dispatch = useDispatch();
   const [loginUser] = useLoginUserMutation();
   const [userDevice] = useUserdeviceMutation();
@@ -116,6 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   };
+
 
   useEffect(() => {
     const liverate = async () => {
@@ -279,6 +284,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const handleLogout = () => {
     dispatch(unSetUserToken());
     removeToken();
+    signOut();
     toast.success("Logged out");
     setuserLogin(null);
     setIsLoggedIn(false);
@@ -296,9 +302,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { convertedPrice: price, symbol: "" };
   };
 
+    useEffect(() => {
+      const { access_token } = getToken();      
+      if (status === 'authenticated' && session?.access && session?.refresh && !access_token) {
+        const token = { access: session.access, refresh: session.refresh, remember: true };
+        storeToken(token);
+        dispatch(setUserToken(token));
+        toast.success("Login successful");
+        setIsLoggedIn(true);
+      }
+  }, [session, status]);
+
   return (
     <AuthContext.Provider
       value={{
+        setIsLoggedIn,
         setuserLogin,
         userLogin,
         isLoggedIn,

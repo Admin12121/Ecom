@@ -95,9 +95,7 @@ const Productcard: React.FC<ImageProps> = ({ products, clasName }) => {
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative flex w-80 flex-col rounded-xl h-[355px] justify-end admin-view ${
-        clasName ? clasName : ""
-      } text-white shadow-md clone_element`}
+      className={`${ Array.isArray(products.variants) ? 'article-1' : ''} relative flex w-80 flex-col rounded-xl h-[355px] justify-end admin-view ${ clasName ? clasName : ""} text-white shadow-md clone_element`}
     >
       <div className="multi-button">
         <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`}><MdOutlineViewInAr color={`${dark ? "#fff" : "#000"}`}/></button>
