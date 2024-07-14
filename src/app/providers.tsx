@@ -21,13 +21,13 @@ export interface ProvidersProps {
   themeProps?: ThemeProviderProps;
 
 }
-export async function Providers({ children, themeProps }: ProvidersProps) {
+export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
   const storeRef = useRef<AppStore>();
   if (!storeRef.current) {
     storeRef.current = store();
   }
-  const session = await getSession();
+
   return (
     <NextUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
@@ -38,7 +38,7 @@ export async function Providers({ children, themeProps }: ProvidersProps) {
           theme="system"
           position="top-right"
         />
-        <SessionProvider session={session}>
+        <SessionProvider >
           <Provider store={storeRef.current}>
             <AuthProvider>
               <CartProvider>{children}</CartProvider>
