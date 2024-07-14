@@ -103,7 +103,7 @@ export default function Product() {
         options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}
       >
         <div className="w-[100vw] min-h-[100vh] flex flex-col">
-          <Header id='12' />
+          <Header id={productslug} />
           <div className="relative flex gap-5 mmd:h-[90vh] p-10 w-[100vw] rounded-xl bg-blue-gray-500 bg-clip-border justify-between max-mmd:flex-col ">
             <div className="flex mmd:w-[60%] flex-col gap-2 max-mmd:items-center">
               <Image

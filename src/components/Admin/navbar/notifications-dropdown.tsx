@@ -33,7 +33,7 @@ export const NotificationsDropdown = () => {
       // console.log('WebSocket connection closed');
     };
     socket.onerror = (error) => {
-      toast.success("Error on Notification");
+      // toast.success("Error on Notification");
       // console.error('WebSocket error:', error);
     };
     return () => {
