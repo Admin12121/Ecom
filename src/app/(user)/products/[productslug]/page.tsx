@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React,{useState} from "react";
 import { useParams } from "next/navigation";
 import Header from "../../collections/Header/Header";
 import {
@@ -29,9 +29,9 @@ import {
   WhatsappShareButton, 
   WhatsappIcon, 
 } from 'next-share'; 
+import {useProductsViewQuery} from "@/lib/store/Service/User_Auth_Api";
 
-
-const data = [
+const radata = [
   {
     id: 1,
     img: "/product1.png",
@@ -67,18 +67,12 @@ const data = [
 ];
 
 export default function Product() {
-  const params = useParams<{ id: string }>();
-  const id = params.id;
-  const filteredData = data.filter((event: any) => event.id.toString() === id);
-  function setProductViewTransition(id: any) {
-    document.documentElement.style.setProperty(
-      "--view-transition-name",
-      `product-${id}`
-    );
-    document.documentElement.style.setProperty("--product-id", id);
-  }
-
-  setProductViewTransition(filteredData[0].id);
+  const params = useParams<{ productslug: string }>();
+  const productslug = params.productslug;
+  const [products, SetProducts] = useState()
+  // const filteredData = data.filter((event: any) => event.id.toString() === id);
+  const { data, isLoading, refetch } = useProductsViewQuery({productslug});
+  console.log(data)
   defineElement(lottie.loadAnimation);
 
   const settings = {
@@ -109,7 +103,7 @@ export default function Product() {
         options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}
       >
         <div className="w-[100vw] min-h-[100vh] flex flex-col">
-          <Header id={id} />
+          <Header id='12' />
           <div className="relative flex gap-5 mmd:h-[90vh] p-10 w-[100vw] rounded-xl bg-blue-gray-500 bg-clip-border justify-between max-mmd:flex-col ">
             <div className="flex mmd:w-[60%] flex-col gap-2 max-mmd:items-center">
               <Image
@@ -117,7 +111,7 @@ export default function Product() {
                 as={NextImage}
                 width={500}
                 height={300}
-                src={filteredData && filteredData[0].img}
+                // src={filteredData && filteredData[0].img}
                 alt="NextUI Album Cover"
                 className="object-contain cursor-pointer h-[450px] top-0"
               />
@@ -127,7 +121,7 @@ export default function Product() {
                   as={NextImage}
                   width={100}
                   height={100}
-                  src={filteredData && filteredData[0].img}
+                  // src={filteredData && filteredData[0].img}
                   alt="NextUI Album Cover"
                   style={{ border: "1px solid #ffffff29" }}
                   className="object-contain bg-[#1a1a1aa8] cursor-pointer h-[100px] top-0 "
@@ -137,7 +131,7 @@ export default function Product() {
                   as={NextImage}
                   width={100}
                   height={100}
-                  src={filteredData && filteredData[0].img}
+                  // src={filteredData && filteredData[0].img}
                   alt="NextUI Album Cover"
                   style={{ border: "1px solid #ffffff29" }}
                   className="object-contain bg-[#1a1a1aa8] cursor-pointer h-[100px] top-0 "
@@ -147,7 +141,7 @@ export default function Product() {
                   as={NextImage}
                   width={100}
                   height={100}
-                  src={filteredData && filteredData[0].img}
+                  // src={filteredData && filteredData[0].img}
                   alt="NextUI Album Cover"
                   style={{ border: "1px solid #ffffff29" }}
                   className="object-contain bg-[#1a1a1aa8] cursor-pointer h-[100px] top-0 "
@@ -157,7 +151,7 @@ export default function Product() {
                   as={NextImage}
                   width={100}
                   height={100}
-                  src={filteredData && filteredData[0].img}
+                  // src={filteredData && filteredData[0].img}
                   alt="NextUI Album Cover"
                   style={{ border: "1px solid #ffffff29" }}
                   className="object-contain bg-[#1a1a1aa8] cursor-pointer h-[100px] top-0 "
@@ -316,7 +310,7 @@ export default function Product() {
               <Link href="/collections" color="foreground">View All</Link>
             </span>
             <Slider {...settings}>
-              {data.map(({ img, id }: { img: string; id: number }, index) => (
+              {radata.map(({ img, id }: { img: string; id: number }, index:number) => (
                 <>
                   <div key={index}>
                     <CardBox

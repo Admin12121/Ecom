@@ -113,13 +113,8 @@ export default function Nav() {
 
   const menuItems = [
     "Profile",
-    "Dashboard",
     "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
+    "Settings",
     "Help & Feedback",
     "Log Out",
   ];

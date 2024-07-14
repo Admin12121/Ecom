@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './style.module.scss';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -7,6 +7,7 @@ import Link from './Link';
 import Curve from './Curve';
 import Footer from './Footer';
 import useAuth from "@/context/AuthContext";
+import {useProductsViewQuery} from "@/lib/store/Service/User_Auth_Api";
 
 const navItems = [
   {
@@ -17,16 +18,28 @@ const navItems = [
     title: "Work",
     href: "/work",
   },
-  {
-    title: "About",
-    href: "/about",
-  },
 ]
 
 export default function Cart({setIsActive, isActive}:{isActive:boolean, setIsActive:any}) {
   const { isLoggedIn } = useAuth();
   const pathname = usePathname();
   const [selectedIndicator, setSelectedIndicator] = useState(pathname);
+  const [cartItems, setCartItems] = useState<number[]>([]);
+  const [products, SetProducts] = useState<FormData[]>([])
+
+  useEffect(() => {
+    const cartItemsFromStorage = JSON.parse(localStorage.getItem('cart') || '[]');
+    setCartItems(cartItemsFromStorage);
+  }, []);
+
+  const { data, isLoading, refetch } = useProductsViewQuery(
+    { ids: cartItems.join(',') }, 
+    { skip: cartItems.length === 0 }
+  );
+
+  useEffect(()=>{
+    SetProducts(data?.results)
+  },[data])
 
   return (
     <motion.div variants={menuSlide} initial="initial" animate="enter" exit="exit" className={styles.menu}>

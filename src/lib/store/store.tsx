@@ -9,7 +9,6 @@ export const store = () =>{
     reducer: {
       [userAuthapi.reducerPath]: userAuthapi.reducer,
       auth: authSlice,
-  
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(userAuthapi.middleware),
