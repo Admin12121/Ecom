@@ -4,7 +4,6 @@ import { Providers } from "./providers";
 import "./globals.css";
 import ApiViewTransition  from "./apiview";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
@@ -19,10 +18,9 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async  function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
 
   return (
     <ApiViewTransition>

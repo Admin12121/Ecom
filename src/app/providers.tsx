@@ -11,8 +11,7 @@ import dynamic from "next/dynamic";
 import { CartProvider } from "@/context/CartState";
 import { Spinner } from "@nextui-org/react";
 // import Curve from "./components/Animation/page";
-import { SessionProvider } from "next-auth/react";
-
+import { SessionProvider, getSession } from "next-auth/react";
 const AuthProvider = dynamic(
   () => import("@/context/AuthContext").then((mod) => mod.AuthProvider),
   { ssr: false }
@@ -20,15 +19,15 @@ const AuthProvider = dynamic(
 export interface ProvidersProps {
   children: React.ReactNode;
   themeProps?: ThemeProviderProps;
-  session: any;
+
 }
-export function Providers({ children, themeProps, session }: ProvidersProps) {
+export async function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
   const storeRef = useRef<AppStore>();
   if (!storeRef.current) {
     storeRef.current = store();
   }
-
+  const session = await getSession();
   return (
     <NextUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
