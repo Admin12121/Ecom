@@ -60,7 +60,7 @@ export const Login: React.FC<Props> = ({ isOpen, onOpenChange }) => {
     if (res.data) {
       storeToken(res.data);
       const { access_token }: { access_token: any } = getToken();
-      dispatch(setUserToken({ access_token: access_token }));
+      dispatch(setUserToken({ access: access_token }));
       toast.success("Login successful", {
         action: {
           label: "X",
