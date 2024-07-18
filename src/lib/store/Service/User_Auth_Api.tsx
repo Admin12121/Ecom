@@ -154,13 +154,30 @@ export const userAuthapi = createApi({
       },
     }),
     productsView: builder.query({
-      query: ({productslug, id , search, ids}) => {
-        const { access_token } = getToken();
+      query: ({productslug, id , search, ids, category}) => {
+        let queryParams = "";
+        if (productslug) {
+          queryParams += `productslug=${productslug}&`;
+        }
+        if (id) {
+          queryParams += `id=${id}&`;
+        }
+        if (search) {
+          queryParams += `search=${search}&`;
+        }
+        if (ids) {
+          queryParams += `ids=${ids}&`;
+        }
+        if (category) {
+          queryParams += `category=${category}&`;
+        }
+        if (queryParams.length > 0) {
+          queryParams = '?' + queryParams.slice(0, -1); // Remove the last '&' and prepend '?'
+        }
         return {
-          url: `api/products/products/${id ? `${id}/`: ""}${productslug ? `?productslug=${productslug}` : ''}${search ? `?search=${search}` : ``}${ids ? `get_products_by_ids/?ids=${ids}` : ``}`,
+          url: `api/products/products/${queryParams}`,
           method: "GET",
           headers: {
-            // authorization: `Bearer ${access_token}`,
             "Content-type": "application/json",
           },
         };

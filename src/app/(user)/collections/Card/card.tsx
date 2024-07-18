@@ -73,6 +73,7 @@ export const CardBox: React.FC<Image> = ({
   const truncateText = (text: string, maxLength: number): string => {
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
+  const variantId = getVariantData(variantsdata, 'id')
   return (
     <div
       ref={divRef}
@@ -148,7 +149,7 @@ export const CardBox: React.FC<Image> = ({
           <Button
             color="secondary"
             className="cursor-pointer "
-            onClick={(event) => addToCart(product!.id, event)}
+            onClick={(event) => addToCart(product!.id, event, variantId)}
             variant="bordered"
           >
             Add to Cart

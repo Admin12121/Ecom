@@ -1,0 +1,284 @@
+"use client"
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  CardFooter,
+  Divider,
+  Code,
+  Chip,
+} from "@nextui-org/react";
+import { FiBox } from "react-icons/fi";
+import { CiStar } from "react-icons/ci";
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { PiWarningOctagon } from "react-icons/pi";
+import { IoIosHeartEmpty } from "react-icons/io";
+import useAuth from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+
+interface VariantObject {
+  id: number;
+  product_stripe_id: string | null;
+  size: string | null;
+  price: string;
+  discount: string;
+  stock: number;
+  product: number;
+}
+
+interface Product {
+  id: number;
+  categoryname: string;
+  subcategoryname: string;
+  reviews: any[]; // Update to appropriate type if needed
+  comments: any[]; // Update to appropriate type if needed
+  product_name: string;
+  description: string;
+  productslug: string;
+  category: number;
+  subcategory: number;
+  variants: VariantObject | VariantObject[];
+}
+
+const getSizeCategory = (index: number) => {
+  const sizeNames = [
+    "Small",
+    "Medium",
+    "Large",
+    "X-Large",
+    "XX-Large",
+    "XXX-Large",
+  ];
+  return sizeNames[index] || `Size-${index + 1}`;
+};
+
+const Sidebar = ({ products }: { products: Product }) => {
+  const router = useRouter();
+  const [selectedSize, setSelectedSize] = useState<{
+    id: number;
+    size: string | null;
+  } | null>(null);
+  const [variantsData, setVariantsData] = useState<
+    VariantObject[] | VariantObject | null
+  >(null);
+  const [outOfStock, setOutOfStock] = useState<boolean>(false);
+  const { convertPrice } = useAuth();
+
+  const handleSizeClick = (id: number, size: string | null) => {
+    setSelectedSize({ id, size });
+  };
+
+  const sortedVariants = Array.isArray(variantsData)
+    ? [...variantsData].sort((a, b) => Number(a.size) - Number(b.size))
+    : [];
+
+  useEffect(() => {
+    if (products?.variants) {
+      setVariantsData(products.variants);
+      if (!Array.isArray(products.variants)) {
+        setSelectedSize({
+          id: products.variants.id,
+          size: products.variants.size,
+        });
+      }
+    }
+  }, [products]);
+
+  useEffect(() => {
+    if (products?.variants && Array.isArray(products.variants)) {
+      const variants = products.variants;
+      const sortedVariants = [...variants].sort(
+        (a, b) => Number(a.size) - Number(b.size)
+      );
+      setVariantsData(sortedVariants);
+
+      // Set initial selected size
+      if (sortedVariants.length > 0) {
+        setSelectedSize({
+          id: sortedVariants[0].id,
+          size: sortedVariants[0].size,
+        });
+      }
+
+      // Check if any variant is out of stock
+      const anyOutOfStock = sortedVariants.some(
+        (variant) => variant.stock === 0
+      );
+      setOutOfStock(anyOutOfStock);
+    }
+  }, [products]);
+
+  const defaultContent =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+  const itemClasses = {
+    base: "py-0 w-full rounded-lg",
+    title: "font-normal text-sm",
+    trigger: "p-0 rounded-md h-[45px] flex items-center",
+    indicator: "text-medium",
+    content: "text-small px-2",
+  };
+
+  const getVariantData = (
+    variantsData: VariantObject[] | VariantObject | null,
+    key: keyof VariantObject,
+    index: number = 0
+  ): any => {
+    if (Array.isArray(variantsData)) {
+      const variant = variantsData.find((variant) => variant.id === index);
+      return variant ? variant[key] : null;
+    } else if (variantsData) {
+      return variantsData[key];
+    }
+    return null;
+  };
+  const { convertedPrice, symbol } = convertPrice(
+    getVariantData(variantsData, "price", selectedSize?.id)
+  );
+  const handleRoute = () => {
+    router.push(`/collections?category=${products?.categoryname}`)
+  };
+  return (
+    <>
+      <aside className="sidebar py-6 w-full sticky top-[65px] space-y-8 ">
+        {outOfStock && (
+          <span className="w-full flex justify-center items-center px-2">
+            <Code className=" w-full text-base flex items-center justify-center flex-row bg-neutral-950 rounded-md h-[50px]">
+              <p className="flex items-center justify-center flex-row gap-2 text-orange-500">
+                <PiWarningOctagon size={18} /> Some items are out of stock
+              </p>
+            </Code>
+          </span>
+        )}
+        <Card className=" w-full bg-transparent border-none border-0 shadow-none">
+          <CardHeader className="flex gap-3 justify-between">
+            <div className="flex gap-3 items-center">
+              <div className="flex flex-col">
+                <p className="text-2xl">{products?.product_name}</p>
+                <p className="text-sm text-slate-500 cursor-pointer" onClick={handleRoute}>
+                  {products?.categoryname}
+                </p>
+              </div>
+            </div>
+            <div className="text-foreground/50 flex gap-2 items-center">
+              <span className="h-full flex text-xs items-center justify-center cursor-pointer">
+                <IoIosHeartEmpty size={22} color="#fff" />
+              </span>
+            </div>
+          </CardHeader>
+          <CardBody className="p-4 gap-5 flex-initial ">
+            {Array.isArray(variantsData) && (
+              <>
+                <span className="flex gap-3 flex-col">
+                  <p className="text-sm">Statue Size</p>
+                  <span className="flex gap-2 items-center">
+                    {sortedVariants.map((variant, index) => (
+                      <Button
+                        key={variant.id}
+                        color={
+                          selectedSize?.id === variant.id
+                            ? "secondary"
+                            : "default"
+                        }
+                        variant="shadow"
+                        radius="sm"
+                        size="sm"
+                        onClick={() =>
+                          handleSizeClick(variant.id, variant.size)
+                        }
+                      >
+                        {getSizeCategory(index)}
+                      </Button>
+                    ))}
+                  </span>
+                </span>
+                <Card className="w-full mt-5 rounded-md bg-neutral-900 border-none shadow-none p-1">
+                  <CardBody>
+                    <p className="text-sm text-zinc-400">Size</p>
+                    <Divider className="my-1" />
+                    <span className="flex justify-between items-center">
+                      <p className="text-xs text-zinc-400">Statue Size</p>
+                      <p className="text-xs text-zinc-400">
+                        {selectedSize?.size} cm
+                      </p>
+                    </span>
+                  </CardBody>
+                </Card>
+              </>
+            )}
+            <span className="w-full flex gap-5 items-center">
+              <span className="text-xs text-zinc-400 flex gap-2">
+                <FiBox size={16} /> Delivery on July 18th - 25th
+              </span>
+            </span>
+            <span className="w-full flex gap-3 items-center">
+              <span className="text-lg">
+                {symbol} {convertedPrice}
+              </span>
+              <Chip className="text-xs bg-neutral-900 rounded-md text-orange-500">
+                $48 with 50% off
+              </Chip>
+            </span>
+            <Button
+              color="default"
+              variant="shadow"
+              radius="sm"
+              size="sm"
+              className="w-full h-[40px] text-base"
+            >
+              Add to Cart
+            </Button>
+          </CardBody>
+          <CardFooter className="gap-5 flex flex-col pb-0">
+            {/* <Button
+              color="secondary"
+              variant="shadow"
+              className="w-full h-[50px]"
+            >
+              Buy Now
+            </Button> */}
+            <Accordion variant="splitted" isCompact itemClasses={itemClasses}>
+              <AccordionItem
+                key="1"
+                aria-label="Accordion 1"
+                title="🟠 Composition"
+                // className="h-[40px] py-0 rounded-md"
+              >
+                {defaultContent}
+              </AccordionItem>
+              <AccordionItem key="2" aria-label="Accordion 2" title="📏 Size & Weight">
+                {defaultContent}
+              </AccordionItem>
+            </Accordion>
+            <span className="w-full px-2">
+              <Card className="w-full">
+                <CardHeader className="flex gap-3">
+                  <div className="w-full flex justify-between items-center">
+                    <p className="text-md">Reviews(122)</p>
+                    <p className="text-small text-default-500">
+                      Write a Review
+                    </p>
+                  </div>
+                </CardHeader>
+                <CardBody className="gap-3">
+                  <div className="w-full flex justify-between items-center px-1">
+                    <p className="text-xs">Overall rating</p>
+                    <p className="text-xs flex gap-1">
+                      4.5 <CiStar size={14} />
+                    </p>
+                  </div>
+                  <Button color="default" radius="sm" variant="flat">
+                    Show all
+                  </Button>
+                </CardBody>
+              </Card>
+            </span>
+          </CardFooter>
+        </Card>
+      </aside>
+    </>
+  );
+};
+
+export default Sidebar;

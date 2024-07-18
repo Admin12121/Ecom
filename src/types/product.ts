@@ -29,6 +29,7 @@ export interface FormValues {
   }
 
   export interface Variant {
+    id: number;
     size?: string;
     price: number;
     stock: number;

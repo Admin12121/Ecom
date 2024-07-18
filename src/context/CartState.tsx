@@ -99,9 +99,10 @@ import { useDisclosure } from "@nextui-org/react";
 
 interface CartContextType {
   counter: number;
-  addToCart: (id: number, event: React.MouseEvent<HTMLButtonElement>) => void;
+  addToCart: (id: number, event: React.MouseEvent<HTMLButtonElement>, variantId?: number | null) => void;
   isOpen: boolean;
   onOpenChange: () => void; 
+  setCounter: (value: number) => void;
 }
 
 interface CartProviderProps {
@@ -128,7 +129,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setCounter(cartItems.length);
   }, []);
 
-  const addToCart = async (id: number, event: React.MouseEvent<HTMLButtonElement>) => {
+  const addToCart = async (id: number, event: React.MouseEvent<HTMLButtonElement>, variantId?: number | null) => {
     const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
  
     const buttonElement = event.target as HTMLElement;
@@ -175,11 +176,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         cardClone.style.opacity = '0';
         cardClone.addEventListener('transitionend', () => {
           cardClone.remove();
-          if (!cartItems.includes(id)) {
-            cartItems.push(id);
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            setCounter(cartItems.length);
-          }   
+        
+        const itemvariantId = variantId && variantId === null ? 1 : variantId;
+        const cartItem = { id, variantId: itemvariantId };
+        if (!cartItems.some((item: any) => item.id === id && item.variantId === itemvariantId)) {
+          cartItems.push(cartItem);
+          localStorage.setItem('cart', JSON.stringify(cartItems));
+          setCounter(cartItems.length);
+        }
         }, { once: true });
       });
     });
@@ -204,7 +208,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ counter, addToCart, isOpen, onOpenChange }}>
+    <CartContext.Provider value={{ counter, addToCart, isOpen, onOpenChange, setCounter }}>
       {children}
     </CartContext.Provider>
   );

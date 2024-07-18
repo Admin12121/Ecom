@@ -30,6 +30,7 @@ const config: Config = {
       'sm': '660px',
       'max-sm': {'max': '639px'},
       'md': '768px',
+      'max-md': {'max': '767px'},
       'custom-md': { 'min': '800px', 'max': '1100px' },
       'mmd' : '1000px',
       'mid-mmd': {'max': '900px'},
