@@ -108,7 +108,7 @@ export default function Product() {
               <h1 className="text-5xl font-bold text-center w-[450px]">
                 What people say about Nassau
               </h1>
-              <p>Don't just take our word for it.</p>
+              <p>Don&apos;t just take our word for it.</p>
               <span className="flex flex-wrap gap-4 pt-10 items-center justify-center">
                 <Reviewcards />
               </span>
