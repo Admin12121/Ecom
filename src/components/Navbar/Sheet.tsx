@@ -65,8 +65,8 @@ export function SheetDemo() {
       <SheetContent className="border-0 w-full md:min-w-[500px] h-[98vh] top-[1vh] rounded-lg bg-neutral-950">
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
-          <SheetDescription className="text-zinc-400 text-sm bg-neutral-900 p-3 rounded-md ">
-            Make changes to your profile here. Click save when you're done.
+          <SheetDescription className="text-zinc-400 text-sm bg-neutral-9000 p-3 rounded-md ">
+            Make changes to your profile here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
         <CartWrapper />

@@ -11,7 +11,7 @@ import { useForm, useFieldArray, Form } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DeleteIcon from "@/components/Admin/icons/deleteIcon";
-import {useCategoryViewQuery, useAddCategoryMutation, useAddsubCategoryMutation, useProductsRegistrationMutation} from "@/lib/store/Service/User_Auth_Api"
+import {useCategoryViewQuery, useAddCategoryMutation, useAddSubCategoryMutation, useProductsRegistrationMutation} from "@/lib/store/Service/User_Auth_Api"
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 
 
@@ -143,7 +143,7 @@ const AddProduct = () => {
   });
 
   const [addcategory] = useAddCategoryMutation();
-  const [addsubcategory] = useAddsubCategoryMutation();
+  const [addsubcategory] = useAddSubCategoryMutation();
   const [addProduct, {isLoading}] = useProductsRegistrationMutation();
 
   useEffect(()=>{
