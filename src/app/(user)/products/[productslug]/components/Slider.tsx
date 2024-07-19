@@ -1,6 +1,6 @@
 "use client"; // <===== REQUIRED
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CiStar } from "react-icons/ci";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdHeart } from "react-icons/io";
@@ -13,33 +13,86 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { Image, Button } from "@nextui-org/react";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import useAuth from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
-interface Slide {
-  id: number;
-  title: string;
-  tagline: string;
+interface Image {
   image: string;
-  buttons: ButtonProps[];
 }
 
-interface ButtonProps {
+interface VariantObject {
   id: number;
-  text: string;
-  link: string;
-  type: string;
+  product_stripe_id: string | null;
+  size: string | null;
+  price: string;
+  discount: string;
+  stock: number;
+  product: number;
+}
+
+interface Product {
+  id: number;
+  categoryname: string;
+  subcategoryname: string;
+  reviews: any[]; // Update to appropriate type if needed
+  comments: any[]; // Update to appropriate type if needed
+  product_name: string;
+  description: string;
+  productslug: string;
+  category: number;
+  subcategory: number;
+  variants: VariantObject | VariantObject[];
+  images: Image[];
 }
 
 interface DemoSliderProps {
-  data: Slide[];
+  data: Product;
 }
 
 const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
+  const router = useRouter();
+  const { convertPrice } = useAuth();
+  const [outOfStock, setOutOfStock] = useState<boolean>(false);
+  const [variantsData, setVariantsData] = useState<
+    VariantObject[] | VariantObject | null
+  >(null);
+
+  useEffect(() => {
+    if (data?.variants) {
+      setVariantsData(data.variants);
+    }
+  }, [data]);
+
+  
+  const getVariantData = (
+    variantsData: VariantObject[] | VariantObject | null,
+    key: keyof VariantObject,
+    index: number = 0
+  ): any => {
+    if (Array.isArray(variantsData)) {
+      const variant = variantsData.find((variant) => variant.id === index);
+      return variant ? variant[key] : null;
+    } else if (variantsData) {
+      return variantsData[key];
+    }
+    return null;
+  };
+  const { convertedPrice, symbol } = convertPrice(
+    getVariantData(variantsData, "price")
+  );
+  const handleRoute = () => {
+    router.push(`/collections?category=${data?.categoryname}`);
+  };
   return (
     <section className="w-full flex gap-5">
       <span className="relative w-[350px]flex flex-col h-[500px] m-0 bg-neutral-950 rounded-lg">
         <span className="absolute z-10 w-[320px] top-3 left-3 flex justify-between items-center h-5 ">
-          <span className="w-[50px] h-full flex bg-zinc-300 rounded-md text-xs items-center justify-center text-black gap-1">4.5 <FaStar size={10}/> </span>
-          <span className="h-full flex text-xs items-center justify-center"><IoIosHeartEmpty size={18} color="#fff"/></span>
+          <span className="w-[50px] h-full flex bg-zinc-300 rounded-md text-xs items-center justify-center text-black gap-1">
+            4.5 <FaStar size={10} />{" "}
+          </span>
+          <span className="h-full flex text-xs items-center justify-center">
+            <IoIosHeartEmpty size={18} color="#fff" />
+          </span>
         </span>
         <Swiper
           navigation
@@ -51,35 +104,41 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
           style={{ margin: "0px" }}
           className="w-[350px] h-[400px] rounded-lg"
         >
-          {data.map(({ id, image }) => (
-            <SwiperSlide key={id}>
-              <div className="h-full w-full left-0 top-0 bg-neutral-950 flex items-center justify-center">
-                <Image
-                  src={image}
-                  isBlurred
-                  className=" w-full cursor-pointer h-[350px]  object-contain"
-                  alt="Image 1"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
+          {data &&
+            data?.images &&
+            data.images.map((data: Image, index: number) => (
+              <SwiperSlide key={index}>
+                <div className="h-full w-full left-0 top-0 bg-neutral-950 flex items-center justify-center">
+                  <Image
+                    src={data.image}
+                    isBlurred
+                    className=" w-full cursor-pointer h-[350px]  object-contain"
+                    alt="Image 1"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
         </Swiper>
         <span className=" w-full h-[100px] flex flex-col rounded-lg p-3 justify-between">
-            <div className="flex gap-3 items-center">
-              <div className="flex flex-col cursor-pointer">
-                <p className="text-sm">Buddha Statue</p>
-                <p className="text-xs text-slate-500">Buddha Statue</p>
-              </div>
+          <div className="flex gap-3 items-center">
+            <div className="flex flex-col cursor-pointer">
+              <p className="text-sm">{data.product_name}</p>
+              <p className="text-xs text-slate-500">{data.categoryname}</p>
             </div>
-            <div className="flex w-full justify-between items-center">
-              <p className="text-sm">$ 12500</p>
-              <Button               
+          </div>
+          <div className="flex w-full justify-between items-center">
+            <p className="text-sm">{symbol} {convertedPrice}</p>
+            <Button
               color="default"
               variant="shadow"
               radius="sm"
               size="sm"
-              className=" h-[30px] flex justify-center items-center text-sm"><HiOutlineShoppingBag size={14}/>Add</Button>
-            </div>
+              className=" h-[30px] flex justify-center items-center text-sm"
+            >
+              <HiOutlineShoppingBag size={14} />
+              Add
+            </Button>
+          </div>
         </span>
       </span>
     </section>

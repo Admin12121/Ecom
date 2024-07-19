@@ -21,6 +21,7 @@ export interface FormValues {
     description: string;    
     productslug:string;
     category: number;
+    category_name?: string;
     subcategory: number;
     images: Array<{
       image: string;

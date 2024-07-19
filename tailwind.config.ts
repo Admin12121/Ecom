@@ -17,6 +17,8 @@ const config: Config = {
       },
       animation: {
         scroll:"scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out"        
       },
       keyframes: {
         scroll: {
@@ -24,6 +26,14 @@ const config: Config = {
             transform: "translate(calc(-50% - 0.5rem))",
           },
         },
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" }
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" }
+        }        
       },
     },
     screens:{
@@ -45,7 +55,7 @@ const config: Config = {
     }
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [nextui(), require("tailwindcss-animate")],
 
 };
 export default config;

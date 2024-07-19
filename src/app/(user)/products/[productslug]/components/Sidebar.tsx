@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -8,6 +8,7 @@ import {
   CardFooter,
   Divider,
   Code,
+  Input,
   Chip,
 } from "@nextui-org/react";
 import { FiBox } from "react-icons/fi";
@@ -63,8 +64,10 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [variantsData, setVariantsData] = useState<
     VariantObject[] | VariantObject | null
   >(null);
+  const [selectedVariantOutOfStock, setSelectedVariantOutOfStock] =
+    useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
-  const { convertPrice } = useAuth();
+  const { convertPrice, isLoggedIn } = useAuth();
 
   const handleSizeClick = (id: number, size: string | null) => {
     setSelectedSize({ id, size });
@@ -110,6 +113,21 @@ const Sidebar = ({ products }: { products: Product }) => {
     }
   }, [products]);
 
+  useEffect(() => {
+    if (selectedSize) {
+      if (Array.isArray(variantsData)) {
+        const selectedVariant = variantsData.find(
+          (variant) => variant.id === selectedSize.id
+        );
+        setSelectedVariantOutOfStock(
+          selectedVariant ? selectedVariant.stock === 0 : false
+        );
+      } else if (variantsData) {
+        setSelectedVariantOutOfStock(variantsData.stock === 0);
+      }
+    }
+  }, [selectedSize, variantsData]);
+
   const defaultContent =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
   const itemClasses = {
@@ -137,12 +155,12 @@ const Sidebar = ({ products }: { products: Product }) => {
     getVariantData(variantsData, "price", selectedSize?.id)
   );
   const handleRoute = () => {
-    router.push(`/collections?category=${products?.categoryname}`)
+    router.push(`/collections?category=${products?.categoryname}`);
   };
   return (
     <>
       <aside className="sidebar py-6 w-full sticky top-[65px] space-y-8 ">
-        {outOfStock && (
+        {outOfStock && !selectedVariantOutOfStock && (
           <span className="w-full flex justify-center items-center px-2">
             <Code className=" w-full text-base flex items-center justify-center flex-row bg-neutral-950 rounded-md h-[50px]">
               <p className="flex items-center justify-center flex-row gap-2 text-orange-500">
@@ -151,12 +169,24 @@ const Sidebar = ({ products }: { products: Product }) => {
             </Code>
           </span>
         )}
+        {selectedVariantOutOfStock && (
+          <span className="w-full flex justify-center items-center px-2">
+            <Code className=" w-full text-base flex items-center justify-center flex-row bg-neutral-950 rounded-md h-[50px]">
+              <p className="flex items-center justify-center flex-row gap-2 text-orange-500">
+                <PiWarningOctagon size={18} /> This item is out of stock
+              </p>
+            </Code>
+          </span>
+        )}
         <Card className=" w-full bg-transparent border-none border-0 shadow-none">
           <CardHeader className="flex gap-3 justify-between">
             <div className="flex gap-3 items-center">
               <div className="flex flex-col">
-                <p className="text-2xl">{products?.product_name}</p>
-                <p className="text-sm text-slate-500 cursor-pointer" onClick={handleRoute}>
+                <p className="text-2xl font-medium">{products?.product_name}</p>
+                <p
+                  className="text-sm text-slate-500 cursor-pointer"
+                  onClick={handleRoute}
+                >
                   {products?.categoryname}
                 </p>
               </div>
@@ -220,15 +250,61 @@ const Sidebar = ({ products }: { products: Product }) => {
                 $48 with 50% off
               </Chip>
             </span>
-            <Button
-              color="default"
-              variant="shadow"
-              radius="sm"
-              size="sm"
-              className="w-full h-[40px] text-base"
-            >
-              Add to Cart
-            </Button>
+            {!selectedVariantOutOfStock ? (
+              <span className="flex gap-3">
+                <Button
+                  color="default"
+                  variant={`${isLoggedIn ? "flat" : "shadow"}`}
+                  radius="sm"
+                  size="sm"
+                  className="w-full h-[40px] text-base"
+                >
+                  Add to Cart
+                </Button>
+                {isLoggedIn && (
+                  <Button
+                    color="secondary"
+                    variant="shadow"
+                    radius="sm"
+                    size="sm"
+                    className="w-full h-[40px] text-base"
+                  >
+                    Buy now
+                  </Button>
+                )}
+              </span>
+            ) : (
+              <span className=" flex flex-col gap-2 py-5">
+                <span>
+                  <h1 className="text-xl font-medium text-zinc-300">
+                    This item is out of stock!
+                  </h1>
+                  <p className="text-sm text-zinc-400">
+                    Enter your email and we&apos;ll notify you when it&apos;s
+                    back in stock
+                  </p>
+                </span>
+                <Input
+                  radius="sm"
+                  size="md"
+                  type="email"
+                  placeholder="Enter your email"
+                />
+                <span className="flex gap-2">
+                  <Button
+                    color="default"
+                    radius="sm"
+                    variant="flat"
+                    className="w-full h-[40px] text-base"
+                  >
+                    Notify me when available
+                  </Button>
+                  <Button color="default" radius="sm" variant="flat" isIconOnly>
+                    <IoIosHeartEmpty size={22} color="#fff" />
+                  </Button>
+                </span>
+              </span>
+            )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
             {/* <Button
@@ -247,7 +323,11 @@ const Sidebar = ({ products }: { products: Product }) => {
               >
                 {defaultContent}
               </AccordionItem>
-              <AccordionItem key="2" aria-label="Accordion 2" title="📏 Size & Weight">
+              <AccordionItem
+                key="2"
+                aria-label="Accordion 2"
+                title="📏 Size & Weight"
+              >
                 {defaultContent}
               </AccordionItem>
             </Accordion>

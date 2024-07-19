@@ -1,348 +1,236 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getToken } from "./LocalStorageServices";
 
+const createHeaders = (isAuthRequired = false) => {
+  const headers: HeadersInit = { "Content-type": "application/json" };
+  if (isAuthRequired) {
+    const { access_token } = getToken();
+    if (access_token) {
+      headers["authorization"] = `Bearer ${access_token}`;
+    }
+  }
+  return headers;
+};
+
+const buildQueryParams = (params: Record<string, string | number | undefined>) => {
+  const queryParams = Object.entries(params)
+  .filter(([_, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+  return queryParams ? `?${queryParams}` : "";
+};
+
 export const userAuthapi = createApi({
   reducerPath: "userAuthapi",
   baseQuery: fetchBaseQuery({ baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}` }),
   endpoints: (builder) => ({
     registerUser: builder.mutation({
-      query: (user) => {
-        return {
-          url: "api/accounts/users/",
-          method: "POST",
-          body: user,
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+      query: (user) => ({
+        url: "api/accounts/users/",
+        method: "POST",
+        body: user,
+        headers: createHeaders(),
+      }),
     }),
     loginUser: builder.mutation({
-      query: (user) => {
-        return {
-          url: "api/accounts/users/login/",
-          method: "POST",
-          body: user,
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+      query: (user) => ({
+        url: "api/accounts/users/login/",
+        method: "POST",
+        body: user,
+        headers: createHeaders(),
+      }),
     }),
-    userdevice: builder.mutation({
-      query: (user) => {
-        const {access_token} = getToken();
-        return {
-          url: "api/accounts/users/device/",
-          method: "POST",
-          body: user,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    userDevice: builder.mutation({
+      query: (user) => ({
+        url: "api/accounts/users/device/",
+        method: "POST",
+        body: user,
+        headers: createHeaders(true),
+      }),
     }),
     getLoggedUser: builder.query({
-      query: () => {
-        const {access_token} = getToken();
-        return {
-          url: "accounts/profile/",
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: () => ({
+        url: "accounts/profile/",
+        method: "GET",
+        headers: createHeaders(true),
+      }),
     }),
     getUserProfile: builder.query({
-      query: ({  username }) => {
-        const  { access_token }  = getToken();
-        return {
-          url: `accounts/users/?name=${username}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: ({ username }) => ({
+        url: `accounts/users/?name=${username}`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
     }),
     updateUserProfile: builder.mutation({
-      query: ({ NewFormData, id }) => {
-        const  { access_token }  = getToken();
-        return {
-          url: `accounts/profile/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: ({ NewFormData, id }) => ({
+        url: `accounts/profile/?id=${id}`,
+        method: "PATCH",
+        body: NewFormData,
+        headers: createHeaders(true),
+      }),
     }),
     changeUserPassword: builder.mutation({
-      query: ({ actualData }) => {
-        const  { access_token }  = getToken();
-        return {
-          url: "accounts/changepassword/",
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: ({ actualData }) => ({
+        url: "accounts/changepassword/",
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(true),
+      }),
     }),
     sendPasswordResetEmail: builder.mutation({
-      query: (user) => {
-        return {
-          url: "accounts/send-reset-password-email/",
-          method: "POST",
-          body: user,
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+      query: (user) => ({
+        url: "accounts/send-reset-password-email/",
+        method: "POST",
+        body: user,
+        headers: createHeaders(),
+      }),
     }),
     resetPassword: builder.mutation({
-      query: ({ actualData, id, token }) => {
-        return {
-          url: `accounts/reset-password/${id}/${token}/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+      query: ({ actualData, id, token }) => ({
+        url: `accounts/reset-password/${id}/${token}/`,
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(),
+      }),
     }),
     registration: builder.mutation({
-      query: (actualData) => {
-        return {
-          url: `accounts/registration/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+      query: (actualData) => ({
+        url: "accounts/registration/",
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(),
+      }),
     }),
-    refreshaccess_tokenToken: builder.mutation({
-      query: (refreshToken) => {
-        return {
-          url: "accounts/token/refresh/",
-          method: "POST",
-          body: refreshToken, // Fix: Pass the object directly
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+    refreshToken: builder.mutation({
+      query: (refreshToken) => ({
+        url: "accounts/token/refresh/",
+        method: "POST",
+        body: refreshToken,
+        headers: createHeaders(),
+      }),
     }),
     productsRegistration: builder.mutation({
-      query: ( actualData ) => {
-        const { access_token } = getToken();
-        return {
-          url: "api/products/products/",
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: (actualData) => ({
+        url: "api/products/products/",
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(true),
+      }),
     }),
     productsView: builder.query({
-      query: ({productslug, id , search, ids, category}) => {
-        let queryParams = "";
-        if (productslug) {
-          queryParams += `productslug=${productslug}&`;
-        }
-        if (id) {
-          queryParams += `id=${id}&`;
-        }
-        if (search) {
-          queryParams += `search=${search}&`;
-        }
-        if (ids) {
-          queryParams += `ids=${ids}&`;
-        }
-        if (category) {
-          queryParams += `category=${category}&`;
-        }
-        if (queryParams.length > 0) {
-          queryParams = '?' + queryParams.slice(0, -1); // Remove the last '&' and prepend '?'
-        }
+      query: ({ productslug, id, search, ids, category }) => {
+        const queryParams = buildQueryParams({ productslug, id, search, ids, category });
         return {
           url: `api/products/products/${queryParams}`,
           method: "GET",
-          headers: {
-            "Content-type": "application/json",
-          },
+          headers: createHeaders(),
         };
       },
     }),
-    deleteproducts: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/products/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    recommendedProductsView: builder.query({
+      query: () => ({
+        url: "api/products/recommendations/",
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),
+    deleteProduct: builder.mutation({
+      query: (id) => ({
+        url: `products/products/?id=${id}`,
+        method: "DELETE",
+        headers: createHeaders(true),
+      }),
     }),
     categoryView: builder.query({
-      query: () => {
-        return {
-          url: `api/products/categories/`,
-          method: "GET",
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-      },
+      query: () => ({
+        url: "api/products/categories/",
+        method: "GET",
+        headers: createHeaders(),
+      }),
     }),
     addCategory: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `api/products/categories/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: (actualData) => ({
+        url: "api/products/categories/",
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(true),
+      }),
     }),
     upgradeCategory: builder.mutation({
-      query: ({NewFormData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/category/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: ({ NewFormData, id }) => ({
+        url: `products/category/?id=${id}`,
+        method: "PATCH",
+        body: NewFormData,
+        headers: createHeaders(true),
+      }),
     }),
     deleteCategory: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/category/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: (id) => ({
+        url: `products/category/?id=${id}`,
+        method: "DELETE",
+        headers: createHeaders(true),
+      }),
     }),
     subCategoryView: builder.query({
-      query: (storeCode) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subcategory/?store=${storeCode}`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+      query: (storeCode) => ({
+        url: `products/subcategory/?store=${storeCode}`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
     }),
-    AddsubCategory: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `api/products/subcategories/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    addSubCategory: builder.mutation({
+      query: (actualData) => ({
+        url: "api/products/subcategories/",
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(true),
+      }),
     }),
-    deletesubCategory: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subcategory/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    deleteSubCategory: builder.mutation({
+      query: (id) => ({
+        url: `products/subcategory/?id=${id}`,
+        method: "DELETE",
+        headers: createHeaders(true),
+      }),
     }),
-    upgradesubCategory: builder.mutation({
-      query: ({NewFormData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `products/subcategory/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    upgradeSubCategory: builder.mutation({
+      query: ({ NewFormData, id }) => ({
+        url: `products/subcategory/?id=${id}`,
+        method: "PATCH",
+        body: NewFormData,
+        headers: createHeaders(true),
+      }),
     }),
-    RedeemCodeView: builder.mutation({
-      query: ({storeCode,code}) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/redeemcode/?store=${storeCode}${code ? `&code=${code}` : '' }`,
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    redeemCodeView: builder.query({
+      query: ({ storeCode, code }) => ({
+        url: `sales/redeemcode/?store=${storeCode}${code ? `&code=${code}` : ""}`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
     }),
-    AddRedeemCode: builder.mutation({
-      query: (actualData) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/redeemcode/`,
-          method: "POST",
-          body: actualData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    addRedeemCode: builder.mutation({
+      query: (actualData) => ({
+        url: "sales/redeemcode/",
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(true),
+      }),
     }),
-    UpdateRedeemCode: builder.mutation({
-      query: ({NewFormData,id}) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/redeemcode/?id=${id}`,
-          method: "PATCH",
-          body: NewFormData,
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    updateRedeemCode: builder.mutation({
+      query: ({ NewFormData, id }) => ({
+        url: `sales/redeemcode/?id=${id}`,
+        method: "PATCH",
+        body: NewFormData,
+        headers: createHeaders(true),
+      }),
     }),
-    DeleteRedeemCode: builder.mutation({
-      query: (id) => {
-        const { access_token } = getToken();
-        return {
-          url: `sales/redeemcode/?id=${id}`,
-          method: "DELETE",
-          headers: {
-            authorization: `Bearer ${access_token}`,
-          },
-        };
-      },
+    deleteRedeemCode: builder.mutation({
+      query: (id) => ({
+        url: `sales/redeemcode/?id=${id}`,
+        method: "DELETE",
+        headers: createHeaders(true),
+      }),
     }),
   }),
 });
@@ -350,7 +238,7 @@ export const userAuthapi = createApi({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
-  useUserdeviceMutation,
+  useUserDeviceMutation,
   useGetLoggedUserQuery,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
@@ -358,19 +246,20 @@ export const {
   useSendPasswordResetEmailMutation,
   useResetPasswordMutation,
   useRegistrationMutation,
-  useRefreshaccess_tokenTokenMutation,
+  useRefreshTokenMutation,
   useProductsRegistrationMutation,
   useProductsViewQuery,
-  useDeleteproductsMutation,
+  useRecommendedProductsViewQuery,
+  useDeleteProductMutation,
   useCategoryViewQuery,
   useAddCategoryMutation,
   useUpgradeCategoryMutation,
   useDeleteCategoryMutation,
   useSubCategoryViewQuery,
-  useAddsubCategoryMutation, 
-  useDeletesubCategoryMutation, 
-  useUpgradesubCategoryMutation,
-  useRedeemCodeViewMutation,
+  useAddSubCategoryMutation,
+  useDeleteSubCategoryMutation,
+  useUpgradeSubCategoryMutation,
+  useRedeemCodeViewQuery,
   useAddRedeemCodeMutation,
   useDeleteRedeemCodeMutation,
   useUpdateRedeemCodeMutation,

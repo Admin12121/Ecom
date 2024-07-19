@@ -1,26 +1,12 @@
 "use client";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import {
-  getToken,
-  removeToken,
-  storeToken,
-} from "@/lib/store/Service/LocalStorageServices";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { getToken, removeToken, storeToken } from "@/lib/store/Service/LocalStorageServices";
 import { useDispatch } from "react-redux";
 import { unSetUserToken, setUserToken } from "@/lib/store/Feature/authSlice";
 import { toast } from "sonner";
-import {
-  useLoginUserMutation,
-  useUserdeviceMutation,
-} from "@/lib/store/Service/User_Auth_Api";
+import { useLoginUserMutation, useUserDeviceMutation } from "@/lib/store/Service/User_Auth_Api";
 import axios from "axios";
-import { useSession, signOut  } from 'next-auth/react';
-
+import { useSession, signOut } from "next-auth/react";
 
 interface User {
   email: string;
@@ -43,19 +29,15 @@ type CurrencyDataArray = CurrencyData[];
 
 interface AuthContextType {
   userLogin: User | null;
-  setuserLogin: any;
+  setuserLogin: React.Dispatch<React.SetStateAction<User | null>>;
   isLoggedIn: boolean;
   liveratedata: CurrencyDataArray | null;
-  handleLogin: (credentials: {
-    email: string;
-    password: string;
-    remember: boolean;
-  }) => Promise<void>;
+  handleLogin: (credentials: { email: string; password: string; remember: boolean }) => Promise<void>;
   handleLogout: () => void;
-  handleSelectionChange: (e: any) => void;
+  handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   selectedcurrencyiso: string;
   convertPrice: (price: number) => { convertedPrice: number; symbol: string };
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,9 +49,7 @@ interface DeviceDetails {
 }
 
 const getDeviceDetails = (): Omit<DeviceDetails, "ip_address"> => {
-  const device_type = /Mobi|Android/i.test(navigator.userAgent)
-    ? "Mobile"
-    : "Desktop";
+  const device_type = /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop";
   const device_os = navigator.platform;
 
   return { device_type, device_os };
@@ -87,30 +67,21 @@ const getSymbol = (iso3: string) => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const { data: session, status } = useSession();  
+  const { data: session, status } = useSession();
   const dispatch = useDispatch();
   const [loginUser] = useLoginUserMutation();
-  const [userDevice] = useUserdeviceMutation();
+  const [userDevice] = useUserDeviceMutation();
   const [userLogin, setuserLogin] = useState<User | null>(null);
-  const [deviceDetails, setDeviceDetails] = useState<DeviceDetails | null>(
-    null
-  );
-  const [liveratedata, setLiveRateData] = useState<CurrencyDataArray | null>(
-    null
-  );
+  const [deviceDetails, setDeviceDetails] = useState<DeviceDetails | null>(null);
+  const [liveratedata, setLiveRateData] = useState<CurrencyDataArray | null>(null);
   const [reloaddata, setreloaddata] = useState<boolean>(false);
-  const [selectedcurrency, setSelectedCurrency] = useState<{
-    sell: number;
-    symbol: string;
-  } | null>(null);
+  const [selectedcurrency, setSelectedCurrency] = useState<{ sell: number; symbol: string } | null>(null);
   const [selectedcurrencyiso, setSelectedCurrencyiso] = useState<string>("");
 
-  const handleSelectionChange = (e: any) => {
+  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedIso3 = e.target.value;
     if (selectedIso3 && liveratedata) {
-      const selectedCurrency = liveratedata.find(
-        (currency) => currency.iso3 === selectedIso3
-      );
+      const selectedCurrency = liveratedata.find((currency) => currency.iso3 === selectedIso3);
       if (selectedCurrency) {
         setSelectedCurrencyiso(selectedIso3);
         setSelectedCurrency({
@@ -121,36 +92,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-
   useEffect(() => {
-    const liverate = async () => {
+    const fetchLiveRates = async () => {
       try {
-        const res = await axios.get(
-          "https://www.nrb.org.np/api/forex/v1/app-rate"
-        );
-        if (res.data) {
+        const { data } = await axios.get("https://www.nrb.org.np/api/forex/v1/app-rate");
+        if (data) {
           const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
-          const filteredData = res.data.filter((currency: CurrencyData) =>
-            requiredCurrencies.includes(currency.iso3)
-          );
-
-          const filteredDataWithSymbols = filteredData.map(
-            (currency: CurrencyData) => {
-              if (currency.iso3 === "INR") {
-                return {
-                  ...currency,
-                  unit: 1,
-                  buy: (parseFloat(currency.buy) / currency.unit).toFixed(2),
-                  sell: (parseFloat(currency.sell) / currency.unit).toFixed(2),
-                  symbol: getSymbol(currency.iso3),
-                };
-              }
-              return {
-                ...currency,
-                symbol: getSymbol(currency.iso3),
-              };
-            }
-          );
+          const filteredData = data.filter((currency: CurrencyData) => requiredCurrencies.includes(currency.iso3));
+          const finalData = filteredData.map((currency: CurrencyData) => ({
+            ...currency,
+            unit: currency.iso3 === "INR" ? 1 : currency.unit,
+            buy: (parseFloat(currency.buy) / (currency.unit || 1)).toFixed(2),
+            sell: (parseFloat(currency.sell) / (currency.unit || 1)).toFixed(2),
+            symbol: getSymbol(currency.iso3),
+          }));
 
           const nepaliRupee = {
             iso3: "NPR",
@@ -164,33 +119,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             symbol: "रु",
           };
 
-          const finalData = [...filteredDataWithSymbols, nepaliRupee];
-          setSelectedCurrency({
-            sell: parseFloat(nepaliRupee.sell),
-            symbol: nepaliRupee.symbol,
-          });
+          setLiveRateData([...finalData, nepaliRupee]);
+          setSelectedCurrency({ sell: 1, symbol: nepaliRupee.symbol });
           setSelectedCurrencyiso(nepaliRupee.iso3);
-          setLiveRateData(finalData);
         } else {
-          setreloaddata(!reloaddata);
+          setreloaddata((prev) => !prev);
         }
       } catch (error) {
         console.error("Error fetching live rate data:", error);
-        setreloaddata(!reloaddata);
+        setreloaddata((prev) => !prev);
       }
     };
-    liverate();
+    fetchLiveRates();
   }, [reloaddata]);
 
   useEffect(() => {
-    const details = getDeviceDetails();
-    axios
-      .get("https://api64.ipify.org?format=json")
-      .then((response) => {
-        const ip_address = response.data.ip;
-        setDeviceDetails({ ...details, ip_address });
-      })
-      .catch((error) => console.error("Error fetching IP address:", error));
+    const fetchDeviceDetails = async () => {
+      try {
+        const { data } = await axios.get("https://api64.ipify.org?format=json");
+        setDeviceDetails({ ...getDeviceDetails(), ip_address: data.ip });
+      } catch (error) {
+        console.error("Error fetching IP address:", error);
+      }
+    };
+    fetchDeviceDetails();
   }, [reloaddata]);
 
   useEffect(() => {
@@ -205,30 +157,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const sendDeviceDetailsToApi = async (deviceDetails: DeviceDetails) => {
-    if (deviceDetails) {
+  const sendDeviceDetailsToApi = async (details: DeviceDetails) => {
+    if (details) {
       try {
-        const res = await userDevice(deviceDetails);
-        console.log(res);
+        await userDevice(details);
       } catch (error) {
-        toast.error(
-          "An error occurred while trying to log in. Please try again later."
-        );
+        toast.error("An error occurred while trying to log in. Please try again later.");
         console.error("Login error:", error);
       }
     }
   };
 
-  const handleLogin = async (credentials: {
-    email: string;
-    password: string;
-    remember: boolean;
-  }) => {
+  const handleLogin = async (credentials: { email: string; password: string; remember: boolean }) => {
     try {
-      const deviceDetails = await getDeviceDetails();
-
-      const credentialsWithDeviceDetails = { ...credentials, deviceDetails };
-      const res = await loginUser(credentialsWithDeviceDetails);
+      const deviceDetails = getDeviceDetails();
+      const res = await loginUser({ ...credentials, deviceDetails });
 
       if ("error" in res) {
         const error = res.error as {
@@ -260,23 +203,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
       }
-
       if (res.data) {
-        const token = res.data?.token;
-        const remember = credentials.remember;
-        const newtoken = { ...token, remember };
-        storeToken(newtoken);
-        dispatch(setUserToken(newtoken));
+        const token = { ...res.data.token, remember: credentials.remember };
+        storeToken(token);
+        dispatch(setUserToken(token));
         toast.success("Login successful");
         setIsLoggedIn(true);
-        if (deviceDetails) {
-          sendDeviceDetailsToApi(deviceDetails);
-        }
+        sendDeviceDetailsToApi(deviceDetails);
       }
     } catch (error) {
-      toast.error(
-        "An error occurred while trying to log in. Please try again later."
-      );
+      toast.error("An error occurred while trying to log in. Please try again later.");
       console.error("Login error:", error);
     }
   };
@@ -290,27 +226,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoggedIn(false);
   };
 
-  const convertPrice = (
-    price: number
-  ): { convertedPrice: number; symbol: string } => {
+  const convertPrice = (price: number): { convertedPrice: number; symbol: string } => {
     if (selectedcurrency) {
-      const convertedPrice = parseFloat(
-        (price / selectedcurrency.sell).toFixed(2)
-      );
-      return { convertedPrice, symbol: selectedcurrency.symbol };
+      return { convertedPrice: parseFloat((price / selectedcurrency.sell).toFixed(2)), symbol: selectedcurrency.symbol };
     }
     return { convertedPrice: price, symbol: "" };
   };
 
-    useEffect(() => {
-      const { access_token } = getToken();      
-      if (status === 'authenticated' && session?.access && session?.refresh && !access_token) {
-        const token = { access: session.access, refresh: session.refresh, remember: true };
-        storeToken(token);
-        dispatch(setUserToken(token));
-        toast.success("Login successful");
-        setIsLoggedIn(true);
-      }
+  useEffect(() => {
+    const { access_token } = getToken();
+    if (status === "authenticated" && session?.access && session?.refresh && !access_token) {
+      const token = { access: session.access, refresh: session.refresh, remember: true };
+      storeToken(token);
+      dispatch(setUserToken(token));
+      toast.success("Login successful");
+      setIsLoggedIn(true);
+    }
   }, [session, status]);
 
   return (
