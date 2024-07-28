@@ -25,6 +25,7 @@ export const TableWrapper = () => {
 
     return users.slice(start, end);
   }, [page]);
+  
   return (
     <div className=" w-full flex flex-col gap-1 ">
       <Table
@@ -32,7 +33,7 @@ export const TableWrapper = () => {
         color="secondary"
         selectionMode="multiple"
         classNames={{
-          base: "max-h-[520px] overflow-scroll rounded-3xl gap-1",
+          base: "h-full overflow-scroll rounded-3xl gap-1",
           table: "min-h-[420px] gap-1",
         }}
         bottomContent={

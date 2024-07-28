@@ -65,7 +65,7 @@ export function SheetDemo() {
       <SheetContent className="border-0 w-full md:min-w-[500px] h-[98vh] top-[1vh] rounded-lg bg-neutral-950">
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
-          <SheetDescription className="text-zinc-400 text-sm bg-neutral-9000 p-3 rounded-md ">
+          <SheetDescription className="text-zinc-400 text-sm bg-neutral-900 p-3 rounded-md ">
             Make changes to your profile here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
@@ -144,9 +144,9 @@ const CartWrapper = () => {
   }, [isRefetch, refetch]);
 
   return (
-    <div className="flex flex-col gap-4 py-5">
+    <div data-lenis-prevent className="flex flex-col gap-4 py-5 max-h-[75vh] overflow-y-auto overflow-hidden mt-3">
       {isLoading ? (
-        <Spinner />
+        <Spinner color="default"/>
       ) : (
         <>
           <h1 className="text-xl">
@@ -164,7 +164,7 @@ const CartWrapper = () => {
               />
             ) : null;
           })}
-          <Card>
+          <Card className="min-h-[105px]">
             <CardBody className="flex text-sm gap-1">
               <span className="flex w-full justify-between items-center">
                 <p>Subtotal </p>
@@ -222,21 +222,21 @@ const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, 
   }, [counter, id, variantId, refetch, setCounter]);
 
   return (
-    <Card className="w-full rounded-md shadow-none bg-transparent">
+    <Card className="w-full rounded-md shadow-none bg-transparent min-h-[75px] bg-neutral-950">
       <CardBody className="flex justify-between flex-row items-center">
-        <span className="flex gap-5">
+        <span className="flex gap-5 items-center">
           <Image
             alt="nextui logo"
-            height={80}
+            height={50}
             isBlurred
             radius="md"
             src={images[0].image}
-            width={80}
-            className="max-w-[80px] max-h-[80px] w-[80px] object-cover"
+            width={50}
+            className="max-w-[50px] max-h-[50px] w-[50px] object-contain"
           />
           <span className="flex items-start flex-col gap-2 justify-between">
             <span>
-              <p className="text-lg">{truncateText(product_name, 25)}</p>
+              <p className="text-base">{truncateText(product_name, 25)}</p>
               <p className="text-sm text-zinc-400">{categoryname}</p>
             </span>
             <Button
@@ -244,17 +244,17 @@ const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, 
               color="danger"
               aria-label="Like"
               onClick={handleDelete}
-              size="sm"
+              className="max-h-[20px] max-w-[10px] p-0"
             >
-              <AiFillDelete color="#ffffffd6" size={20} />
+              <AiFillDelete color="#ffffffd6" size={10} />
             </Button>
           </span>
         </span>
-        <span className="flex justify-between gap-7 flex-col h-full">
-          <p className="text-sm bg-[#dc1158] p-1 rounded-md text-center">
+        <span className="flex justify-between flex-col h-full">
+          <p className="text-sm bg-orange-500 rounded-md text-center">
             - {getVariantData(variantsdata, "discount", variantId)} %
           </p>
-          <p className="text-lg">
+          <p className="text-base">
             {symbol} {convertedPrice}
           </p>
         </span>

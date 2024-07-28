@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { useLoginUserMutation, useUserDeviceMutation } from "@/lib/store/Service/User_Auth_Api";
 import axios from "axios";
 import { useSession, signOut } from "next-auth/react";
+import Cookies from 'js-cookie';
+
 
 interface User {
   email: string;
@@ -134,18 +136,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [reloaddata]);
 
   useEffect(() => {
-    const fetchDeviceDetails = async () => {
-      try {
-        const { data } = await axios.get("https://api64.ipify.org?format=json");
-        setDeviceDetails({ ...getDeviceDetails(), ip_address: data.ip });
-      } catch (error) {
-        console.error("Error fetching IP address:", error);
-      }
-    };
-    fetchDeviceDetails();
-  }, [reloaddata]);
-
-  useEffect(() => {
     const handleStorageChange = () => {
       const { access_token } = getToken();
       setIsLoggedIn(!!access_token);
@@ -159,12 +149,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const sendDeviceDetailsToApi = async (details: DeviceDetails) => {
     if (details) {
-      try {
-        await userDevice(details);
-      } catch (error) {
-        toast.error("An error occurred while trying to log in. Please try again later.");
-        console.error("Login error:", error);
-      }
+      const fetchDeviceDetails = async () => {
+        try {
+          const { data } = await axios.get("https://api.ipify.org?format=json");
+          const signature = Cookies.get('enclg') || "";
+          const deviceDetails = { ...details, ip_address: data.ip, signature: signature };
+          try {
+            await userDevice(deviceDetails);
+          } catch (error) {
+            toast.error("An error occurred while trying to log in. Please try again later.");
+            console.error("Login error:", error);
+          }
+        } catch (error) {
+          console.error("Error fetching IP address:", error);
+        }
+      }; 
+      fetchDeviceDetails()     
     }
   };
 

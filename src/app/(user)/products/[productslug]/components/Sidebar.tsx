@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
+  Spinner,
   Card,
   CardHeader,
   CardBody,
@@ -18,7 +19,15 @@ import { PiWarningOctagon } from "react-icons/pi";
 import { IoIosHeartEmpty } from "react-icons/io";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import {useNotifyuserMutation, useGetnotifyuserQuery} from '@/lib/store/Service/User_Auth_Api';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { toast } from "sonner";
 
+const schema = yup.object().shape({
+  email: yup.string().email('Invalid email format').required('Email is required'),
+});
 interface VariantObject {
   id: number;
   product_stripe_id: string | null;
@@ -67,8 +76,12 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [selectedVariantOutOfStock, setSelectedVariantOutOfStock] =
     useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
+  const [selectedVariant, setSelectedVariant] = useState<number | null>(null)
   const { convertPrice, isLoggedIn } = useAuth();
-
+  const [notifyuser] = useNotifyuserMutation()
+  const [notifyadded, setNotifyAdded] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
+  console.log(notifyadded)
   const handleSizeClick = (id: number, size: string | null) => {
     setSelectedSize({ id, size });
   };
@@ -122,6 +135,11 @@ const Sidebar = ({ products }: { products: Product }) => {
         setSelectedVariantOutOfStock(
           selectedVariant ? selectedVariant.stock === 0 : false
         );
+        if(selectedVariant){
+          setSelectedVariant(
+            selectedVariant.id
+          )
+        }
       } else if (variantsData) {
         setSelectedVariantOutOfStock(variantsData.stock === 0);
       }
@@ -157,6 +175,20 @@ const Sidebar = ({ products }: { products: Product }) => {
   const handleRoute = () => {
     router.push(`/collections?category=${products?.categoryname}`);
   };
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (data:any) => {
+    const actualData = {...data, variant : selectedVariant, product: products.id}
+    const res = await notifyuser(actualData);
+    if(res.data){
+    }else if(res.error){
+      toast.error('Some Thing went wrong, try again later');      
+    }
+  }
+
   return (
     <>
       <aside className="sidebar py-6 w-full sticky top-[65px] space-y-8 ">
@@ -250,6 +282,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                 $48 with 50% off
               </Chip>
             </span>
+            {selectedVariantOutOfStock && <Notify selectedVariant={selectedVariant} products={products.id} setLoading={setLoading} setNotifyAdded={setNotifyAdded}/>}
             {!selectedVariantOutOfStock ? (
               <span className="flex gap-3">
                 <Button
@@ -274,7 +307,8 @@ const Sidebar = ({ products }: { products: Product }) => {
                 )}
               </span>
             ) : (
-              <span className=" flex flex-col gap-2 py-5">
+              loading ? <span className="flex w-full h-[185px] items-center justify-center"><Spinner color="default" /></span> :
+              (<form onSubmit={handleSubmit(onSubmit)} className=" flex flex-col gap-2 py-5">
                 <span>
                   <h1 className="text-xl font-medium text-zinc-300">
                     This item is out of stock!
@@ -285,10 +319,13 @@ const Sidebar = ({ products }: { products: Product }) => {
                   </p>
                 </span>
                 <Input
+                  {...register('email')}
                   radius="sm"
                   size="md"
                   type="email"
                   placeholder="Enter your email"
+                  isDisabled={notifyadded}
+                  errorMessage={errors?.email?.message}
                 />
                 <span className="flex gap-2">
                   <Button
@@ -296,6 +333,8 @@ const Sidebar = ({ products }: { products: Product }) => {
                     radius="sm"
                     variant="flat"
                     className="w-full h-[40px] text-base"
+                    type="submit"
+                    isDisabled={notifyadded}
                   >
                     Notify me when available
                   </Button>
@@ -303,7 +342,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                     <IoIosHeartEmpty size={22} color="#fff" />
                   </Button>
                 </span>
-              </span>
+              </form> )
             )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
@@ -361,4 +400,19 @@ const Sidebar = ({ products }: { products: Product }) => {
   );
 };
 
+const Notify = ({products,selectedVariant, setNotifyAdded, setLoading}:{products:number,selectedVariant:number | null, setNotifyAdded:any, setLoading:any}) => {
+  const product = products;
+  const variant = selectedVariant;
+  const {data, isLoading, refetch} = useGetnotifyuserQuery({product,variant});
+  if(data && data.requested){
+    setNotifyAdded(true)
+  }else{
+    setNotifyAdded(false)
+  }
+  setLoading(isLoading)
+  return(
+    <>
+    </>
+  )
+}
 export default Sidebar;

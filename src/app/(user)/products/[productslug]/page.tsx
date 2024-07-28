@@ -58,32 +58,39 @@ const Product = () => {
 
   return (
     <>
-      <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}>
+      <ReactLenis
+        root
+        options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}
+      >
         <Header id={productslug} />
         {error ? (
           <ProductNotFound />
-        ) : isLoading && !product? (
+        ) : isLoading && !product ? (
           <section className="w-full h-[100vh] flex flex-col items-center justify-center">
             <Spinner color="secondary" />
           </section>
         ) : (
           <>
-        {!product ? (
-          <section className="w-full h-[100vh] flex flex-col items-center justify-center">
-            <Spinner color="secondary" />
-          </section>
-        ) :<section className="post-section !pb-2 text-gray-900 grid container mmd:grid-cols-6 min-w-[100vw] gap-4 p-5 pt-0">
-              <div className="PostCon col-span-7 mmd:col-span-4">
-                <div className="flex flex-col">
-                  <div className="postWrapper py-6 flex mmd:flex-wrap max-mmd:flex-col gap-3">
-                    {product && product.images && <Image images={product.images} />}
+            {!product ? (
+              <section className="w-full h-[100vh] flex flex-col items-center justify-center">
+                <Spinner color="secondary" />
+              </section>
+            ) : (
+              <section className="post-section !pb-2 text-gray-900 grid container mmd:grid-cols-6 min-w-[100vw] gap-4 p-5 pt-0">
+                <div className="PostCon col-span-7 mmd:col-span-4">
+                  <div className="flex flex-col">
+                    <div className="postWrapper py-6 flex mmd:flex-wrap max-mmd:flex-col gap-3">
+                      {product && product.images && (
+                        <Image images={product.images} />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="sidebarWraper mb-[4rem] w-full col-span-7 mmd:col-span-2">
-                {product && <Sidebar products={product} />}
-              </div>
-            </section>}
+                <div className="sidebarWraper mb-[4rem] w-full col-span-7 mmd:col-span-2">
+                  {product && <Sidebar products={product} />}
+                </div>
+              </section>
+            )}
             <section className="w-full h-full py-10 flex flex-col items-center justify-center">
               <h1 className="text-5xl font-bold text-center w-[450px]">
                 What people say about Nassau
@@ -93,7 +100,13 @@ const Product = () => {
                 <Reviewcards />
               </div>
             </section>
-            <RecommendedProducts />
+            {product ? (
+              <RecommendedProducts product_id={product!.id} />
+            ) : (
+              <section className="w-full h-[50vh] flex flex-col items-center justify-center">
+                <Spinner color="secondary" />
+              </section>
+            )}
           </>
         )}
       </ReactLenis>
@@ -101,8 +114,10 @@ const Product = () => {
   );
 };
 
-const RecommendedProducts = () => {
-  const { data, isLoading, error } = useRecommendedProductsViewQuery({});
+const RecommendedProducts = ({ product_id }: { product_id: number }) => {
+  const { data, isLoading, error } = useRecommendedProductsViewQuery({
+    product_id,
+  });
   const [products, setProducts] = useState<Product[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const cardsPerView = 4;

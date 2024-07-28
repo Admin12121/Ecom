@@ -22,8 +22,6 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  RadioGroup,
-  Radio,
 } from "@nextui-org/react";
 import axios from "axios";
 import DynamicForm from "@/context/FormHandler"

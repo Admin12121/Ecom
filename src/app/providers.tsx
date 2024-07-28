@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { Provider } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -27,7 +27,13 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   if (!storeRef.current) {
     storeRef.current = store();
   }
-
+  useEffect(() => {
+    fetch('/api/log-view', { method: 'POST' })
+      .catch(error => {
+        console.error('Failed to log view:', error);
+      });
+  }, []);
+  
   return (
     <NextUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>

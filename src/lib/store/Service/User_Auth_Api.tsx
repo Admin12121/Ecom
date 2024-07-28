@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getToken } from "./LocalStorageServices";
 
-const createHeaders = (isAuthRequired = false) => {
-  const headers: HeadersInit = { "Content-type": "application/json" };
+const createHeaders = (isAuthRequired = false, contentType: string = "application/json") => {
+  const headers: HeadersInit = { "Content-type": contentType };
   if (isAuthRequired) {
     const { access_token } = getToken();
     if (access_token) {
@@ -48,6 +48,13 @@ export const userAuthapi = createApi({
         headers: createHeaders(true),
       }),
     }),
+    allUsers: builder.query({
+      query: ({username, search, rowsperpage, page}) => ({
+        url: `api/accounts/admin-users/${username ? `by-username/${username}/` : ""}${buildQueryParams({ search, page_size: rowsperpage, page })}`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),        
     getLoggedUser: builder.query({
       query: () => ({
         url: "accounts/profile/",
@@ -111,12 +118,17 @@ export const userAuthapi = createApi({
       }),
     }),
     productsRegistration: builder.mutation({
-      query: (actualData) => ({
-        url: "api/products/products/",
-        method: "POST",
-        body: actualData,
-        headers: createHeaders(true),
-      }),
+      query: ( actualData ) => {
+        const { access_token } = getToken();
+        return {
+          url: "api/products/products/",
+          method: "POST",
+          body: actualData,
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
     }),
     productsView: builder.query({
       query: ({ productslug, id, search, ids, category }) => {
@@ -129,8 +141,23 @@ export const userAuthapi = createApi({
       },
     }),
     recommendedProductsView: builder.query({
-      query: () => ({
-        url: "api/products/recommendations/",
+      query: ({product_id}) => ({
+        url: `api/products/recommendations/${product_id ? `?product_id=${product_id}` : ""}`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),
+    notifyuser: builder.mutation({
+      query: (actualData) => ({
+        url: "api/products/notifyuser/",
+        method: "POST",
+        body :actualData,
+        headers: createHeaders(true),
+      }),
+    }),
+    getnotifyuser: builder.query({
+      query: ({product,variant}) => ({
+        url: `api/products/notifyuser/${buildQueryParams({ product, variant})}`,
         method: "GET",
         headers: createHeaders(true),
       }),
@@ -239,6 +266,7 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useUserDeviceMutation,
+  useAllUsersQuery,
   useGetLoggedUserQuery,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
@@ -250,6 +278,8 @@ export const {
   useProductsRegistrationMutation,
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
+  useNotifyuserMutation,
+  useGetnotifyuserQuery,
   useDeleteProductMutation,
   useCategoryViewQuery,
   useAddCategoryMutation,
