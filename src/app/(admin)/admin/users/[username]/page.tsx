@@ -12,7 +12,7 @@ import { useAllUsersQuery } from "@/lib/store/Service/User_Auth_Api";
 import { useParams } from "next/navigation";
 import UserDate from "./UserDate";
 
-export default function page() {
+export default function User() {
     const params = useParams<{ username: string }>();
     const username = decodeURIComponent(params.username)
 
