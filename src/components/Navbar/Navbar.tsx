@@ -17,7 +17,7 @@ import {
 } from "@nextui-org/react";
 import dynamic from "next/dynamic";
 import { AcmeLogo } from "./AcmeLogo";
-import { PlaceholdersAndVanishInput } from "../SearchBox/Search";
+import { PlaceholdersAndVanishInput } from "./SearchBox/Search";
 import Link from "next/link";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";

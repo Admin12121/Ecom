@@ -1,9 +1,9 @@
 "use client";
 import { Button } from "@nextui-org/react";
-import { CardBox } from "@/components/Card/card";
-import { GlobeDemo } from "@/components/Globe/globe";
-import Parallex from "@/components/Prallex/Parallex";
-import { InfiniteMovingCardsDemo } from "@/components/Testimonial/testimonial";
+import { CardBox } from "./Card/card";
+import { GlobeDemo } from "./Globe/globe";
+import Parallex from "./Prallex/Parallex";
+import { InfiniteMovingCardsDemo } from "./Testimonial/testimonial";
 import { useRouter } from "next/navigation";
 import Store from "./Store";
 
