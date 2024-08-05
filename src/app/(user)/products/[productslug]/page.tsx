@@ -8,7 +8,7 @@ import {
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
 } from "@/lib/store/Service/User_Auth_Api";
-import Header from "../../collections/Header/Header";
+import Header from "../../../../components/User/Collections/Header/Header";
 import Sidebar from "./components/Sidebar";
 import Image from "./components/Image";
 import DemoSlider from "./components/Slider";

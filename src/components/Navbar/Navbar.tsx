@@ -3,11 +3,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Navbar,
   NavbarBrand,
-  NavbarMenuToggle,
   NavbarContent,
   NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
@@ -69,7 +66,6 @@ interface CurrencyData {
 }
 
 export default function Nav() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const {
     isLoggedIn,
     handleLogout,
@@ -86,11 +82,6 @@ export default function Nav() {
       setCalled(false);
     }
   }, [called, isLoggedIn, router]);
-
-  const menuItems = useMemo(
-    () => ["Settings", "My Wishlist", "Help & Feedback", "Log Out"],
-    []
-  );
 
   const placeholders = useMemo(
     () => [
@@ -131,13 +122,8 @@ export default function Nav() {
     <>
       <Navbar
         className="bg-background/20 z-50"
-        onMenuOpenChange={setIsMenuOpen}
       >
         <NavbarContent>
-          <NavbarMenuToggle
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="sm:hidden"
-          />
           <NavbarBrand className="max-w-[150px]">
             <Link
               href="/"
@@ -187,25 +173,6 @@ export default function Nav() {
             <UserDropdown handleLogoutWithCall={handleLogoutWithCall} />
           )}
         </NavbarContent>
-        <NavbarMenu className="overflow-hidden">
-          {menuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                className="w-full"
-                href="#"
-              >
-                {item}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </NavbarMenu>
       </Navbar>
     </>
   );
@@ -359,7 +326,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ handleLogoutWithCall }) => 
     return email;
   }
   return (
-    <div className="items-center gap-4 hidden md:flex">
+    <div className="items-center gap-4">
       <Dropdown placement="bottom-start">
         <DropdownTrigger>
           {isLoading ? (
@@ -367,7 +334,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ handleLogoutWithCall }) => 
               <div>
                 <Skeleton className="flex rounded-md w-10 h-10" />
               </div>
-              <div className="w-20 flex flex-col gap-2">
+              <div className="w-20 flex-col gap-2 hidden md:flex">
                 <Skeleton className="h-3 w-3/5 rounded-md" />
                 <Skeleton className="h-3 w-4/5 rounded-md" />
               </div>
@@ -383,7 +350,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ handleLogoutWithCall }) => 
                 }}
                 src={user?.profile ? user?.profile : ""}
               />
-              <span className="flex flex-col cursor-pointer text-xs justify-center">
+              <span className="flex-col cursor-pointer text-xs justify-center hidden md:flex">
                 <p>{user?.first_name}</p>
                 <p className="text-default-500">
                   {user?.email ? truncateEmail(user.email) : ""}

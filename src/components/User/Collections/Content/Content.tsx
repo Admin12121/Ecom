@@ -1,8 +1,11 @@
-import { CardBox } from "../Card/card";
+import CardBox  from "../Card/card";
 import React, { useState, useEffect } from "react";
 import Header from "../Header/Header";
 import { FormData } from "@/types/product";
-import Sidebar from "./Sidebar";
+import dynamic from 'next/dynamic'
+
+const Sidebar = dynamic(() => import('./Sidebar'), { ssr: false })
+
 interface Productdata {
   count: number;
   next: string | null;
@@ -11,49 +14,10 @@ interface Productdata {
 }
 
 interface ContentProps {
-  // productState: { isActive: boolean; selectedId: number | null };
-  // setProductState: React.Dispatch<React.SetStateAction<{ isActive: boolean; selectedId: number | null }>>;
   params?: string;
   productdata: Productdata;
 }
-interface Event {
-  id: number;
-  img: string;
-}
-const data: Event[] = [
-  {
-    id: 1,
-    img: "/product1.png",
-  },
-  {
-    id: 2,
-    img: "/product.png",
-  },
-  {
-    id: 3,
-    img: "/product2.png",
-  },
-  {
-    id: 4,
-    img: "/product.png",
-  },
-  {
-    id: 5,
-    img: "/product1.png",
-  },
-  {
-    id: 6,
-    img: "/product2.png",
-  },
-  {
-    id: 7,
-    img: "/product1.png",
-  },
-  {
-    id: 8,
-    img: "/product.png",
-  },
-];
+
 
 const Content: React.FC<ContentProps> = ({ params, productdata }) => {
   const [products, SetProducts] = useState<FormData[] | null>([]);

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ReactLenis, useLenis } from 'lenis/react'
 import { useCart } from '@/context/CartState';
 
-const Login = dynamic(() => import("@/components/User/Login/Login"), {ssr: false});
+const Login = dynamic(() => import("@/components/User/LoginModel/Login"), {ssr: false});
 const HomePage = dynamic(() => import("@/components/Home/Home"), {ssr: false});
 
 export default function Home() {

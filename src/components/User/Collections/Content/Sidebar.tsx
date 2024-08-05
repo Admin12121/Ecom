@@ -5,20 +5,16 @@ import {
   CheckboxGroup,
   Checkbox,
   Slider,
-  SliderValue,
-  Button,
+  SliderValue
 } from "@nextui-org/react";
 
 const Sidebar = () => {
   const itemClasses = {
     base: "py-1 w-full",
     title: "font-normal text-medium",
-    // trigger: "px-2 py-0 data-[hover=true]:bg-default-100 rounded-lg h-14 flex items-center",
     indicator: "text-medium",
     content: "text-small px-2",
   };
-  const defaultContent =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, ";
   const [value, setValue] = React.useState<SliderValue>([100, 300]);
   const [producttype, setProductType] = React.useState<string[]>(["all"]);
   const [size, setSize] = React.useState<string[]>(["0-12"]);
@@ -129,77 +125,6 @@ const Sidebar = () => {
           </CheckboxGroup>
         </span>
       </AccordionItem>
-      {/* <AccordionItem
-        key="2"
-        aria-label="Product Type"
-        title="Metal"
-        className="!bg-transparent border-0"
-        style={{ boxShadow: "none" }}
-      >
-        <span className="flex flex-wrap gap-2">
-          <Button className="bg-foreground text-background" size="sm">
-            Full Gold Coted
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            Half Gold Coted
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            Brass
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            Copper
-          </Button>
-        </span>
-      </AccordionItem>
-      <AccordionItem
-        key="3"
-        aria-label="Select size"
-        title="Select size"
-        className="!bg-transparent border-0"
-        style={{ boxShadow: "none" }}
-      >
-        <span className="flex flex-wrap gap-2">
-          <Button className="bg-foreground text-background" size="sm">
-            0-12 
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            13-24
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            25-36
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            37-48
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            48-Higher
-          </Button>
-        </span>
-      </AccordionItem>            
-      <AccordionItem
-        key="1"
-        aria-label="All products"
-        title="Price"
-        className="!bg-transparent border-0"
-        style={{ boxShadow: "none" }}
-      >
-        <span className="flex flex-col gap-3">
-        <span className="flex flex-wrap gap-2">
-          <Button className="bg-foreground text-background" size="sm">
-            under $100 
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            $100 - $1000
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            $1000-$10000
-          </Button>
-          <Button className="bg-foreground text-background" size="sm">
-            Over $10000
-          </Button>
-        </span>
-        </span>
-      </AccordionItem> */}
     </Accordion>
   );
 };

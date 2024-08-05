@@ -1,27 +1,10 @@
-"use client"
-import { ReactLenis, useLenis } from 'lenis/react'
-import Sidebar from './Sidebar/Sidebar'
-import Content from './Content/Content'
-import { Login } from "@/components/User/Login/Login";
-import { useCart } from '@/context/CartState';
-import {useProductsViewQuery} from "@/lib/store/Service/User_Auth_Api"
-import { useSearchParams } from 'next/navigation';
+import React from 'react';
+import dynamic from 'next/dynamic'
 
-const Category = () => {
-  const { isOpen, onOpenChange } = useCart();
-  const searchParams = useSearchParams();
-  const category = searchParams.get('category');  
-  const {data, isLoading, refetch} = useProductsViewQuery({category})
+const Category = dynamic(() => import('@/components/User/Collections/Collection'), { ssr: false })
 
+export default function Page() {
   return (
-    <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1}}>
-      <div className="w-full min-h-[100vh] h-full flex">     
-      {/* <Sidebar /> */}
-         <Content productdata={data}/> 
-      </div>
-      <Login isOpen={isOpen} onOpenChange={onOpenChange}/>
-    </ReactLenis>
-  )
+    <Category />
+  );
 }
-
-export default Category

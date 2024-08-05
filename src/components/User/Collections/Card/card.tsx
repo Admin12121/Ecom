@@ -12,7 +12,7 @@ interface Image {
   clasName?: string;
 }
 
-export const CardBox: React.FC<Image> = ({
+const CardBox: React.FC<Image> = ({
   product,
   clasName,
 }) => {
@@ -162,3 +162,5 @@ export const CardBox: React.FC<Image> = ({
     </div>
   );
 };
+
+export default CardBox;

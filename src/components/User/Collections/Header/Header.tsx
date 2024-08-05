@@ -13,13 +13,11 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
 import Icon from "./Icon";
-import { IoColorFilter  } from "react-icons/io5";
 import { IoIosColorFilter } from "react-icons/io";
-import CategoryIcon from "./CategoryIcon";
-import FilterIcon from "./FilterIcon";
+
 
 interface ContentProps {
   id?: string;
@@ -59,18 +57,16 @@ const Header: React.FC<ContentProps> = ({ id, params, setFilters, filters }) => 
               <span>collections</span>
             )}
           </BreadcrumbItem>
-          {/* {params && <BreadcrumbItem>{params}</BreadcrumbItem>} */}
           {id && <BreadcrumbItem>{id}</BreadcrumbItem>}
         </Breadcrumbs>
       </NavbarBrand>
       {!id && (
         <NavbarContent justify="end" className="max-sm:hidden">
           <NavbarItem className="flex items-center gap-4">
-            {/* <p>Short by : </p> */}
             <Dropdown
               radius="md"
               classNames={{
-                base: "before:bg-default-200", // change arrow background
+                base: "before:bg-default-200",
                 content: "min-w-[150px] border-0 border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black",
               }}>
               <DropdownTrigger className="w-[150px] justify-start items-center">
@@ -119,16 +115,6 @@ const Header: React.FC<ContentProps> = ({ id, params, setFilters, filters }) => 
           >
             Show Filters
           </Button>
-          {/* <NavbarItem className="flex gap-2">
-            <ButtonGroup>
-              <Button isIconOnly onPress={() => SetFilter(!filter)}>
-                <CategoryIcon SetFilter={SetFilter} filter={filter} />
-              </Button>
-              <Button isIconOnly onPress={() => SetFilter(!filter)}>
-                <FilterIcon SetFilter={SetFilter} filter={filter} />
-              </Button>
-            </ButtonGroup>
-          </NavbarItem> */}
         </NavbarContent>
       )}
     </Navbar>
