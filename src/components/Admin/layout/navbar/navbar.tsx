@@ -1,12 +1,9 @@
-import { Input, Link, Navbar, NavbarContent } from "@nextui-org/react";
+import { Input, Navbar, NavbarContent } from "@nextui-org/react";
 import React from "react";
-import { FeedbackIcon } from "../../icons/navbar/feedback-icon";
-import { GithubIcon } from "../../icons/navbar/github-icon";
-import { SupportIcon } from "../../icons/navbar/support-icon";
 import useAuth from "@/context/AuthContext";
 import { SearchIcon } from "../../icons/searchicon";
 import { BurguerButton } from "./burguer-button";
-import { NotificationsDropdown } from "./notifications-dropdown";
+import NotificationsDropdown  from "./notifications-dropdown";
 import { UserDropdown } from "./user-dropdown";
 import ToggleButton from "./ToggleButton";
 import {Select, SelectItem,  Avatar,} from "@nextui-org/react";
@@ -102,12 +99,6 @@ export const NavbarWrapper = ({ children }: Props) => {
             </Select>    }                  
           <ToggleButton />
           <NotificationsDropdown />
-          {/* <Link
-            href="https://github.com/Admin12121/Dashboard"
-            target={"_blank"}
-          >
-            <GithubIcon />
-          </Link> */}
           <NavbarContent>
             <UserDropdown />
           </NavbarContent>

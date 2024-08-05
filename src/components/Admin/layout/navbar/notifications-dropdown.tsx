@@ -12,7 +12,7 @@ import { NotificationIcon } from "../../icons/navbar/notificationicon";
 import { toast } from "sonner";
 import { getToken } from "@/lib/store/Service/LocalStorageServices";
 
-export const NotificationsDropdown = () => {
+const NotificationsDropdown = () => {
   const [messages, setMessages] = useState<string[]>([]); // Explicitly type the state
   const { access_token } = getToken();
   useEffect(() => {
@@ -102,3 +102,4 @@ export const NotificationsDropdown = () => {
     </Dropdown>
   );
 };
+export default NotificationsDropdown;

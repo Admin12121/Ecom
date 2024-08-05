@@ -51,7 +51,7 @@ const getVariantData = (
   return null;
 };
 
-export function SheetDemo() {
+export default function SheetDemo() {
   const { counter } = useCart();
 
   return (

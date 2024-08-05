@@ -2,7 +2,7 @@
 import { ReactLenis, useLenis } from 'lenis/react'
 import Sidebar from './Sidebar/Sidebar'
 import Content from './Content/Content'
-import { Login } from "@/components/Login/Login";
+import { Login } from "@/components/User/Login/Login";
 import { useCart } from '@/context/CartState';
 import {useProductsViewQuery} from "@/lib/store/Service/User_Auth_Api"
 import { useSearchParams } from 'next/navigation';

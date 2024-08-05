@@ -2,8 +2,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation'
 import {animals} from "./data";
-import {Listbox, ListboxItem} from "@nextui-org/react";
-import {ListboxWrapper} from "./Auto"
 import { cn } from "./cn";
 import {useSearchPostMutation} from '@/lib/store/Service/User_Auth_Api'
 export function PlaceholdersAndVanishInput({
@@ -163,7 +161,7 @@ export function PlaceholdersAndVanishInput({
     router.push(`/collections/${value}`)
     onSubmit && onSubmit(e);
   };
-  const filteredAnimals = animals.filter(animal => animal.value.includes(value));
+  
   return (
     <span className="relative w-full">
     <form
@@ -262,16 +260,6 @@ export function PlaceholdersAndVanishInput({
         </AnimatePresence>
       </div>
     </form>
-    { value && filteredAnimals.length > 0 && <ListboxWrapper>
-        <Listbox
-          aria-label="Actions"
-          onAction={()=>{router.push('/collections');setValue('')}}
-        >
-            {filteredAnimals.map((animal) => (
-            <ListboxItem key={animal.value}>{animal.label}</ListboxItem>
-            ))}
-        </Listbox>
-    </ListboxWrapper>}
     </span>
   );
 }

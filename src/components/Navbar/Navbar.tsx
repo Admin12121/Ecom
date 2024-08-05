@@ -5,7 +5,6 @@ import {
   NavbarBrand,
   NavbarMenuToggle,
   NavbarContent,
-  useDisclosure,
   NavbarItem,
   NavbarMenu,
   NavbarMenuItem,
@@ -19,24 +18,50 @@ import {
   SelectItem,
   AvatarIcon,
 } from "@nextui-org/react";
-import {
-  ChevronDown,
-  Lock,
-  Activity,
-  Flash,
-  Server,
-  TagUser,
-  Scale,
-} from "./Icons";
+import dynamic from "next/dynamic";
 import { AcmeLogo } from "./AcmeLogo";
-import { Login } from "../Login/Login";
 import { PlaceholdersAndVanishInput } from "../SearchBox/Search";
 import Link from "next/link";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { NotificationsDropdown } from "../Admin/layout/navbar/notifications-dropdown";
-import { SheetDemo } from "./Sheet";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/User_Auth_Api";
+
+const NotificationsDropdown = dynamic(
+  () => import("../Admin/layout/navbar/notifications-dropdown"),
+  { ssr: false }
+);
+const AddtoCart = dynamic(() => import("./Sheet"), { ssr: false });
+
+interface UserDropdownProps {
+  handleLogoutWithCall: () => void;
+}
+
+interface UserData {
+  email: string;
+  profile: string | null;
+  phone: string | null;
+  username: string;
+  last_name: string;
+  first_name: string;
+  role: string;
+  gender: string | null;
+  dob: string | null;
+}
+
+interface CurrencySelectorProps {
+  liveratedata: CurrencyData[];
+  selectedcurrencyiso: string;
+  handleSelectionChange: (e: any) => void;
+}
+
+interface DropdownItemProps {
+  key: string;
+  label: string | JSX.Element;
+  color?: "default" | "danger";
+  onPress?: () => void;
+  isCustom?: boolean;
+}
+
 interface CurrencyData {
   iso3: string;
   name: string;
@@ -45,7 +70,6 @@ interface CurrencyData {
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isLoggedIn,
     handleLogout,
@@ -63,63 +87,8 @@ export default function Nav() {
     }
   }, [called, isLoggedIn, router]);
 
-  const icons = useMemo(
-    () => ({
-      chevron: <ChevronDown fill="currentColor" height={16} width={16} />,
-      scale: (
-        <Scale
-          className="text-warning"
-          fill="currentColor"
-          height={30}
-          width={30}
-        />
-      ),
-      lock: (
-        <Lock
-          className="text-success"
-          fill="currentColor"
-          height={30}
-          width={30}
-        />
-      ),
-      activity: (
-        <Activity
-          className="text-secondary"
-          fill="currentColor"
-          height={30}
-          width={30}
-        />
-      ),
-      flash: (
-        <Flash
-          className="text-primary"
-          fill="currentColor"
-          height={30}
-          width={30}
-        />
-      ),
-      server: (
-        <Server
-          className="text-success"
-          fill="currentColor"
-          height={30}
-          width={30}
-        />
-      ),
-      user: (
-        <TagUser
-          className="text-danger"
-          fill="currentColor"
-          height={30}
-          width={30}
-        />
-      ),
-    }),
-    []
-  );
-
   const menuItems = useMemo(
-    () => ["Profile", "Activity", "Settings", "Help & Feedback", "Log Out"],
+    () => ["Settings", "My Wishlist", "Help & Feedback", "Log Out"],
     []
   );
 
@@ -179,11 +148,11 @@ export default function Nav() {
               <p className="font-bold text-foreground">E-com</p>
             </Link>
           </NavbarBrand>
-            <NavbarItem>
-              <Link color="foreground" href="#">
-                Shop
-              </Link>
-            </NavbarItem>
+          <NavbarItem className="hidden sm:flex">
+            <Link color="foreground" href="#">
+              Shop
+            </Link>
+          </NavbarItem>
           <PlaceholdersAndVanishInput
             placeholders={placeholders}
             onSubmit={onSubmit}
@@ -238,17 +207,8 @@ export default function Nav() {
           ))}
         </NavbarMenu>
       </Navbar>
-      <Login isOpen={isOpen} onOpenChange={onOpenChange} />
     </>
   );
-}
-
-const AddtoCart = () => <SheetDemo />;
-
-interface CurrencySelectorProps {
-  liveratedata: CurrencyData[];
-  selectedcurrencyiso: string;
-  handleSelectionChange: (e: any) => void;
 }
 
 const CurrencySelector: React.FC<CurrencySelectorProps> = ({
@@ -328,33 +288,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   </Select>
 );
 
-interface UserDropdownProps {
-  handleLogoutWithCall: () => void;
-}
-
-interface UserData {
-  email: string;
-  profile: string | null;
-  phone: string | null;
-  username: string;
-  last_name: string;
-  first_name: string;
-  role: string;
-  gender: string | null;
-  dob: string | null;
-}
-
-interface DropdownItemProps {
-  key: string;
-  label: string | JSX.Element;
-  color?: "default" | "danger";
-  onPress?: () => void;
-  isCustom?: boolean;
-}
-
-const UserDropdown: React.FC<UserDropdownProps> = ({
-  handleLogoutWithCall,
-}) => {
+const UserDropdown: React.FC<UserDropdownProps> = ({ handleLogoutWithCall }) => {
   const router = useRouter();
   const [user, setUser] = useState<UserData>();
   const { data, isLoading } = useGetLoggedUserQuery({});
@@ -364,7 +298,6 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     }
   }, [data]);
 
-  // Custom item for "Signed in as"
   const signedInAsItem: DropdownItemProps = {
     key: "signed-in-as",
     label: (
@@ -376,63 +309,60 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     isCustom: true,
   };
 
-  // Admin panel item
   const adminPanelItem: DropdownItemProps = {
     key: "admin_panel",
     label: "Dashboard",
     color: "default",
-    onPress: () => router.push("/admin")
+    onPress: () => router.push("/admin"),
   };
 
-  // Regular menu items
   const regularItems: DropdownItemProps[] = [
     {
       key: "profile",
       label: "Settings",
       color: "default",
-      onPress: () => router.push("/settings")
+      onPress: () => router.push("/settings"),
     },
     {
       key: "configurations",
       label: "My Wishlist",
       color: "default",
-      onPress: () => {} // Add your onPress logic here
+      onPress: () => {}, // Add your onPress logic here
     },
     {
       key: "help_and_feedback",
       label: "Help & Feedback",
       color: "default",
-      onPress: () => router.push("/help")
+      onPress: () => router.push("/help"),
     },
     {
       key: "logout",
       label: "Log Out",
       color: "danger",
-      onPress: handleLogoutWithCall
-    }
+      onPress: handleLogoutWithCall,
+    },
   ];
 
-  // Construct the items list
   const items: DropdownItemProps[] = [signedInAsItem];
 
-  if (user?.role === 'Admin' || user?.role === 'Staff') {
+  if (user?.role === "Admin" || user?.role === "Staff") {
     items.push(adminPanelItem);
   }
 
   items.push(...regularItems);
 
   function truncateEmail(email: string, maxLength: number = 5): string {
-    const [username, domain] = email.split('@');
+    const [username, domain] = email.split("@");
     if (username.length > maxLength) {
       return `${username.substring(0, maxLength)}...@${domain}`;
     }
     return email;
   }
   return (
-    <div className="flex items-center gap-4">
+    <div className="items-center gap-4 hidden md:flex">
       <Dropdown placement="bottom-start">
         <DropdownTrigger>
-          {isLoading ? 
+          {isLoading ? (
             <div className="max-w-[300px] w-full flex items-center gap-2">
               <div>
                 <Skeleton className="flex rounded-md w-10 h-10" />
@@ -441,31 +371,39 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
                 <Skeleton className="h-3 w-3/5 rounded-md" />
                 <Skeleton className="h-3 w-4/5 rounded-md" />
               </div>
-            </div> :
+            </div>
+          ) : (
             <span className="flex gap-2">
-            <Avatar
-              radius="md"
-              icon={<AvatarIcon />}
-              classNames={{
-                base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] cursor-pointer",
-                icon: "text-black/80 cursor-pointer",
-              }}
-              src={user?.profile ? user?.profile : ""}
-            />
-            <span className="flex flex-col cursor-pointer text-xs justify-center">
-              <p>{user?.first_name}</p>
-              <p className="text-default-500">{user?.email ? truncateEmail(user.email) : ""}</p>
+              <Avatar
+                radius="md"
+                icon={<AvatarIcon />}
+                classNames={{
+                  base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] cursor-pointer",
+                  icon: "text-black/80 cursor-pointer",
+                }}
+                src={user?.profile ? user?.profile : ""}
+              />
+              <span className="flex flex-col cursor-pointer text-xs justify-center">
+                <p>{user?.first_name}</p>
+                <p className="text-default-500">
+                  {user?.email ? truncateEmail(user.email) : ""}
+                </p>
+              </span>
             </span>
-          </span>}
+          )}
         </DropdownTrigger>
-        <DropdownMenu aria-label="User Actions" variant="flat"  disabledKeys={["signed-in-as"]}>
-        {items.map((item) => (
+        <DropdownMenu
+          aria-label="User Actions"
+          variant="flat"
+          disabledKeys={["signed-in-as"]}
+        >
+          {items.map((item) => (
             <DropdownItem
               key={item.key}
               onPress={item.onPress}
               {...(!item.isCustom && { color: item.color })}
-              className={item.color === "danger" ? "text-danger" : ""} 
-              >
+              className={item.color === "danger" ? "text-danger" : ""}
+            >
               {item.label}
             </DropdownItem>
           ))}
@@ -474,4 +412,3 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     </div>
   );
 };
-

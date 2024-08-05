@@ -3,7 +3,7 @@ import { AcmeLogo } from "../Navbar/AcmeLogo"
 import {Image} from "@nextui-org/react";
 import NextImage from "next/image";
 
-export const Footer = () =>{
+const Footer = () =>{
     return(
         <>
         <div className="w-full">
@@ -167,3 +167,4 @@ export const Footer = () =>{
         </>
     )
 }
+export default Footer;
