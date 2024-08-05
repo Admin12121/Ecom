@@ -2,8 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
-import NextImage from "next/image";
-import styles from "../Prallex/ParallaxCard.module.css";
+import styles from "./Prallex/ParallaxCard.module.css";
 import { Image, Button } from "@nextui-org/react";
 
 const IMG_PADDING = 12;
