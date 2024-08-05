@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/sheet/Sheet";
 import { Badge } from "@nextui-org/react";
 import { IoCartOutline } from "react-icons/io5";
-import { Button, Input, Card, Spinner, CardBody, Image, Divider } from "@nextui-org/react";
+import { Button, Card, Spinner, CardBody, Image, Divider } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 import useAuth from "@/context/AuthContext";
 import { useProductsViewQuery } from "@/lib/store/Service/User_Auth_Api";
 import { FormData, Variant } from "@/types/product";
 import { useCart } from "@/context/CartState";
 import { AiFillDelete } from "react-icons/ai";
+import {useCartViewQuery, useCartPostMutation, useCartUpdateMutation, useCartDeleteMutation} from "@/lib/store/Service/User_Auth_Api"
 
 interface CartItem {
   id: number;
@@ -62,7 +63,7 @@ export function SheetDemo() {
           </Badge>
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-0 w-full md:min-w-[500px] h-[98vh] top-[1vh] rounded-lg bg-neutral-950">
+      <SheetContent className="border-0 w-[97vw] mr-[1.5vw] md:min-w-[500px] h-[98vh] top-[1vh] rounded-lg bg-neutral-950 md:mr-2">
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription className="text-zinc-400 text-sm bg-neutral-900 p-3 rounded-md ">
@@ -80,6 +81,11 @@ export function SheetDemo() {
   );
 }
 
+interface CartItem {
+  id: number;
+  variantId: number;
+}
+
 const CartWrapper = () => {
   const { isLoggedIn, convertPrice } = useAuth();
   const pathname = usePathname();
@@ -92,6 +98,8 @@ const CartWrapper = () => {
     currencySymbol: "",
   });
   const { counter } = useCart();
+  const { data: serverCartData } = useCartViewQuery({}, { skip: !isLoggedIn });
+  const [postCartItem] = useCartPostMutation();
 
   useEffect(() => {
     const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -99,6 +107,44 @@ const CartWrapper = () => {
     setIsRefetch(false);
   }, [counter]);
 
+  useEffect(() => {
+    if (isLoggedIn && Array.isArray(serverCartData)) {
+      const serverCartItems = serverCartData.map((item: any) => ({
+        id: item.product,
+        variantId: item.variant,
+      }));
+
+      const localStorageCartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+      const itemsToPost: CartItem[] = localStorageCartItems.filter(
+        (localItem: CartItem) =>
+          !serverCartItems.some(
+            (serverItem: CartItem) =>
+              serverItem.id === localItem.id && serverItem.variantId === localItem.variantId
+          )
+        );        
+      if (itemsToPost.length > 0) {
+        postCartItem({ items: itemsToPost })
+      }
+
+      const newLocalStorageCartItems: CartItem[] = [...localStorageCartItems];
+      console.log("localstorage current data",newLocalStorageCartItems)
+      serverCartItems.forEach((serverItem: CartItem) => {
+        if (
+          !newLocalStorageCartItems.some(
+            (localItem: CartItem) =>
+              localItem.id === serverItem.id && localItem.variantId === serverItem.variantId
+          )
+        ) {
+          newLocalStorageCartItems.push(serverItem);
+        }
+      });
+      console.log("after filter new local storage data need to be",newLocalStorageCartItems)
+      // Update local storage and state
+      localStorage.setItem("cart", JSON.stringify(newLocalStorageCartItems));
+    }
+  }, [isLoggedIn, serverCartData, postCartItem]);
+
+  
   const productIds = useMemo(() => cartItems.map((item) => item.id), [cartItems]);
 
   const { data, isLoading, refetch } = useProductsViewQuery(
@@ -193,9 +239,10 @@ const CartWrapper = () => {
 
 const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, refetch }) => {
   const { images, product_name, categoryname, variants, id } = data;
-  const { convertPrice } = useAuth();
+  const { isLoggedIn, convertPrice } = useAuth();
   const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
   const { counter, setCounter } = useCart();
+  const [deleteCartItem] = useCartDeleteMutation();
 
   useEffect(() => {
     if (variants) {
@@ -210,19 +257,48 @@ const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, 
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   }, []);
 
-  const handleDelete = useCallback(() => {
-    const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
-    const updatedCartItems = cartItemsFromStorage.filter(
-      (item: CartItem) => !(item.id === id && item.variantId === variantId)
-    );
+  const handleDelete = useCallback(async () => {
+    try {
+      if (isLoggedIn) {
+        const response = await deleteCartItem({id}).unwrap();
+        if (response && response.msg === 'Item removed from cart') {
+          const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+          const updatedCartItems = cartItemsFromStorage.filter(
+            (item: CartItem) => !(item.id === id && item.variantId === variantId)
+          );
 
-    localStorage.setItem("cart", JSON.stringify(updatedCartItems));
-    setCounter(counter - 1);
-    refetch(true);
-  }, [counter, id, variantId, refetch, setCounter]);
+          localStorage.setItem("cart", JSON.stringify(updatedCartItems));
+          setCounter(counter - 1);
+          refetch(true);
+        }
+      }else{
+        const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+        const updatedCartItems = cartItemsFromStorage.filter(
+          (item: CartItem) => !(item.id === id && item.variantId === variantId)
+        );
+
+        localStorage.setItem("cart", JSON.stringify(updatedCartItems));
+        setCounter(counter - 1);
+        refetch(true);        
+      }
+    } catch (error) {
+      console.error("Failed to delete item from server:", error);
+    }
+  }, [counter, id, variantId, refetch, setCounter, deleteCartItem, isLoggedIn]);  
+
+  // const handleDelete = useCallback(() => {
+  //   const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+  //   const updatedCartItems = cartItemsFromStorage.filter(
+  //     (item: CartItem) => !(item.id === id && item.variantId === variantId)
+  //   );
+
+  //   localStorage.setItem("cart", JSON.stringify(updatedCartItems));
+  //   setCounter(counter - 1);
+  //   refetch(true);
+  // }, [counter, id, variantId, refetch, setCounter]);
 
   return (
-    <Card className="w-full rounded-md shadow-none bg-transparent min-h-[75px] bg-neutral-950">
+    <Card className="w-full rounded-md shadow-none bg-transparent min-h-[100px] bg-neutral-950">
       <CardBody className="flex justify-between flex-row items-center">
         <span className="flex gap-5 items-center">
           <Image
@@ -241,12 +317,12 @@ const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, 
             </span>
             <Button
               isIconOnly
-              color="danger"
+              color="secondary"
               aria-label="Like"
               onClick={handleDelete}
-              className="max-h-[20px] max-w-[10px] p-0"
+              className="max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
             >
-              <AiFillDelete color="#ffffffd6" size={10} />
+              <AiFillDelete color="#ffffffd6" size={15} />
             </Button>
           </span>
         </span>

@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation'
-import {  Autocomplete,  AutocompleteSection,  AutocompleteItem} from "@nextui-org/react";
 import {animals} from "./data";
 import {Listbox, ListboxItem} from "@nextui-org/react";
 import {ListboxWrapper} from "./Auto"
 import { cn } from "./cn";
+import {useSearchPostMutation} from '@/lib/store/Service/User_Auth_Api'
 export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
@@ -33,7 +33,7 @@ export function PlaceholdersAndVanishInput({
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState<string>("");
   const [animating, setAnimating] = useState<boolean>(false);
-
+  const [SearchPost] = useSearchPostMutation();
   const draw = useCallback(() => {
     if (!inputRef.current) return;
     const canvas = canvasRef.current;
@@ -158,6 +158,8 @@ export function PlaceholdersAndVanishInput({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     vanishAndSubmit();
+    const actualData = {keyword:value}
+    SearchPost({actualData});
     router.push(`/collections/${value}`)
     onSubmit && onSubmit(e);
   };

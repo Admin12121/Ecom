@@ -16,15 +16,19 @@ import {
 import { Button, ButtonGroup } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
 import Icon from "./Icon";
+import { IoColorFilter  } from "react-icons/io5";
+import { IoIosColorFilter } from "react-icons/io";
 import CategoryIcon from "./CategoryIcon";
 import FilterIcon from "./FilterIcon";
 
 interface ContentProps {
   id?: string;
-  params? :string;
+  params?: string;
+  setFilters? :any;
+  filters? : boolean
 }
 
-const Header: React.FC<ContentProps> = ({ id ,params}) => {
+const Header: React.FC<ContentProps> = ({ id, params, setFilters, filters }) => {
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
     new Set(["recent"])
   );
@@ -49,8 +53,10 @@ const Header: React.FC<ContentProps> = ({ id ,params}) => {
               <Link href="/collections" className="text-foreground/50">
                 All Products
               </Link>
+            ) : params ? (
+              <span>Search Result {params && `for  "${params}"`}</span>
             ) : (
-              params ? <span>Search Result {params && `for  "${params}"`}</span> : <span>collections</span>
+              <span>collections</span>
             )}
           </BreadcrumbItem>
           {/* {params && <BreadcrumbItem>{params}</BreadcrumbItem>} */}
@@ -61,10 +67,17 @@ const Header: React.FC<ContentProps> = ({ id ,params}) => {
         <NavbarContent justify="end" className="max-sm:hidden">
           <NavbarItem className="flex items-center gap-4">
             {/* <p>Short by : </p> */}
-            <Dropdown>
-              <DropdownTrigger className="w-[200px] justify-start items-center">
+            <Dropdown
+              radius="md"
+              classNames={{
+                base: "before:bg-default-200", // change arrow background
+                content: "min-w-[150px] border-0 border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black",
+              }}>
+              <DropdownTrigger className="w-[150px] justify-start items-center">
                 <Button
-                  variant="bordered"
+                  variant="flat"
+                  radius="sm"
+                  size="sm"
                   className="capitalize justify-between"
                   endContent={<Icon />}
                 >
@@ -77,20 +90,36 @@ const Header: React.FC<ContentProps> = ({ id ,params}) => {
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedKeys}
+                className="p-0"
                 onSelectionChange={(keys) =>
                   setSelectedKeys(keys as Set<string>)
                 }
+                itemClasses={{
+                  base: [
+                    "w-[150px]",
+                  ],
+                }}                
               >
-                  <DropdownItem key="recent">Recent</DropdownItem>
-                  <DropdownItem key="oldest">Oldest</DropdownItem>
-                  <DropdownItem key="view">View</DropdownItem>
-                  <DropdownItem key="rating">Rating</DropdownItem>
-                  <DropdownItem key="trending">Trending</DropdownItem>
-                  <DropdownItem key="selled">Most Selled</DropdownItem>
+                <DropdownItem key="recent">Recent</DropdownItem>
+                <DropdownItem key="oldest">Oldest</DropdownItem>
+                <DropdownItem key="view">View</DropdownItem>
+                <DropdownItem key="rating">Rating</DropdownItem>
+                <DropdownItem key="trending">Trending</DropdownItem>
+                <DropdownItem key="selled">Most Selled</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </NavbarItem>
-          <NavbarItem className="flex gap-2">
+          <Button
+            variant="flat"
+            radius="sm"
+            size="sm"
+            className="capitalize justify-between"
+            onClick={()=>setFilters(!filters)}
+            endContent={<IoIosColorFilter  size={18}/>}
+          >
+            Show Filters
+          </Button>
+          {/* <NavbarItem className="flex gap-2">
             <ButtonGroup>
               <Button isIconOnly onPress={() => SetFilter(!filter)}>
                 <CategoryIcon SetFilter={SetFilter} filter={filter} />
@@ -99,7 +128,7 @@ const Header: React.FC<ContentProps> = ({ id ,params}) => {
                 <FilterIcon SetFilter={SetFilter} filter={filter} />
               </Button>
             </ButtonGroup>
-          </NavbarItem>
+          </NavbarItem> */}
         </NavbarContent>
       )}
     </Navbar>

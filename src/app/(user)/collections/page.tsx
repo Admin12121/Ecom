@@ -16,7 +16,7 @@ const Category = () => {
   return (
     <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1}}>
       <div className="w-full min-h-[100vh] h-full flex">     
-      <Sidebar />
+      {/* <Sidebar /> */}
          <Content productdata={data}/> 
       </div>
       <Login isOpen={isOpen} onOpenChange={onOpenChange}/>

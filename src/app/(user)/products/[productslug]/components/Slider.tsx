@@ -1,5 +1,4 @@
-"use client"; // <===== REQUIRED
-
+"use client";
 import React, { useState, useEffect } from "react";
 import { CiStar } from "react-icons/ci";
 import { IoIosHeartEmpty } from "react-icons/io";
@@ -15,6 +14,7 @@ import { Image, Button } from "@nextui-org/react";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Image {
   image: string;
@@ -63,14 +63,15 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
     }
   }, [data]);
 
-  
   const getVariantData = (
     variantsData: VariantObject[] | VariantObject | null,
     key: keyof VariantObject,
     index: number = 0
   ): any => {
     if (Array.isArray(variantsData)) {
-      const variant = variantsData.find((variant) => variant.id === index);
+      console.log(variantsData);
+      // const variant = variantsData.find((variant) => variant.id === index);
+      const variant = variantsData[index];
       return variant ? variant[key] : null;
     } else if (variantsData) {
       return variantsData[key];
@@ -83,6 +84,7 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
   const handleRoute = () => {
     router.push(`/collections?category=${data?.categoryname}`);
   };
+  const productslug = data.productslug;
   return (
     <section className="w-full flex gap-5">
       <span className="relative w-[350px]flex flex-col h-[500px] m-0 bg-neutral-950 rounded-lg">
@@ -109,12 +111,14 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
             data.images.map((data: Image, index: number) => (
               <SwiperSlide key={index}>
                 <div className="h-full w-full left-0 top-0 bg-neutral-950 flex items-center justify-center">
-                  <Image
-                    src={data.image}
-                    isBlurred
-                    className=" w-full cursor-pointer h-[350px]  object-contain"
-                    alt="Image 1"
-                  />
+                  <Link href={`/products/${productslug}`}>
+                    <Image
+                      src={data.image}
+                      isBlurred
+                      className=" w-full cursor-pointer h-[350px]  object-contain"
+                      alt="Image 1"
+                    />
+                  </Link>
                 </div>
               </SwiperSlide>
             ))}
@@ -123,11 +127,15 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
           <div className="flex gap-3 items-center">
             <div className="flex flex-col cursor-pointer">
               <p className="text-sm">{data.product_name}</p>
-              <p className="text-xs text-slate-500">{data.categoryname}</p>
+              <p className="text-xs text-slate-500" onClick={handleRoute}>
+                {data.categoryname}
+              </p>
             </div>
           </div>
           <div className="flex w-full justify-between items-center">
-            <p className="text-sm">{symbol} {convertedPrice}</p>
+            <p className="text-sm">
+              {symbol} {convertedPrice}
+            </p>
             <Button
               color="default"
               variant="shadow"

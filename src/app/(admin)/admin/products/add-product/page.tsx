@@ -23,7 +23,6 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
 import DynamicForm from "@/context/FormHandler"
 import { FormValues } from "@/types/product";
 

@@ -14,6 +14,7 @@ import Image from "./components/Image";
 import DemoSlider from "./components/Slider";
 import Reviewcards from "./components/reviewcards";
 import ProductNotFound from "@/components/404/404";
+import FeatureNine from "./components/feature";
 
 interface Image {
   image: string;
@@ -76,18 +77,20 @@ const Product = () => {
                 <Spinner color="secondary" />
               </section>
             ) : (
-              <section className="post-section !pb-2 text-gray-900 grid container mmd:grid-cols-6 min-w-[100vw] gap-4 p-5 pt-0">
-                <div className="PostCon col-span-7 mmd:col-span-4">
-                  <div className="flex flex-col">
-                    <div className="postWrapper py-6 flex mmd:flex-wrap max-mmd:flex-col gap-3">
-                      {product && product.images && (
-                        <Image images={product.images} />
-                      )}
+              <section className="min-w-[100vw] justify-center items-center flex">
+                <div className="post-section !pb-2 text-gray-900 grid container mmd:grid-cols-6  gap-4 p-5 pt-0 max-w-[95rem]">
+                  <div className="PostCon col-span-7 mmd:col-span-4">
+                    <div className="flex flex-col">
+                      <div className="postWrapper py-6 flex mmd:flex-wrap max-mmd:flex-col gap-3">
+                        {product && product.images && (
+                          <Image images={product.images} />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="sidebarWraper mb-[4rem] w-full col-span-7 mmd:col-span-2">
-                  {product && <Sidebar products={product} />}
+                  <div className="sidebarWraper w-full col-span-7 mmd:col-span-2">
+                    {product && <Sidebar products={product} />}
+                  </div>                  
                 </div>
               </section>
             )}
@@ -119,65 +122,18 @@ const RecommendedProducts = ({ product_id }: { product_id: number }) => {
     product_id,
   });
   const [products, setProducts] = useState<Product[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const cardsPerView = 4;
-
   useEffect(() => {
     if (data) {
       setProducts(data);
     }
   }, [data]);
-
-  const handlePrevClick = () => {
-    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  };
-
-  const handleNextClick = () => {
-    setCurrentIndex((prevIndex) =>
-      Math.min(prevIndex + 1, data.length - cardsPerView)
-    );
-  };
-
   return (
-    <div className="slider-container relative w-full overflow-hidden">
-      <div className="px-5 w-full flex items-center">
-        <h2 className="text-2xl">You may also like</h2>
-      </div>
-      <div
-        className="slider-wrapper flex transition-transform ease-in-out duration-500"
-        style={{
-          transform: `translateX(-${currentIndex * (100 / cardsPerView)}%)`,
-        }}
-      >
-        {products.map((product, index) => (
-          <div
-            className="slider-slide flex items-center justify-center p-4"
-            key={index}
-          >
-            <DemoSlider data={product} />
-          </div>
-        ))}
-      </div>
-      <button
-        className={`absolute top-0 h-[30px] w-[30px] ${
-          currentIndex > 0 ? "bg-[#26262b]" : "bg-[#0a0a0a] text-zinc-700"
-        } flex items-center justify-center p-2 rounded-lg right-[60px]`}
-        onClick={handlePrevClick}
-      >
-        &lt;
-      </button>
-      <button
-        className={`absolute top-0 h-[30px] w-[30px] ${
-          currentIndex < products.length - cardsPerView
-            ? "bg-[#26262b]"
-            : "bg-[#0a0a0a] text-zinc-700"
-        } flex items-center justify-center p-2 rounded-lg right-[20px]`}
-        onClick={handleNextClick}
-      >
-        &gt;
-      </button>
-    </div>
+    <>
+    {isLoading ? <span className="flex items-center justify-center w-full h-[50vh]"><Spinner/></span> :
+      <FeatureNine products={products}/>}
+    </>
   );
 };
 
 export default Product;
+

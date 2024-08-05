@@ -25,7 +25,7 @@ interface SwapEventData {
   to: { slot: string };
 }
 
-export const Content = () => {
+const Content = () => {
   const [positions, setPositions] = useState<Record<string, string>>(() => {
     if (typeof window !== "undefined") {
       const savedPositions = localStorage.getItem("slotItem");
@@ -109,3 +109,4 @@ export const Content = () => {
     </div>
   );
 };
+export default Content;

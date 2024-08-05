@@ -148,9 +148,9 @@ export const CardBox: React.FC<Image> = ({
         <div className="p-6 pt-0 flex justify-between items-center">
           <Button
             color="secondary"
-            className="cursor-pointer "
+            className="cursor-pointer text-white bg-transparent"
             onClick={(event) => addToCart(product!.id, event, variantId)}
-            variant="bordered"
+            variant="flat"
           >
             Add to Cart
           </Button>

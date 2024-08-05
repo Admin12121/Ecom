@@ -1,7 +1,9 @@
-import { Content } from "@/components/Admin/home/content";
+import React from 'react';
+import dynamic from 'next/dynamic'
 
+const Content = dynamic(() => import('@/components/Admin/home/content'), { ssr: false })
 
-export default function Home() {
+export default function Page() {
   return (
     <Content />
   );

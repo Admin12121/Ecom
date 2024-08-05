@@ -81,7 +81,7 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [notifyuser] = useNotifyuserMutation()
   const [notifyadded, setNotifyAdded] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
-  console.log(notifyadded)
+
   const handleSizeClick = (id: number, size: string | null) => {
     setSelectedSize({ id, size });
   };

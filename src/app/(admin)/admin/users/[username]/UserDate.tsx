@@ -108,18 +108,20 @@ const UserDate = ({ data }: { data: Data }) => {
         selectionMode="multiple"
         defaultExpandedKeys={["1"]}
         variant="splitted"
+        style={{boxShadow:"none"}}
       >
         <AccordionItem
           key="1"
           aria-label="Personal details"
           title="Personal details"
           className="!bg-transparent"
+          style={{boxShadow:"none"}}
         >
-          <span className="flex gap-5 items-center w-full">
+          <span className="flex gap-5 items-center w-full max-md:flex-col max-md:items-start">
             <Card
               isBlurred
-              className="border-none bg-background/60 w-[400px] max-h-[200px]"
-              //   style={{ background: "#121212" }}
+              className="border-none bg-background/60 min-w-[400px] max-h-[200px]"
+              style={{boxShadow:"none"}}
             >
               <CardBody>
                 <div className="flex w-full items-center justify-between gap-5 ">
@@ -185,6 +187,7 @@ const UserDate = ({ data }: { data: Data }) => {
           aria-label="Devices"
           title="Devices"
           className="!bg-transparent"
+          style={{boxShadow:"none"}}
         >
           <span className="flex gap-5">
             {device &&
@@ -212,6 +215,7 @@ const UserDate = ({ data }: { data: Data }) => {
           aria-label="User Activity"
           title="User Activity"
           className="!bg-transparent "
+          style={{boxShadow:"none"}}
         ></AccordionItem>
       </Accordion>
     </>

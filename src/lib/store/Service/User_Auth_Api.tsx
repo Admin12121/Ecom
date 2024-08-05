@@ -14,7 +14,7 @@ const createHeaders = (isAuthRequired = false, contentType: string = "applicatio
 
 const buildQueryParams = (params: Record<string, string | number | undefined>) => {
   const queryParams = Object.entries(params)
-  .filter(([_, value]) => value !== undefined && value !== null)
+  .filter(([_, value]) => value !== undefined && value !== null && value !== "")
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
   return queryParams ? `?${queryParams}` : "";
@@ -49,15 +49,15 @@ export const userAuthapi = createApi({
       }),
     }),
     allUsers: builder.query({
-      query: ({username, search, rowsperpage, page}) => ({
-        url: `api/accounts/admin-users/${username ? `by-username/${username}/` : ""}${buildQueryParams({ search, page_size: rowsperpage, page })}`,
+      query: ({username, search, rowsperpage, page, exclude_by}) => ({
+        url: `api/accounts/admin-users/${username ? `by-username/${username}/` : ""}${buildQueryParams({ search, page_size: rowsperpage, page, exclude_by })}`,
         method: "GET",
         headers: createHeaders(true),
       }),
     }),        
     getLoggedUser: builder.query({
       query: () => ({
-        url: "accounts/profile/",
+        url: "api/accounts/users/me/",
         method: "GET",
         headers: createHeaders(true),
       }),
@@ -164,11 +164,51 @@ export const userAuthapi = createApi({
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
-        url: `products/products/?id=${id}`,
+        url: `api/products/products/?id=${id}`,
         method: "DELETE",
         headers: createHeaders(true),
       }),
     }),
+    cartView: builder.query({
+      query: ({}) => ({
+        url: `api/products/cart/`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),
+    cartPost: builder.mutation({
+      query: (actualData) => ({
+        url: `api/products/cart/`,
+        method: "POST",
+        body: actualData,         
+        headers: createHeaders(true),
+      }),
+    }),
+    cartUpdate: builder.mutation({
+      query: ({id}) => ({
+        url: `api/products/cart/${id}/`,
+        method: "PATCH",
+        headers: createHeaders(true),
+      }),
+    }),
+    cartDelete: builder.mutation({
+      query: ({id}) => ({
+        url: `api/products/cart/${id}/`,
+        method: "DELETE",         
+        headers: createHeaders(true),
+      }),
+    }),
+    searchPost: builder.mutation({
+      query: ({actualData}) => {
+        console.log("actualData:", actualData); // Log actualData
+        return {
+          url: `api/accounts/search/`,
+          method: "POST",
+          body: actualData,
+          headers: createHeaders(true),
+        };
+      },
+    }),    
     categoryView: builder.query({
       query: () => ({
         url: "api/products/categories/",
@@ -281,6 +321,11 @@ export const {
   useNotifyuserMutation,
   useGetnotifyuserQuery,
   useDeleteProductMutation,
+  useCartViewQuery,
+  useCartPostMutation,
+  useCartUpdateMutation,
+  useCartDeleteMutation,
+  useSearchPostMutation,
   useCategoryViewQuery,
   useAddCategoryMutation,
   useUpgradeCategoryMutation,
