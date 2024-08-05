@@ -34,7 +34,7 @@ import { PlaceholdersAndVanishInput } from "../SearchBox/Search";
 import Link from "next/link";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { NotificationsDropdown } from "../Admin/navbar/notifications-dropdown";
+import { NotificationsDropdown } from "../Admin/layout/navbar/notifications-dropdown";
 import { SheetDemo } from "./Sheet";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/User_Auth_Api";
 interface CurrencyData {

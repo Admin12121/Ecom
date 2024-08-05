@@ -1,16 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { TableWrapper } from "../table/table";
+import { TableWrapper } from "./table/table";
 import { CardBalance1 } from "./card-balance1";
 import { CardBalance2 } from "./card-balance2";
 import { CardBalance3 } from "./card-balance3";
 import { CardTransactions } from "./card-transactions";
 import { createSwapy } from "swapy";
-import  UiChart  from "../charts/barchart";
+// import  UiChart  from "../charts/barchart";
 
 const Chart = dynamic(
-  () => import("../charts/steam").then((mod) => mod.Steam),
+  () => import("./charts/steam").then((mod) => mod.Steam),
   { ssr: false }
 );
 
