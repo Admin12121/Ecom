@@ -120,9 +120,7 @@ export default function Nav() {
 
   return (
     <>
-      <Navbar
-        className="bg-background/20 z-50"
-      >
+      <Navbar className="bg-background/20 z-50">
         <NavbarContent>
           <NavbarBrand className="max-w-[150px]">
             <Link
@@ -255,7 +253,9 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   </Select>
 );
 
-const UserDropdown: React.FC<UserDropdownProps> = ({ handleLogoutWithCall }) => {
+const UserDropdown: React.FC<UserDropdownProps> = ({
+  handleLogoutWithCall,
+}) => {
   const router = useRouter();
   const [user, setUser] = useState<UserData>();
   const { data, isLoading } = useGetLoggedUserQuery({});
@@ -359,22 +359,24 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ handleLogoutWithCall }) => 
             </span>
           )}
         </DropdownTrigger>
-        <DropdownMenu
-          aria-label="User Actions"
-          variant="flat"
-          disabledKeys={["signed-in-as"]}
-        >
-          {items.map((item) => (
-            <DropdownItem
-              key={item.key}
-              onPress={item.onPress}
-              {...(!item.isCustom && { color: item.color })}
-              className={item.color === "danger" ? "text-danger" : ""}
-            >
-              {item.label}
-            </DropdownItem>
-          ))}
-        </DropdownMenu>
+        <div className="fixed z-50">
+          <DropdownMenu
+            aria-label="User Actions"
+            variant="flat"
+            disabledKeys={["signed-in-as"]}
+          >
+            {items.map((item) => (
+              <DropdownItem
+                key={item.key}
+                onPress={item.onPress}
+                {...(!item.isCustom && { color: item.color })}
+                className={item.color === "danger" ? "text-danger" : ""}
+              >
+                {item.label}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </div>
       </Dropdown>
     </div>
   );

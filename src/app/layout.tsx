@@ -2,7 +2,6 @@ import { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
-import ApiViewTransition  from "./apiview";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,14 +20,15 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
   return (
-    <ApiViewTransition>
-        <body className={inter.className}>
-          <Providers themeProps={{ attribute: "class", defaultTheme: "dark", children }}>
-            {children}
-          </Providers>
-        </body>
-    </ApiViewTransition>
+    <html lang="en" className="dark">
+      <body className={inter.className}>
+        <Providers
+          themeProps={{ attribute: "class", defaultTheme: "dark", children }}
+        >
+          {children}
+        </Providers>
+      </body>
+    </html>
   );
 }
