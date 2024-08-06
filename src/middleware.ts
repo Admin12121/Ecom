@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { parse } from 'cookie';
-import { jwtVerify } from 'jose'; 
+import { jwtVerify, decodeJwt  } from 'jose'; 
 
 interface MyJwtPayload {
   roles?: string[];
@@ -23,6 +23,15 @@ export async function middleware(request: NextRequest) {
 
   if (protectedPaths.includes(request.nextUrl.pathname) && (!access_token || !refresh_token)) {
     return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  if (refresh_token) {
+    const decodedRefreshToken = decodeJwt(refresh_token);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (decodedRefreshToken.exp && decodedRefreshToken.exp < currentTime) {
+      return NextResponse.redirect(new URL('/login?sessionExpired=true', request.url));
+    }
   }
 
   // Check is_admin for admin paths
