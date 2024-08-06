@@ -32,6 +32,7 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const pwa = withPWA({
   dest: 'public',
+  disable: process.env.NODE_ENV === 'development', // Disable PWA in development
 });
 
 const nextConfig = {
@@ -72,4 +73,4 @@ const nextConfig = {
   },
 };
 
-export default pwa(bundleAnalyzer(nextConfig));
+export default bundleAnalyzer(pwa(nextConfig));

@@ -22,6 +22,8 @@ import Link from "next/link";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/User_Auth_Api";
+import ShopMenu from "./HoverMenu/menu";
+
 
 const NotificationsDropdown = dynamic(
   () => import("../Admin/layout/navbar/notifications-dropdown"),
@@ -133,9 +135,7 @@ export default function Nav() {
             </Link>
           </NavbarBrand>
           <NavbarItem className="hidden sm:flex">
-            <Link color="foreground" href="#">
-              Shop
-            </Link>
+            <ShopMenu />
           </NavbarItem>
           <PlaceholdersAndVanishInput
             placeholders={placeholders}

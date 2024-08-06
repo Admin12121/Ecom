@@ -1,7 +1,7 @@
 import React from "react";
-import { Card, Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@nextui-org/react";
 
-const HomeSkleton = ({
+const LocalSkeleton = ({
   className,
   children,
 }: {
@@ -10,10 +10,9 @@ const HomeSkleton = ({
 }) => {
   return (
     <>
-      <Skeleton className={`${className}`}></Skeleton>
-      {children}
+      <Skeleton className={`${className}`}>{children}</Skeleton>
     </>
   );
 };
 
-export default HomeSkleton;
+export default LocalSkeleton;

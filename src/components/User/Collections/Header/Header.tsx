@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -17,20 +17,25 @@ import { Button } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
 import Icon from "./Icon";
 import { IoIosColorFilter } from "react-icons/io";
-
+import { useSearchParams } from "next/navigation";
 
 interface ContentProps {
   id?: string;
   params?: string;
-  setFilters? :any;
-  filters? : boolean
+  setFilters?: any;
+  filters?: boolean;
 }
 
 const Header: React.FC<ContentProps> = ({ id, params, setFilters, filters }) => {
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
-    new Set(["recent"])
-  );
-  const [filter, SetFilter] = useState<boolean>(false);
+  const searchParams = useSearchParams();  
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["recent"]));
+  const [category, setCategory] = useState<string | null>(null);
+  const [filter, setFilter] = useState<boolean>(false);
+
+  useEffect(() => {
+    const queryCategory = searchParams.get('category');
+    setCategory(queryCategory ? queryCategory : null);
+  }, [searchParams]);
 
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
@@ -52,11 +57,10 @@ const Header: React.FC<ContentProps> = ({ id, params, setFilters, filters }) => 
                 All Products
               </Link>
             ) : params ? (
-              <span>Search Result {params && `for  "${params}"`}</span>
-            ) : (
-              <span>collections</span>
-            )}
+              <span>Search Result {params && `for "${params}"`}</span>
+            ) : <>{!category ? <span>collections</span> :  <Link href="/collections" className="text-foreground/50"><span>collections</span></Link>}</>}
           </BreadcrumbItem>
+          {category && <BreadcrumbItem>{category}</BreadcrumbItem>}
           {id && <BreadcrumbItem>{id}</BreadcrumbItem>}
         </Breadcrumbs>
       </NavbarBrand>
@@ -110,8 +114,8 @@ const Header: React.FC<ContentProps> = ({ id, params, setFilters, filters }) => 
             radius="sm"
             size="sm"
             className="capitalize justify-between"
-            onClick={()=>setFilters(!filters)}
-            endContent={<IoIosColorFilter  size={18}/>}
+            onClick={() => setFilters(!filters)}
+            endContent={<IoIosColorFilter size={18} />}
           >
             Show Filters
           </Button>
