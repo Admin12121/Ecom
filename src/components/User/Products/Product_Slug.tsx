@@ -11,8 +11,23 @@ import {
 import Header from "@/components/User/Collections/Header/Header";
 import Image from "./components/Image";
 import Reviewcards from "./components/reviewcards";
+import LocalSkeleton from "@/components/Skleton/Skleton";
 
-const Sidebar = dynamic(() => import('./components/Sidebar'), { ssr: false })
+const Sidebar = dynamic(() => import('./components/Sidebar'), { 
+  loading: () => (
+  <div className="w-full h-full p-5 flex flex-col items-start gap-3">
+    <LocalSkeleton className="w-full h-[50px] rounded-xl bg-default-300"></LocalSkeleton>
+    <LocalSkeleton className="w-[50%] h-[40px] rounded-xl bg-default-300 mt-5"></LocalSkeleton>
+    <LocalSkeleton className="w-[50%] h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
+    <span className='flex gap-5 w-full'>
+      <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
+      <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
+    </span>
+    <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300 mt-5"></LocalSkeleton>
+    <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
+    <LocalSkeleton className="w-full h-[150px] rounded-xl bg-default-300"></LocalSkeleton>
+  </div>
+), ssr: false })
 const ProductNotFound = dynamic(() => import('./404/404'), { ssr: false })
 const FeatureNine = dynamic(() => import('./components/feature'), { ssr: false })
 
