@@ -21,10 +21,10 @@ const FeatureNine = ({ products }: { products: any }) => {
           <CarouselContent className="-ml-1 mt-5">
             {products.map((product: any, index: any) => (
               <div
-                className="slider-slide flex items-center justify-center p-4"
+                className={`slider-slide flex items-center justify-center p-4 ${index === 0 ? 'w-[350px] md:w-[600px]' : ''} transition duration-500 ease-in-out`}
                 key={index}
               >
-                <DemoSlider data={product} />
+                <DemoSlider data={product} width={index === 0 ? '500px' : null}/>
               </div>
             ))}
           </CarouselContent>

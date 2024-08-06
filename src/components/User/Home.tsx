@@ -8,7 +8,7 @@ const Login = dynamic(() => import("@/components/User/LoginModel/Login"), {ssr: 
 const HomePage = dynamic(() => import("@/components/Home/Home"),{
   loading: () => (
     <div className="w-[100vw] h-[100vh] p-5 flex flex-col items-center justify-center gap-3">
-      <LocalSkeleton className="rounded-lg w-full h-[70vh] w-full rounded-xl bg-default-300">
+      <LocalSkeleton className=" h-[70vh] w-full rounded-xl bg-default-300">
       </LocalSkeleton>
       <div className="w-full flex gap-3">
         <LocalSkeleton className="h-52 w-[35%] rounded-lg bg-default-200"></LocalSkeleton>

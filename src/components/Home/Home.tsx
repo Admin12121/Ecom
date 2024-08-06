@@ -2,10 +2,13 @@
 import { Button } from "@nextui-org/react";
 import { CardBox } from "./Card/card";
 import { GlobeDemo } from "./Globe/globe";
-import Parallex from "./Prallex/Parallex";
 import { InfiniteMovingCardsDemo } from "./Testimonial/testimonial";
 import { useRouter } from "next/navigation";
 import Store from "./Store";
+import Parallex from "./Prallex/Parallex";
+import LandingPage1 from "./LandingPages/LandingPage1";
+
+
 
 export default function HomePage() {
   const router = useRouter();
@@ -13,7 +16,8 @@ export default function HomePage() {
     <>
       <div className="relative h-full min-h-[100vh]">
         <div className="absolute flex-col inset-0 h-full w-full items-center dark:bg-black flex bg-white ">
-          <Parallex />
+          {/* <Parallex /> */}
+          <LandingPage1 />
         </div>
       </div>
       <div className="relative min-h-[100vh]  flex-col flex items-center justify-center pt-5">

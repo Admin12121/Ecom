@@ -11,14 +11,27 @@ import {
 } from "@/components/ui/sheet/Sheet";
 import { Badge } from "@nextui-org/react";
 import { IoCartOutline } from "react-icons/io5";
-import { Button, Card, Spinner, CardBody, Image, Divider } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  Spinner,
+  CardBody,
+  Image,
+  Divider,
+} from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 import useAuth from "@/context/AuthContext";
 import { useProductsViewQuery } from "@/lib/store/Service/User_Auth_Api";
 import { FormData, Variant } from "@/types/product";
 import { useCart } from "@/context/CartState";
 import { AiFillDelete } from "react-icons/ai";
-import {useCartViewQuery, useCartPostMutation, useCartUpdateMutation, useCartDeleteMutation} from "@/lib/store/Service/User_Auth_Api"
+import {
+  useCartViewQuery,
+  useCartPostMutation,
+  useCartUpdateMutation,
+  useCartDeleteMutation,
+} from "@/lib/store/Service/User_Auth_Api";
+import { useRouter } from "next/navigation";
 
 interface CartItem {
   id: number;
@@ -58,7 +71,12 @@ export default function SheetDemo() {
     <Sheet>
       <SheetTrigger asChild>
         <Button isIconOnly variant="light" className="overflow-visible">
-          <Badge color="secondary" id="js-shopping-bag-counter" content={counter} shape="circle">
+          <Badge
+            color="secondary"
+            id="js-shopping-bag-counter"
+            content={counter}
+            shape="circle"
+          >
             <IoCartOutline size={30} />
           </Badge>
         </Button>
@@ -100,9 +118,12 @@ const CartWrapper = () => {
   const { counter } = useCart();
   const { data: serverCartData } = useCartViewQuery({}, { skip: !isLoggedIn });
   const [postCartItem] = useCartPostMutation();
+  const router = useRouter();
 
   useEffect(() => {
-    const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cartItemsFromStorage = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
     setCartItems(cartItemsFromStorage);
     setIsRefetch(false);
   }, [counter]);
@@ -114,38 +135,47 @@ const CartWrapper = () => {
         variantId: item.variant,
       }));
 
-      const localStorageCartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+      const localStorageCartItems = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+      );
       const itemsToPost: CartItem[] = localStorageCartItems.filter(
         (localItem: CartItem) =>
           !serverCartItems.some(
             (serverItem: CartItem) =>
-              serverItem.id === localItem.id && serverItem.variantId === localItem.variantId
+              serverItem.id === localItem.id &&
+              serverItem.variantId === localItem.variantId
           )
-        );        
+      );
       if (itemsToPost.length > 0) {
-        postCartItem({ items: itemsToPost })
+        postCartItem({ items: itemsToPost });
       }
 
       const newLocalStorageCartItems: CartItem[] = [...localStorageCartItems];
-      console.log("localstorage current data",newLocalStorageCartItems)
+      console.log("localstorage current data", newLocalStorageCartItems);
       serverCartItems.forEach((serverItem: CartItem) => {
         if (
           !newLocalStorageCartItems.some(
             (localItem: CartItem) =>
-              localItem.id === serverItem.id && localItem.variantId === serverItem.variantId
+              localItem.id === serverItem.id &&
+              localItem.variantId === serverItem.variantId
           )
         ) {
           newLocalStorageCartItems.push(serverItem);
         }
       });
-      console.log("after filter new local storage data need to be",newLocalStorageCartItems)
+      console.log(
+        "after filter new local storage data need to be",
+        newLocalStorageCartItems
+      );
       // Update local storage and state
       localStorage.setItem("cart", JSON.stringify(newLocalStorageCartItems));
     }
   }, [isLoggedIn, serverCartData, postCartItem]);
 
-  
-  const productIds = useMemo(() => cartItems.map((item) => item.id), [cartItems]);
+  const productIds = useMemo(
+    () => cartItems.map((item) => item.id),
+    [cartItems]
+  );
 
   const { data, isLoading, refetch } = useProductsViewQuery(
     { ids: productIds.join(",") },
@@ -165,9 +195,14 @@ const CartWrapper = () => {
       cartItems.forEach((cartItem) => {
         const product = products.find((product) => product.id === cartItem.id);
         if (product) {
-          const price = getVariantData(product.variants || null, "price", cartItem.variantId);
+          const price = getVariantData(
+            product.variants || null,
+            "price",
+            cartItem.variantId
+          );
           if (price) {
-            const { convertedPrice, symbol: convertedSymbol } = convertPrice(price);
+            const { convertedPrice, symbol: convertedSymbol } =
+              convertPrice(price);
             total += convertedPrice;
             symbol = convertedSymbol;
           }
@@ -190,57 +225,88 @@ const CartWrapper = () => {
   }, [isRefetch, refetch]);
 
   return (
-    <div data-lenis-prevent className="flex flex-col gap-4 py-5 max-h-[75vh] overflow-y-auto overflow-hidden mt-3">
+    <div
+      data-lenis-prevent
+      className="flex flex-col gap-4 py-5 max-h-[75vh] overflow-y-auto overflow-hidden mt-3"
+    >
       {isLoading ? (
-        <Spinner color="default"/>
+        <Spinner color="default" />
       ) : (
         <>
-          <h1 className="text-xl">
-            Your cart total is {totalPriceData.currencySymbol} {totalPriceData.totalPrice}
-          </h1>
-          {products.map((product, index) => {
-            const cartItem = cartItems.find((item) => item.id === product.id);
-            return cartItem ? (
-              <CartItem
-                key={index}
-                data={{ ...product, index }}
-                variantId={cartItem.variantId}
-                setSelectedIndicator={setSelectedIndicator}
-                refetch={setIsRefetch}
-              />
-            ) : null;
-          })}
-          <Card className="min-h-[105px]">
-            <CardBody className="flex text-sm gap-1">
-              <span className="flex w-full justify-between items-center">
-                <p>Subtotal </p>
-                <p>
-                  {totalPriceData.currencySymbol} {totalPriceData.totalPrice}
+          {counter > 0 ? (
+            <>
+              <h1 className="text-xl">
+                Your cart total is {totalPriceData.currencySymbol}{" "}
+                {totalPriceData.totalPrice}
+              </h1>
+              {products.map((product, index) => {
+                const cartItem = cartItems.find(
+                  (item) => item.id === product.id
+                );
+                return cartItem ? (
+                  <CartItem
+                    key={index}
+                    data={{ ...product, index }}
+                    variantId={cartItem.variantId}
+                    setSelectedIndicator={setSelectedIndicator}
+                    refetch={setIsRefetch}
+                  />
+                ) : null;
+              })}
+              <Card className="min-h-[105px]">
+                <CardBody className="flex text-sm gap-1">
+                  <span className="flex w-full justify-between items-center">
+                    <p>Subtotal </p>
+                    <p>
+                      {totalPriceData.currencySymbol}{" "}
+                      {totalPriceData.totalPrice}
+                    </p>
+                  </span>
+                  <span className="flex w-full justify-between items-center">
+                    <p>Shipping </p>
+                    <p>Free</p>
+                  </span>
+                  <Divider className="my-1" />
+                  <span className="flex w-full justify-between items-center">
+                    <p>Total </p>
+                    <p>
+                      {totalPriceData.currencySymbol}{" "}
+                      {totalPriceData.totalPrice}
+                    </p>
+                  </span>
+                </CardBody>
+              </Card>
+            </>
+          ) : (
+            <div className="w-full h-full min-h-[70vh] flex items-center justify-center flex-col gap-2">
+              <span className="flex flex-col items-center justify-center">
+                <h1 className="text-2xl">Your cart is currently empty</h1>
+                <p className="text-md text-zinc-500">
+                  Add products to your cart
                 </p>
               </span>
-              <span className="flex w-full justify-between items-center">
-                <p>Shipping </p>
-                <p>Free</p>
-              </span>
-              <Divider className="my-1" />
-              <span className="flex w-full justify-between items-center">
-                <p>Total </p>
-                <p>
-                  {totalPriceData.currencySymbol} {totalPriceData.totalPrice}
-                </p>
-              </span>
-            </CardBody>
-          </Card>
+              <SheetClose asChild>
+                <Button className=" text-white" onClick={() => router.push("/collections")}>Shop Now</Button>
+              </SheetClose>
+            </div>
+          )}
         </>
       )}
     </div>
   );
 };
 
-const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, refetch }) => {
+const CartItem: React.FC<LinkProps> = ({
+  data,
+  variantId,
+  setSelectedIndicator,
+  refetch,
+}) => {
   const { images, product_name, categoryname, variants, id } = data;
   const { isLoggedIn, convertPrice } = useAuth();
-  const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
+  const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(
+    null
+  );
   const { counter, setCounter } = useCart();
   const [deleteCartItem] = useCartDeleteMutation();
 
@@ -250,41 +316,55 @@ const CartItem: React.FC<LinkProps> = ({ data, variantId, setSelectedIndicator, 
     }
   }, [variants]);
 
-  const variantPrice = useMemo(() => getVariantData(variantsdata, "price", variantId), [variantsdata, variantId]);
-  const { convertedPrice, symbol } = useMemo(() => convertPrice(variantPrice), [convertPrice, variantPrice]);
+  const variantPrice = useMemo(
+    () => getVariantData(variantsdata, "price", variantId),
+    [variantsdata, variantId]
+  );
+  const { convertedPrice, symbol } = useMemo(
+    () => convertPrice(variantPrice),
+    [convertPrice, variantPrice]
+  );
 
-  const truncateText = useCallback((text: string, maxLength: number): string => {
-    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-  }, []);
+  const truncateText = useCallback(
+    (text: string, maxLength: number): string => {
+      return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    },
+    []
+  );
 
   const handleDelete = useCallback(async () => {
     try {
       if (isLoggedIn) {
-        const response = await deleteCartItem({id}).unwrap();
-        if (response && response.msg === 'Item removed from cart') {
-          const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+        const response = await deleteCartItem({ id }).unwrap();
+        if (response && response.msg === "Item removed from cart") {
+          const cartItemsFromStorage = JSON.parse(
+            localStorage.getItem("cart") || "[]"
+          );
           const updatedCartItems = cartItemsFromStorage.filter(
-            (item: CartItem) => !(item.id === id && item.variantId === variantId)
+            (item: CartItem) =>
+              !(item.id === id && item.variantId === variantId)
           );
 
           localStorage.setItem("cart", JSON.stringify(updatedCartItems));
           setCounter(counter - 1);
           refetch(true);
         }
-      }else{
-        const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+      } else {
+        const cartItemsFromStorage = JSON.parse(
+          localStorage.getItem("cart") || "[]"
+        );
         const updatedCartItems = cartItemsFromStorage.filter(
           (item: CartItem) => !(item.id === id && item.variantId === variantId)
         );
 
         localStorage.setItem("cart", JSON.stringify(updatedCartItems));
         setCounter(counter - 1);
-        refetch(true);        
+        refetch(true);
       }
     } catch (error) {
       console.error("Failed to delete item from server:", error);
     }
-  }, [counter, id, variantId, refetch, setCounter, deleteCartItem, isLoggedIn]);  
+  }, [counter, id, variantId, refetch, setCounter, deleteCartItem, isLoggedIn]);
 
   // const handleDelete = useCallback(() => {
   //   const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");

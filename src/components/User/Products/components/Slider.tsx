@@ -47,9 +47,10 @@ interface Product {
 
 interface DemoSliderProps {
   data: Product;
+  width?: string | null;
 }
 
-const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
+const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
   const router = useRouter();
   const { convertPrice } = useAuth();
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
@@ -86,9 +87,9 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
   };
   const productslug = data.productslug;
   return (
-    <section className="w-full flex gap-5">
-      <span className="relative w-[350px]flex flex-col h-[500px] m-0 bg-neutral-950 rounded-lg">
-        <span className="absolute z-10 w-[320px] top-3 left-3 flex justify-between items-center h-5 ">
+    <section className="relative w-full flex gap-5">
+      <span className={`${width ? `w-full` : "w-[350px]" } relative flex flex-col h-[500px] m-0 bg-neutral-950 rounded-lg `}>
+        <span className={`absolute z-10 ${width ? `w-full ` : "w-[350px]" } px-3 top-3 flex justify-between items-center h-5 `}>
           <span className="w-[50px] h-full flex bg-zinc-300 rounded-md text-xs items-center justify-center text-black gap-1">
             4.5 <FaStar size={10} />{" "}
           </span>
@@ -104,7 +105,7 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data }) => {
           effect="fade"
           modules={[Autoplay, Navigation, Pagination, EffectFade]}
           style={{ margin: "0px" }}
-          className="w-[350px] h-[400px] rounded-lg"
+          className={`${width ? `w-full` : "w-[350px]" } h-[400px] rounded-lg`}
         >
           {data &&
             data?.images &&

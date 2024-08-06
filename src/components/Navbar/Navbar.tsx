@@ -151,11 +151,11 @@ export default function Nav() {
                 handleSelectionChange={handleSelectionChange}
               />
             )}
-            <NavbarItem>
+            {/* <NavbarItem>
               <Link color="foreground" href="/contact">
                 Contact Us
               </Link>
-            </NavbarItem>
+            </NavbarItem> */}
           </NavbarContent>
           {!isLoggedIn ? (
             <>
@@ -164,7 +164,8 @@ export default function Nav() {
               </NavbarItem>
             </>
           ) : (
-            <NotificationsDropdown />
+            <></>
+            // <NotificationsDropdown />
           )}
           <AddtoCart />
           {isLoggedIn && (

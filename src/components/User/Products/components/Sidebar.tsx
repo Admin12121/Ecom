@@ -11,6 +11,12 @@ import {
   Code,
   Input,
   Chip,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader, 
+  useDisclosure, 
 } from "@nextui-org/react";
 import { FiBox } from "react-icons/fi";
 import { CiStar } from "react-icons/ci";
@@ -81,6 +87,7 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [notifyuser] = useNotifyuserMutation()
   const [notifyadded, setNotifyAdded] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleSizeClick = (id: number, size: string | null) => {
     setSelectedSize({ id, size });
@@ -346,13 +353,6 @@ const Sidebar = ({ products }: { products: Product }) => {
             )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
-            {/* <Button
-              color="secondary"
-              variant="shadow"
-              className="w-full h-[50px]"
-            >
-              Buy Now
-            </Button> */}
             <Accordion variant="splitted" isCompact itemClasses={itemClasses}>
               <AccordionItem
                 key="1"
@@ -387,7 +387,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                       4.5 <CiStar size={14} />
                     </p>
                   </div>
-                  <Button color="default" radius="sm" variant="flat">
+                  <Button color="default" radius="sm" variant="flat" onClick={()=>{onOpen()}}>
                     Show all
                   </Button>
                 </CardBody>
@@ -395,6 +395,54 @@ const Sidebar = ({ products }: { products: Product }) => {
             </span>
           </CardFooter>
         </Card>
+        <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="auto"
+        backdrop="blur"
+        className="rounded-lg fixed md:right-0 w-[98vw] md:w-full h-[98vh] !my-[1vh] !mx-[1vw]  md:!my-0 md:!mx-2 max-md:!max-w-[100vw]"
+        classNames={{
+          closeButton: "rounded-lg border-1 border-default-300",
+        }}
+        motionProps={{
+          variants: {
+            enter: {
+              x: 0,
+              y: 0,
+              opacity: 1,
+              transition: {
+                duration: 0.3,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              x: 500,
+              y: 0,
+              opacity: 0.5,
+              transition: {
+                duration: 0.3,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="">
+              </ModalHeader>
+              <ModalBody className="px-2 gap-3 ">
+              </ModalBody>
+              <ModalFooter className="py-2">
+                <Button className="bg-foreground text-background" size="sm">
+                  Update
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>        
       </aside>
     </>
   );
