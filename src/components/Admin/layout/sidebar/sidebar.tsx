@@ -14,6 +14,9 @@ import { SidebarItem } from "./sidebar-item";
 import { SidebarMenu } from "./sidebar-menu";
 import { useSidebarContext } from "../layout-context";
 import { usePathname } from "next/navigation";
+import { PiLayoutLight } from "react-icons/pi";
+import { TbCube } from "react-icons/tb";
+import { HiOutlineCubeTransparent } from "react-icons/hi2";
 
 export const SidebarWrapper = () => {
   const pathname = usePathname();
@@ -52,6 +55,12 @@ export const SidebarWrapper = () => {
                 title="Products"
                 icon={<ProductsIcon isActive={pathname === "/admin/products"}/>}
                 href="/admin/products"
+                />
+              <SidebarItem
+                isActive={pathname === "/admin/layout"}
+                title="Layout"
+                icon={<HiOutlineCubeTransparent  size={24} strokeWidth={1.5}/>}
+                href="/admin/layout"
               />
               <SidebarItem
                 isActive={pathname === "/admin/review&comments"}

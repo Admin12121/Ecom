@@ -29,7 +29,7 @@ const LandingPage1 = () => {
   return (
     <>
       <div className="w-full h-full flex items-center justify-center p-10">
-        <div className="w-full h-full bg-red-600 rounded-3xl relative">
+        <div className="w-full h-full  rounded-3xl relative">
           {/* <Data1 /> */}
           <Swiper
             navigation
@@ -39,7 +39,6 @@ const LandingPage1 = () => {
             effect="fade"
             modules={[Autoplay, Navigation, Pagination, EffectFade]}
             style={{ margin: "0px" }}
-            // className={`${width ? `w-full` : "w-[350px]"} h-[400px] rounded-lg`}
           >
             {data &&
               data.map((data: any, index: number) => (
@@ -77,7 +76,7 @@ const Data1 = ({image}:{image:string}) => {
           </p>
           <span className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col gap-2">
             <span className="flex items-center justify-center">
-              <Button size="lg" className="rounded-3xl px-10 bg-white text-black">
+              <Button size="lg" className="rounded-3xl px-12 bg-white text-black">
                 Start Shop
               </Button>
               <Button size="lg" isIconOnly radius="full" className="bg-white text-black">

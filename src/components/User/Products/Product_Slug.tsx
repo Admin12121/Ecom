@@ -2,7 +2,6 @@
 import dynamic from 'next/dynamic'
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Spinner } from "@nextui-org/react";
 import { ReactLenis, useLenis } from "lenis/react";
 import {
   useProductsViewQuery,
@@ -11,21 +10,12 @@ import {
 import Header from "@/components/User/Collections/Header/Header";
 import Image from "./components/Image";
 import Reviewcards from "./components/reviewcards";
-import LocalSkeleton from "@/components/Skleton/Skleton";
+import {LocalSpinner} from "@/components/Skleton/Skleton";
 
 const Sidebar = dynamic(() => import('./components/Sidebar'), { 
   loading: () => (
-  <div className="w-full h-full p-5 flex flex-col items-start gap-3">
-    <LocalSkeleton className="w-full h-[50px] rounded-xl bg-default-300"></LocalSkeleton>
-    <LocalSkeleton className="w-[50%] h-[40px] rounded-xl bg-default-300 mt-5"></LocalSkeleton>
-    <LocalSkeleton className="w-[50%] h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
-    <span className='flex gap-5 w-full'>
-      <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
-      <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
-    </span>
-    <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300 mt-5"></LocalSkeleton>
-    <LocalSkeleton className="w-full h-[40px] rounded-xl bg-default-300"></LocalSkeleton>
-    <LocalSkeleton className="w-full h-[150px] rounded-xl bg-default-300"></LocalSkeleton>
+  <div className="w-full h-[50%] flex items-center justify-center">
+    <LocalSpinner/>
   </div>
 ), ssr: false })
 const ProductNotFound = dynamic(() => import('./404/404'), { ssr: false })
@@ -83,13 +73,13 @@ const Product_Slug = () => {
           <ProductNotFound />
         ) : isLoading && !product ? (
           <section className="w-full h-[100vh] flex flex-col items-center justify-center">
-            <Spinner color="secondary" />
+            <LocalSpinner  />
           </section>
         ) : (
           <>
             {!product ? (
               <section className="w-full h-[100vh] flex flex-col items-center justify-center">
-                <Spinner color="secondary" />
+                <LocalSpinner />
               </section>
             ) : (
               <section className="min-w-[100vw] justify-center items-center flex">
@@ -122,7 +112,7 @@ const Product_Slug = () => {
               <RecommendedProducts product_id={product!.id} />
             ) : (
               <section className="w-full h-[50vh] flex flex-col items-center justify-center">
-                <Spinner color="secondary" />
+                <LocalSpinner  />
               </section>
             )}
           </>
@@ -144,7 +134,7 @@ const RecommendedProducts = ({ product_id }: { product_id: number }) => {
   }, [data]);
   return (
     <>
-    {isLoading ? <span className="flex items-center justify-center w-full h-[50vh]"><Spinner/></span> :
+    {isLoading ? <span className="flex items-center justify-center w-full h-[50vh]"><LocalSpinner/></span> :
       <FeatureNine products={products}/>}
     </>
   );

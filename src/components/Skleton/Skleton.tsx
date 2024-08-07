@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 
 const LocalSkeleton = ({
   className,
@@ -16,3 +16,30 @@ const LocalSkeleton = ({
 };
 
 export default LocalSkeleton;
+
+
+
+ 
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={`animate-pulse rounded-md bg-muted ${className}`}
+      {...props}
+    />
+  )
+}
+ 
+export { Skeleton }
+
+
+
+function LocalSpinner() {
+  return (
+    <Spinner color="default"/>
+  )
+}
+
+export { LocalSpinner }

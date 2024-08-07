@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import Store from "./Store";
 import Parallex from "./Prallex/Parallex";
 import LandingPage1 from "./LandingPages/LandingPage1";
+import LandingPage2 from "./LandingPages/LandingPage2";
+import LandingPage3 from "./LandingPages/LandingPage3";
 
 
 
@@ -16,8 +18,7 @@ export default function HomePage() {
     <>
       <div className="relative h-full min-h-[100vh]">
         <div className="absolute flex-col inset-0 h-full w-full items-center dark:bg-black flex bg-white ">
-          {/* <Parallex /> */}
-          <LandingPage1 />
+          <LandingPage3 />
         </div>
       </div>
       <div className="relative min-h-[100vh]  flex-col flex items-center justify-center pt-5">
