@@ -1,99 +1,89 @@
+"use client";
 import React from "react";
-import { Card, CardBody, CardFooter } from "@nextui-org/react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
+import { Card, CardBody, Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
+import { Section, Container } from "@/components/costum/craft";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/costum/carousel";
+import { useGetlayoutQuery } from "@/lib/store/Service/User_Auth_Api";
+import LocalSpinner from "@/components/Skleton/Skleton";
+import {
+  LayoutSkeleton1,
+  LayoutSkeleton2,
+  LayoutSkeleton3,
+  LayoutProps,
+} from "./LayoutSkleton";
+
+const COMPONENT_MAP: { [key: string]: React.FC<LayoutProps> } = {
+  SwiperHero: LayoutSkeleton1,
+  SingleCard: LayoutSkeleton2,
+  TransparentCard: LayoutSkeleton3,
+};
 
 function Layout() {
+  const { data, isLoading, error } = useGetlayoutQuery({});
+
   return (
-    <>
-      <div className="w-full h-full flex items-start justify-center md:justify-start flex-wrap p-5 gap-5">
-        <LayoutSkeleton1 />
-        <LayoutSkeleton2 />
-        <LayoutSkeleton3 />
-      </div>
-    </>
+    <div className="p-5">
+      <span>
+        <Breadcrumbs>
+          <BreadcrumbItem>Layouts</BreadcrumbItem>
+        </Breadcrumbs>
+      </span>
+      <Section className="md:py-0 py-0">
+        {isLoading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <LocalSpinner />
+          </div>
+        ) : (
+          <Container className="p-0 sm:p-0 pt-5 md:pt-10">
+            <Carousel className="w-full">
+              <CarouselContent className="px-5 -ml-1 mt-5 flex gap-3">
+                {data &&
+                  data.map((layout: LayoutProps, index: number) => {
+                    const LayoutComponent =
+                      COMPONENT_MAP[
+                        layout.name as keyof typeof COMPONENT_MAP
+                      ] || CustomLayout;
+                    return <LayoutComponent key={index} {...layout} />;
+                  })}
+                <CreateLayout />
+              </CarouselContent>
+              <CarouselPrevious className="absolute top-0 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[60px] left-auto" />
+              <CarouselNext className="absolute top-0 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[20px]" />
+            </Carousel>
+          </Container>
+        )}
+      </Section>
+    </div>
   );
 }
 
 export default Layout;
 
-const LayoutSkeleton1 = () => {
+const CreateLayout = () => {
   return (
     <>
       <span className="flex flex-col items-start justify-start flex-wrap gap-2">
-        <Card className="w-[80vw] sm:w-[26vw] mmd:w-[25vw]   h-[250px] rounded-xl bg-neutral-950 cursor-pointer">
-          <CardBody className="w-full h-full flex flex-col items-start justify-start flex-wrap">
-            <div className="relative overflow-hidden w-full h-full rounded-xl bg-default-300">
-              <span className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-10 flex items-center justify-between px-3">
-                <span className="bg-neutral-800 rounded-md p-1 cursor-pointer">
-                  <IoIosArrowBack />
-                </span>
-                <span className="bg-neutral-800 rounded-md p-1 cursor-pointer">
-                  <IoIosArrowForward />
-                </span>
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-5 flex items-center justify-start px-3 ">
-                <span className="w-10  h-2 bg-neutral-800 rounded-md flex items-center justify-start px-1 gap-1">
-                  <span className="w-4 h-1 bg-white flex rounded-md"></span>
-                  <span className="w-1 h-1 bg-white flex rounded-md"></span>
-                  <span className="w-1 h-1 bg-white flex rounded-md"></span>
-                </span>
-              </span>
-            </div>
-          </CardBody>
+        <Card className="w-[350px] h-[250px] mr-5 rounded-xl bg-neutral-950 cursor-pointer flex items-center justify-center">
+          <p>Create Layout</p>
         </Card>
-        <span>
-          <h1 className="text-lg">Swiper Hero</h1>
-        </span>
       </span>
     </>
   );
 };
 
-const LayoutSkeleton2 = () => {
+const CustomLayout = () => {
   return (
-    <span className="flex flex-col items-start justify-start flex-wrap gap-2">
-      <Card className="w-[80vw] sm:w-[26vw] mmd:w-[25vw]  h-[250px] rounded-xl bg-neutral-950 cursor-pointer">
-        <CardBody className="w-full h-full flex flex-col items-start justify-start flex-wrap ">
-          <span className="w-full h-full relative bg-default-300 rounded-xl overflow-hidden">
-            <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/20 to-transparent">
-              <span className="absolute left-2 top-2 bg-neutral-800 h-3 w-12 rounded-md"></span>
-              <span className="absolute right-2 top-2 bg-neutral-800 h-3 w-20 rounded-md"></span>
-              <span className="absolute bottom-0 left-0 h-7 w-full flex items-center justify-center">
-                <span className="w-10 h-3 bg-white rounded-md flex items-center justify-start px-1 gap-1"></span>
-                <span className="w-3 h-3 bg-white rounded-md flex items-center justify-start px-1 gap-1"></span>
-              </span>
-            </span>
-          </span>
-        </CardBody>
-      </Card>
-      <span>
-          <h1 className="text-lg">Single Card</h1>
-        </span>
-    </span>
-  );
-};
-
-const LayoutSkeleton3 = () => {
-  return (
-    <span className="flex flex-col items-start justify-start flex-wrap gap-2">
-      <Card className="w-[80vw] sm:w-[26vw] mmd:w-[25vw]  h-[250px] rounded-xl bg-neutral-950 cursor-pointer">
-        <CardBody className="w-full h-full flex flex-col items-start justify-start flex-wrap ">
-          <span className="w-full h-full relative rounded-xl overflow-hidden">
-            <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/20 to-transparent">
-              <span className="absolute left-2 top-2 bg-neutral-800 h-3 w-12 rounded-md"></span>
-              <span className="absolute right-2 top-2 bg-neutral-800 h-3 w-20 rounded-md"></span>
-              <span className="absolute bottom-0 left-0 h-7 w-full flex items-center justify-center">
-                <span className="w-10 h-3 bg-white rounded-md flex items-center justify-start px-1 gap-1"></span>
-                <span className="w-3 h-3 bg-white rounded-md flex items-center justify-start px-1 gap-1"></span>
-              </span>
-            </span>
-          </span>
-        </CardBody>
-      </Card>
-      <span>
-          <h1 className="text-lg">Transparent Card</h1>
-        </span>
-    </span>
+    <>
+      <span className="flex flex-col items-start justify-start flex-wrap gap-2">
+        <Card className="w-[350px] h-[250px] mr-5 rounded-xl bg-neutral-950 cursor-pointer flex items-center justify-center"></Card>
+      </span>
+    </>
   );
 };

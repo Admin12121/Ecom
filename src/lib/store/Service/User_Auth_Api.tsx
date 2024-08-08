@@ -299,6 +299,13 @@ export const userAuthapi = createApi({
         headers: createHeaders(true),
       }),
     }),
+    getlayout: builder.query({
+      query: () => ({
+        url: `api/layout/layouts/`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),    
   }),
 });
 
@@ -338,4 +345,5 @@ export const {
   useAddRedeemCodeMutation,
   useDeleteRedeemCodeMutation,
   useUpdateRedeemCodeMutation,
+  useGetlayoutQuery,
 } = userAuthapi;
