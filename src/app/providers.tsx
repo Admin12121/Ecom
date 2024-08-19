@@ -10,7 +10,7 @@ import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
 import { CartProvider } from "@/context/CartState";
 import { Spinner } from "@nextui-org/react";
-// import Curve from "./components/Animation/page";
+
 import { SessionProvider, getSession } from "next-auth/react";
 const AuthProvider = dynamic(
   () => import("@/context/AuthContext").then((mod) => mod.AuthProvider),

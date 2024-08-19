@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@nextui-org/react";
 import { GoArrowUpRight } from "react-icons/go";
@@ -11,18 +10,21 @@ const LandingPage3 = () => {
           src="/product2.png"
           alt="image"
           fill
+          priority 
           className="object-contain rounded-3xl !top-[5%] !left-1/2 !-translate-x-full !w-[45vw] md:!w-[350px] blur-[1px]"
         />
         <Image
           src="/product.png"
           alt="image"
           fill
+          priority 
           className="object-contain rounded-3xl z-10"
         />
         <Image
           src="/product1.png"
           alt="image"
           fill
+          priority 
           className="object-contain rounded-3xl !top-[5%] !w-[45vw] md:!w-[350px] !left-1/2 blur-[1px]"
         />
       </div>

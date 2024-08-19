@@ -709,6 +709,7 @@ const DeleteModal = ({
     </section>
   );
 };
+
 const gender = [
   {
     key: "male",

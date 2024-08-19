@@ -300,8 +300,8 @@ export const userAuthapi = createApi({
       }),
     }),
     getlayout: builder.query({
-      query: () => ({
-        url: `api/layout/layouts/`,
+      query: ({layoutslug}) => ({
+        url: `api/layout/layouts/${layoutslug ? `?layout_slug=${layoutslug}` : ""}`,
         method: "GET",
         headers: createHeaders(true),
       }),
