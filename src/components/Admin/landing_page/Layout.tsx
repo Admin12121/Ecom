@@ -52,7 +52,7 @@ function Layout() {
                       ] || CustomLayout;
                     return <LayoutComponent key={index} {...layout} />;
                   })}
-                <CreateLayout />
+                {/* <CreateLayout /> */}
               </CarouselContent>
               <CarouselPrevious className="absolute top-0 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[60px] left-auto" />
               <CarouselNext className="absolute top-0 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[20px]" />
@@ -65,18 +65,6 @@ function Layout() {
 }
 
 export default Layout;
-
-const CreateLayout = () => {
-  return (
-    <>
-      <span className="flex flex-col items-start justify-start flex-wrap gap-2">
-        <Card className="w-[350px] h-[250px] mr-5 rounded-xl bg-neutral-950 cursor-pointer flex items-center justify-center">
-          <p>Create Layout</p>
-        </Card>
-      </span>
-    </>
-  );
-};
 
 const CustomLayout = () => {
   return (

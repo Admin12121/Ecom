@@ -301,11 +301,32 @@ export const userAuthapi = createApi({
     }),
     getlayout: builder.query({
       query: ({layoutslug}) => ({
-        url: `api/layout/layouts/${layoutslug ? `?layout_slug=${layoutslug}` : ""}`,
+        url: `api/layout/layouts/${layoutslug ? `${layoutslug}/` : ""}`,
         method: "GET",
         headers: createHeaders(true),
       }),
+    }),
+    createorUpdatelayout: builder.mutation({
+      query : ({layoutslug, NewFormData}) =>{
+        const { access_token } = getToken();
+        return {
+          url: `api/layout/layouts/${layoutslug}/`,
+          method: "PATCH",
+          body: NewFormData ,
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+        }
+      }
     }),    
+    updateLayoutCard : builder.mutation({
+      query:({formData, layoutslug, id}) => ({
+        url: `api/layout/layouts/${layoutslug ? `${layoutslug}/` : ""}`,
+        method: "PATCH",
+        body: formData,
+        headers : createHeaders(true)
+      })
+    })
   }),
 });
 
@@ -346,4 +367,6 @@ export const {
   useDeleteRedeemCodeMutation,
   useUpdateRedeemCodeMutation,
   useGetlayoutQuery,
+  useCreateorUpdatelayoutMutation,
+  useUpdateLayoutCardMutation,
 } = userAuthapi;
