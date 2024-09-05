@@ -14,7 +14,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image, { ImageProps } from "next/image";
 import { useOutsideClick } from "./useOutsideClick";
 import { Input } from "@nextui-org/react";
-import { useUpdateLayoutCardMutation } from "@/lib/store/Service/User_Auth_Api"
+import * as yup from "yup";
+import { useUpdateLayoutCardMutation, usePostLayoutCardMutation } from "@/lib/store/Service/User_Auth_Api"
+import { useDropzone } from 'react-dropzone';
+import { toast } from "sonner";
 
 interface CarouselProps {
   items: JSX.Element[];
@@ -22,6 +25,7 @@ interface CarouselProps {
 }
 
 type Card = {
+  id: number;
   image_id: string;
   image: string;
   links: {id: number, link: string}[];
@@ -155,21 +159,32 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   );
 };
 
+
+const linkSchema = yup.object().shape({
+  link: yup.string().url("Invalid URL").required("Link is required"),
+});
+
+const titleSchema = yup.object().shape({
+  title: yup.string().required("Title is required"),
+});
+
+
 export const Card = ({
   card,
   index,
   slug,
+  refetch,
   layout = false,
 }: {
   card: Card;
   slug: string;
   index: number;
+  refetch: any;
   layout?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { onCardClose, currentIndex } = useContext(CarouselContext);
-
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -198,9 +213,38 @@ export const Card = ({
     onCardClose(index);
   };
 
+  const handleUpdate = async (data: any, type: 'link' | 'title', id: number) => {
+    await updateLayoutCard({
+      formData:data,
+      layoutslug: slug,
+      [`${type}_id`]: id,
+    });
+    refetch();
+  };
+
+  const [updateLayoutCard] = useUpdateLayoutCardMutation();
+
+  const onDrop = async (acceptedFiles:any) => {
+    const file = acceptedFiles[0];
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await updateLayoutCard({ formData, layoutslug: slug, image_id: card.id });
+    if (response.data){
+      refetch();
+      toast.success("Image updated successfully");
+    }else{
+      toast.error("Failed to update image");
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+
+
   return (
     <>
-      <AnimatePresence>
+     <AnimatePresence>
         {open && (
           <motion.div layoutId={layout ? `card-${card.image_id}` : undefined} className="fixed inset-0 h-screen z-50 overflow-auto">
             <motion.div
@@ -229,38 +273,61 @@ export const Card = ({
               >
                 {slug}
               </motion.p>
-              <div className="py-10">
-                <motion.span layoutId={layout ? `image-${card.image_id}` : undefined} className="w-full mb-5 relative h-[500px] p-1 flex rounded-md overflow-hidden">
-                  <Image
-                    className={cn(
-                      "transition duration-300 w-full h-[500px] object-contain"
-                    )}
-                    src={card.image}
-                    decoding="async"
-                    fill 
-                    quality={100}
-                    priority
-                    alt={"Background of a beautiful view"}
-                  />
-                </motion.span>
-                <span className="flex flex-col gap-2">
-                  {card.link_no != card.links.length && <Input size="sm" type="email" label="Email" />}
-                  {card.links.map((linkObj: { link: string }, idx: number) => (
+              <div className="py-10 flex flex-col gap-2">
+              <motion.span layoutId={layout ? `image-${card.image_id}` : undefined} className="w-full mb-5 relative h-[500px] p-1 flex rounded-md overflow-hidden">
+                <div {...getRootProps()} className="w-full h-full flex items-center justify-center rounded-md">
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p>Drop the files here ...</p>
+                  ) : (
+                    <Image
+                      className={cn(
+                        "transition duration-300 w-full h-[500px] object-contain"
+                      )}
+                      src={card.image}
+                      decoding="async"
+                      fill 
+                      quality={100}
+                      priority
+                      alt={"Background of a beautiful view"}
+                    />
+                  )}
+                </div>
+              </motion.span>
+                <div className="flex flex-col gap-2">
+                  {card.link_no != card.links.length && (
                     <Input
-                        key={idx}
-                        size="sm"
-                        type="url"
-                        label="Link"
-                        value={linkObj.link}
-                      />
-                    ))}
-                </span>
-                {card.title_no != card.titles.length && <Input size="sm" type="email" label="Email" />}
-                {card.titles.map((title : {title:string}, idx) => (
-                  <p key={idx} className="text-neutral-600">
-                    {title.title}
-                  </p>
-                ))}
+                      size="sm"
+                      type="url"
+                      label="Link"
+                    />
+                  )}
+                  {card.links.map((linkObj: { id: number, link: string }, idx: number) => (
+                    <LinkForm
+                      key={idx}
+                      linkObj={linkObj}
+                      slug={slug}
+                      handleUpdate={handleUpdate}
+                    />
+                  ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                  {card.title_no != card.titles.length && (
+                    <Input
+                      size="sm"
+                      type="text"
+                      label="Title"
+                    />
+                  )}
+                  {card.titles.map((titleObj: { id: number, title: string }, idx: number) => (
+                    <TitleForm
+                      key={idx}
+                      titleObj={titleObj}
+                      slug={slug}
+                      handleUpdate={handleUpdate}
+                    />
+                  ))}
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -269,7 +336,7 @@ export const Card = ({
       <motion.button
         layoutId={layout ? `card-${card.image_id}` : undefined}
         onClick={handleOpen}
-        className="rounded-3xl bg-gray-100 dark:bg-neutral-900 h-[400px] w-56 md:h-[450px] md:w-96 overflow-hidden flex flex-col items-start justify-start relative z-10"
+        className="rounded-3xl bg-gray-100 dark:bg-neutral-900 h-[400px] w-full md:h-[450px] overflow-hidden flex flex-col items-start justify-start relative z-10"
       >
         <div className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/50 via-transparent to-transparent z-30 pointer-events-none" />
         <div className="relative z-40 p-8">
@@ -324,34 +391,74 @@ export const BlurImage = ({
   );
 };
 
-const DummyContent = () => {
+const LinkForm = ({ linkObj, slug, handleUpdate }:{linkObj:any, slug:any, handleUpdate:any}) => {
+  const [link, setLink] = useState(linkObj.link);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const handleChange = (e:any) => {
+    setLink(e.target.value);
+    setIsDirty(true);
+  };
+
+  const handleSave = () => {
+    handleUpdate({ link }, 'link', linkObj.id);
+    setIsDirty(false);
+  };
+
   return (
-    <>
-      {[...new Array(3).fill(1)].map((_, index) => {
-        return (
-          <div
-            key={"dummy-content" + index}
-            className="bg-[#F5F5F7] p-8 md:p-14 rounded-3xl mb-4"
-          >
-            <p className="text-neutral-600 text-base md:text-2xl font-sans max-w-3xl mx-auto">
-              <span className="font-bold text-neutral-700">
-                The first rule of Apple club is that you boast about Apple club.
-              </span>{" "}
-              Keep a journal, quickly jot down a grocery list, and take amazing
-              class notes. Want to convert those notes to text? No problem.
-              Langotiya jeetu ka mara hua yaar is ready to capture every
-              thought.
-            </p>
-            <Image
-              src="https://assets.aceternity.com/macbook.png"
-              alt="Macbook mockup from Aceternity UI"
-              height="500"
-              width="500"
-              className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain"
-            />
-          </div>
-        );
-      })}
-    </>
+    <div>
+      <Input
+        size="sm"
+        type="url"
+        label="Link"
+        value={link}
+        onChange={handleChange}
+      />
+      {isDirty && (
+        <button
+          className="mt-2 bg-blue-500 text-white py-1 px-2 rounded"
+          onClick={handleSave}
+        >
+          Save
+        </button>
+      )}
+    </div>
+  );
+};
+
+
+const TitleForm = ({ titleObj, slug, handleUpdate }:{titleObj:any, slug:any, handleUpdate:any}) => {
+  const [title, setTitle] = useState(titleObj.title);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const handleChange = (e:any) => {
+    setTitle(e.target.value);
+    setIsDirty(true);
+  };
+
+  const handleSave = () => {
+    handleUpdate({ title }, 'title', titleObj.id);
+    setIsDirty(false);
+  };
+
+
+  return (
+    <div>
+    <Input
+      size="sm"
+      type="url"
+      label="Title"
+      value={title}
+      onChange={handleChange}
+    />
+    {isDirty && (
+      <button
+        className="mt-2 bg-blue-500 text-white py-1 px-2 rounded"
+        onClick={handleSave}
+      >
+        Save
+      </button>
+    )}
+  </div>
   );
 };
