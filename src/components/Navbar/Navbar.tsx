@@ -23,7 +23,7 @@ import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/User_Auth_Api";
 import ShopMenu from "./HoverMenu/menu";
-
+import { IoMdHeartEmpty } from "react-icons/io";
 
 const NotificationsDropdown = dynamic(
   () => import("../Admin/layout/navbar/notifications-dropdown"),
@@ -157,6 +157,10 @@ export default function Nav() {
               </Link>
             </NavbarItem> */}
           </NavbarContent>
+          <Link href="/wishlist">
+            <IoMdHeartEmpty size={24} />
+          </Link>
+          <AddtoCart />
           {!isLoggedIn ? (
             <>
               <NavbarItem>
@@ -167,7 +171,6 @@ export default function Nav() {
             <></>
             // <NotificationsDropdown />
           )}
-          <AddtoCart />
           {isLoggedIn && (
             <UserDropdown handleLogoutWithCall={handleLogoutWithCall} />
           )}

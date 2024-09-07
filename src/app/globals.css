@@ -520,3 +520,9 @@ img {
 .transition-transform {
   transition: transform 1s ease-in-out;
 }
+
+.custom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
