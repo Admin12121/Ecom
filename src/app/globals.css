@@ -496,3 +496,27 @@ img {
   fill: #ff3f25; /* Change to your desired hover color */
 }
 
+.image-front {
+  transform: translateZ(0) scale(1);
+  z-index: 10;
+  background: #0000001e;
+}
+
+.image-back-left {
+  transform: translateX(-15%) translateZ(-200px) scale(0.7);
+  z-index: 5;
+  filter: blur(1px);
+  object-fit: contain;
+  width: 45vw;
+}
+/* object-contain rounded-3xl !top-[5%] !w-[45vw] md:!w-[350px] !left-1/2 blur-[1px] */
+.image-back-right {
+  transform: translateX(15%) translateZ(-200px) scale(0.7);
+  z-index: 5;
+  filter: blur(1px);
+  width: 45vw;
+}
+
+.transition-transform {
+  transition: transform 1s ease-in-out;
+}

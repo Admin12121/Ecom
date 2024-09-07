@@ -9,11 +9,16 @@ import Parallex from "./Prallex/Parallex";
 import LandingPage1 from "./LandingPages/LandingPage1";
 import LandingPage2 from "./LandingPages/LandingPage2";
 import LandingPage3 from "./LandingPages/LandingPage3";
-
+import {
+  useTrendingProductsViewQuery,
+} from "@/lib/store/Service/User_Auth_Api";
+import { FormData, Variant } from "@/types/product";
 
 
 export default function HomePage() {
   const router = useRouter();
+  const {data} = useTrendingProductsViewQuery({})
+
   return (
     <>
       <div className="relative h-full min-h-[100vh]">
@@ -35,10 +40,9 @@ export default function HomePage() {
           </p>
         </div>
         <div className="w-full flex-row flex p-8 items-center justify-center flex-wrap gap-x-10 gap-y-32">
-          <CardBox image="/product.png" clasName="bg-neutral-950" />
-          <CardBox image="/product1.png" />
-          <CardBox image="/product.png" clasName="bg-neutral-950" />
-          <CardBox image="/product1.png" />
+          {data?.map((product:FormData) => (
+            <CardBox key={product.id} product={product} clasName="bg-neutral-950" />
+          ))}
         </div>
         <div className="flex">
           <Button onPress={() => router.push(`/collections`)}>

@@ -369,7 +369,7 @@ export const BlurImage = ({
   layoutId,
   alt,
   ...rest
-}: ImageProps) => {
+}: ImageProps & { layoutId?: string }) => {
   const [isLoading, setLoading] = useState(true);
   return (
       <Image

@@ -147,6 +147,13 @@ export const userAuthapi = createApi({
         headers: createHeaders(true),
       }),
     }),
+    trendingProductsView: builder.query({
+      query: () => ({
+        url: "api/products/trending/",
+        method: "GET",
+        headers: createHeaders(),
+      }),
+    }),
     notifyuser: builder.mutation({
       query: (actualData) => ({
         url: "api/products/notifyuser/",
@@ -390,6 +397,7 @@ export const {
   useProductsRegistrationMutation,
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
+  useTrendingProductsViewQuery,
   useNotifyuserMutation,
   useGetnotifyuserQuery,
   useDeleteProductMutation,
