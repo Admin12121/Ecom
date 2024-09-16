@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import Header from "../Header/Header";
 import { FormData } from "@/types/product";
 import dynamic from 'next/dynamic'
+import SpinnerLocal from "@/components/ui/spinner";
 
-const Sidebar = dynamic(() => import('./Sidebar'), { ssr: false })
+const Sidebar = dynamic(() => import('./Sidebar'))
 
 interface Productdata {
   count: number;
@@ -16,10 +17,11 @@ interface Productdata {
 interface ContentProps {
   params?: string;
   productdata: Productdata;
+  isLoading: boolean;
 }
 
 
-const Content: React.FC<ContentProps> = ({ params, productdata }) => {
+const Content: React.FC<ContentProps> = ({ params, productdata , isLoading}) => {
   const [products, SetProducts] = useState<FormData[] | null>([]);
   useEffect(() => {
     SetProducts(productdata?.results);
@@ -29,8 +31,8 @@ const Content: React.FC<ContentProps> = ({ params, productdata }) => {
     <div className={`w-full main-contant`}>
       <Header params={params} setFilters={setFilters} filters={filters}/>
       <span className="flex justify-between max-md:flex-col-reverse">
-        {/* <div className="w-full pt-40 px-10 flex flex-wrap gap-x-10 gap-y-40 items-center justify-center main-contant-items"> */}
-        <div className={`pt-40 px-4 md:px-10 gap-x-10 gap-y-40 grid max-sm-2:!grid-cols-1 max-md:grid-cols-2 md:grid-cols-2 ${filters ? 'lg:grid-cols-2 xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'} 2xl:grid-cols-4 main-contant-items`}>
+        {isLoading ? <div className="w-full h-full flex items-center justify-center"><SpinnerLocal /></div> : 
+        (<div className={`pt-40 px-4 md:px-10 gap-x-10 gap-y-40 grid max-sm-2:!grid-cols-1 max-md:grid-cols-2 md:grid-cols-2 ${filters ? 'lg:grid-cols-2 xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'} 2xl:grid-cols-4 main-contant-items`}>
           {products &&
             products.map((product, index) => {
               return (
@@ -42,7 +44,7 @@ const Content: React.FC<ContentProps> = ({ params, productdata }) => {
                 </div>
               );
             })}
-        </div>
+        </div>)}
         {filters && 
           <div className="w-[500px] p-[10px] max-md:w-full max-md:top-[120px] max-md:z-50">
             <span className="flex w-full rounded-md sticky top-[130px] h-[82vh] max-md:bg-neutral-950 ">

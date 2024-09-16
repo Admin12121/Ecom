@@ -10,11 +10,11 @@ import {
   Chip,
 } from "@nextui-org/react";
 import { BsBox } from "react-icons/bs";
-import { ReactLenis, useLenis } from "lenis/react";
+// import { ReactLenis, useLenis } from "lenis/react";
 
 export default function Profile() {
   return (
-    <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}>
+    // <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}>
       <section className="flex item-center justify-center w-full h-full">
         <Card
           isBlurred
@@ -62,6 +62,6 @@ export default function Profile() {
           </CardBody>
         </Card>
       </section>
-    </ReactLenis>
+    // </ReactLenis>
   );
 }

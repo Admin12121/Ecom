@@ -13,7 +13,8 @@ import { AcmeLogo } from "@/components/Navbar/AcmeLogo";
 
 const Category = () => {
   return (
-    <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}>
+    <>
+    {/* <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}> */}
       <div className="w-full min-h-[100vh] h-full dark:bg-black justify-center items-center flex bg-white bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px]">
       <div className="absolute inset-0 w-full h-[120vh] bg-black flex items-center justify-center [mask-image:radial-gradient(800px_450px_at_top,transparent_50%,white)]"></div>
         <div className="absolute max-w-screen-xl px-4 mx-auto mt-8 sm:mt-12 sm:px-6 md:mt-16">
@@ -66,7 +67,8 @@ const Category = () => {
           </div>
         </div>
       </div>
-    </ReactLenis>
+    {/* </ReactLenis> */}
+    </>
   );
 };
 

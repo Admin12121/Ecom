@@ -11,12 +11,7 @@ import {
   Code,
   Input,
   Chip,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader, 
-  useDisclosure, 
+  useDisclosure,
 } from "@nextui-org/react";
 import { FiBox } from "react-icons/fi";
 import { CiStar } from "react-icons/ci";
@@ -25,14 +20,26 @@ import { PiWarningOctagon } from "react-icons/pi";
 import { IoIosHeartEmpty } from "react-icons/io";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import {useNotifyuserMutation, useGetnotifyuserQuery} from '@/lib/store/Service/User_Auth_Api';
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  useNotifyuserMutation,
+  useGetnotifyuserQuery,
+} from "@/lib/store/Service/User_Auth_Api";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
+import { FaStar } from "react-icons/fa6";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const Review = dynamic(()=> import('./review'))
+
 
 const schema = yup.object().shape({
-  email: yup.string().email('Invalid email format').required('Email is required'),
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
 });
 interface VariantObject {
   id: number;
@@ -82,11 +89,11 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [selectedVariantOutOfStock, setSelectedVariantOutOfStock] =
     useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
-  const [selectedVariant, setSelectedVariant] = useState<number | null>(null)
+  const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
   const { convertPrice, isLoggedIn } = useAuth();
-  const [notifyuser] = useNotifyuserMutation()
-  const [notifyadded, setNotifyAdded] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [notifyuser] = useNotifyuserMutation();
+  const [notifyadded, setNotifyAdded] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleSizeClick = (id: number, size: string | null) => {
@@ -142,10 +149,8 @@ const Sidebar = ({ products }: { products: Product }) => {
         setSelectedVariantOutOfStock(
           selectedVariant ? selectedVariant.stock === 0 : false
         );
-        if(selectedVariant){
-          setSelectedVariant(
-            selectedVariant.id
-          )
+        if (selectedVariant) {
+          setSelectedVariant(selectedVariant.id);
         }
       } else if (variantsData) {
         setSelectedVariantOutOfStock(variantsData.stock === 0);
@@ -183,18 +188,26 @@ const Sidebar = ({ products }: { products: Product }) => {
     router.push(`/collections?category=${products?.categoryname}`);
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data:any) => {
-    const actualData = {...data, variant : selectedVariant, product: products.id}
+  const onSubmit = async (data: any) => {
+    const actualData = {
+      ...data,
+      variant: selectedVariant,
+      product: products.id,
+    };
     const res = await notifyuser(actualData);
-    if(res.data){
-    }else if(res.error){
-      toast.error('Some Thing went wrong, try again later');      
+    if (res.data) {
+    } else if (res.error) {
+      toast.error("Some Thing went wrong, try again later");
     }
-  }
+  };
 
   return (
     <>
@@ -289,7 +302,14 @@ const Sidebar = ({ products }: { products: Product }) => {
                 $48 with 50% off
               </Chip>
             </span>
-            {selectedVariantOutOfStock && <Notify selectedVariant={selectedVariant} products={products.id} setLoading={setLoading} setNotifyAdded={setNotifyAdded}/>}
+            {selectedVariantOutOfStock && (
+              <Notify
+                selectedVariant={selectedVariant}
+                products={products.id}
+                setLoading={setLoading}
+                setNotifyAdded={setNotifyAdded}
+              />
+            )}
             {!selectedVariantOutOfStock ? (
               <span className="flex gap-3">
                 <Button
@@ -313,9 +333,15 @@ const Sidebar = ({ products }: { products: Product }) => {
                   </Button>
                 )}
               </span>
+            ) : loading ? (
+              <span className="flex w-full h-[185px] items-center justify-center">
+                <Spinner color="default" />
+              </span>
             ) : (
-              loading ? <span className="flex w-full h-[185px] items-center justify-center"><Spinner color="default" /></span> :
-              (<form onSubmit={handleSubmit(onSubmit)} className=" flex flex-col gap-2 py-5">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className=" flex flex-col gap-2 py-5"
+              >
                 <span>
                   <h1 className="text-xl font-medium text-zinc-300">
                     This item is out of stock!
@@ -326,7 +352,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                   </p>
                 </span>
                 <Input
-                  {...register('email')}
+                  {...register("email")}
                   radius="sm"
                   size="md"
                   type="email"
@@ -349,7 +375,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                     <IoIosHeartEmpty size={22} color="#fff" />
                   </Button>
                 </span>
-              </form> )
+              </form>
             )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
@@ -384,10 +410,18 @@ const Sidebar = ({ products }: { products: Product }) => {
                   <div className="w-full flex justify-between items-center px-1">
                     <p className="text-xs">Overall rating</p>
                     <p className="text-xs flex gap-1">
-                      4.5 <CiStar size={14} />
+                      {" "}
+                      4.5 <CiStar size={14} />{" "}
                     </p>
                   </div>
-                  <Button color="default" radius="sm" variant="flat" onClick={()=>{onOpen()}}>
+                  <Button
+                    color="default"
+                    radius="sm"
+                    variant="flat"
+                    onClick={() => {
+                      onOpen();
+                    }}
+                  >
                     Show all
                   </Button>
                 </CardBody>
@@ -395,72 +429,35 @@ const Sidebar = ({ products }: { products: Product }) => {
             </span>
           </CardFooter>
         </Card>
-        <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        placement="auto"
-        backdrop="blur"
-        className="rounded-lg fixed md:right-0 w-[98vw] md:w-full h-[98vh] !my-[1vh] !mx-[1vw]  md:!my-0 md:!mx-2 max-md:!max-w-[100vw]"
-        classNames={{
-          closeButton: "rounded-lg border-1 border-default-300",
-        }}
-        motionProps={{
-          variants: {
-            enter: {
-              x: 0,
-              y: 0,
-              opacity: 1,
-              transition: {
-                duration: 0.3,
-                ease: "easeOut",
-              },
-            },
-            exit: {
-              x: 500,
-              y: 0,
-              opacity: 0.5,
-              transition: {
-                duration: 0.3,
-                ease: "easeIn",
-              },
-            },
-          },
-        }}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="">
-              </ModalHeader>
-              <ModalBody className="px-2 gap-3 ">
-              </ModalBody>
-              <ModalFooter className="py-2">
-                <Button className="bg-foreground text-background" size="sm">
-                  Update
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>        
+        <Review isOpen={isOpen} onOpenChange={onOpenChange} slug={products.productslug}/>
       </aside>
     </>
   );
 };
 
-const Notify = ({products,selectedVariant, setNotifyAdded, setLoading}:{products:number,selectedVariant:number | null, setNotifyAdded:any, setLoading:any}) => {
+const Notify = ({
+  products,
+  selectedVariant,
+  setNotifyAdded,
+  setLoading,
+}: {
+  products: number;
+  selectedVariant: number | null;
+  setNotifyAdded: any;
+  setLoading: any;
+}) => {
   const product = products;
   const variant = selectedVariant;
-  const {data, isLoading, refetch} = useGetnotifyuserQuery({product,variant});
-  if(data && data.requested){
-    setNotifyAdded(true)
-  }else{
-    setNotifyAdded(false)
+  const { data, isLoading, refetch } = useGetnotifyuserQuery({
+    product,
+    variant,
+  });
+  if (data && data.requested) {
+    setNotifyAdded(true);
+  } else {
+    setNotifyAdded(false);
   }
-  setLoading(isLoading)
-  return(
-    <>
-    </>
-  )
-}
+  setLoading(isLoading);
+  return <></>;
+};
 export default Sidebar;

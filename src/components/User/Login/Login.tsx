@@ -1,16 +1,17 @@
 "use client";
 import React from "react";
 import dynamic from 'next/dynamic';
+import Form from './Form';
 
-import { ReactLenis, useLenis } from 'lenis/react'
+// import { ReactLenis, useLenis } from 'lenis/react'
 
 const SparklesCore = dynamic(() => import('./sparkles'), { ssr: false });
-const FormTab = dynamic(() => import('./Form'), { ssr: false });
 
 const Signup = () => {
 
   return (
-    <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1}}>
+    <>
+    {/* <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1}}> */}
       <div className="h-[40rem] w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
         <div className="w-[100vw] h-[100vh] relative">
           <SparklesCore
@@ -25,11 +26,12 @@ const Signup = () => {
         </div>
         <div className="wrapper absolute ">
           <div className="flex flex-col w-full min-w-[480px] min-h-[550px] max-sm:min-w-[400px]">
-            <FormTab/>
+            <Form/>
           </div>
         </div>
       </div>
-    </ReactLenis>
+    {/* </ReactLenis> */}
+    </>
   );
 };
 

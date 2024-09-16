@@ -92,7 +92,7 @@ export default function SheetDemo() {
         </SheetHeader>
         <CartWrapper />
         <SheetFooter>
-          <span className="w-full h-[120px] flex justify-end items-start flex-col gap-2">
+          {counter > 0 && (<span className="w-full h-[120px] flex justify-end items-start flex-col gap-2">
             <p className="text-zinc-400 text-xs">Free delivery on September 10th - 17th</p>
             <Divider className="w-full" orientation="horizontal" />
             <div className="w-full justify-end flex flex-wrap items-center gap-2">
@@ -231,9 +231,7 @@ export default function SheetDemo() {
             <Button type="submit" radius="sm" className="w-full">
               Checkout
             </Button>
-          </span>
-          {/* <SheetClose asChild>
-          </SheetClose> */}
+          </span>)}
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic'
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ReactLenis, useLenis } from "lenis/react";
+// import { ReactLenis, useLenis } from "lenis/react";
 import {
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
@@ -64,10 +64,7 @@ const Product_Slug = () => {
 
   return (
     <>
-      <ReactLenis
-        root
-        options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }}
-      >
+      {/* <ReactLenis root options={{ lerp: 0.04, duration: 1, wheelMultiplier: 1 }} > */}
         <Header id={productslug} />
         {error ? (
           <ProductNotFound />
@@ -117,7 +114,7 @@ const Product_Slug = () => {
             )}
           </>
         )}
-      </ReactLenis>
+      {/* </ReactLenis> */}
     </>
   );
 };
