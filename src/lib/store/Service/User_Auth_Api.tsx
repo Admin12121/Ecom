@@ -224,12 +224,16 @@ export const userAuthapi = createApi({
       }),
     }),
     addCategory: builder.mutation({
-      query: (actualData) => ({
-        url: "api/products/categories/",
-        method: "POST",
-        body: actualData,
-        headers: createHeaders(true),
-      }),
+      query: ({ formData }) => {
+        const { access_token } = getToken();
+        return {
+          url: "api/products/categories/",
+          method: "POST",
+          body: formData,
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+      }},
     }),
     upgradeCategory: builder.mutation({
       query: ({ NewFormData, id }) => ({

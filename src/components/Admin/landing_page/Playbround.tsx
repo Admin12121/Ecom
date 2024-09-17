@@ -27,8 +27,7 @@ interface LayoutData {
   no_image: number;
 }
 
-const Playbround = () => {
-  const params = useParams<{ layoutslug: string }>();
+const Playbround = ({params}:{params:{ layoutslug: string }}) => {
   const layoutslug = decodeURIComponent(params.layoutslug);
   const { data, refetch } = useGetlayoutQuery({ layoutslug });
   const [isSelected, setIsSelected] = React.useState(data?.active);

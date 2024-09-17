@@ -55,7 +55,6 @@ interface Product {
   id: number;
   categoryname: string;
   subcategoryname: string;
-  reviews: any[]; // Update to appropriate type if needed
   comments: any[]; // Update to appropriate type if needed
   product_name: string;
   description: string;

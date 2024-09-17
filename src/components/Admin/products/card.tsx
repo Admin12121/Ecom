@@ -7,6 +7,8 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { useTheme as useNextTheme } from 'next-themes';
 import useAuth from  "@/context/AuthContext"
 import { FormData , Variant} from "@/types/product";
+import { useRouter } from "next/navigation";
+
 interface ImageProps {
   products: FormData;
   clasName?: string;
@@ -26,6 +28,8 @@ const Productcard: React.FC<ImageProps> = ({ products, clasName }) => {
   const [dark ,setDark] =useState<boolean>(false)
   const { resolvedTheme } = useNextTheme();
   const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
+  
+  const route = useRouter()
 
   const {convertPrice} = useAuth()
 
@@ -99,7 +103,7 @@ const Productcard: React.FC<ImageProps> = ({ products, clasName }) => {
     >
       <div className="multi-button">
         <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`}><MdOutlineViewInAr color={`${dark ? "#fff" : "#000"}`}/></button>
-        <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} ><FiEdit color={`${dark ? "#fff" : "#000"}`}/></button>
+        <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} onClick={()=> route.push(`products/${products.productslug}`)} ><FiEdit color={`${dark ? "#fff" : "#000"}`}/></button>
         <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} ><AiOutlineDelete color={`${dark ? "#fff" : "#000"}`}/></button>
         <button className={`${dark ? "bg-zinc-800 text-white" : "bg-zinc-200 text-black shadow-md"}`} ></button>
       </div>

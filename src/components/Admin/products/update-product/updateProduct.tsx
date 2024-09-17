@@ -51,8 +51,7 @@ const schema = yup.object().shape({
       schema
         .required("Stock is required")
         .typeError("Stock must be a number")
-        .integer("Stock must be an integer")
-        .positive("Stock must be a positive number"),
+        .integer("Stock must be an integer"),
     otherwise: (schema) => schema.optional().nullable(),
   }),
   discount: yup.number().when("isMultiVariant", {
@@ -61,7 +60,6 @@ const schema = yup.object().shape({
       schema
         .required("Discount is required")
         .typeError("Discount must be a number")
-        .min(0, "Discount must be at least 0")
         .max(100, "Discount must be at most 100"),
     otherwise: (schema) => schema.optional().nullable(),
   }),
@@ -81,13 +79,11 @@ const schema = yup.object().shape({
               .number()
               .typeError("Stock must be a number")
               .required("Stock is required")
-              .integer("Stock must be an integer")
-              .positive("Stock must be a positive number"),
+              .integer("Stock must be an integer"),
             discount: yup
               .number()
               .typeError("Discount must be a number")
               .optional()
-              .min(1, "Discount must be greater than 0")
               .max(100, "Discount must be at most 100"),
           })
         )
@@ -120,7 +116,17 @@ interface GetSubCategory {
   category: number;
 }
 
-const AddProduct = () => {
+interface Variant {
+  id: number;
+  product_stripe_id: string;
+  size: string ;
+  price: string;
+  discount: string;
+  stock: number;
+  product: number;
+}
+
+const UpdateProduct = ({productData}:{productData : any}) => {
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<File[]>([]);
@@ -289,7 +295,6 @@ const AddProduct = () => {
       const selectedCat = getcategory.find(
         (cat) => String(cat.id) === String(selectedCategory)
       );
-      console.log("selectedCat:", selectedCat);
       setGetSubCategory(selectedCat ? selectedCat.subcategories : []);
     } else {
       setGetSubCategory([]);
@@ -297,28 +302,21 @@ const AddProduct = () => {
   }, [selectedCategory, getcategory]);
 
   const onSubmit = async (data: FormValues) => {
-    // Clean up the data before submission
     const cleanedData = { ...data };
-
     if (data.isMultiVariant) {
-      // Remove single variant fields if isMultiVariant is true
       delete cleanedData.basePrice;
       delete cleanedData.stock;
       delete cleanedData.discount;
     } else {
-      // Remove variants array if isMultiVariant is false
       delete cleanedData.variants;
     }
-
     if (images.length < 2) {
       toast.error("At least 2 images are required");
       return;
     }
-
     const toastId = toast.loading("Preparing data...", {
       position: "top-center",
     });
-    // Prepare form data
     const formData = new FormData();
     formData.append("product_name", cleanedData.productName);
     formData.append("description", cleanedData.description);
@@ -468,7 +466,6 @@ const AddProduct = () => {
     trigger(name);
   };
 
-  // Function to restrict input to numeric values
   const handleNumericInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!/[0-9]/.test(e.key)) {
       e.preventDefault();
@@ -482,7 +479,6 @@ const AddProduct = () => {
         append({ size: "", price: 0, stock: 0, discount: 1 });
       }
     } else {
-      // Clear variants if switching to single variant
       remove(Array.from({ length: fields.length }, (_, i) => i));
     }
   };
@@ -510,6 +506,36 @@ const AddProduct = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (productData) {
+      setImages(productData.images.map((img: any) => img.image));
+      if (Array.isArray(productData.variants)) {
+        setIsMultiVariant(true);
+        // Clear existing variants before appending new ones
+        reset({ variants: [] });
+        productData.variants.forEach((variant: Variant) => {
+          append({
+            size: variant.size,
+            price: parseFloat(variant.price),
+            stock: variant.stock,
+            discount: parseFloat(variant.discount),
+          });
+        });
+      } else {
+        setIsMultiVariant(false);
+        setValue("basePrice", parseFloat(productData.variants.price));
+        setValue("stock", productData.variants.stock);
+        setValue("discount", parseFloat(productData.variants.discount));
+      }
+      setValue("productName", productData.product_name);
+      setValue("description", productData.description);
+      setValue("category", productData.category);
+      setValue("subCategory", productData.subcategory);
+    }
+  }, [productData]);
+
+  
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -519,10 +545,11 @@ const AddProduct = () => {
               <BreadcrumbItem onClick={() => router.push("/admin/products")}>
                 Products
               </BreadcrumbItem>
-              <BreadcrumbItem>Add Products</BreadcrumbItem>
+              <BreadcrumbItem>Update Products</BreadcrumbItem>
+              <BreadcrumbItem>{productData.product_name}</BreadcrumbItem>
             </Breadcrumbs>
             <Button color="secondary" type="submit" isLoading={isLoading}>
-              Save Product
+              Update Product
             </Button>
           </span>
           <span className="flex w-full gap-5 max-lg:flex-col ">
@@ -536,6 +563,7 @@ const AddProduct = () => {
                   label="New Product"
                   placeholder="buddha statue"
                   labelPlacement="outside"
+                  defaultValue={productData?.product_name}
                   size="lg"
                   radius="sm"
                   isInvalid={!!errors.productName}
@@ -561,11 +589,13 @@ const AddProduct = () => {
                   <span className="flex gap-3">
                     <Button
                       color={!isMultiVariant ? "secondary" : "default"}
+                      disabled
                       onClick={() => toggleVariantType(false)}
-                    >
+                      >
                       Single Variant
                     </Button>
                     <Button
+                      disabled
                       color={isMultiVariant ? "secondary" : "default"}
                       onClick={() => toggleVariantType(true)}
                     >
@@ -832,6 +862,7 @@ const AddProduct = () => {
                       label="Product Category"
                       placeholder="Select an Category"
                       className="max-w-xs"
+                      defaultSelectedKeys={[productData.category]}
                       {...register("category")}
                     >
                       {getcategory.map(({ id, name }) => (
@@ -850,6 +881,7 @@ const AddProduct = () => {
                   <span className="flex w-full gap-3 items-end justify-center">
                     <Select
                       isDisabled={getsubcategory.length == 0}
+                      defaultSelectedKeys={[selectedCategory ? productData.subcategory : productData?.subcategory]}
                       labelPlacement="outside"
                       label="Product Sub Category"
                       placeholder="Select an Category"
@@ -980,4 +1012,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;
