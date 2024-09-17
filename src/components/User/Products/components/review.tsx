@@ -112,9 +112,9 @@ const Review = ({ isOpen, onOpenChange, slug }: any) => {
                   <span className="flex flex-col p-2">
                     <h1 className="font-semibold">Best Product</h1>
                     <p className="text-sm">
-                      The tone of the Statue is beautiful. It's exactly same as
-                      Shown in Image , increase the decoration of the room and
-                      spreat peace.
+                      The tone of the statue is beautiful. It&apos;s exactly the same as
+                      shown in the image, increases the decoration of the room, and
+                      spreads peace.
                     </p>
                   </span>
                 </Card>
