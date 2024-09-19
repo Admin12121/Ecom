@@ -381,7 +381,35 @@ export const userAuthapi = createApi({
           headers,
         };
       }
-    })
+    }),
+    postReview: builder.mutation({
+      query: (actualData) => {
+        const { access_token } = getToken();
+        return {
+        url: "api/products/reviews/post/",
+        method: "POST",
+        body: actualData,
+        headers: {
+          authorization: `Bearer ${access_token}`,
+        },
+      }},
+    }),
+    updateReview: builder.mutation({
+      query: ({ NewFormData, id }) => ({
+        url: `api/products/reviews/post/${id}/`,
+        method: "PATCH",
+        body: NewFormData,
+        headers: createHeaders(true),
+      }),
+    }),
+    getReview: builder.query({
+      query: ({ product_slug }) => (
+        {
+        url: `api/products/reviews/${product_slug}/data/`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),
   }),
 });
 
@@ -426,4 +454,7 @@ export const {
   useCreateorUpdatelayoutMutation,
   usePostLayoutCardMutation,
   useUpdateLayoutCardMutation,
+  usePostReviewMutation,
+  useUpdateReviewMutation,
+  useGetReviewQuery,
 } = userAuthapi;

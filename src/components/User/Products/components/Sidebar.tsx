@@ -28,11 +28,9 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
-import { FaStar } from "react-icons/fa6";
-import Image from "next/image";
 import dynamic from "next/dynamic";
-
-const Review = dynamic(()=> import('./review'))
+// const WriteReview = dynamic(()=> import('./drawer'), {ssr: false})
+// const Review = dynamic(()=> import('./review'), {ssr: false})
 
 
 const schema = yup.object().shape({
@@ -62,6 +60,7 @@ interface Product {
   category: number;
   subcategory: number;
   variants: VariantObject | VariantObject[];
+  images: any[];
 }
 
 const getSizeCategory = (index: number) => {
@@ -93,7 +92,21 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [notifyuser] = useNotifyuserMutation();
   const [notifyadded, setNotifyAdded] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const WriteReview = dynamic(
+    () => (isSheetOpen ? import('./drawer') : Promise.resolve(() => null)),
+    { ssr: false }
+  );
+  const Review = dynamic(
+    () => (isOpen ? import('./review') : Promise.resolve(() => null)),
+    { ssr: false }
+  );
+
+
+  const handleDrawer = () => {
+    setIsSheetOpen(true);
+  }
 
   const handleSizeClick = (id: number, size: string | null) => {
     setSelectedSize({ id, size });
@@ -180,9 +193,11 @@ const Sidebar = ({ products }: { products: Product }) => {
     }
     return null;
   };
+
   const { convertedPrice, symbol } = convertPrice(
     getVariantData(variantsData, "price", selectedSize?.id)
   );
+
   const handleRoute = () => {
     router.push(`/collections?category=${products?.categoryname}`);
   };
@@ -400,17 +415,16 @@ const Sidebar = ({ products }: { products: Product }) => {
                 <CardHeader className="flex gap-3">
                   <div className="w-full flex justify-between items-center">
                     <p className="text-md">Reviews(122)</p>
-                    <p className="text-small text-default-500">
+                    <span onClick={()=>isLoggedIn ? handleDrawer : router.push('/login')} className="cursor-pointer hover:text-zinc-600 transition text-small text-default-500">
                       Write a Review
-                    </p>
+                    </span>
                   </div>
                 </CardHeader>
                 <CardBody className="gap-3">
                   <div className="w-full flex justify-between items-center px-1">
                     <p className="text-xs">Overall rating</p>
                     <p className="text-xs flex gap-1">
-                      {" "}
-                      4.5 <CiStar size={14} />{" "}
+                      4.5 <CiStar size={14} />
                     </p>
                   </div>
                   <Button
@@ -428,8 +442,9 @@ const Sidebar = ({ products }: { products: Product }) => {
             </span>
           </CardFooter>
         </Card>
-        <Review isOpen={isOpen} onOpenChange={onOpenChange} slug={products.productslug}/>
+        {products?.productslug && <Review isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} slug={products.productslug} onSheetOpen={handleDrawer} />}
       </aside>
+      <WriteReview product={products} price={`${symbol} ${convertedPrice}`} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
     </>
   );
 };

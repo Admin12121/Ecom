@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Card,
   CardHeader,
@@ -14,8 +12,16 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa6";
+import { useGetReviewQuery } from "@/lib/store/Service/User_Auth_Api";
+import SpinnerLocal from "@/components/ui/spinner";
+import useAuth from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
-const Review = ({ isOpen, onOpenChange, slug }: any) => {
+const Review = ({ isOpen, onOpenChange, onClose, slug, onSheetOpen }: any) => {
+  const router = useRouter();
+  const {isLoggedIn} = useAuth();
+  const {data, isLoading} = useGetReviewQuery({product_slug:slug},{skip: !slug});
+  
   return (
     <Modal
       isOpen={isOpen}
@@ -94,6 +100,12 @@ const Review = ({ isOpen, onOpenChange, slug }: any) => {
                     <SelectItem key="3" value="rating"> By rating </SelectItem>
                   </Select>
                 </span>
+                {isLoading ?
+                 
+                 <div className="w-full h-full flex items-center justify-center">
+                  <SpinnerLocal/>
+                 </div>
+                : 
                 <Card className="flex p-2">
                   <CardHeader className="flex items-center justify-between">
                     <span> ★★★★★ </span> <span>Aug 12, 2024</span>
@@ -117,16 +129,24 @@ const Review = ({ isOpen, onOpenChange, slug }: any) => {
                       spreads peace.
                     </p>
                   </span>
-                </Card>
+                </Card>}
               </span>
             </ModalBody>
             <ModalFooter className="py-2 w-full px-2">
-              <Button
-                className="bg-foreground w-full text-background"
-                size="sm"
-              >
-                Write a Review
-              </Button>
+                  <Button
+                    className="bg-foreground w-full text-background"
+                    size="sm" 
+                    onClick={() => {
+                      if(isLoggedIn){
+                        onClose();
+                        onSheetOpen();
+                      }else{
+                        router.push('/login')
+                      }
+                    }}
+                  >
+                    Write a Review
+                  </Button>
             </ModalFooter>
           </>
         )}

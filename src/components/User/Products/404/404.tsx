@@ -1,41 +1,24 @@
 import React from "react";
-import "./style.css";
+import { Empty } from "@/components/ui/empty";
+import { Button } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 const ProductNotFound = () => {
+  const router = useRouter();
   return (
-    <span className="w-full h-[100vh] flex flex-col items-center justify-center">
-      <h1 className="text-[6vw] top-[40%] font-bold absolute">Product Not Found</h1>
-      <div className="box">
-        <div className="face opposite"></div>
-        <div className="face bottom"></div>
-        <div className="face back"></div>
-        <div className="face right"></div>
-        <div className="face left">
-          <div className="icons">
-            <div className="umbrella"></div>
-            <div className="orientation">
-              <div className="base"></div>
-            </div>
-            <div className="glass"></div>
-          </div>
-        </div>
-        <div className="face front">
-          <div className="recycled">
-            <div className="arrow"></div>
-            <div className="arrow"></div>
-            <div className="arrow"></div>
-          </div>
-          <div className="label"></div>
-          <div className="ball"></div>
-        </div>
-        <div className="face top">
-          <div className="cover-back"></div>
-          <div className="cover-right"></div>
-          <div className="cover-left"></div>
-          <div className="cover-front"></div>
-        </div>
-      </div>
-    </span>
+    <div className="lg:col-span-3 md:col-span-2 flex flex-col items-center justify-center gap-y-16 h-screen w-screen">
+      <Empty />
+      <span className="flex flex-col gap-5 items-center ">
+        <h1 className="font-semibold text-4xl">Product not Found</h1>
+        <Button
+          variant="flat"
+          className="flex gap-3 text-themeTextGray border-0"
+          onClick={() => router.push("/collections")}
+        >
+          Back to Collactions
+        </Button>
+      </span>
+    </div>
   );
 };
 
