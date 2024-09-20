@@ -47,6 +47,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'backendcore.vickytajpuriya.com',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'assets.aceternity.com',
         pathname: '/**',
       },
