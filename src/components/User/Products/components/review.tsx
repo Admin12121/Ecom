@@ -24,6 +24,7 @@ interface ReviewImage {
 }
 
 interface ReviewResult {
+  id: number;
   user: number;
   rating: number;
   title: string;
