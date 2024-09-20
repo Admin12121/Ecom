@@ -148,7 +148,7 @@ const Review = ({ isOpen, onOpenChange, onClose, slug, onSheetOpen, rating }: an
                 : 
                 <>
                 {reviewData && reviewData.map((review: ReviewResult) => (
-                  <Card className="flex p-2 dark:bg-zinc-800">
+                  <Card className="flex p-2 dark:bg-zinc-800" key={review.id}>
                     <CardHeader className="flex items-center justify-between pb-1">
                       <span> {[...Array(review.rating)].map((_, index) => (
                         <span key={index}>★</span>
