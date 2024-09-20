@@ -1,10 +1,10 @@
 import React from 'react';
 import dynamic from 'next/dynamic'
-import SpinnerLocal from '@/components/ui/spinner';
+import {LocalSpinner} from "@/components/Skleton/Skleton";
 
 const Product_Slug = dynamic(() => import('@/components/User/Products/Product_Slug'), { loading: () => (
   <div className="w-screen h-screen p-5 flex items-center justify-center">
-    <SpinnerLocal/>
+    <LocalSpinner/>
   </div>
 ), ssr: false })
 

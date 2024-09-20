@@ -110,7 +110,7 @@ const WriteReview = ({ product, price, open, onOpenChange }: any) => {
       onOpenChange={onOpenChange}
       placement="auto"
       backdrop="blur"
-      className="rounded-lg fixed md:right-0 w-[98vw] md:w-full h-[98vh] !my-[1vh] !mx-[1vw]  md:!my-0 md:!mx-2 max-md:!max-w-[100vw]"
+      className="rounded-lg fixed md:right-0 w-[98vw] md:w-full h-[98vh] !my-[1vh] !mx-[1vw]  md:!my-0 md:!mx-2 max-md:!max-w-[100vw] bg-[#121212]"
       classNames={{
         closeButton: "rounded-lg border-1 border-default-300",
       }}
@@ -195,7 +195,7 @@ const WriteReview = ({ product, price, open, onOpenChange }: any) => {
                       ★★★★★
                     </SelectItem>
                   </Select>
-                  {errors.score && <p>{errors.score.message as string}</p>}
+                  {errors.score && <p className="text-red-500 text-xs">{errors.score.message as string}</p>}
                 </span>
                 <span className="flex flex-col gap-1 text-zinc-400">
                   <Input
@@ -210,7 +210,7 @@ const WriteReview = ({ product, price, open, onOpenChange }: any) => {
                     variant="bordered"
                     labelPlacement="outside"
                   />
-                  {errors.title && <p>{errors.title.message as string}</p>}
+                  {errors.title && <p className="text-red-500 text-xs">{errors.title.message as string}</p>}
                 </span>
 
                 <span className="flex flex-col gap-1 text-zinc-400">
@@ -230,7 +230,7 @@ const WriteReview = ({ product, price, open, onOpenChange }: any) => {
                       label: "!text-zinc-400 !text-sm",
                     }}
                   />
-                  {errors.review && <p>{errors.review.message as string}</p>}
+                  {errors.review && <p className="text-red-500 text-xs">{errors.review.message as string}</p>}
                 </span>
 
                 <div className="flex flex-col gap-1">
@@ -319,7 +319,7 @@ const WriteReview = ({ product, price, open, onOpenChange }: any) => {
                     <p>{errors.delivery.message as string}</p>
                   )}
                 </span>
-                    <Button size="sm" type="submit" isLoading={isLoading} disabled={isLoading}>
+                    <Button size="sm" className="bg-foreground w-full text-background" type="submit" isLoading={isLoading} disabled={isLoading}>
                       Post Review
                     </Button>
               </form>

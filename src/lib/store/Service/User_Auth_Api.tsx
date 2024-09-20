@@ -403,9 +403,9 @@ export const userAuthapi = createApi({
       }),
     }),
     getReview: builder.query({
-      query: ({ product_slug }) => (
+      query: ({ product_slug, page, page_size, star, filter }) => (
         {
-        url: `api/products/reviews/${product_slug}/data/`,
+        url: `api/products/reviews/${product_slug}/data/${buildQueryParams({ page, page_size, star, filter })}`,
         method: "GET",
         headers: createHeaders(true),
       }),

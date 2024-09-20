@@ -34,9 +34,9 @@ interface Product {
   id: number;
   categoryname: string;
   subcategoryname: string;
-  reviews: any[]; // Update to appropriate type if needed
   comments: any[]; // Update to appropriate type if needed
   product_name: string;
+  rating: number;
   description: string;
   productslug: string;
   category: number;
@@ -70,7 +70,6 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
     index: number = 0
   ): any => {
     if (Array.isArray(variantsData)) {
-      console.log(variantsData);
       // const variant = variantsData.find((variant) => variant.id === index);
       const variant = variantsData[index];
       return variant ? variant[key] : null;
@@ -91,7 +90,7 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
       <span className={`${width ? `w-full` : "w-[350px]" } relative flex flex-col h-[500px] m-0 bg-neutral-950 rounded-lg `}>
         <span className={`absolute z-10 ${width ? `w-full ` : "w-[350px]" } px-3 top-3 flex justify-between items-center h-5 `}>
           <span className="w-[50px] h-full flex bg-zinc-300 rounded-md text-xs items-center justify-center text-black gap-1">
-            4.5 <FaStar size={10} />{" "}
+            {data?.rating ? data?.rating : 0.0} <FaStar size={10} />{" "}
           </span>
           <span className="h-full flex text-xs items-center justify-center">
             <IoIosHeartEmpty size={18} color="#fff" />

@@ -41,6 +41,8 @@ interface Product {
   subcategoryname: string;
   reviews: any[];
   comments: any[];
+  rating: number;
+  total_ratings: number;
   product_name: string;
   description: string;
   productslug: string;

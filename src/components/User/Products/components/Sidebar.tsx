@@ -14,7 +14,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { FiBox } from "react-icons/fi";
-import { CiStar } from "react-icons/ci";
+import { MdOutlineStar } from "react-icons/md";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { PiWarningOctagon } from "react-icons/pi";
 import { IoIosHeartEmpty } from "react-icons/io";
@@ -53,7 +53,9 @@ interface Product {
   id: number;
   categoryname: string;
   subcategoryname: string;
-  comments: any[]; // Update to appropriate type if needed
+  comments: any[];
+  rating: number;
+  total_ratings: number;
   product_name: string;
   description: string;
   productslug: string;
@@ -105,8 +107,13 @@ const Sidebar = ({ products }: { products: Product }) => {
 
 
   const handleDrawer = () => {
-    setIsSheetOpen(true);
+    if(isLoggedIn){
+      setIsSheetOpen(true);
+    }else{
+      router.push('/login');
+    }
   }
+
 
   const handleSizeClick = (id: number, size: string | null) => {
     setSelectedSize({ id, size });
@@ -414,8 +421,8 @@ const Sidebar = ({ products }: { products: Product }) => {
               <Card className="w-full">
                 <CardHeader className="flex gap-3">
                   <div className="w-full flex justify-between items-center">
-                    <p className="text-md">Reviews(122)</p>
-                    <span onClick={()=>isLoggedIn ? handleDrawer : router.push('/login')} className="cursor-pointer hover:text-zinc-600 transition text-small text-default-500">
+                    <p className="text-md">Reviews({products.total_ratings})</p>
+                    <span onClick={()=> handleDrawer()} className="cursor-pointer hover:text-zinc-600 transition text-small text-default-500">
                       Write a Review
                     </span>
                   </div>
@@ -423,8 +430,8 @@ const Sidebar = ({ products }: { products: Product }) => {
                 <CardBody className="gap-3">
                   <div className="w-full flex justify-between items-center px-1">
                     <p className="text-xs">Overall rating</p>
-                    <p className="text-xs flex gap-1">
-                      4.5 <CiStar size={14} />
+                    <p className="text-xs flex gap-1 items-center">
+                      {products.rating} <MdOutlineStar color="orange" size={16} />
                     </p>
                   </div>
                   <Button
@@ -442,7 +449,7 @@ const Sidebar = ({ products }: { products: Product }) => {
             </span>
           </CardFooter>
         </Card>
-        {products?.productslug && <Review isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} slug={products.productslug} onSheetOpen={handleDrawer} />}
+        {products?.productslug && <Review rating={products.rating} isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} slug={products.productslug} onSheetOpen={handleDrawer} />}
       </aside>
       <WriteReview product={products} price={`${symbol} ${convertedPrice}`} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
     </>

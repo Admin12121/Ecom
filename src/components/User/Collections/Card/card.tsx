@@ -74,6 +74,7 @@ const CardBox: React.FC<Image> = ({
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
   const variantId = getVariantData(variantsdata, 'id')
+
   return (
     <div
       ref={divRef}
@@ -140,7 +141,7 @@ const CardBox: React.FC<Image> = ({
                   </g>
                 </g>
               </svg>
-              5.0{`(1.5k review)`}
+              {product?.rating}{`(${product?.total_ratings} review)`}
             </p>
             <p className="absolute right-0 text-gray-300">{symbol} {convertedPrice}</p>
           </span>

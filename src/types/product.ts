@@ -23,6 +23,8 @@ export interface FormValues {
     category: number;
     category_name?: string;
     subcategory: number;
+    rating: number;
+    total_ratings: number;
     images: Array<{
       image: string;
     }>;
