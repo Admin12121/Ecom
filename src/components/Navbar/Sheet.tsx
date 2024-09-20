@@ -21,7 +21,7 @@ import {
 } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 import useAuth from "@/context/AuthContext";
-import { useProductsViewQuery } from "@/lib/store/Service/User_Auth_Api";
+import { useProductsByIdsQuery } from "@/lib/store/Service/User_Auth_Api";
 import { FormData, Variant } from "@/types/product";
 import { useCart } from "@/context/CartState";
 import { AiFillDelete } from "react-icons/ai";
@@ -38,6 +38,7 @@ import { PiHandbag } from "react-icons/pi";
 interface CartItem {
   id: number;
   variantId: number;
+  pcs: number;
 }
 
 interface TotalPriceData {
@@ -47,6 +48,7 @@ interface TotalPriceData {
 
 interface LinkProps {
   data: any;
+  pcs: number;
   variantId: number;
   setSelectedIndicator: any;
   refetch: (value: boolean) => void;
@@ -241,6 +243,7 @@ export default function SheetDemo() {
 interface CartItem {
   id: number;
   variantId: number;
+  pcs: number;
 }
 
 const CartWrapper = () => {
@@ -272,6 +275,7 @@ const CartWrapper = () => {
       const serverCartItems = serverCartData.map((item: any) => ({
         id: item.product,
         variantId: item.variant,
+        pcs: item.pcs,
       }));
 
       const localStorageCartItems = JSON.parse(
@@ -282,7 +286,8 @@ const CartWrapper = () => {
           !serverCartItems.some(
             (serverItem: CartItem) =>
               serverItem.id === localItem.id &&
-              serverItem.variantId === localItem.variantId
+              serverItem.variantId === localItem.variantId &&
+              serverItem.pcs === localItem.pcs
           )
       );
       if (itemsToPost.length > 0) {
@@ -290,7 +295,6 @@ const CartWrapper = () => {
       }
 
       const newLocalStorageCartItems: CartItem[] = [...localStorageCartItems];
-      console.log("localstorage current data", newLocalStorageCartItems);
       serverCartItems.forEach((serverItem: CartItem) => {
         if (
           !newLocalStorageCartItems.some(
@@ -302,11 +306,6 @@ const CartWrapper = () => {
           newLocalStorageCartItems.push(serverItem);
         }
       });
-      console.log(
-        "after filter new local storage data need to be",
-        newLocalStorageCartItems
-      );
-      // Update local storage and state
       localStorage.setItem("cart", JSON.stringify(newLocalStorageCartItems));
     }
   }, [isLoggedIn, serverCartData, postCartItem]);
@@ -316,7 +315,7 @@ const CartWrapper = () => {
     [cartItems]
   );
 
-  const { data, isLoading, refetch } = useProductsViewQuery(
+  const { data, isLoading, refetch } = useProductsByIdsQuery(
     { ids: productIds.join(",") },
     { skip: productIds.length === 0 }
   );
@@ -387,6 +386,7 @@ const CartWrapper = () => {
                     key={index}
                     data={{ ...product, index }}
                     variantId={cartItem.variantId}
+                    pcs={cartItem.pcs}
                     setSelectedIndicator={setSelectedIndicator}
                     refetch={setIsRefetch}
                   />
@@ -443,6 +443,7 @@ const CartWrapper = () => {
 const CartItem: React.FC<LinkProps> = ({
   data,
   variantId,
+  pcs,
   setSelectedIndicator,
   refetch,
 }) => {
@@ -453,6 +454,7 @@ const CartItem: React.FC<LinkProps> = ({
   );
   const { counter, setCounter } = useCart();
   const [deleteCartItem] = useCartDeleteMutation();
+  const [updateCartItem, {isLoading: isLoadingUpdate}] = useCartUpdateMutation();
 
   useEffect(() => {
     if (variants) {
@@ -510,16 +512,22 @@ const CartItem: React.FC<LinkProps> = ({
     }
   }, [counter, id, variantId, refetch, setCounter, deleteCartItem, isLoggedIn]);
 
-  // const handleDelete = useCallback(() => {
-  //   const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
-  //   const updatedCartItems = cartItemsFromStorage.filter(
-  //     (item: CartItem) => !(item.id === id && item.variantId === variantId)
-  //   );
+  const handleAddpcs = () => {
 
-  //   localStorage.setItem("cart", JSON.stringify(updatedCartItems));
-  //   setCounter(counter - 1);
-  //   refetch(true);
-  // }, [counter, id, variantId, refetch, setCounter]);
+  }
+
+  const handleRemovepcs = () => {
+
+  }
+
+  const handleUpdateCartItem = async () => {
+    // try {
+    //   const response = await updateCartItem({ items: cartItems });
+    //   console.log("response", response);
+    // } catch (error) {
+    //   console.error("Failed to update cart item:", error);
+    // }
+  };
 
   return (
     <Card className="w-full rounded-md shadow-none bg-transparent min-h-[100px] bg-neutral-950">
@@ -549,7 +557,7 @@ const CartItem: React.FC<LinkProps> = ({
               >
                 <AiFillDelete color="#ffffffd6" size={15} />
               </Button>
-              <p className="text-sm">1</p>
+              <p className="text-sm">{pcs}</p>
               <Button
                 isIconOnly
                 variant="bordered"
@@ -558,6 +566,7 @@ const CartItem: React.FC<LinkProps> = ({
               >
                 <IoIosAdd color="#ffffffd6" size={22} />
               </Button>
+              {isLoadingUpdate && <Spinner color="default" />}
             </span>
           </span>
         </span>

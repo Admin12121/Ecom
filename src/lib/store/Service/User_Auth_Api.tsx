@@ -140,6 +140,13 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    productsByIds: builder.query({
+      query: ({ ids }) => ({
+        url: `api/products/get_products_by_ids/?ids=${ids}`,
+        method: "GET",
+        headers: createHeaders(),
+      }),
+    }),
     recommendedProductsView: builder.query({
       query: ({product_id}) => ({
         url: `api/products/recommendations/${product_id ? `?product_id=${product_id}` : ""}`,
@@ -428,6 +435,7 @@ export const {
   useRefreshTokenMutation,
   useProductsRegistrationMutation,
   useProductsViewQuery,
+  useProductsByIdsQuery,
   useRecommendedProductsViewQuery,
   useTrendingProductsViewQuery,
   useNotifyuserMutation,

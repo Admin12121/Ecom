@@ -215,7 +215,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           cardClone.remove();
           
           const itemvariantId = variantId && variantId === null ? 1 : variantId;
-          const cartItem = { id, variantId: itemvariantId };
+          const cartItem = { id, variantId: itemvariantId , pcs: 1};
           if (!cartItems.some((item: any) => item.id === id && item.variantId === itemvariantId)) {
             cartItems.push(cartItem);
             localStorage.setItem('cart', JSON.stringify(cartItems));
