@@ -199,9 +199,10 @@ export const userAuthapi = createApi({
       }),
     }),
     cartUpdate: builder.mutation({
-      query: ({id}) => ({
+      query: ({ id , actualData }) => ({
         url: `api/products/cart/${id}/`,
         method: "PATCH",
+        body: actualData,
         headers: createHeaders(true),
       }),
     }),

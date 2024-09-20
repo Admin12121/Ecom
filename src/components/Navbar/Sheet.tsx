@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, act } from "react";
 import {
   Sheet,
   SheetClose,
@@ -9,8 +9,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet/Sheet";
-import { Badge } from "@nextui-org/react";
 import { IoCartOutline } from "react-icons/io5";
+
 import {
   Button,
   Card,
@@ -18,6 +18,8 @@ import {
   CardBody,
   Image,
   Divider,
+  Chip,
+  Badge,
 } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 import useAuth from "@/context/AuthContext";
@@ -34,6 +36,7 @@ import {
 import { useRouter } from "next/navigation";
 import { IoIosAdd } from "react-icons/io";
 import { PiHandbag } from "react-icons/pi";
+import { Minus } from "lucide-react"
 
 interface CartItem {
   id: number;
@@ -50,6 +53,9 @@ interface LinkProps {
   data: any;
   pcs: number;
   variantId: number;
+  cartId: number;
+  cardrefetch: any;
+  serverCartId: number;
   setSelectedIndicator: any;
   refetch: (value: boolean) => void;
 }
@@ -258,7 +264,7 @@ const CartWrapper = () => {
     currencySymbol: "",
   });
   const { counter } = useCart();
-  const { data: serverCartData } = useCartViewQuery({}, { skip: !isLoggedIn });
+  const { data: serverCartData, refetch: CardRefetch } = useCartViewQuery({}, { skip: !isLoggedIn });
   const [postCartItem] = useCartPostMutation();
   const router = useRouter();
 
@@ -268,7 +274,7 @@ const CartWrapper = () => {
     );
     setCartItems(cartItemsFromStorage);
     setIsRefetch(false);
-  }, [counter]);
+  }, [counter, serverCartData]);
 
   useEffect(() => {
     if (isLoggedIn && Array.isArray(serverCartData)) {
@@ -333,12 +339,9 @@ const CartWrapper = () => {
       cartItems.forEach((cartItem) => {
         const product = products.find((product) => product.id === cartItem.id);
         if (product) {
-          const price = getVariantData(
-            product.variants || null,
-            "price",
-            cartItem.variantId
-          );
-          if (price) {
+          const price = getVariantData( product.variants || null, "price", cartItem.variantId);
+          const stock = getVariantData(product.variants || null, "stock", cartItem.variantId)
+          if (price && stock > 0) {
             const { convertedPrice, symbol: convertedSymbol } =
               convertPrice(price);
             total += convertedPrice;
@@ -381,14 +384,20 @@ const CartWrapper = () => {
                 const cartItem = cartItems.find(
                   (item) => item.id === product.id
                 );
+                const serverCartItem = serverCartData?.find(
+                  (item: any) => item.product === product.id
+                );
                 return cartItem ? (
                   <CartItem
                     key={index}
                     data={{ ...product, index }}
                     variantId={cartItem.variantId}
                     pcs={cartItem.pcs}
+                    cartId={cartItem.id}
+                    serverCartId={serverCartItem?.id}
                     setSelectedIndicator={setSelectedIndicator}
                     refetch={setIsRefetch}
+                    cardrefetch={CardRefetch}
                   />
                 ) : null;
               })}
@@ -444,6 +453,9 @@ const CartItem: React.FC<LinkProps> = ({
   data,
   variantId,
   pcs,
+  cartId,
+  serverCartId,
+  cardrefetch,
   setSelectedIndicator,
   refetch,
 }) => {
@@ -512,21 +524,52 @@ const CartItem: React.FC<LinkProps> = ({
     }
   }, [counter, id, variantId, refetch, setCounter, deleteCartItem, isLoggedIn]);
 
-  const handleAddpcs = () => {
-
-  }
-
-  const handleRemovepcs = () => {
-
-  }
+  const handleAddpcs = async () => {
+    if (getVariantData(variantsdata, "stock", variantId) > pcs) {
+      try {
+        const actualData = {"pcs" : pcs + 1}
+        await updateCartItem({ id: serverCartId, actualData});
+        const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+        const updatedCartItems = cartItemsFromStorage.map((item: CartItem) =>
+          item.id === cartId && item.variantId === variantId ? { ...item, pcs: item.pcs + 1 } : item
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCartItems));  
+        cardrefetch();
+        refetch(true);
+      } catch (error) {
+        console.error("Failed to add pcs:", error);
+      }
+    } else {
+      console.log("Not enough stock available");
+    }
+  };
+  
+  const handleRemovepcs = async () => {
+    if (pcs > 1) {
+      try {
+        const actualdata = { pcs: pcs - 1 }
+        await updateCartItem({ id: serverCartId, actualdata});
+        const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+        const updatedCartItems = cartItemsFromStorage.map((item: CartItem) =>
+          item.id === cartId && item.variantId === variantId ? { ...item, pcs: item.pcs - 1 } : item
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCartItems));
+        cardrefetch();
+        refetch(true);
+      } catch (error) {
+        console.error("Failed to remove pcs:", error);
+      }
+    } else {
+      console.log("Cannot have less than 1 pcs");
+    }
+  };
 
   const handleUpdateCartItem = async () => {
-    // try {
-    //   const response = await updateCartItem({ items: cartItems });
-    //   console.log("response", response);
-    // } catch (error) {
-    //   console.error("Failed to update cart item:", error);
-    // }
+    if(pcs == 1){
+      handleDelete()
+    }else{
+      handleRemovepcs()
+    }
   };
 
   return (
@@ -550,23 +593,26 @@ const CartItem: React.FC<LinkProps> = ({
             <span className="flex items-center gap-5">
               <Button
                 isIconOnly
-                color="secondary"
+                color={pcs > 1 ? "default" : "secondary"}
+                variant={pcs > 1 ? "bordered" : "solid"}
                 aria-label="Like"
-                onClick={handleDelete}
+                onClick={handleUpdateCartItem}
                 className="max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
               >
-                <AiFillDelete color="#ffffffd6" size={15} />
+                {pcs > 1 ? <Minus size={15}/> : <AiFillDelete color="#ffffffd6" size={15} />}
               </Button>
-              <p className="text-sm">{pcs}</p>
+              {getVariantData(variantsdata, "stock", variantId) == 0 ?  <Chip radius="sm" variant="flat">out of stock</Chip> : <><p className="text-sm">{pcs}</p>
               <Button
+                disabled={pcs >= getVariantData(variantsdata, "stock", variantId) || isLoadingUpdate}
                 isIconOnly
                 variant="bordered"
                 aria-label="Like"
                 className="max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
+                onClick={handleAddpcs}
               >
                 <IoIosAdd color="#ffffffd6" size={22} />
-              </Button>
-              {isLoadingUpdate && <Spinner color="default" />}
+              </Button></>}
+              {isLoadingUpdate && <Spinner size="sm" color="default" />}
             </span>
           </span>
         </span>
@@ -575,7 +621,7 @@ const CartItem: React.FC<LinkProps> = ({
             - {getVariantData(variantsdata, "discount", variantId)} %
           </p>
           <p className="text-base">
-            {symbol} {convertedPrice}
+           {getVariantData(variantsdata, "stock", variantId) == 0 ?  "-" : `${symbol} ${convertedPrice}`}
           </p>
         </span>
       </CardBody>

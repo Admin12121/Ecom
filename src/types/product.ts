@@ -21,7 +21,8 @@ export interface FormValues {
     description: string;    
     productslug:string;
     category: number;
-    category_name?: string;
+    categoryname?: string;
+    subcategoryname?: string;
     subcategory: number;
     rating: number;
     total_ratings: number;

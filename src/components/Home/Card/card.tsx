@@ -114,8 +114,8 @@ export const  CardBox = ({ product, clasName }: CardBoxProps) => {
                   </Button>    
                 </span>
                 <span className="flex gap-2 hidden-element">
-                  <Chip radius="sm" color="default">Full Gold Coted</Chip>
-                  <Chip radius="sm" color="default">Premium</Chip>
+                  <Chip radius="sm" color="default">{product.categoryname}</Chip>
+                  <Chip radius="sm" color="default">{product.subcategoryname}</Chip>
                 </span>
                   <p className="block mt-2 font-sans text-base font-light leading-relaxed text-inherit antialiased text-gray-500">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Id voluptatem obcaecati ad natus ex! Corporis,
