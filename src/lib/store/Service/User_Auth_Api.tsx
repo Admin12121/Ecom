@@ -418,6 +418,22 @@ export const userAuthapi = createApi({
         headers: createHeaders(true),
       }),
     }),
+    postSale: builder.mutation({
+      query: ({ actualData }) => ({
+        url: `api/sales/sales/`,
+        method: "PATCH",
+        body: actualData,
+        headers: createHeaders(true),
+      }),
+    }),    
+    getStripeClientSecret: builder.query({
+      query: (amount) => ({
+        url: `api/payments/stripe-client-secret/`,
+        method: "POST",
+        body: { amount },
+        headers: createHeaders(),
+      }),
+    }),    
   }),
 });
 
@@ -466,4 +482,7 @@ export const {
   usePostReviewMutation,
   useUpdateReviewMutation,
   useGetReviewQuery,
+  usePostSaleMutation,
+  useGetStripeClientSecretQuery,
+  useLazyGetStripeClientSecretQuery,
 } = userAuthapi;

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useCart } from "@/context/CartState";
 import { FormData, Variant } from "@/types/product";
 import useAuth from  "@/context/AuthContext"
+import { encryptproduct } from "@/lib/transition";
+import { useRouter } from 'next/navigation'
 
 interface Image {
   product?:FormData;
@@ -23,6 +25,7 @@ const CardBox: React.FC<Image> = ({
   const [opacity, setOpacity] = useState(0);
   const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
   const {convertPrice} = useAuth()
+  const router = useRouter();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current || isFocused) return;
@@ -75,6 +78,14 @@ const CardBox: React.FC<Image> = ({
   };
   const variantId = getVariantData(variantsdata, 'id')
 
+  const handleenc = async () => {
+    const data = [{
+      "id": product?.id,
+      "variantId": variantId,
+      "pcs": 1,      
+    }];
+    await encryptproduct(data, router);
+  };
   return (
     <div
       ref={divRef}
@@ -155,7 +166,7 @@ const CardBox: React.FC<Image> = ({
           >
             Add to Cart
           </Button>
-          <Button color="secondary" className="cursor-pointer ">
+          <Button color="secondary" className="cursor-pointer " onClick={handleenc}>
             Buy Now
           </Button>
         </div>

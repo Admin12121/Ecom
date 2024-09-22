@@ -157,7 +157,7 @@ export default function Nav() {
               </Link>
             </NavbarItem> */}
           </NavbarContent>
-          <Link href="/wishlist">
+          <Link href="/collections/wishlist">
             <IoMdHeartEmpty size={24} />
           </Link>
           <AddtoCart />
