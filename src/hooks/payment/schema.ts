@@ -9,4 +9,5 @@ export const CreateSalesSchema = z.object({
   redeemCode: z.string().optional(),
   redeem_amt: z.number().optional(),
   grand_total: z.number().optional(),
+  email: z.string().email(), // Add email field
 })

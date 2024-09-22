@@ -71,32 +71,30 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
 
   return (
     <>
-      <div className="flex items-center">
-        <BackdropGradient className="w-8/12 h-2/6 opacity-50">
-          <h5 className="text-2xl font-bold text-themeTextWhite">Grouple.</h5>
-          <GradientText element="H2" className="text-4xl font-semibold py-1">
-            Create Your Group
-          </GradientText>
-          <p className="text-themeTextGray">
-            Free for 14 days, then $99/month. Cancel anytime.All features.
-            Unlimited everything. No hidden fees.
-          </p>
-          {ProductData &&
-            data &&
-            ProductData.results.map((product: any) => {
-              const parsedData = JSON.parse(data);
-              const productData = parsedData.find(
-                (item: any) => item.id === product.id
-              );
-              return (
-                <Voucher
-                  key={product.id}
-                  product={product}
-                  variantId={productData.variantId}
-                  pcs={productData.pcs}
-                />
-              );
-            })}
+      <div className="flex h-full lg:h-[90vh]">
+        <BackdropGradient className="w-8/12 h-2/6 opacity-50 flex" container="gap-10">
+          <h5 className="text-2xl font-bold text-themeTextWhite">Ecom.</h5>
+          <span className="flex gap-5 flex-col">
+            <GradientText element="H2" className="text-4xl font-semibold py-1">
+              Proceed to Payment
+            </GradientText>
+            {ProductData &&
+              data &&
+              ProductData.results.map((product: any) => {
+                const parsedData = JSON.parse(data);
+                const productData = parsedData.find(
+                  (item: any) => item.id === product.id
+                );
+                return (
+                  <Voucher
+                    key={product.id}
+                    product={product}
+                    variantId={productData.variantId}
+                    pcs={productData.pcs}
+                  />
+                );
+              })}
+          </span>
         </BackdropGradient>
       </div>
       <div>
@@ -110,17 +108,19 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
                 Payment Method
               </h5>
               <p className="text-themeTextGray leading-tight">
-                Free for 14 days, then $99/month. Cancel anytime.All features.
-                Unlimited everything. No hidden fees.
+                Easy to pay with One Click. No hidden fees.
               </p>
             </div>
-            {userData && (
-              <Payment
-                userId={userData.email}
-                stripeId={""}
-                usdPrice={usdPrice}
-              />
-            )}
+            <div className="min-h-[300px] w-full flex items-center justify-center">
+              {userData && (
+                <Payment
+                  userId={userData.email}
+                  stripeId={""}
+                  usdPrice={usdPrice}
+                  products={JSON.parse(data)}
+                />
+              )}
+            </div>
           </GlassCard>
         </BackdropGradient>
       </div>

@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
 import { CartProvider } from "@/context/CartState";
 import { Spinner } from "@nextui-org/react";
+import { ReactQueryProvider } from "@/lib/react-query/provider"
 
 import { SessionProvider, getSession } from "next-auth/react";
 const AuthProvider = dynamic(
@@ -47,7 +48,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
         <SessionProvider >
           <Provider store={storeRef.current}>
             <AuthProvider>
-              <CartProvider>{children}</CartProvider>
+              <CartProvider><ReactQueryProvider>{children}</ReactQueryProvider></CartProvider>
             </AuthProvider>
           </Provider>
         </SessionProvider>

@@ -1,29 +1,36 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { CreateSalesSchema } from "./schema"
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
-import { StripeCardElement, loadStripe } from "@stripe/stripe-js"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
-import { useLazyGetStripeClientSecretQuery, usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api"
+"use client";
+
+import {
+  onGetStripeClientSecret,
+} from "@/actions/payments";
+import { CreateSalesSchema } from "./schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 export const useStripeElements = () => {
   const StripePromise = async () =>
-    await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISH_KEY as string)
+    await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISH_KEY as string);
 
-  return { StripePromise }
-}
+  return { StripePromise };
+};
 
 export const usePayments = (
   userId: string,
-  usdPrice: number | null,
+  usdPrice?: number | null,
   stripeId?: string,
+  products?: any
 ) => {
-  const [isCategory, setIsCategory] = useState<string | undefined>(undefined)
-  const stripe = useStripe()
-  const elements = useElements()
+  const [postSale, { isLoading }] = usePostSaleMutation();
+  const stripe = useStripe();
+  const elements = useElements();
+  const router = useRouter();
 
   const {
     reset,
@@ -34,46 +41,64 @@ export const usePayments = (
   } = useForm<z.infer<typeof CreateSalesSchema>>({
     resolver: zodResolver(CreateSalesSchema),
     defaultValues: {
-      transactionuid : Date.now() * 1000000 + Math.floor(Math.random() * 1000000),
+      transactionuid: Date.now() * 1000000 + Math.floor(Math.random() * 1000000),
+      email: userId, // Set the user email
     },
-  })
+  });
 
-  const [getStripeClientSecret, { data: Intent, isLoading: creatingIntent }] = useLazyGetStripeClientSecretQuery()
+  const { data: Intent, isPending: creatingIntent } = useQuery({
+    queryKey: ["payment-intent"],
+    queryFn: () => onGetStripeClientSecret({ amount: usdPrice, products }),
+  });
 
-  const [createGroup, { isLoading: isPending }] = usePostSaleMutation()
+  const { mutateAsync: createGroup, isPending } = useMutation({
+    mutationFn: async (data: z.infer<typeof CreateSalesSchema>) => {
+      console.log("Inside mutationFn");
+      if (!stripe || !elements || !Intent) {
+        console.log("Stripe or elements or Intent not available");
+        return null;
+      }
 
-  const handleCreateGroup = async (data: z.infer<typeof CreateSalesSchema>) => {
-    if (!stripe || !elements || !Intent) {
-      return null
-    }
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        Intent.secret!,
+        {
+          payment_method: {
+            card: elements.getElement(CardElement) as StripeCardElement,
+          },
+        }
+      );
 
-    const { error, paymentIntent } = await stripe.confirmCardPayment(
-      Intent.secret!,
-      {
-        payment_method: {
-          card: elements.getElement(CardElement) as StripeCardElement,
-        },
-      },
-    )
+      if (error) {
+        console.log("Payment error:", error);
+        return toast("Error", {
+          description: "Oops! something went wrong, try again later",
+        });
+      }
 
-    if (error) {
-      return toast("Error", {
-        description: "Oops! something went wrong, try again later",
-      })
-    }
-  }
+      if (paymentIntent?.status === "succeeded") {
+        console.log("Payment succeeded:", paymentIntent);
+        const res = await postSale({
+          ...data,
+          userId,
+          usdPrice,
+          stripeId,
+          paymentIntentId: paymentIntent.id,
+        });
+        console.log("Post sale response:", res);
+      }
+    },
+  });
 
-  const handleGetClientSecret = async (amount: number) => {
-    await getStripeClientSecret(amount)
-  }
+  const handlePaymentSubmission = handleSubmit(async (values) => {
+    console.log("Submitting payment with values:", values);
+    await createGroup(values);
+  });
 
   return {
+    handlePaymentSubmission,
     isPending,
     register,
     errors,
-    isCategory,
     creatingIntent,
-    handleCreateGroup,
-    handleGetClientSecret,
-  }
-}
+  };
+};

@@ -5,12 +5,13 @@ type Props = {
   userId: string
   stripeId?: string
   usdPrice: number | null
+  products : any
 }
 
-const Payment = ({ userId, stripeId , usdPrice}: Props) => {
+const Payment = ({ userId, stripeId , usdPrice, products}: Props) => {
   return (
     <StripeElements>
-      <PaymentForm userId={userId}  stripeId={stripeId}  usdPrice={usdPrice}/>
+      <PaymentForm userId={userId}  stripeId={stripeId}  usdPrice={usdPrice} products={products}/>
     </StripeElements>
   )
 }
