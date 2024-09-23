@@ -20,15 +20,13 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
     isPending,
     register,
     errors,
-    creatingIntent,
   } = usePayments(userId, usdPrice, stripeId, products);
 
   return (
-    <Loader loading={creatingIntent}>
+    <Loader loading={isPending}>
         <form className="pt-5 relative z-50 w-full"               
                   onSubmit={(e) => {
                     e.preventDefault();
-                    console.log("Form submitted");
                     handlePaymentSubmission(e);
                   }}>
           <div className="px-7 mb-2">

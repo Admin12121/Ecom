@@ -7,7 +7,7 @@ import { CreateSalesSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api";
 import { useForm } from "react-hook-form";
@@ -17,7 +17,6 @@ import { z } from "zod";
 export const useStripeElements = () => {
   const StripePromise = async () =>
     await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISH_KEY as string);
-
   return { StripePromise };
 };
 
@@ -46,17 +45,21 @@ export const usePayments = (
     },
   });
 
-  const { data: Intent, isPending: creatingIntent } = useQuery({
-    queryKey: ["payment-intent"],
-    queryFn: () => onGetStripeClientSecret({ amount: usdPrice, products }),
-  });
-
   const { mutateAsync: createGroup, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof CreateSalesSchema>) => {
       console.log("Inside mutationFn");
-      if (!stripe || !elements || !Intent) {
-        console.log("Stripe or elements or Intent not available");
+      if (!stripe || !elements) {
+        console.log("Stripe or elements not available");
         return null;
+      }
+
+      const Intent = await onGetStripeClientSecret({ amount: usdPrice, products , user: userId });
+
+      if (!Intent) {
+        console.log("Failed to create payment intent");
+        return toast("Error", {
+          description: "Failed to create payment intent",
+        });
       }
 
       const { error, paymentIntent } = await stripe.confirmCardPayment(
@@ -99,6 +102,5 @@ export const usePayments = (
     isPending,
     register,
     errors,
-    creatingIntent,
   };
 };

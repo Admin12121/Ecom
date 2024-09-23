@@ -6,7 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2024-06-20",
 })
 
-export const onGetStripeClientSecret = async ({ amount, products }: any) => {
+export const onGetStripeClientSecret = async ({ amount, products , user}: any) => {
   try {
     // Validate amount
     if (amount <= 0) {
@@ -20,6 +20,7 @@ export const onGetStripeClientSecret = async ({ amount, products }: any) => {
         enabled: true,
       },
       metadata: {
+        user: user,
         products: JSON.stringify(products),
       },
     });
