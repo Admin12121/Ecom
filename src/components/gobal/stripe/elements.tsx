@@ -12,5 +12,5 @@ export const StripeElements = ({ children }: StripeElementsProps) => {
 
   const promise = StripePromise()
 
-  return promise && <Elements stripe={promise}>{children}</Elements>
+  return promise ? <Elements stripe={promise}>{children}</Elements> : <div>Loading...</div>;
 }

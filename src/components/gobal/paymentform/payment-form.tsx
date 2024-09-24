@@ -5,8 +5,7 @@ import { Loader } from "@/components/gobal/loader";
 import { Button } from "@/components/ui/button";
 import { usePayments } from "@/hooks/payment";
 import { ErrorMessage } from "@hookform/error-message";
-import { CardElement } from "@stripe/react-stripe-js";
-
+import { CardElement  } from "@stripe/react-stripe-js";
 type Props = {
   userId: string;
   stripeId?: string;
@@ -20,15 +19,13 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
     isPending,
     register,
     errors,
+    // formState: { errors as formError}
   } = usePayments(userId, usdPrice, stripeId, products);
+  
 
   return (
     <Loader loading={isPending}>
-        <form className="pt-5 relative z-50 w-full"               
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handlePaymentSubmission(e);
-                  }}>
+        <form className="pt-5 relative z-50 w-full" onSubmit={handlePaymentSubmission}>
           <div className="px-7 mb-2">
             <ErrorMessage
               errors={errors}
@@ -87,7 +84,6 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
               }}
               className="bg-themeBlack border-[1px] border-themeGray outline-none rounded-lg p-3"
             />
-            {/* <ErrorMessage errors={errors} name="card" /> */}
           </div>
           <div className="px-7 flex flex-col gap-3">
             <div className="flex justify-between">
@@ -115,6 +111,7 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
               type="submit"
               className="bg-themeBlack border-themeGray rounded-xl"
             >
+              {/* Proceed to Pay */}
               <Loader loading={isPending}>Proceed to Pay</Loader>
             </Button>
           </div>
