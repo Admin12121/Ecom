@@ -24,7 +24,7 @@ const CardBox: React.FC<Image> = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
   const [variantsdata, setVariantsData] = useState<Variant[] | Variant | null>(null);
-  const {convertPrice} = useAuth()
+  const { convertPrice, isLoggedIn } = useAuth()
   const router = useRouter();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -79,12 +79,16 @@ const CardBox: React.FC<Image> = ({
   const variantId = getVariantData(variantsdata, 'id')
 
   const handleenc = async () => {
-    const data = [{
-      "id": product?.id,
-      "variantId": variantId,
-      "pcs": 1,      
-    }];
-    await encryptproduct(data, router);
+    if (isLoggedIn){
+      const data = [{
+        "id": product?.id,
+        "variantId": variantId,
+        "pcs": 1,      
+      }];
+      await encryptproduct(data, router);
+    }else{
+      router.push(`/login`);
+    }
   };
   return (
     <div

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useEffect } from "react";
 import { z } from "zod";
 
 export const useStripeElements = () => {
@@ -36,27 +37,44 @@ export const usePayments = (
     handleSubmit,
     formState: { errors },
     register,
+    setValue,
     watch,
   } = useForm<z.infer<typeof CreateSalesSchema>>({
     resolver: zodResolver(CreateSalesSchema),
-    defaultValues: {
-      transactionuid: Date.now() * 1000000 + Math.floor(Math.random() * 1000000),
-      email: userId,
-      total_amt: usdPrice ? usdPrice : 100
-    },
+    // defaultValues: {
+    //   transactionuid: Date.now() * 1000000 + Math.floor(Math.random() * 1000000),
+    //   email: userId,
+    //   total_amt: usdPrice ? usdPrice : 100
+    // },
   });
+
 
   const { data: Intent, isPending: creatingIntent } = useQuery({
     queryKey: ["payment-intent"],
-    queryFn: () => onGetStripeClientSecret({ amount: usdPrice, products , user: userId }),
+    queryFn: () => {
+      if (usdPrice && products && userId) {
+        return onGetStripeClientSecret({ amount: usdPrice, products, user: userId });
+      }
+      return null;
+    },
+    enabled: !!usdPrice && !!products && !!userId,
   })
+
+  
+  useEffect(() => {
+    if (userId && usdPrice && products) {
+      setValue("transactionuid", Date.now() * 1000000 + Math.floor(Math.random() * 1000000));
+      setValue("email", userId);
+      setValue("total_amt", usdPrice);
+    }
+  }, [userId, usdPrice, products, setValue]);
+
 
   const { mutateAsync: createGroup, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof CreateSalesSchema>) => {
       if (!stripe || !elements || !Intent) {
         return null;
       }
-
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         Intent.secret!,
         {
@@ -78,10 +96,12 @@ export const usePayments = (
           userId,
           usdPrice,
           stripeId,
+          products,
           paymentIntentId: paymentIntent.id,
         };
-        const res = await postSale({actualData});
-        console.log("Post sale response:", res);
+        console.log(actualData)
+        // const res = await postSale({actualData});
+        // console.log("Post sale response:", res);
       }
     },
   });

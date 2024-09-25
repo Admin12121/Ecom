@@ -50,14 +50,14 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
           if (Array.isArray(product.variants)) {
             product.variants.forEach((variant: any) => {
               const price = parseFloat(variant.price);
-              const pcs = variant.pcs || 1; // Default to 1 if pcs is not defined
+              const pcs = variant.pcs || 1;
               if (!isNaN(price)) {
                 totalNpr += price * pcs;
               }
             });
           } else {
             const price = parseFloat(product.variants.price);
-            const pcs = product.pcs || 1; // Default to 1 if pcs is not defined
+            const pcs = product.pcs || 1;
             if (!isNaN(price)) {
               totalNpr += price * pcs;
             }

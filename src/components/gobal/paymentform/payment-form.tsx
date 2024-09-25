@@ -15,6 +15,7 @@ type Props = {
 };
 
 const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
+  
   const {
     handlePaymentSubmission,
     isPending,
@@ -110,7 +111,7 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
               variant="outline"
               type="submit"
               className="bg-themeBlack border-themeGray rounded-xl"
-              disabled={isPending}
+              disabled={isPending || creatingIntent}
             >
               <Loader loading={isPending}>Proceed to Pay</Loader>
             </Button>
