@@ -1,4 +1,5 @@
-import { z } from "zod"
+import { z } from "zod";
+import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
 
 export const CreateSalesSchema = z.object({
   transactionuid: z.number().int().positive({ message: "Transaction UID must be a positive integer" }),
@@ -9,5 +10,6 @@ export const CreateSalesSchema = z.object({
   redeemCode: z.string().optional(),
   redeem_amt: z.number().optional(),
   grand_total: z.number().optional(),
-  email: z.string().email(), // Add email field
-})
+  email: z.string().email(),
+  cardElement: z.any(), // Ensure this is required
+});

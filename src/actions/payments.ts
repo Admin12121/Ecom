@@ -29,7 +29,6 @@ export const onGetStripeClientSecret = async ({ amount, products , user}: any) =
       return { secret: paymentIntent.client_secret };
     }
   } catch (error) {
-    console.error("Error creating payment intent:", error);
     return { status: 400, message: (error as Error).message || "Failed to load form" };
   }
 };

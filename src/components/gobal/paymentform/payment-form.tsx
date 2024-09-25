@@ -1,11 +1,12 @@
 "use client";
 
-import { FormGenerator } from "@/components/gobal/form-generator";
-import { Loader } from "@/components/gobal/loader";
-import { Button } from "@/components/ui/button";
-import { usePayments } from "@/hooks/payment";
-import { ErrorMessage } from "@hookform/error-message";
-import { CardElement  } from "@stripe/react-stripe-js";
+import { FormGenerator } from "@/components/gobal/form-generator"
+import { Loader } from "@/components/gobal/loader"
+import { Button } from "@/components/ui/button"
+import { usePayments } from "@/hooks/payment"
+import { ErrorMessage } from "@hookform/error-message"
+import { CardElement } from "@stripe/react-stripe-js"
+
 type Props = {
   userId: string;
   stripeId?: string;
@@ -19,12 +20,11 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
     isPending,
     register,
     errors,
-    // formState: { errors as formError}
+    creatingIntent,
   } = usePayments(userId, usdPrice, stripeId, products);
-  
 
   return (
-    <Loader loading={isPending}>
+    <Loader loading={creatingIntent}>
         <form className="pt-5 relative z-50 w-full" onSubmit={handlePaymentSubmission}>
           <div className="px-7 mb-2">
             <ErrorMessage
@@ -110,8 +110,8 @@ const PaymentForm = ({ userId, stripeId, usdPrice , products}: Props) => {
               variant="outline"
               type="submit"
               className="bg-themeBlack border-themeGray rounded-xl"
+              disabled={isPending}
             >
-              {/* Proceed to Pay */}
               <Loader loading={isPending}>Proceed to Pay</Loader>
             </Button>
           </div>
