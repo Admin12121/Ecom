@@ -66,6 +66,7 @@ export const SidebarWrapper = () => {
                 isActive={pathname === "/admin/review&comments"}
                 title="Review and Comments"
                 icon={<CommentIcon />}
+                href="/admin/reviews&comments"
               />
               <CollapseItems
                 icon={<BalanceIcon />}
@@ -77,6 +78,7 @@ export const SidebarWrapper = () => {
                 isActive={pathname === "/admin/oders"}
                 title="Oders"
                 icon={<OdersIcon isActive={pathname === "/admin/oders"}/>}
+                href="/admin/orders"
               />
               <SidebarItem
                 isActive={pathname === "/admin/reports"}

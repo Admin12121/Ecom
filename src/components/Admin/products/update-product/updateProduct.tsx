@@ -28,9 +28,10 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import DynamicForm from "@/context/FormHandler";
-import { FormValues } from "@/types/product";
+import { updateFormValues } from "@/types/product";
 
 const schema = yup.object().shape({
+  id: yup.string().required("Id is required"),
   productName: yup.string().required("Product name is required"),
   description: yup.string().required("Description is required"),
   isMultiVariant: yup.boolean().required("Product Type is required"),
@@ -69,6 +70,7 @@ const schema = yup.object().shape({
       schema
         .of(
           yup.object().shape({
+            id: yup.string().required("Id is required"),
             size: yup.string().required("Size is required"),
             price: yup
               .number()
@@ -117,7 +119,7 @@ interface GetSubCategory {
 }
 
 interface Variant {
-  id: number;
+  id: string;
   product_stripe_id: string;
   size: string ;
   price: string;
@@ -268,8 +270,8 @@ const UpdateProduct = ({productData}:{productData : any}) => {
     clearErrors,
     control,
     reset,
-  } = useForm<FormValues>({
-    resolver: yupResolver<FormValues>(schema),
+  } = useForm<updateFormValues>({
+    resolver: yupResolver<updateFormValues>(schema),
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -301,7 +303,7 @@ const UpdateProduct = ({productData}:{productData : any}) => {
     }
   }, [selectedCategory, getcategory]);
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: updateFormValues) => {
     const cleanedData = { ...data };
     if (data.isMultiVariant) {
       delete cleanedData.basePrice;
@@ -367,22 +369,23 @@ const UpdateProduct = ({productData}:{productData : any}) => {
         id: toastId,
         position: "top-center",
       });
-      const res = await addProduct(formData);
+      console.log(cleanedData)
+      // const res = await addProduct(formData);
 
-      if (res.data) {
-        reset();
-        setImages([]);
-        setProductImages([]);
-        toast.success("Product saved successfully!", {
-          id: toastId,
-          position: "top-center",
-        });
-      } else if (res.error) {
-        toast.error("Failed to save product", {
-          id: toastId,
-          position: "top-center",
-        });
-      }
+      // if (res.data) {
+      //   reset();
+      //   setImages([]);
+      //   setProductImages([]);
+      //   toast.success("Product saved successfully!", {
+      //     id: toastId,
+      //     position: "top-center",
+      //   });
+      // } else if (res.error) {
+      //   toast.error("Failed to save product", {
+      //     id: toastId,
+      //     position: "top-center",
+      //   });
+      // }
     } catch (error: any) {
       console.log("Error", error.message);
       toast.error("Error saving product", {
@@ -476,7 +479,7 @@ const UpdateProduct = ({productData}:{productData : any}) => {
     setIsMultiVariant(isMulti);
     if (isMulti) {
       if (fields.length === 0) {
-        append({ size: "", price: 0, stock: 0, discount: 1 });
+        append({id:"", size: "", price: 0, stock: 0, discount: 1 });
       }
     } else {
       remove(Array.from({ length: fields.length }, (_, i) => i));
@@ -512,10 +515,10 @@ const UpdateProduct = ({productData}:{productData : any}) => {
       setImages(productData.images.map((img: any) => img.image));
       if (Array.isArray(productData.variants)) {
         setIsMultiVariant(true);
-        // Clear existing variants before appending new ones
         reset({ variants: [] });
         productData.variants.forEach((variant: Variant) => {
           append({
+            id: variant.id,
             size: variant.size,
             price: parseFloat(variant.price),
             stock: variant.stock,
@@ -528,6 +531,7 @@ const UpdateProduct = ({productData}:{productData : any}) => {
         setValue("stock", productData.variants.stock);
         setValue("discount", parseFloat(productData.variants.discount));
       }
+      setValue("id", productData.id);
       setValue("productName", productData.product_name);
       setValue("description", productData.description);
       setValue("category", productData.category);
@@ -841,7 +845,7 @@ const UpdateProduct = ({productData}:{productData : any}) => {
                     <Button
                       color="secondary"
                       onClick={() =>
-                        append({ size: "", price: 0, stock: 0, discount: 0 })
+                        append({id:"", size: "", price: 0, stock: 0, discount: 0 })
                       }
                     >
                       Add Variant

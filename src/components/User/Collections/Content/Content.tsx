@@ -28,11 +28,11 @@ const Content: React.FC<ContentProps> = ({ params, productdata , isLoading}) => 
   }, [productdata]);
   const [filters, setFilters] = useState<boolean>(false)
   return (
-    <div className={`w-full main-contant`}>
+    <div className={`w-full main-contant flex flex-col items-center`}>
       <Header params={params} setFilters={setFilters} filters={filters}/>
       <span className="flex justify-between max-md:flex-col-reverse">
         {isLoading ? <div className="w-full h-full flex items-center justify-center"><SpinnerLocal /></div> : 
-        (<div className={`pt-40 px-4 md:px-10 gap-x-10 gap-y-40 grid max-sm-2:!grid-cols-1 max-md:grid-cols-2 md:grid-cols-2 ${filters ? 'lg:grid-cols-2 xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'} 2xl:grid-cols-4 main-contant-items`}>
+        (<div className={`pt-40 px-4 md:px-10 gap-x-10 gap-y-40 grid max-sm-2:!grid-cols-1 max-md:grid-cols-2 md:grid-cols-2 ${filters ? 'lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4' : 'lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5'} 2xl:grid-cols-4 main-contant-items`}>
           {products &&
             products.map((product, index) => {
               return (

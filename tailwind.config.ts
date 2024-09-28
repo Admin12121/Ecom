@@ -60,6 +60,8 @@ const config: Config = {
       'xl': '1280px',
       'max-2xl': {'max': '1400px'},
       '2xl': '1536px',
+      '3xl': '1636px',
+      '4xl': '1736px',
     }
   },
   darkMode: "class",

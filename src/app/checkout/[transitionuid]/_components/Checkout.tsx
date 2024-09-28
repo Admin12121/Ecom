@@ -43,31 +43,31 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
   );
 
   useEffect(() => {
-    if (ProductData) {
+    if (ProductData && data) {
       let totalNpr = 0;
+      const parsedData = JSON.parse(data);
+  
       ProductData.results.forEach((product: any) => {
-        if (product.variants) {
-          if (Array.isArray(product.variants)) {
-            product.variants.forEach((variant: any) => {
-              const price = parseFloat(variant.price);
-              const pcs = variant.pcs || 1;
-              if (!isNaN(price)) {
-                totalNpr += price * pcs;
-              }
-            });
-          } else {
-            const price = parseFloat(product.variants.price);
-            const pcs = product.pcs || 1;
+        const productData = parsedData.find((item: any) => item.id === product.id);
+        if (productData && product.variants) {
+          const variant = Array.isArray(product.variants)
+            ? product.variants.find((v: any) => v.id === productData.variantId)
+            : product.variants;
+  
+          if (variant) {
+            const price = parseFloat(variant.price);
+            const pcs = productData.pcs || 1;
             if (!isNaN(price)) {
               totalNpr += price * pcs;
             }
           }
         }
       });
+  
       const conversionRate = 0.00747943156;
       setUsdPrice(totalNpr * conversionRate);
     }
-  }, [ProductData]);
+  }, [ProductData, data]);
 
   return (
     <>
@@ -97,9 +97,9 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
           </span>
         </BackdropGradient>
       </div>
-      <div>
+      <div className="pb-5">
         <BackdropGradient
-          className="w-6/12 h-3/6 opacity-40"
+          className="w-6/12 h-3/6 opacity-40 "
           container="lg:items-center"
         >
           <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-7 ">

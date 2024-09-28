@@ -7,9 +7,13 @@ export const CreateSalesSchema = z.object({
   shipping: z.number().optional(),
   discount: z.number().optional(),
   total_amt: z.number().positive({ message: "Total amount must be a positive number" }),
-  redeemCode: z.string().optional(),
+  Code: z.string().optional(),
   redeem_amt: z.number().optional(),
   grand_total: z.number().optional(),
   email: z.string().email(),
   cardElement: z.any(), // Ensure this is required
+});
+
+export const redeemCodeSchema = z.object({
+  code: z.string().min(1, "Redeem code is required"),
 });

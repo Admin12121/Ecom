@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useEffect } from "react";
 import { z } from "zod";
 
 export const useStripeElements = () => {
@@ -24,6 +23,7 @@ export const useStripeElements = () => {
 export const usePayments = (
   userId: string,
   usdPrice?: number | null,
+  grand_total? : number | null,
   stripeId?: string,
   products?: any
 ) => {
@@ -41,33 +41,19 @@ export const usePayments = (
     watch,
   } = useForm<z.infer<typeof CreateSalesSchema>>({
     resolver: zodResolver(CreateSalesSchema),
-    // defaultValues: {
-    //   transactionuid: Date.now() * 1000000 + Math.floor(Math.random() * 1000000),
-    //   email: userId,
-    //   total_amt: usdPrice ? usdPrice : 100
-    // },
   });
 
 
   const { data: Intent, isPending: creatingIntent } = useQuery({
     queryKey: ["payment-intent"],
     queryFn: () => {
-      if (usdPrice && products && userId) {
-        return onGetStripeClientSecret({ amount: usdPrice, products, user: userId });
+      if (grand_total && products && userId) {
+        return onGetStripeClientSecret({ amount: grand_total, products, user: userId });
       }
       return null;
     },
-    enabled: !!usdPrice && !!products && !!userId,
+    enabled: !!grand_total && !!products && !!userId,
   })
-
-  
-  useEffect(() => {
-    if (userId && usdPrice && products) {
-      setValue("transactionuid", Date.now() * 1000000 + Math.floor(Math.random() * 1000000));
-      setValue("email", userId);
-      setValue("total_amt", usdPrice);
-    }
-  }, [userId, usdPrice, products, setValue]);
 
 
   const { mutateAsync: createGroup, isPending } = useMutation({
@@ -99,9 +85,10 @@ export const usePayments = (
           products,
           paymentIntentId: paymentIntent.id,
         };
-        console.log(actualData)
-        // const res = await postSale({actualData});
-        // console.log("Post sale response:", res);
+        const res = await postSale({actualData});
+        if (res.data) {
+          router.push("/orders");
+        }
       }
     },
   });
@@ -121,5 +108,7 @@ export const usePayments = (
     errors,
     formState: { errors },
     creatingIntent,
+    setValue,
+    watch,
   };
 };

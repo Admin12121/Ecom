@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, act } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef, MutableRefObject } from "react";
 import {
   Sheet,
   SheetClose,
@@ -9,8 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet/Sheet";
-import { IoCartOutline } from "react-icons/io5";
-
 import {
   Button,
   Card,
@@ -37,6 +35,7 @@ import { useRouter } from "next/navigation";
 import { IoIosAdd } from "react-icons/io";
 import { PiHandbag } from "react-icons/pi";
 import { Minus } from "lucide-react"
+import { encryptproduct } from "@/lib/transition";
 
 interface CartItem {
   id: number;
@@ -77,6 +76,17 @@ const getVariantData = (
 export default function SheetDemo() {
   const { counter } = useCart();
 
+  const [isCheckoutDisabled, setIsCheckoutDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const handleCheckoutRef = useRef<() => void>(() => {});
+
+  const handleCheckout = useCallback(() => {
+    if (handleCheckoutRef.current) {
+      setIsLoading(true);
+      handleCheckoutRef.current();
+    }
+  }, []);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -98,7 +108,7 @@ export default function SheetDemo() {
             Make changes to your profile here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
-        <CartWrapper />
+        <CartWrapper handleCheckoutRef={handleCheckoutRef} setIsCheckoutDisabled={setIsCheckoutDisabled} setIsLoading={setIsLoading} />
         <SheetFooter>
           {counter > 0 && (<span className="w-full h-[120px] flex justify-end items-start flex-col gap-2">
             <p className="text-zinc-400 text-xs">Free delivery on September 10th - 17th</p>
@@ -236,7 +246,10 @@ export default function SheetDemo() {
               </span>
             </div>
             <Divider className="w-full" orientation="horizontal" />
-            <Button type="submit" radius="sm" className="w-full">
+            <Button type="submit" radius="sm" className="w-full"
+              onClick={handleCheckout}
+              disabled={isCheckoutDisabled || isLoading}
+              >
               Checkout
             </Button>
           </span>)}
@@ -252,7 +265,13 @@ interface CartItem {
   pcs: number;
 }
 
-const CartWrapper = () => {
+interface CartWrapperProps {
+  handleCheckoutRef: MutableRefObject<() => void>;
+  setIsCheckoutDisabled: (value: boolean) => void;
+  setIsLoading: (value: boolean) => void;
+}
+
+const CartWrapper: React.FC<CartWrapperProps> = ({ handleCheckoutRef, setIsCheckoutDisabled, setIsLoading }) => {
   const { isLoggedIn, convertPrice } = useAuth();
   const pathname = usePathname();
   const [selectedIndicator, setSelectedIndicator] = useState(pathname);
@@ -344,12 +363,12 @@ const CartWrapper = () => {
           if (price && stock > 0) {
             const { convertedPrice, symbol: convertedSymbol } =
               convertPrice(price);
-            total += convertedPrice;
+            total += convertedPrice * cartItem.pcs;
             symbol = convertedSymbol;
           }
         }
       });
-
+      total = parseFloat(total.toFixed(2));
       setTotalPriceData({ totalPrice: total, currencySymbol: symbol });
     };
 
@@ -364,6 +383,35 @@ const CartWrapper = () => {
     }
     setIsRefetch(false);
   }, [isRefetch, refetch]);
+
+  useEffect(() => {
+    const handleCheckout = async () => {
+      if (isLoggedIn) {
+        const data = cartItems
+          .filter(item => getVariantData(products.find(p => p.id === item.id)?.variants || null, "stock", item.variantId) > 0)
+          .map(item => ({
+            id: item.id,
+            variantId: item.variantId,
+            pcs: item.pcs,
+          }));
+        if (data.length > 0) {
+          await encryptproduct(data, router);
+        } else {
+          setIsCheckoutDisabled(true);
+        }
+      } else {
+        router.push(`/login`);
+      }
+      setIsLoading(false);
+    };
+
+    handleCheckoutRef.current = handleCheckout;
+  }, [isLoggedIn, cartItems, products, router, handleCheckoutRef, setIsCheckoutDisabled, setIsLoading]);
+
+  useEffect(() => {
+    const allOutOfStock = cartItems.every(item => getVariantData(products.find(p => p.id === item.id)?.variants || null, "stock", item.variantId) === 0);
+    setIsCheckoutDisabled(allOutOfStock);
+  }, [cartItems, products, setIsCheckoutDisabled]);
 
   return (
     <div
@@ -385,7 +433,7 @@ const CartWrapper = () => {
                   (item) => item.id === product.id
                 );
                 const serverCartItem = serverCartData?.find(
-                  (item: any) => item.product === product.id
+                  (item: any) => item.product === product.id && item.variant === cartItem?.variantId
                 );
                 return cartItem ? (
                   <CartItem
@@ -476,11 +524,11 @@ const CartItem: React.FC<LinkProps> = ({
 
   const variantPrice = useMemo(
     () => getVariantData(variantsdata, "price", variantId),
-    [variantsdata, variantId]
+    [variantsdata, variantId, pcs]
   );
   const { convertedPrice, symbol } = useMemo(
     () => convertPrice(variantPrice),
-    [convertPrice, variantPrice]
+    [convertPrice, variantPrice, pcs]
   );
 
   const truncateText = useCallback(
@@ -528,7 +576,7 @@ const CartItem: React.FC<LinkProps> = ({
     if (getVariantData(variantsdata, "stock", variantId) > pcs) {
       try {
         const actualData = {"pcs" : pcs + 1}
-        await updateCartItem({ id: serverCartId, actualData});
+        const res = await updateCartItem({ id: serverCartId, actualData});
         const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
         const updatedCartItems = cartItemsFromStorage.map((item: CartItem) =>
           item.id === cartId && item.variantId === variantId ? { ...item, pcs: item.pcs + 1 } : item
@@ -548,7 +596,7 @@ const CartItem: React.FC<LinkProps> = ({
     if (pcs > 1) {
       try {
         const actualdata = { pcs: pcs - 1 }
-        await updateCartItem({ id: serverCartId, actualdata});
+        const res = await updateCartItem({ id: serverCartId, actualdata});
         const cartItemsFromStorage = JSON.parse(localStorage.getItem("cart") || "[]");
         const updatedCartItems = cartItemsFromStorage.map((item: CartItem) =>
           item.id === cartId && item.variantId === variantId ? { ...item, pcs: item.pcs - 1 } : item
@@ -565,10 +613,10 @@ const CartItem: React.FC<LinkProps> = ({
   };
 
   const handleUpdateCartItem = async () => {
-    if(pcs == 1){
-      handleDelete()
+    if(pcs === 1){
+      await handleDelete()
     }else{
-      handleRemovepcs()
+      await handleRemovepcs()
     }
   };
 
@@ -597,7 +645,7 @@ const CartItem: React.FC<LinkProps> = ({
                 variant={pcs > 1 ? "bordered" : "solid"}
                 aria-label="Like"
                 onClick={handleUpdateCartItem}
-                className="max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
+                className="cursor-pointer max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
               >
                 {pcs > 1 ? <Minus size={15}/> : <AiFillDelete color="#ffffffd6" size={15} />}
               </Button>
@@ -607,7 +655,7 @@ const CartItem: React.FC<LinkProps> = ({
                 isIconOnly
                 variant="bordered"
                 aria-label="Like"
-                className="max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
+                className="cursor-pointer max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
                 onClick={handleAddpcs}
               >
                 <IoIosAdd color="#ffffffd6" size={22} />

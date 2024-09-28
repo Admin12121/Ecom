@@ -40,3 +40,23 @@ export interface FormValues {
     product_stripe_id?: string;
     discount?: number;
   }
+
+
+  export interface updateFormValues {
+    id: string;
+    productName: string;
+    description: string;
+    isMultiVariant: boolean;
+    category: number;
+    subCategory: number;
+    basePrice?: number | null | undefined;
+    stock?: number | null | undefined;
+    discount?: number | null | undefined;
+    variants?: Array<{
+      id: string;
+      size: string;
+      price: number;
+      stock: number;
+      discount?: number;
+    }>; 
+  }

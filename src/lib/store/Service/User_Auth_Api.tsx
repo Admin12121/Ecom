@@ -289,9 +289,17 @@ export const userAuthapi = createApi({
       }),
     }),
     redeemCodeView: builder.query({
-      query: ({ storeCode, code }) => ({
-        url: `sales/redeemcode/?store=${storeCode}${code ? `&code=${code}` : ""}`,
+      query: ({ code }) => ({
+        url: `api/sales/redeemcode/${code ? `?code=${code}` : ""}`,
         method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),
+    verifyRedeemCode: builder.mutation({
+      query: (code) => ({
+        url: `api/sales/redeemcode/verify-code/`,
+        method: "POST",
+        body: code,
         headers: createHeaders(true),
       }),
     }),
@@ -410,6 +418,19 @@ export const userAuthapi = createApi({
         headers: createHeaders(true),
       }),
     }),
+    getReviewData: builder.query({
+      query: ({ product_slug, page, page_size, star, filter }) => {
+        const baseUrl = product_slug 
+          ? `api/products/reviews/${product_slug}/data/` 
+          : `api/products/reviews/`;
+        const queryParams = buildQueryParams({ page, page_size, star, filter });
+        return {
+          url: `${baseUrl}${queryParams}`,
+          method: "GET",
+          headers: createHeaders(true),
+        };
+      },
+    }),
     getReview: builder.query({
       query: ({ product_slug, page, page_size, star, filter }) => (
         {
@@ -464,6 +485,7 @@ export const {
   useDeleteSubCategoryMutation,
   useUpgradeSubCategoryMutation,
   useRedeemCodeViewQuery,
+  useVerifyRedeemCodeMutation,
   useAddRedeemCodeMutation,
   useDeleteRedeemCodeMutation,
   useUpdateRedeemCodeMutation,
@@ -473,6 +495,7 @@ export const {
   useUpdateLayoutCardMutation,
   usePostReviewMutation,
   useUpdateReviewMutation,
+  useGetReviewDataQuery,
   useGetReviewQuery,
   usePostSaleMutation,
 } = userAuthapi;

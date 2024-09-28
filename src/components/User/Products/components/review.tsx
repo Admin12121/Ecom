@@ -53,7 +53,11 @@ const Review = ({ isOpen, onOpenChange, onClose, slug, onSheetOpen, rating }: an
 
   useEffect(() => {
     if (data?.results) {
-      setReviewData(prevData => [...(prevData || []), ...data.results]);
+      if (page === 1) {
+        setReviewData(data.results);
+      } else {
+        setReviewData(prevData => [...(prevData || []), ...data.results]);
+      }
     }
   }, [data]);
 
