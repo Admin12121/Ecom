@@ -1,0 +1,51 @@
+"use client";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/context";
+import { cn } from "@/lib/utils";
+
+export const CurrencySelector: React.FC = ({}) => {
+  const { liveratedata, handleSelectionChange, selectedcurrencyiso } =
+    useAuth();
+  return (
+    <>
+      {liveratedata && selectedcurrencyiso && (
+        <Select defaultValue={selectedcurrencyiso}>
+          <SelectTrigger className="w-[180px] border-0 border-none">
+            <SelectValue placeholder="Country / Region" />
+          </SelectTrigger>
+          <SelectContent className={cn("p-0 rounded-xl bg-zinc-800")}>
+            <SelectGroup>
+              {liveratedata &&
+                liveratedata.map((item) => (
+                  <SelectItem
+                    className={cn("transparent backdrop-blur-md hover:bg-zinc-900 rounded-xl")}
+                    key={item?.iso3}
+                    value={item?.iso3}
+                  >
+                    <div className="flex gap-2 items-center">
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback>{item?.symbol}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col text-white">
+                        <span className="text-base">{item?.name}</span>
+                      </div>
+                    </div>
+                  </SelectItem>
+                ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      )}
+    </>
+  );
+};
