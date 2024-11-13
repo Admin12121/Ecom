@@ -69,14 +69,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
       <span
         className={cn(
           "relative rounded-lg overflow-hidden group grow isolation-auto z-10 svelte-483qmb p-1",
-          "dark:bg-themeGray dark:border-themeGray bg-clip-padding backdrop--blur__safari backdrop-filter backdrop-blur-4xl bg-opacity-40",
+          "dark:bg-neutral-950",
           "flex flex-col gap-1"
         )}
       >
         <span
-          className={`absolute z-10 ${
-            width ? `w-full ` : "w-[350px]"
-          } px-3 top-3 flex justify-between items-center h-5 `}
+          className={cn(`absolute z-10 px-3 top-3 flex justify-between items-center h-5 w-full`)}
         >
           {data?.rating > 0 && (
             <span className="w-[50px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
@@ -94,14 +92,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
           effect="fade"
           modules={[Autoplay, Navigation, Pagination, EffectFade]}
           style={{ margin: "0px" }}
-          className={`w-full h-[390px] rounded-lg`}
+          className={cn(`w-full h-[390px] rounded-lg`, width)}
         >
           {data &&
             data?.images &&
             data.images.map((data: InterfaceImage, index: number) => (
               <SwiperSlide key={index}>
-                <div className="h-full w-full left-0 top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
-                  <Link href={`/products/${productslug}`}>
+                <div className="h-full w-full left-0 top-0 bg-white dark:bg-neutral-950 flex items-center justify-center">
+                  <Link href={`/collections/${productslug}`}>
                     <Image
                       src={data.image}
                       width={600}
@@ -123,19 +121,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
               </p>
             </div>
           </div>
-          <div className="flex w-full justify-between items-center">
+          <div className="flex w-full justify-between items-center gap-1">
             <p className="text-sm">
               {symbol} {convertedPrice}
             </p>
             <Button
-              color="default"
+              variant="active"
               size="sm"
-              className=" h-[30px] flex justify-center items-center text-sm"
+              className="h-[30px] flex justify-center items-center text-sm gap-2"
               //   onClick={(event) => {
               //     addToCart(data!.id, event, variantId);
               //   }}
             >
-              <HiOutlineShoppingBag size={14} />
+              <HiOutlineShoppingBag className="w-3 h-3" />
               Add
             </Button>
           </div>

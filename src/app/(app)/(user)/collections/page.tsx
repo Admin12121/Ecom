@@ -1,10 +1,8 @@
-import React from 'react';
-import dynamic from 'next/dynamic'
+import React from "react";
+import dynamic from "next/dynamic";
 
-const Products = dynamic(() => import('./_components'))
+const Products = dynamic(() => import("./_components"));
 
-export default function Page() {
-  return (
-    <Products />
-  );
+export default async function Page() {
+  return <Products />;
 }

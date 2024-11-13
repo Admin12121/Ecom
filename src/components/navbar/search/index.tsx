@@ -87,14 +87,14 @@ export function PlaceholdersAndVanishInput({
       <div
         className={cn(
           "w-full cursor-pointer relative max-w-xl mx-auto hidden sm:flex bg-default-400/20 dark:bg-default-500/20 h-[40px] min-w-[350px] rounded-lg overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
-          "dark:bg-zinc-800 bg-muted"
+          "dark:bg-zinc-800/50 bg-muted/50"
         )}
         onClick={onClick}
       >
         <button
           disabled={!value}
           type="submit"
-          className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full bg-background dark:bg-neutral-950 dark:disabled:bg-transparent transition duration-200 flex items-center justify-center"
+          className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full bg-transparent dark:disabled:bg-transparent transition duration-200 flex items-center justify-center"
         >
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"

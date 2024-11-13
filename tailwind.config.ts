@@ -20,6 +20,8 @@ const config: Config = {
     },
     extend: {
       colors: {
+        custom: "hsl(var(--custom))",
+        main: "#9353d3",
         themeBlack: "#09090B",
         themeGray: "#27272A",
         themeDarkGray: "#27272A",

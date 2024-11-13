@@ -8,8 +8,8 @@ import { CurrencySelector } from "./currency";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
-      <div className="flex h-14 items-center px-4">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none border-0">
+      <div className="flex h-16 items-center px-4">
         <MainNav />
         <div className="flex flex-1 items-center justify-end gap-2 md:justify-end">
           <nav className="flex items-center gap-1 w-full justify-end">

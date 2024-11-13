@@ -20,7 +20,7 @@ const sizeMap = {
 };
 
 const colorMap = {
-  default: "hsl(214, 97%, 59%)",
+  default: "#27272a",
   primary: "blue",
   secondary: "gray",
   success: "green",
@@ -30,7 +30,7 @@ const colorMap = {
   danger: "red",
 };
 
-const Spinner: React.FC<SpinnerProps> = ({
+export const Spinner: React.FC<SpinnerProps> = ({
   size = "md",
   color = "default",
 }) => {

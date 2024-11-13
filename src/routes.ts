@@ -2,6 +2,7 @@ export const publicRoutes = [
     "/",
     "/auth/(.*)",
     "/collections",
+    "/collections/(.*)",
     "/explore/(.*)",
 ]
 
