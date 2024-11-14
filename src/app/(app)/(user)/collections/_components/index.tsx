@@ -17,42 +17,24 @@ const Category = () => {
     SetProducts(data?.results);
   }, [data]);
 
-  const Products = ({
-    products,
-    loading,
-  }: {
-    products: Product[] | null;
-    loading: boolean;
-  }) => {
-    if (loading) {
-      return Array.from({ length: 4 }, (_, index) => (
-        <ProductSkeleton key={index} />
-      ));
-    }
-
-    return (
-      <>
-        {products &&
-          products.map((product, index) => {
-            return (
-              <div
-                key={index}
-                className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
-              >
-                <ProductCard data={product} />
-              </div>
-            );
-          })}
-      </>
-    );
-  };
-
   return (
     <span className="flex justify-between max-md:flex-col-reverse ">
       <div
         className={`grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none`}
       >
-        <Products products={products} loading={isLoading} />
+        <ProductSkeleton loading={isLoading}>
+          {products &&
+            products.map((product, index) => {
+              return (
+                <div
+                  key={index}
+                  className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
+                >
+                  <ProductCard data={product} />
+                </div>
+              );
+            })}
+        </ProductSkeleton>
       </div>
       {filters && (
         <div className="w-[500px] p-[10px] max-md:w-full max-md:top-[120px] max-md:z-50">

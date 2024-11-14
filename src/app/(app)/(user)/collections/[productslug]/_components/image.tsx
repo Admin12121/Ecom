@@ -7,12 +7,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-interface Images{
-  image : string;
+interface Images {
+  image: string;
 }
 
-
-const DemoSlider = ({ images }:{images:Images[]}) => {
+const DemoSlider = ({ images }: { images: Images[] }) => {
   return (
     <section className="w-full flex items-center justify-center ">
       <span className="relative w-[90vw] flex flex-col h-[500px] m-0 dark:bg-neutral-950 rounded-lg">
@@ -26,7 +25,7 @@ const DemoSlider = ({ images }:{images:Images[]}) => {
           style={{ margin: "0px" }}
           className="w-full h-[500px] rounded-lg"
         >
-          {images.map(({image }:{image:string}) => (
+          {images.map(({ image }: { image: string }) => (
             <SwiperSlide key={Math.random()}>
               <div className="h-full w-full left-0 top-0 bg-neutral-950 flex items-center justify-center">
                 <Image
@@ -45,15 +44,14 @@ const DemoSlider = ({ images }:{images:Images[]}) => {
   );
 };
 
-export default function Page({images}:{images:Images[]}) {
+export default function Page({ images }: { images: Images[] }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1000);
     };
-
-    handleResize(); // Check on mount
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -63,7 +61,7 @@ export default function Page({images}:{images:Images[]}) {
       {isMobile ? (
         <DemoSlider images={images} />
       ) : (
-        images.map(({image}:{image:string}, index) => (
+        images.map(({ image }: { image: string }, index) => (
           <span
             key={index}
             className="mmd:w-[49%] bg-white dark:bg-neutral-950 flex items-center justify-center rounded-xl p-3"

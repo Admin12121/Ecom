@@ -1,17 +1,27 @@
 "use client";
+import * as z from "zod";
+import { toast } from "sonner";
+import dynamic from "next/dynamic";
+import { useAuth } from "@/lib/context";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Code } from "@/components/ui/code";
+import { ReviewSheet } from "./review-sheet";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import React, { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Badge as Chip } from "@/components/ui/badge";
+import { Separator as Divider } from "@/components/ui/separator";
+
 import {
   Card,
   CardContent as CardBody,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Code } from "@/components/ui/code";
-import { Input } from "@/components/ui/input";
-import { Badge as Chip } from "@/components/ui/badge";
-import { Spinner } from "@/components/ui/spinner";
-import { Button } from "@/components/ui/button";
-import { Separator as Divider } from "@/components/ui/separator";
+
 import {
   Box as FiBox,
   Star as MdOutlineStar,
@@ -19,24 +29,12 @@ import {
   Heart as IoIosHeartEmpty,
 } from "lucide-react";
 
-import { useAuth } from "@/lib/context";
-import { useRouter } from "next/navigation";
-
 import {
   useNotifyuserMutation,
   useGetnotifyuserQuery,
 } from "@/lib/store/Service/User_Auth_Api";
 
-import { useForm } from "react-hook-form";
-
-import { toast } from "sonner";
-import dynamic from "next/dynamic";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-// const WriteReview = dynamic(()=> import('./drawer'), {ssr: false})
-// const Review = dynamic(()=> import('./review'), {ssr: false})
-
-const PasswordSchema = z.object({
+const EmailSchema = z.object({
   uid: z.string().min(1, { message: "UID is required" }),
   token: z.string().min(1, { message: "Token is required" }),
   password: z
@@ -84,6 +82,9 @@ const getSizeCategory = (index: number) => {
 
 const Sidebar = ({ products }: { products: Product }) => {
   const router = useRouter();
+  const { convertPrice } = useAuth();
+  const [notifyuser] = useNotifyuserMutation();
+
   const [selectedSize, setSelectedSize] = useState<{
     id: number;
     size: string | null;
@@ -95,32 +96,18 @@ const Sidebar = ({ products }: { products: Product }) => {
     useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
-  const { convertPrice } = useAuth();
-  const [notifyuser] = useNotifyuserMutation();
   const [notifyadded, setNotifyAdded] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  //   const WriteReview = dynamic(
-  //     () => (isSheetOpen ? import("./drawer") : Promise.resolve(() => null)),
-  //     { ssr: false }
-  //   );
-  //   const Review = dynamic(
-  //     () => (isOpen ? import("./review") : Promise.resolve(() => null)),
-  //     { ssr: false }
-  //   );
 
-  const handleDrawer = () => {
-    // to do
-    // if (isLoggedIn) {
-    //   setIsSheetOpen(true);
-    // } else {
-    //   router.push("/login");
-    // }
-  };
+  const { data, isLoading, refetch } = useGetnotifyuserQuery(
+    { product: products, variant: selectedVariant },
+    { skip: !products || !selectedVariant || selectedVariantOutOfStock }
+  );
 
-  const handleSizeClick = (id: number, size: string | null) => {
-    setSelectedSize({ id, size });
-  };
+  useEffect(() => {
+    setNotifyAdded(data?.requested || false);
+  }, [data]);
+
+  const handleDrawer = () => {};
 
   const sortedVariants = Array.isArray(variantsData)
     ? [...variantsData].sort((a, b) => Number(a.size) - Number(b.size))
@@ -145,16 +132,12 @@ const Sidebar = ({ products }: { products: Product }) => {
         (a, b) => Number(a.size) - Number(b.size)
       );
       setVariantsData(sortedVariants);
-
-      // Set initial selected size
       if (sortedVariants.length > 0) {
         setSelectedSize({
           id: sortedVariants[0].id,
           size: sortedVariants[0].size,
         });
       }
-
-      // Check if any variant is out of stock
       const anyOutOfStock = sortedVariants.some(
         (variant) => variant.stock === 0
       );
@@ -207,7 +190,7 @@ const Sidebar = ({ products }: { products: Product }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(PasswordSchema),
+    resolver: zodResolver(EmailSchema),
   });
 
   const onSubmit = async (data: any) => {
@@ -217,9 +200,8 @@ const Sidebar = ({ products }: { products: Product }) => {
       product: products.id,
     };
     const res = await notifyuser(actualData);
-    if (res.data) {
-    } else if (res.error) {
-      toast.error("Some Thing went wrong, try again later");
+    if (res.error) {
+      toast.error("Something went wrong, try again later");
     }
   };
 
@@ -279,7 +261,10 @@ const Sidebar = ({ products }: { products: Product }) => {
                         }
                         size="sm"
                         onClick={() =>
-                          handleSizeClick(variant.id, variant.size)
+                          setSelectedSize({
+                            id: variant.id,
+                            size: variant.size,
+                          })
                         }
                       >
                         {getSizeCategory(index)}
@@ -314,20 +299,10 @@ const Sidebar = ({ products }: { products: Product }) => {
                 $48 with 50% off
               </Chip>
             </span>
-            {selectedVariantOutOfStock && (
-              <Notify
-                selectedVariant={selectedVariant}
-                products={products.id}
-                setLoading={setLoading}
-                setNotifyAdded={setNotifyAdded}
-              />
-            )}
             {!selectedVariantOutOfStock ? (
               <span className="flex gap-3">
                 <Button
                   color="custom"
-                  //   variant={`${isLoggedIn ? "flat" : "shadow"}`}
-                  //   radius="sm"
                   variant="custom"
                   size="sm"
                   className="w-full h-[40px] text-base"
@@ -346,7 +321,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                   </Button>
                 )} */}
               </span>
-            ) : loading ? (
+            ) : isLoading ? (
               <span className="flex w-full h-[185px] items-center justify-center">
                 <Spinner color="default" />
               </span>
@@ -370,7 +345,6 @@ const Sidebar = ({ products }: { products: Product }) => {
                   placeholder="Enter your email"
                   className="dark:bg-custom/40 border-0 bg-white outline-none focus:ring-0 focus:border-transparent"
                   disabled={notifyadded}
-                  // errorMessage={errors?.email?.message}
                 />
                 <span className="flex gap-2">
                   <Button
@@ -384,7 +358,6 @@ const Sidebar = ({ products }: { products: Product }) => {
                   </Button>
                   <Button
                     variant="custom"
-                    asChild
                     className="h-[40px] w-[40px] p-2 cursor-pointer"
                   >
                     <IoIosHeartEmpty className="w-9 h-9" color="#fff" />
@@ -394,23 +367,6 @@ const Sidebar = ({ products }: { products: Product }) => {
             )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
-            {/* <Accordion variant="splitted" isCompact itemClasses={itemClasses}>
-              <AccordionItem
-                key="1"
-                aria-label="Accordion 1"
-                title="🟠 Composition"
-                // className="h-[40px] py-0 rounded-md"
-              >
-                {defaultContent}
-              </AccordionItem>
-              <AccordionItem
-                key="2"
-                aria-label="Accordion 2"
-                title="📏 Size & Weight"
-              >
-                {defaultContent}
-              </AccordionItem>
-            </Accordion> */}
             <span className="w-full px-2">
               <Card className="w-full border-none border-0 bg-white dark:bg-neutral-950">
                 <CardHeader className="flex gap-3 p-3">
@@ -432,67 +388,18 @@ const Sidebar = ({ products }: { products: Product }) => {
                       <MdOutlineStar color="orange" size={16} />
                     </p>
                   </div>
-                  <Button
-                    color="default"
-                    variant="custom"
-                    className="w-full h-[40px] text-base"
-                    // radius="sm"
-                    // variant="flat"
-                    onClick={() => {
-                      // onOpen();
-                    }}
-                  >
-                    Show all
-                  </Button>
+                  <ReviewSheet
+                    rating={products.rating}
+                    slug={products.productslug}
+                  />
                 </CardBody>
               </Card>
             </span>
           </CardFooter>
         </Card>
-        {/* {products?.productslug && (
-          <Review
-            rating={products.rating}
-            isOpen={isOpen}
-            onClose={onClose}
-            onOpenChange={onOpenChange}
-            slug={products.productslug}
-            onSheetOpen={handleDrawer}
-          />
-        )} */}
       </aside>
-      {/* <WriteReview
-        product={products}
-        price={`${symbol} ${convertedPrice}`}
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-      /> */}
     </>
   );
 };
 
-const Notify = ({
-  products,
-  selectedVariant,
-  setNotifyAdded,
-  setLoading,
-}: {
-  products: number;
-  selectedVariant: number | null;
-  setNotifyAdded: any;
-  setLoading: any;
-}) => {
-  const product = products;
-  const variant = selectedVariant;
-  const { data, isLoading, refetch } = useGetnotifyuserQuery({
-    product,
-    variant,
-  });
-  if (data && data.requested) {
-    setNotifyAdded(true);
-  } else {
-    setNotifyAdded(false);
-  }
-  setLoading(isLoading);
-  return <></>;
-};
 export default Sidebar;

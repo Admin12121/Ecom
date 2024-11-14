@@ -344,3 +344,21 @@ body {
   background-color: #0a0a0a !important;
   width: 25px !important;
 }
+
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  100% {
+    width: 820px;
+    height: 820px;
+    opacity: 0;
+  }
+}
+.ripple {
+  background: rgba(255, 255, 255, 0.7);
+  width: 20px;
+  height: 20px;
+}

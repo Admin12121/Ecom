@@ -74,7 +74,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
         )}
       >
         <span
-          className={cn(`absolute z-10 px-3 top-3 flex justify-between items-center h-5 w-full`)}
+          className={cn(
+            `absolute z-10 px-3 top-3 flex justify-between items-center h-5 w-full`
+          )}
         >
           {data?.rating > 0 && (
             <span className="w-[50px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
@@ -143,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
   );
 };
 
-export const ProductSkeleton = () => {
+export const Skeleton = () => {
   return (
     <section className="w-[350px] p-1 h-full flex flex-col gap-1 rounded-lg">
       <div className="w-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[390px] rounded-lg"></div>
@@ -158,4 +160,23 @@ export const ProductSkeleton = () => {
       </div>
     </section>
   );
+};
+
+export const ProductSkeleton = ({
+  loading,
+  children,
+}: {
+  loading: boolean;
+  children: React.ReactNode;
+}) => {
+  if (loading) {
+    return (
+      <>
+        {Array.from({ length: 4 }, (_, index) => (
+          <Skeleton key={index} />
+        ))}
+      </>
+    );
+  }
+  return <>{children}</>;
 };

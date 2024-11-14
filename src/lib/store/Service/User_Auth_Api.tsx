@@ -73,6 +73,14 @@ export const userAuthapi = createApi({
         headers: createHeaders(true),
       }),
     }),
+    getReview: builder.query({
+      query: ({ product_slug, page, page_size, star, filter }) => (
+        {
+        url: `api/products/reviews/${product_slug}/data/${buildQueryParams({ page, page_size, star, filter })}`,
+        method: "GET",
+        headers: createHeaders(true),
+      }),
+    }),
   }),
 });
 
@@ -81,4 +89,5 @@ export const {
   useRecommendedProductsViewQuery,
   useNotifyuserMutation,
   useGetnotifyuserQuery,
+  useGetReviewQuery,
 } = userAuthapi;

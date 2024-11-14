@@ -86,3 +86,21 @@ export interface updateFormValues {
     discount?: number;
   }>;
 }
+
+export interface ReviewsImage {
+  id: number;
+  image: string;
+  review: number;
+}
+
+export interface Reviews {
+  id: number;
+  user: number;
+  rating: number;
+  title: string;
+  content: string;
+  recommended: boolean;
+  delivery: boolean;
+  review_images: ReviewsImage[];
+  created_at: string;
+}
