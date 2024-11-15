@@ -68,7 +68,7 @@ interface Product {
   images: any[];
 }
 
-const getSizeCategory = (index: number) => {
+export const getSizeCategory = (index: number) => {
   const sizeNames = [
     "Small",
     "Medium",

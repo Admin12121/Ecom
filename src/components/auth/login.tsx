@@ -21,12 +21,12 @@ import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import useApi from '@/lib/useApi';
-import { useRouter } from 'next/navigation';
+import useApi from "@/lib/useApi";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const router = useRouter();
-  const { data, error, isLoading, fetchData } = useApi<any>(); 
+  const { data, error, isLoading, fetchData } = useApi<any>();
   const searchParams = useSearchParams();
   const [success, setSuccess] = useState<string>("");
   const errorParam = searchParams.get("error");
@@ -40,23 +40,23 @@ const Login = () => {
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     fetchData({
-      url: '/api/auth/login',
-      method: 'POST',
-      data: values
+      url: "/api/auth/login",
+      method: "POST",
+      data: values,
     });
   };
 
-  useEffect(()=>{
-    if(data){
+  useEffect(() => {
+    if (data) {
       setSuccess("Login Successfull");
-      if(data.redirectUrl){
+      if (data.redirectUrl) {
         router.push(data.redirectUrl);
       }
     }
-  },[data])
+  }, [data]);
 
   if (errorParam) {
-    return <LoginError errorParam={errorParam}/>;
+    return <LoginError errorParam={errorParam} />;
   }
 
   return (
@@ -81,7 +81,8 @@ const Login = () => {
                       disabled={isLoading}
                       type="email"
                       placeholder="Email"
-                      className="bg-themeBlack border-themeGray text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]"
+                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
+                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -100,7 +101,8 @@ const Login = () => {
                       type="password"
                       placeholder="Password"
                       autoComplete="off"
-                      className="bg-themeBlack border-themeGray text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]"
+                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
+                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -108,10 +110,20 @@ const Login = () => {
               )}
             />
           </div>
-            <Link href="/auth/reset-password" className="!mx-1 !my-2 text-themeTextGray text-xs hover:text-themeTextWhite transition duration-500">Forgot Password?</Link>
+          <Link
+            href="/auth/reset-password"
+            className="!mx-1 !my-2 text-themeTextGray text-xs hover:text-themeTextWhite transition duration-500"
+          >
+            Forgot Password?
+          </Link>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isLoading} loading={isLoading} type="submit" className="w-full !mt-2">
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            type="submit"
+            className="w-full !mt-2"
+          >
             Login
           </Button>
         </form>

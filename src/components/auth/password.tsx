@@ -19,45 +19,45 @@ import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import useApi from '@/lib/useApi';
+import useApi from "@/lib/useApi";
 
 const PasswordForm = () => {
-    const pathname = usePathname();
-    const router = useRouter();
-    const pathParts = pathname.split("/");
-    const uid = pathParts[3];
-    const token = pathParts[4];
-    const { data, error, isLoading, fetchData } = useApi<any>(); 
-    const [success, setSuccess] = useState<string>("");
-    const form = useForm<z.infer<typeof PasswordSchema>>({
-      resolver: zodResolver(PasswordSchema),
-      defaultValues: {
-        uid: uid,
-        token: token,
-        password: "",
-      },
+  const pathname = usePathname();
+  const router = useRouter();
+  const pathParts = pathname.split("/");
+  const uid = pathParts[3];
+  const token = pathParts[4];
+  const { data, error, isLoading, fetchData } = useApi<any>();
+  const [success, setSuccess] = useState<string>("");
+  const form = useForm<z.infer<typeof PasswordSchema>>({
+    resolver: zodResolver(PasswordSchema),
+    defaultValues: {
+      uid: uid,
+      token: token,
+      password: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof PasswordSchema>) => {
+    fetchData({
+      url: `/api/auth/reset-password/${uid}`,
+      method: "PATCH",
+      data: values,
     });
-  
-    const onSubmit = (values: z.infer<typeof PasswordSchema>) => {
-      fetchData({
-        url: `/api/auth/reset-password/${uid}`,
-        method: 'PATCH',
-        data: values
-      });
-    };
-  
-    useEffect(()=>{
-      if(data){
-        setSuccess("Password Reset Successfully");
-        setTimeout(() => {
-            setSuccess("Redirecting ...");
-          }, 2000);      
-          setTimeout(() => {
-            router.push(data.redirectUrl);
-          }, 4000);
-      }
-    },[data])
-  
+  };
+
+  useEffect(() => {
+    if (data) {
+      setSuccess("Password Reset Successfully");
+      setTimeout(() => {
+        setSuccess("Redirecting ...");
+      }, 2000);
+      setTimeout(() => {
+        router.push(data.redirectUrl);
+      }, 4000);
+    }
+  }, [data]);
+
   return (
     <Cardwrapper
       title="Password"
@@ -80,22 +80,29 @@ const PasswordForm = () => {
                       disabled={isLoading}
                       type="password"
                       placeholder="new Password"
+                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
+                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-         </div>
+          </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isLoading} loading={isLoading} type="submit" className="w-full !mt-3">
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            type="submit"
+            className="w-full !mt-3"
+          >
             Reset Password
           </Button>
         </form>
       </Form>
     </Cardwrapper>
-  )
-}
+  );
+};
 
 export default PasswordForm;

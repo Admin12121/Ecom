@@ -22,6 +22,8 @@ import {
   Image as InterfaceImage,
 } from "@/types/product";
 import { cn } from "@/lib/utils";
+import { useUpdateQueryParams } from "@/lib/query-params";
+import { getSizeCategory } from "@/app/(app)/(user)/collections/[productslug]/_components/sidebar";
 
 interface ProductCardProps {
   data: Product;
@@ -32,6 +34,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
   const router = useRouter();
   const { convertPrice } = useAuth();
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
+  const updateQueryParams = useUpdateQueryParams();
   const [variantsData, setVariantsData] = useState<
     VariantObject[] | VariantObject | null
   >(null);
@@ -60,16 +63,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
     getVariantData(variantsData, "price")
   );
   const variantId = getVariantData(variantsData, "id");
+
   const handleRoute = () => {
-    router.push(`/collections?category=${data?.categoryname}`);
+    updateQueryParams({ category: data?.categoryname }, "/collections");
   };
+
   const productslug = data.productslug;
   return (
     <section className="relative w-full flex gap-5">
       <span
         className={cn(
           "relative rounded-lg overflow-hidden group grow isolation-auto z-10 svelte-483qmb p-1",
-          "dark:bg-neutral-950",
+          "bg-white dark:bg-neutral-950",
           "flex flex-col gap-1"
         )}
       >
@@ -84,7 +89,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
             </span>
           )}
           <span className="h-full flex text-xs items-center justify-center absolute right-4">
-            <IoIosHeartEmpty size={18} color="#fff" />
+            <IoIosHeartEmpty
+              size={18}
+              className="dark:stroke-white stroke-neutral-800"
+            />
           </span>
         </span>
         <Swiper
@@ -100,7 +108,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
             data?.images &&
             data.images.map((data: InterfaceImage, index: number) => (
               <SwiperSlide key={index}>
-                <div className="h-full w-full left-0 top-0 bg-white dark:bg-neutral-950 flex items-center justify-center">
+                <div className="h-full w-full left-0 top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
                   <Link href={`/collections/${productslug}`}>
                     <Image
                       src={data.image}
@@ -114,7 +122,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
               </SwiperSlide>
             ))}
         </Swiper>
-        <span className=" w-full h-[90px] flex flex-col rounded-lg p-3 py-2 justify-between bg-neutral-100 dark:bg-transparent">
+        <span className=" w-full h-[90px] flex flex-col rounded-lg p-3 py-2 justify-between  dark:bg-transparent">
           <div className="flex gap-3 items-center">
             <div className="flex flex-col cursor-pointer">
               <p className="text-sm">{data.product_name}</p>
@@ -132,9 +140,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
               size="sm"
               className="h-[30px] flex justify-center items-center text-sm gap-2"
               //   onClick={(event) => {
-              //     addToCart(data!.id, event, variantId);
-              //   }}
-            >
+                //     addToCart(data!.id, event, variantId);
+                //   }}
+                >
               <HiOutlineShoppingBag className="w-3 h-3" />
               Add
             </Button>
@@ -179,4 +187,42 @@ export const ProductSkeleton = ({
     );
   }
   return <>{children}</>;
+};
+
+export const VariantCategory = ({
+  variantsData,
+}: {
+  variantsData: VariantObject[] | VariantObject | null;
+}) => {
+  if (!Array.isArray(variantsData)) {
+    return null;
+  }
+
+  const [selectedSize, setSelectedSize] = useState<{
+    id: number;
+    size: string | null;
+  } | null>(null);
+  const sortedVariants = Array.isArray(variantsData)
+    ? [...variantsData].sort((a, b) => Number(a.size) - Number(b.size))
+    : [];
+
+  return (
+    <span className="flex gap-2 items-center">
+      {sortedVariants.map((variant, index) => (
+        <Button
+          key={variant.id}
+          variant={selectedSize?.id === variant.id ? "active" : "secondary"}
+          size="sm"
+          onClick={() =>
+            setSelectedSize({
+              id: variant.id,
+              size: variant.size,
+            })
+          }
+        >
+          {getSizeCategory(index)}
+        </Button>
+      ))}
+    </span>
+  );
 };

@@ -47,6 +47,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
     --custom: 240 5.26% 26.08%;
+    --spring-easing: linear(0, 0.88117 15.492%, 1.09261 23.232%, 1.10421 28.713%, 0.99031 49.585%,0.99995);
   }
   .dark {
     --custombg: 0 0% 0%;
@@ -358,7 +359,6 @@ body {
   }
 }
 .ripple {
-  background: rgba(255, 255, 255, 0.7);
   width: 20px;
   height: 20px;
 }

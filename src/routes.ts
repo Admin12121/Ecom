@@ -1,22 +1,26 @@
+// Public routes accessible without authentication
 export const publicRoutes = [
     "/",
-    "/auth/(.*)",
+    // "/auth/(.*)",
     "/collections",
     "/collections/(.*)",
-    "/explore/(.*)",
-]
+    "/wishlist",
+];
 
+// Routes that require user authentication
 export const protectedRoutes = [
-    "/dashboard"
-]
+    "/dashboard",
+];
 
-
+// Routes related to authentication processes
 export const authRoutes = [
     "/auth/login",
     "/auth/register",
-    "/auth/(.*)"
-]
+    "/auth/(.*)",
+];
 
-
+// Prefix for API authentication routes
 export const apiAuthPrefix = "/api/auth";
-export const Default_Login_Redirect = "/dashboard";
+
+// Default redirect path after login
+export const Default_Login_Redirect = "/";

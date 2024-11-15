@@ -5,8 +5,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import Spinner from "./spinner";
 import { cn } from "@/lib/utils";
 
-
-
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
@@ -53,7 +51,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
-      variant,
+      variant = "default",
       size,
       asChild = false,
       children,
@@ -80,7 +78,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         pointer-events: none; 
         border-radius: 50%; 
         animation: ripple .8s linear infinite; 
-        transition: .5s;`;
+        transition: .5s;
+        ${
+          variant === "default"
+            ? "background: #000000bd"
+            : "background: rgba(255, 255, 255, 0.7)"
+        }`;
       ripples.className = "ripple";
       button.appendChild(ripples);
       setTimeout(() => {
@@ -101,9 +104,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={handleClick}
         {...props}
       >
-        <>
-          {loading ? <Spinner color="secondary" size="sm" /> : children}
-        </>
+        <>{loading ? <Spinner color="secondary" size="sm" /> : children}</>
       </Comp>
     );
   }

@@ -18,8 +18,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
-import useApi from '@/lib/useApi';
-
+import useApi from "@/lib/useApi";
 
 const RegisterForm = () => {
   const { data, error, isLoading, fetchData } = useApi<any>();
@@ -34,9 +33,9 @@ const RegisterForm = () => {
 
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     fetchData({
-      url: '/api/auth/registration',
-      method: 'POST',
-      data: values
+      url: "/api/auth/registration",
+      method: "POST",
+      data: values,
     });
   };
 
@@ -62,7 +61,8 @@ const RegisterForm = () => {
                       disabled={isLoading}
                       type="text"
                       placeholder="Name"
-                      className="bg-themeBlack border-themeGray text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]"
+                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
+                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -80,7 +80,8 @@ const RegisterForm = () => {
                       disabled={isLoading}
                       type="email"
                       placeholder="Email"
-                      className="bg-themeBlack border-themeGray text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]"
+                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
+                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -99,7 +100,8 @@ const RegisterForm = () => {
                       type="password"
                       placeholder="Password"
                       autoComplete="off"
-                      className="bg-themeBlack border-themeGray text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]"
+                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
+                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -109,7 +111,12 @@ const RegisterForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={data?.message} />
-          <Button disabled={isLoading} loading={isLoading} type="submit" className="w-full">
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            type="submit"
+            className="w-full"
+          >
             Create Account
           </Button>
         </form>

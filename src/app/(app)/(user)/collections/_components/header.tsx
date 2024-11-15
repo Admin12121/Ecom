@@ -14,9 +14,10 @@ import { usePathname } from "next/navigation";
 const Header: React.FC = () => {
   const path = usePathname();
   const pathSegments = path.split("/").filter((segment) => segment);
+  
   return (
     <menu className="w-full max-w-full">
-      <div className="flex w-full px-5 lg:p-0">
+      <div className="flex w-full">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

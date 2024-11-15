@@ -5,9 +5,6 @@ export const metadata: Metadata = {
   description: "",
 };
 
-import dynamic from "next/dynamic";
-
-// const Header = dynamic(() => import("./_components/header"));
 import Header from "./_components/header";
 
 export default function RootLayout({

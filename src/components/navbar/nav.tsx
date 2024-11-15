@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link";
 
 import { MainNav } from "@/components/navbar/main-nav";
@@ -5,8 +6,13 @@ import { Button } from "@/components/ui/button";
 import { ModeSwitcher } from "@/components/navbar/mood-switcher";
 import { Heart } from "lucide-react";
 import { CurrencySelector } from "./currency";
+import Cart from "./cart";
+import { authUser } from "@/hooks/use-auth-user";
+import { UserNav } from "./usernav";
 
 export function SiteHeader() {
+  const { status } = authUser()
+
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none border-0">
       <div className="flex h-16 items-center px-4">
@@ -15,15 +21,16 @@ export function SiteHeader() {
           <nav className="flex items-center gap-1 w-full justify-end">
             <CurrencySelector/>
             <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
-              <Link href="/collections/wishlist" rel="noreferrer">
+              <Link href="/wishlist" rel="noreferrer">
                 <Heart className="h-4 w-4" />
                 <span className="sr-only">Wishlist</span>
               </Link>
             </Button>
+            <Cart/>
             <ModeSwitcher />
-            <Button variant="ghost" size="icon" className="h-8 w-20 px-1">
-              <Link href="/login">Sign Up</Link>
-            </Button>
+            {status ? <UserNav/> : <Button variant="ghost" size="icon" className="h-8 w-20 px-1">
+              <Link href="/auth/login">Sign Up</Link>
+            </Button>}
           </nav>
         </div>
       </div>

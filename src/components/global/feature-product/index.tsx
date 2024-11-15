@@ -19,9 +19,9 @@ const FeatureProduct = ({
   title: string;
 }) => {
   return (
-    <Section>
+    <Section className="w-screen">
       <Container>
-        <div className="px-5 w-full flex items-center absolute mt-2">
+        <div className="px-2 lg:px-4 w-full flex items-center absolute mt-2">
           <h2 className="text-2xl">{title}</h2>
         </div>
         <Carousel className="mt-6 w-full">
@@ -30,14 +30,14 @@ const FeatureProduct = ({
               {products &&
                 products.map((product: any, index: any) => (
                   <div
-                    className={`slider-slide flex items-center justify-center p-4 ${
-                      index === 0 ? "w-[350px] md:w-[600px]" : ""
+                    className={`slider-slide flex items-center justify-center p-2 ${
+                      index === 0 ? "w-[430px] md:w-[540px]" : ""
                     } transition duration-500 ease-in-out`}
                     key={index}
                   >
                     <ProductCard
                       data={product}
-                      width={index === 0 ? "w-[500px]" : "w-[390px]"}
+                      width={index === 0 ? "md:w-[515px]" : "w-[390px]"}
                     />
                   </div>
                 ))}

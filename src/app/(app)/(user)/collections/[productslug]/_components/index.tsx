@@ -1,7 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import {
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
@@ -46,9 +45,7 @@ interface Product {
   images: Image[];
 }
 
-const ProductObject = () => {
-  const params = useParams<{ productslug: string }>();
-  const productslug = params.productslug;
+const ProductObject = ({productslug}:{productslug:string}) => {
   const [product, setProduct] = useState<Product | null>(null);
   const { data, isLoading, error } = useProductsViewQuery({ productslug });
 
@@ -105,7 +102,7 @@ const ReviewsSection = () => (
   </section>
 );
 
-const RecommendedProducts = ({ product_id }: { product_id: number }) => {
+export const RecommendedProducts = ({ product_id }: { product_id: number }) => {
   const { data, isLoading } = useRecommendedProductsViewQuery({
     product_id,
   });

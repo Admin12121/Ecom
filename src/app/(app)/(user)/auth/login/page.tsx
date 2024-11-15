@@ -1,10 +1,9 @@
 import dynamic from 'next/dynamic';
+
 const Login = dynamic(() => import('@/components/auth/login'))
 
-const Page = () => {
+export default async function() {
   return (
     <Login/>
   )
 }
-
-export default Page;

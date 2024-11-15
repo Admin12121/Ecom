@@ -54,7 +54,8 @@ export default {
           return null; // Validation failed
         }
         const { email, password } = ValidateFields.data;
-        const response = await fetch(`$\{process.env.BACKEND_URL}/api/accounts/users/login/`, {
+        console.log(process.env.BACKEND_URL)
+        const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/users/login/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ export default {
         throw new Error('Activation link sent to your email');
       }
       if (account?.provider !== 'credentials') {
-        const response = await fetch(`$\{process.env.BACKEND_URL}/api/accounts/users/social_login/`, {
+        const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/users/social_login/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

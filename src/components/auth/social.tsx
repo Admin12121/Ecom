@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Default_Login_Redirect } from "@/routes";
 import { Google } from "@/icons/google";
 import Github from "@/icons/github";
+import { InstagramLogoIcon } from "@radix-ui/react-icons";
 
 const Social = () => {
   const onClick = async (provider: "google" | "github") => {
@@ -28,7 +29,7 @@ const Social = () => {
         variant="outline"
         onClick={() => onClick("github")}
       >
-        <Github />
+        <InstagramLogoIcon className="w-7 h-7" />
       </Button>
     </div>
   );

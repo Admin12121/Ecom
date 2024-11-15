@@ -2,15 +2,15 @@
 import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 import Cardwrapper from "../cardwrapper";
-import { SpinnerLoader } from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { usePathname } from 'next/navigation';
-import { IoAlertOutline } from "react-icons/io5";
-import { GoShieldCheck } from "react-icons/go";
 import { useRouter } from 'next/navigation';
+import { ShieldCheck as GoShieldCheck, OctagonAlert as IoAlertOutline} from "lucide-react";
+
 // import Loader from './loader'
 const Loader = dynamic(() => import('./loader'), {
   ssr: false,
-  loading: () => <span className='w-full h-[150px] flex items-center justify-center'><SpinnerLoader/></span>, 
+  loading: () => <span className='w-full h-[150px] flex items-center justify-center'><Spinner/></span>, 
 });
 
 const Activate = () => {

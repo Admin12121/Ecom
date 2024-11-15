@@ -19,7 +19,14 @@ export const CurrencySelector: React.FC = ({}) => {
   return (
     <>
       {liveratedata && selectedcurrencyiso && (
-        <Select defaultValue={selectedcurrencyiso}>
+        <Select
+          onValueChange={(value) =>
+            handleSelectionChange({
+              target: { value },
+            } as React.ChangeEvent<HTMLSelectElement>)
+          }
+          defaultValue={selectedcurrencyiso}
+        >
           <SelectTrigger className="w-[180px] border-0 border-none">
             <SelectValue placeholder="Country / Region" />
           </SelectTrigger>

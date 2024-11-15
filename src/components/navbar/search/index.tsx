@@ -1,15 +1,40 @@
-"use client"
-import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+"use client";
+import React from "react";
 import { cn } from "@/lib/utils";
-export function PlaceholdersAndVanishInput({
-  placeholders,
-  onClick,
-}: {
-  placeholders: string[];
-  onClick: any,
-}) {
+import { AnimatePresence, motion } from "framer-motion";
+import { useUpdateQueryParams } from "@/lib/query-params";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+
+export function PlaceholdersAndVanishInput() {
+  const placeholders = React.useMemo(
+    () => [
+      "Enlightened Buddha statues",
+      "Lotus Buddha sculpture",
+      "Bodhisattva figurines",
+      "Zen garden decor",
+      "Meditating monk statues",
+      "Tibetan prayer wheels",
+      "Golden Pagoda sculptures",
+      "Incense holders",
+      "Mala beads and bracelets",
+      "Thangka paintings",
+      "Buddhist ritual items",
+      "Zen garden accessories",
+      "Tibetan singing bowls",
+      "Mudra hand gestures",
+      "Buddhist prayer flags",
+      "Enlightenment artwork",
+      "Buddhist meditation aids",
+      "Dharma teachings",
+      "Buddhist wisdom books",
+      "Sacred Bodhi tree art",
+    ],
+    []
+  );
+  const updateQueryParams = useUpdateQueryParams();
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
+  
   useEffect(() => {
     const startAnimation = () => {
       const interval = setInterval(() => {
@@ -25,6 +50,8 @@ export function PlaceholdersAndVanishInput({
   const newDataRef = useRef<any[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState<string>("");
+
+  const [animating, setAnimating] = useState<boolean>(false);
 
   const draw = useCallback(() => {
     if (!inputRef.current) return;
@@ -82,15 +109,110 @@ export function PlaceholdersAndVanishInput({
     draw();
   }, [value, draw]);
 
+  const animate = (start: number) => {
+    const animateFrame = (pos: number = 0) => {
+      requestAnimationFrame(() => {
+        const newArr = [];
+        for (let i = 0; i < newDataRef.current.length; i++) {
+          const current = newDataRef.current[i];
+          if (current.x < pos) {
+            newArr.push(current);
+          } else {
+            if (current.r <= 0) {
+              current.r = 0;
+              continue;
+            }
+            current.x += Math.random() > 0.5 ? 1 : -1;
+            current.y += Math.random() > 0.5 ? 1 : -1;
+            current.r -= 0.05 * Math.random();
+            newArr.push(current);
+          }
+        }
+        newDataRef.current = newArr;
+        const ctx = canvasRef.current?.getContext("2d");
+        if (ctx) {
+          ctx.clearRect(pos, 0, 800, 800);
+          newDataRef.current.forEach((t) => {
+            const { x: n, y: i, r: s, color: color } = t;
+            if (n > pos) {
+              ctx.beginPath();
+              ctx.rect(n, i, s, s);
+              ctx.fillStyle = color;
+              ctx.strokeStyle = color;
+              ctx.stroke();
+            }
+          });
+        }
+        if (newDataRef.current.length > 0) {
+          animateFrame(pos - 8);
+        } else {
+          setValue("");
+          setAnimating(false);
+        }
+      });
+    };
+    animateFrame(start);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !animating) {
+      vanishAndSubmit();
+    }
+  };
+
+  const vanishAndSubmit = () => {
+    setAnimating(true);
+    draw();
+
+    const value = inputRef.current?.value || "";
+    if (value && inputRef.current) {
+      const maxX = newDataRef.current.reduce(
+        (prev, current) => (current.x > prev ? current.x : prev),
+        0
+      );
+      animate(maxX);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    vanishAndSubmit();
+    const actualData = { keyword: value };
+    updateQueryParams({ search: value }, "/collections");
+    // SearchPost({actualData});
+  };
+
   return (
     <span className="relative w-full min-w-[500px]">
-      <div
+      <form
         className={cn(
           "w-full cursor-pointer relative max-w-xl mx-auto hidden sm:flex bg-default-400/20 dark:bg-default-500/20 h-[40px] min-w-[350px] rounded-lg overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
           "dark:bg-zinc-800/50 bg-muted/50"
         )}
-        onClick={onClick}
+        onSubmit={handleSubmit}
       >
+        <canvas
+          className={cn(
+            "absolute pointer-events-none  text-base transform scale-50 top-[10%] left-2  origin-top-left filter invert dark:invert-0 pr-10",
+            !animating ? "opacity-0" : "opacity-100"
+          )}
+          ref={canvasRef}
+        />
+        <input
+          onChange={(e) => {
+            if (!animating) {
+              setValue(e.target.value);
+            }
+          }}
+          onKeyDown={handleKeyDown}
+          ref={inputRef}
+          value={value}
+          type="text"
+          className={cn(
+            "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 px-4 py-4  ",
+            animating && "text-transparent dark:text-transparent"
+          )}
+        />
         <button
           disabled={!value}
           type="submit"
@@ -155,7 +277,7 @@ export function PlaceholdersAndVanishInput({
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </form>
     </span>
   );
 }

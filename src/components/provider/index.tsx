@@ -27,7 +27,7 @@ export const Provider = ({ children, ...props }: ThemeProviderProps) => {
         invert={true}
         pauseWhenPageIsHidden={true}
         theme="system"
-        position="top-right"
+        position="bottom-right"
       />
       <ReduxProvider store={storeRef.current}>
         <AuthProvider>{children}</AuthProvider>
