@@ -42,21 +42,25 @@ export const userAuthapi = createApi({
       }),
     }),
     allUsers: builder.query({
-      query: ({ username, search, rowsperpage, page, exclude_by }) => ({
-        url: `api/accounts/admin-users/${
-          username ? `by-username/${username}/` : ""
-        }${buildQueryParams({
-          search,
-          page_size: rowsperpage,
-          page,
-          exclude_by,
-        })}`,
-        method: "GET",
-        headers: createHeaders(true),
-      }),
+      query: ({ username, search, rowsperpage, page, exclude_by, token }) => {
+        return {
+          url: `api/accounts/admin-users/${
+            username ? `by-username/${username}/` : ""
+          }${buildQueryParams({
+            search,
+            page_size: rowsperpage,
+            page,
+            exclude_by,
+          })}`,
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+      },
     }),
     getLoggedUser: builder.query({
-      query: ({token}) => ({
+      query: ({ token }) => ({
         url: "api/accounts/users/me/",
         method: "GET",
         headers: {

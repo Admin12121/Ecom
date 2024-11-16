@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { nextui } from "@nextui-org/theme";
 
 const config: Config = {
   darkMode: ["class"],
@@ -6,6 +7,7 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     container: {
@@ -109,7 +111,7 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       transitionTimingFunction: {
-        'gooey': 'var(--spring-easing)',
+        gooey: "var(--spring-easing)",
       },
     },
     screens: {
@@ -133,6 +135,6 @@ const config: Config = {
       "4xl": "1736px",
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [nextui(), require("tailwindcss-animate")],
 };
 export default config;
