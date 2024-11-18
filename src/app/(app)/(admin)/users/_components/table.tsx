@@ -335,8 +335,7 @@ export default function UserTable({
               onChange={(event) => {
                 onSearchChange(event.target.value);
               }}
-              className="h-8 w-[150px] lg:w-[350px] peer pe-9 ps-9 bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
-                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
+              className="h-8 w-[150px] lg:w-[350px] peer pe-9 ps-9  "
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
               {isLoading ? (

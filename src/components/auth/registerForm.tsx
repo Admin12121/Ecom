@@ -61,8 +61,7 @@ const RegisterForm = () => {
                       disabled={isLoading}
                       type="text"
                       placeholder="Name"
-                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
-                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
+                      className=" "
                     />
                   </FormControl>
                   <FormMessage />
@@ -80,8 +79,7 @@ const RegisterForm = () => {
                       disabled={isLoading}
                       type="email"
                       placeholder="Email"
-                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
-                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
+                      className=" "
                     />
                   </FormControl>
                   <FormMessage />
@@ -100,8 +98,7 @@ const RegisterForm = () => {
                       type="password"
                       placeholder="Password"
                       autoComplete="off"
-                      className="bg-muted dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray placeholder:text-[rgb(39 39 42 / 1)]
-                      flex h-9 w-full rounded-lg border px-3 py-2 text-sm text-foreground shadow-black/5 ring-offset-background transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-transparent bg-muted shadow-none"
+                      className=" "
                     />
                   </FormControl>
                   <FormMessage />

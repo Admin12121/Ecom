@@ -1,12 +1,11 @@
 export const siteConfig = {
     name: "Ecom",
-    url: "https://ui.shadcn.com",
-    ogImage: "https://ui.shadcn.com/og.jpg",
+    url: "https://ecom.biki.com.np",
+    ogImage: "https://ecom.biki.com.np/og.jpg",
     description:
-      "Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.",
+      "Art and Sclpture store",
     links: {
-      twitter: "https://twitter.com/shadcn",
-      github: "https://github.com/shadcn-ui/ui",
+      instagram: "https://twitter.com/shadcn",
     },
   }
   
