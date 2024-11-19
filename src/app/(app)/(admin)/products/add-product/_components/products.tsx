@@ -3,11 +3,9 @@
 import React, { useState, useRef, DragEvent, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { useForm, useFieldArray, Form } from "react-hook-form";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
 import {
   useCategoryViewQuery,
-  useAddSubCategoryMutation,
   useProductsRegistrationMutation,
 } from "@/lib/store/Service/User_Auth_Api";
 
@@ -22,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 import { toast } from "sonner";
-import { Trash as DeleteIcon } from "lucide-react";
+import { Delete, Trash as DeleteIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -30,17 +28,11 @@ import { FormValues } from "@/types/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-import DynamicForm from "@/constants/formhandler";
 import { Label } from "@/components/ui/label";
 import GlobalInput from "@/components/global/input";
 import AddCategory from "./addCategory";
 import AddSubCategory from "./addSubCategory";
 import { authUser } from "@/hooks/use-auth-user";
-
-interface subCategory {
-  category: number;
-  subcategory: string;
-}
 
 interface GetCategory {
   id: string;
@@ -50,19 +42,23 @@ interface GetCategory {
 }
 
 interface GetSubCategory {
-  id: number;
+  id: string;
   name: string;
   category: number;
 }
 
 const schema = z
   .object({
-    productName: z.string({
-      required_error: "Product name is required",
-    }),
-    description: z.string({
-      required_error: "Description is required",
-    }),
+    productName: z
+      .string({
+        required_error: "Product name is required",
+      })
+      .nonempty("Product name cannot be empty"),
+    description: z
+      .string({
+        required_error: "Description is required",
+      })
+      .nonempty("Description cannot be empty"),
     isMultiVariant: z.boolean({
       required_error: "Product Type is required",
     }),
@@ -77,9 +73,11 @@ const schema = z
     discount: z.number().optional().nullable(),
     variants: z.array(
       z.object({
-        size: z.string({
-          required_error: "Size is required",
-        }),
+        size: z
+          .string({
+            required_error: "Size is required",
+          })
+          .nonempty("Size cannot be empty"),
         price: z
           .number({
             required_error: "Price is required",
@@ -95,7 +93,8 @@ const schema = z
           .number()
           .min(1, "Discount must be greater than 0")
           .max(100, "Discount must be at most 100")
-          .optional(),
+          .optional()
+          .nullable(),
       })
     ),
   })
@@ -124,13 +123,6 @@ const schema = z
           message: "Stock is required when the product is not multi-variant",
         });
       }
-      if (data.discount === null) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["discount"],
-          message: "Discount is required when the product is not multi-variant",
-        });
-      }
     }
   });
 
@@ -138,7 +130,6 @@ const AddProduct = () => {
   const [images, setImages] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<File[]>([]);
   const [isMultiVariant, setIsMultiVariant] = useState<boolean>(false);
-  const [subcategorymodel, setsubCategorymodal] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
@@ -148,7 +139,6 @@ const AddProduct = () => {
   const getcategory = useMemo(() => (data as GetCategory[]) || [], [data]);
 
   const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
-  const [addsubcategory] = useAddSubCategoryMutation();
   const [addProduct, { isLoading }] = useProductsRegistrationMutation();
 
   const { accessToken } = authUser();
@@ -356,22 +346,22 @@ const AddProduct = () => {
         id: toastId,
         position: "top-center",
       });
-      const res = await addProduct(formData);
+      // const res = await addProduct(formData);
 
-      if (res.data) {
-        reset();
-        setImages([]);
-        setProductImages([]);
-        toast.success("Product saved successfully!", {
-          id: toastId,
-          position: "top-center",
-        });
-      } else if (res.error) {
-        toast.error("Failed to save product", {
-          id: toastId,
-          position: "top-center",
-        });
-      }
+      // if (res.data) {
+      //   reset();
+      //   setImages([]);
+      //   setProductImages([]);
+      //   toast.success("Product saved successfully!", {
+      //     id: toastId,
+      //     position: "top-center",
+      //   });
+      // } else if (res.error) {
+      //   toast.error("Failed to save product", {
+      //     id: toastId,
+      //     position: "top-center",
+      //   });
+      // }
     } catch (error: any) {
       console.log("Error", error.message);
       toast.error("Error saving product", {
@@ -481,7 +471,7 @@ const AddProduct = () => {
             <div className="flex w-full gap-5 flex-col h-full custom-md:flex-row">
               <Button
                 variant="secondary"
-                className={`w-full h-80 flex justify-center items-center bg-default-100 p-0 custom-md:w-[50%] ${
+                className={`w-full h-80 flex justify-center items-center bg-default-100 p-0 custom-md:w-[50%] dark:bg-neutral-900 hover:!bg-neutral-800 ${
                   isDragging && draggingIndex === 0 ? "dragging" : ""
                 }`}
                 onDrop={(e: any) => handleDrop(e, 0)}
@@ -494,8 +484,10 @@ const AddProduct = () => {
                 ) : images[0] ? (
                   <Image
                     src={images[0]}
-                    className="h-80 w-full max-lg:h-full max-lg:w-full"
+                    className="h-80 w-full max-lg:h-full max-lg:w-full object-contain"
                     alt="Uploaded"
+                    width={800}
+                    height={800}
                   />
                 ) : (
                   "Click or Drop here"
@@ -506,7 +498,7 @@ const AddProduct = () => {
                   <Button
                     variant="secondary"
                     key={index}
-                    className={`w-20 h-20 items-center justify-center bg-default-100 custom-md:w-[48%] custom-md:h-[48%] p-0${
+                    className={`w-20 h-20 items-center justify-center bg-default-100 custom-md:w-[48%] custom-md:h-[48%] p-0 dark:bg-neutral-900 hover:!bg-zinc-800 ${
                       isDragging && draggingIndex === index ? "dragging" : ""
                     }`}
                     onDrop={(e: any) => handleDrop(e, index)}
@@ -522,11 +514,16 @@ const AddProduct = () => {
                           className="object-contain h-20 w-20 max-lg:h-full max-lg:w-full"
                           src={images[index]}
                           alt={`Uploaded ${index}`}
+                          width={800}
+                          height={800}
                         />
                         <Button
-                          className="absolute top-0 right-0 h-full"
+                          className="absolute top-1 right-1 h-8 w-8 p-0"
+                          variant="destructive"
                           onClick={() => removeImage(index)}
-                        ></Button>
+                        >
+                          <DeleteIcon className="w-4 h-4" />
+                        </Button>
                       </>
                     ) : (
                       "+"
@@ -553,6 +550,7 @@ const AddProduct = () => {
                   error={errors.basePrice?.message}
                   type="text"
                   {...register("basePrice", {
+                    valueAsNumber: true,
                     onBlur: () => handleBlur("basePrice"),
                   })}
                 />
@@ -563,6 +561,7 @@ const AddProduct = () => {
                   error={errors.stock?.message}
                   type="text"
                   {...register("stock", {
+                    valueAsNumber: true,
                     onBlur: () => handleBlur("stock"),
                   })}
                 />
@@ -573,7 +572,7 @@ const AddProduct = () => {
                   error={errors.discount?.message}
                   type="text"
                   {...register("discount", {
-                    onBlur: () => handleBlur("discount"),
+                    valueAsNumber: true,
                   })}
                 />
               </span>
@@ -590,6 +589,7 @@ const AddProduct = () => {
                       className="dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.size?.message}
                       {...register(`variants.${index}.size`, {
+                        valueAsNumber: true,
                         onBlur: () => handleBlur(`variants[${index}].size`),
                       })}
                     />
@@ -599,6 +599,7 @@ const AddProduct = () => {
                       className="dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.price?.message}
                       {...register(`variants.${index}.price`, {
+                        valueAsNumber: true,
                         onBlur: () => handleBlur(`variants[${index}].price`),
                       })}
                     />
@@ -608,6 +609,7 @@ const AddProduct = () => {
                       className="dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.stock?.message}
                       {...register(`variants.${index}.stock`, {
+                        valueAsNumber: true,
                         onBlur: () => handleBlur(`variants[${index}].stock`),
                       })}
                     />
@@ -617,7 +619,7 @@ const AddProduct = () => {
                       className="dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.discount?.message}
                       {...register(`variants.${index}.discount`, {
-                        onBlur: () => handleBlur(`variants[${index}].discount`),
+                        valueAsNumber: true,
                       })}
                     />
                     <span
@@ -658,7 +660,7 @@ const AddProduct = () => {
               <span className="flex w-full gap-3 items-end justify-center">
                 <Select
                   onValueChange={(value: any) => {
-                    setValue("category", value);
+                    setValue("category", Number(value));
                   }}
                 >
                   <SelectTrigger className="dark:bg-[#171717]">
@@ -691,14 +693,14 @@ const AddProduct = () => {
               <span className="flex w-full gap-3 items-end justify-center">
                 <Select
                   onValueChange={(value: any) => {
-                    setValue("subCategory", value);
+                    setValue("subCategory", Number(value));
                   }}
                 >
                   <SelectTrigger className="dark:bg-[#171717]">
                     <SelectValue placeholder="Select a Sub Category">
                       {!selectedSubCategory
                         ? "Select a Sub Category"
-                        : getcategory.find(
+                        : getsubcategory.find(
                             (cat) =>
                               cat.id.toString() ==
                               selectedSubCategory.toString()
@@ -708,7 +710,7 @@ const AddProduct = () => {
                   <SelectContent>
                     <SelectGroup>
                       {getsubcategory.map(({ id, name }) => (
-                        <SelectItem key={id} value={name}>
+                        <SelectItem key={id} value={id}>
                           {name}
                         </SelectItem>
                       ))}

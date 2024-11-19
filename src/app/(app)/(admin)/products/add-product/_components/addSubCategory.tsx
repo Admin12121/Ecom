@@ -38,7 +38,7 @@ interface GetCategory {
 }
 
 interface GetSubCategory {
-  id: number;
+  id: string;
   name: string;
   category: number;
 }
