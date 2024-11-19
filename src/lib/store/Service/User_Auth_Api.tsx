@@ -208,7 +208,6 @@ export const userAuthapi = createApi({
     }),
     searchPost: builder.mutation({
       query: ({ actualData }) => {
-        console.log("actualData:", actualData); // Log actualData
         return {
           url: `api/accounts/search/`,
           method: "POST",
@@ -225,14 +224,13 @@ export const userAuthapi = createApi({
       }),
     }),
     addCategory: builder.mutation({
-      query: ({ formData }) => {
-        const { accessToken } = authUser();
+      query: ({ formData, token }) => {
         return {
           url: "api/products/categories/",
           method: "POST",
           body: formData,
           headers: {
-            authorization: `Bearer ${accessToken}`,
+            authorization: `Bearer ${token}`,
           },
         };
       },
@@ -260,11 +258,13 @@ export const userAuthapi = createApi({
       }),
     }),
     addSubCategory: builder.mutation({
-      query: (actualData) => ({
+      query: ({formData, token}) => ({
         url: "api/products/subcategories/",
         method: "POST",
-        body: actualData,
-        headers: createHeaders(true),
+        body: formData,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       }),
     }),
     deleteSubCategory: builder.mutation({

@@ -11,6 +11,8 @@ interface InputProps {
   required?: boolean;
   className?: string;
   base?:string;
+  value?:string;
+  onChange?:any;
 }
 
 export default function GlobalInput({
@@ -22,6 +24,8 @@ export default function GlobalInput({
   required,
   className,
   base,
+  value,
+  onChange,
   ...props
 }: InputProps) {
   return (
@@ -33,6 +37,8 @@ export default function GlobalInput({
       )}
       <Input
         id={label}
+        value={value}
+        onChange={onChange}
         className={cn(
           className,
           error &&

@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useState, useRef, DragEvent, useEffect } from "react";
+import React, { useState, useRef, DragEvent, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, Form } from "react-hook-form";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
 import {
   useCategoryViewQuery,
-  useAddCategoryMutation,
   useAddSubCategoryMutation,
   useProductsRegistrationMutation,
 } from "@/lib/store/Service/User_Auth_Api";
@@ -19,25 +17,13 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
 import { toast } from "sonner";
 import { Trash as DeleteIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FormValues } from "@/types/product";
@@ -47,12 +33,9 @@ import * as z from "zod";
 import DynamicForm from "@/constants/formhandler";
 import { Label } from "@/components/ui/label";
 import GlobalInput from "@/components/global/input";
-
-interface Category {
-  category: string;
-  image: File | null;
-  imagePreview: string | null;
-}
+import AddCategory from "./addCategory";
+import AddSubCategory from "./addSubCategory";
+import { authUser } from "@/hooks/use-auth-user";
 
 interface subCategory {
   category: number;
@@ -60,7 +43,7 @@ interface subCategory {
 }
 
 interface GetCategory {
-  id: number;
+  id: string;
   name: string;
   categoryslug: string;
   subcategories: GetSubCategory[];
@@ -152,7 +135,6 @@ const schema = z
   });
 
 const AddProduct = () => {
-  const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<File[]>([]);
   const [isMultiVariant, setIsMultiVariant] = useState<boolean>(false);
@@ -163,33 +145,13 @@ const AddProduct = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data, refetch } = useCategoryViewQuery({});
 
-  const [getcategory, setGetCategory] = useState<GetCategory[]>([]);
-  const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
+  const getcategory = useMemo(() => (data as GetCategory[]) || [], [data]);
 
-  const [addcategory] = useAddCategoryMutation();
+  const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
   const [addsubcategory] = useAddSubCategoryMutation();
   const [addProduct, { isLoading }] = useProductsRegistrationMutation();
 
-  const {
-    formData: categoryData,
-    setFormData: setCategoryData,
-    errors: categoryErrors,
-    handleInputChange: handleCategoryChange,
-  } = DynamicForm<Category>({
-    category: "",
-    image: null,
-    imagePreview: null,
-  });
-
-  const {
-    formData: subCategoryData,
-    setFormData: setSubCategoryData,
-    errors: subCategoryErrors,
-    handleInputChange: handleSubCategoryChange,
-  } = DynamicForm<subCategory>({
-    category: 0,
-    subcategory: "",
-  });
+  const { accessToken } = authUser();
 
   const {
     register,
@@ -281,7 +243,7 @@ const AddProduct = () => {
     setProductImages(newProductImages);
     setTimeout(() => {
       setLoadingIndex(null);
-    }, 2000); // Simulate a 2-second upload time
+    }, 2000);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -419,100 +381,20 @@ const AddProduct = () => {
     }
   };
 
-  const SubmitCategory = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const selectedCategory = watch("category");
+  const selectedSubCategory = watch("subCategory");
 
-    if (!categoryData.category) {
-      toast.error("Category name is required");
-      return;
+  useEffect(() => {
+    if (selectedCategory) {
+      const selectedCat = getcategory.find(
+        (cat) => String(cat.id) === String(selectedCategory)
+      );
+      console.log("selectedCat:", selectedCat);
+      setGetSubCategory(selectedCat ? selectedCat.subcategories : []);
+    } else {
+      setGetSubCategory([]);
     }
-
-    if (!categoryData.image) {
-      toast.error("Category image are required");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", categoryData.category);
-    if (categoryData.image) {
-      formData.append("image", categoryData.image);
-    }
-    try {
-      const res = await addcategory({ formData });
-      if (res.data) {
-        toast.success("Category Added");
-      } else {
-        if (res.error) {
-          const errorData = res.error as FetchBaseQueryError;
-          if (
-            errorData.data &&
-            typeof errorData.data === "object" &&
-            "name" in errorData.data
-          ) {
-            const message = (errorData.data as any).name[0];
-            toast.error(message || "Something went wrong");
-          }
-        }
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
-  const handleCategoryImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (validateFile(file)) {
-        setCategoryData((prevData) => ({
-          ...prevData,
-          image: file,
-        }));
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setCategoryData((prevData) => ({
-            ...prevData,
-            imagePreview: e.target?.result as string,
-          }));
-        };
-        reader.readAsDataURL(file);
-      } else {
-        toast.error("Invalid File Format. Please upload a PNG image with a maximum size of 10MB.");
-      }
-    }
-  };
-
-  const SubmitSubCategory = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("category", subCategoryData.category.toString());
-    formData.append("name", subCategoryData.subcategory);
-
-    try {
-      const res = await addsubcategory(formData);
-      if (res.data) {
-        setsubCategorymodal(!subcategorymodel);
-        toast.success("Subcategory Added");
-      } else {
-        if (res.error) {
-          const errorData = res.error as FetchBaseQueryError;
-          if (errorData.data && typeof errorData.data === "object") {
-            const errors = errorData.data as Record<string, string[]>;
-            const errorMessages = Object.values(errors).flat();
-            errorMessages.forEach((message) => {
-              toast.error(message);
-            });
-          }
-        }
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
-  console.log(errors);
+  }, [selectedCategory, getcategory]);
 
   return (
     <form
@@ -774,66 +656,32 @@ const AddProduct = () => {
           <CardContent className="flex flex-col gap-3">
             <span className="flex w-full gap-3 justify-center flex-col">
               <span className="flex w-full gap-3 items-end justify-center">
-                <Select>
+                <Select
+                  onValueChange={(value: any) => {
+                    setValue("category", value);
+                  }}
+                >
                   <SelectTrigger className="dark:bg-[#171717]">
-                    <SelectValue placeholder="Select a Category" />
+                    <SelectValue placeholder="Select a Category">
+                      {!selectedCategory
+                        ? "Select a Category"
+                        : getcategory.find(
+                            (cat) =>
+                              cat.id.toString() == selectedCategory.toString()
+                          )?.name}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       {getcategory.map(({ id, name }) => (
-                        <SelectItem key={id} value={name}>
+                        <SelectItem key={id} value={id}>
                           {name}
                         </SelectItem>
                       ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>Add</Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <form onSubmit={SubmitCategory}>
-                      <DialogHeader className="flex flex-col gap-1">
-                        <DialogTitle>Add Category</DialogTitle>
-                      </DialogHeader>
-                      <GlobalInput
-                        // value={categoryData.category}
-                        // onChange={(e) => handleCategoryChange(e, "category")}
-                        label="Category"
-                        placeholder="Category"
-                      />
-                      <div className="flex flex-col gap-3">
-                        <input
-                          type="file"
-                          style={{ display: "none" }}
-                          accept="image/png"
-                          onChange={handleCategoryImageChange}
-                          ref={fileInputRef}
-                        />
-                        <Button
-                          className="w-full h-40 flex justify-center items-center bg-default-100 p-0"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          {categoryData.image ? (
-                            <Image
-                              src={categoryData.imagePreview!}
-                              className="h-40 w-full object-contain"
-                              alt="Uploaded"
-                            />
-                          ) : (
-                            "Click or Drop here"
-                          )}
-                        </Button>
-                      </div>
-                      <DialogFooter>
-                        <Button color="secondary" type="submit">
-                          Add Category
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                {accessToken && <AddCategory token={accessToken} />}
               </span>
               {errors.category && (
                 <p className="text-red-500">{errors.category.message}</p>
@@ -841,9 +689,21 @@ const AddProduct = () => {
             </span>
             <span className="flex w-full gap-3 justify-center flex-col">
               <span className="flex w-full gap-3 items-end justify-center">
-                <Select>
+                <Select
+                  onValueChange={(value: any) => {
+                    setValue("subCategory", value);
+                  }}
+                >
                   <SelectTrigger className="dark:bg-[#171717]">
-                    <SelectValue placeholder="Select a Sub Category" />
+                    <SelectValue placeholder="Select a Sub Category">
+                      {!selectedSubCategory
+                        ? "Select a Sub Category"
+                        : getcategory.find(
+                            (cat) =>
+                              cat.id.toString() ==
+                              selectedSubCategory.toString()
+                          )?.name}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -855,14 +715,12 @@ const AddProduct = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Button
-                  color="secondary"
-                  // onPress={() => {
-                  //   setsubCategorymodal(!subcategorymodel);
-                  // }}
-                >
-                  Add
-                </Button>
+                {accessToken && (
+                  <AddSubCategory
+                    getcategory={getcategory}
+                    token={accessToken}
+                  />
+                )}
               </span>
               {errors.subCategory && (
                 <p className="text-red-500">{errors.subCategory.message}</p>

@@ -1,7 +1,6 @@
 "use client";
 import * as z from "zod";
 import { toast } from "sonner";
-import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/context";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
