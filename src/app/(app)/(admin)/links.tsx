@@ -28,7 +28,7 @@ export const Links = [
     subLinks: [
       { title: "Products", href: "/products" },
       { title: "Add Products", href: "/products/add-product" },
-      { title: "category", href: "#" },
+      { title: "category", href: "/products/category" },
       { title: "Stock", href: "#" },
     ],
   },

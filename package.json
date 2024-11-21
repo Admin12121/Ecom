@@ -46,6 +46,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.3.1",
     "framer-motion": "^11.11.13",
@@ -74,6 +75,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",

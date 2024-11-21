@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans);
   overflow-x: hidden;
   background: hsl(var(--custombg));
 }
@@ -58,7 +58,8 @@ body {
       1.10421 28.713%,
       0.99031 49.585%,
       0.99995
-    );
+      );
+    --stroke: "#1212"
   }
   .dark {
     --custombg: 0 0% 0%;
@@ -86,6 +87,7 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --stroke: "#1a1a1a"
   }
 }
 
@@ -372,4 +374,8 @@ body {
 .ripple {
   width: 20px;
   height: 20px;
+}
+
+.bg-gradiant{
+  stroke: var(--stroke)
 }

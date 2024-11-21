@@ -11,10 +11,23 @@ const Accounts = () => {
   const [rowsperpage, setRowsPerPage] = useState<number | null>(null);
   const [page, setPage] = useState<number>(1);
   const [exclude_by, SetExcludeBy] = useState<string>("");
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const { data, isLoading, refetch, error } = useAllUsersQuery(
     { search, rowsperpage, page, exclude_by, token: accessToken },
     { skip: !accessToken }
   );
+
+  useEffect(() => {
+    if (search) {
+      setSearchLoading(true);
+      const timer = setTimeout(() => {
+        setSearchLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchLoading(false);
+    }
+  }, [search]);
 
   return (
     <div className="lg:px-6 max-w-[95rem] mx-auto w-full flex flex-col gap-4 h-[90vh] m-0 p-3 overflow-y-auto scroll">
@@ -24,6 +37,7 @@ const Accounts = () => {
           exclude_by={exclude_by}
           page={page}
           isLoading={isLoading}
+          searchLoading={searchLoading}
           setPage={setPage}
           data={data}
           setSearch={setSearch}

@@ -11,7 +11,13 @@ interface Images {
   image: string;
 }
 
-const DemoSlider = ({ images }: { images: Images[] }) => {
+const DemoSlider = ({
+  images,
+  discount,
+}: {
+  images: Images[];
+  discount?: string;
+}) => {
   return (
     <section className="w-full flex items-center justify-center ">
       <span className="relative w-[90vw] flex flex-col h-[500px] m-0 dark:bg-neutral-950 rounded-lg">
@@ -64,8 +70,11 @@ export default function Page({ images }: { images: Images[] }) {
         images.map(({ image }: { image: string }, index) => (
           <span
             key={index}
-            className="mmd:w-[49%] bg-white dark:bg-neutral-950 flex items-center justify-center rounded-xl p-3"
+            className="relative mmd:w-[49%] bg-white dark:bg-neutral-950 flex items-center justify-center rounded-xl p-3"
           >
+            {index == 0 &&<span className="absolute bg-neutral-100 dark:bg-secondary-500 text-secondary-foreground top-[10px] left-[10px] h-[20px] w-[60px] flex  rounded-md text-xs items-center justify-center gap-1 font-semibold font-custom">
+              50% Off
+            </span>}
             <Image
               className="w-full h-[500px] object-contain"
               src={image}

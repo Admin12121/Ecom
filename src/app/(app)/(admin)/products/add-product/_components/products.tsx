@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 import { toast } from "sonner";
-import { Delete, Trash as DeleteIcon } from "lucide-react";
+import { Trash as DeleteIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -156,6 +156,10 @@ const AddProduct = () => {
     reset,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      discount: 0,
+      variants: [{ discount: 0 }],
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -346,22 +350,22 @@ const AddProduct = () => {
         id: toastId,
         position: "top-center",
       });
-      // const res = await addProduct(formData);
+      const res = await addProduct({formData, token:accessToken});
 
-      // if (res.data) {
-      //   reset();
-      //   setImages([]);
-      //   setProductImages([]);
-      //   toast.success("Product saved successfully!", {
-      //     id: toastId,
-      //     position: "top-center",
-      //   });
-      // } else if (res.error) {
-      //   toast.error("Failed to save product", {
-      //     id: toastId,
-      //     position: "top-center",
-      //   });
-      // }
+      if (res.data) {
+        reset();
+        setImages([]);
+        setProductImages([]);
+        toast.success("Product saved successfully!", {
+          id: toastId,
+          position: "top-center",
+        });
+      } else if (res.error) {
+        toast.error("Failed to save product", {
+          id: toastId,
+          position: "top-center",
+        });
+      }
     } catch (error: any) {
       console.log("Error", error.message);
       toast.error("Error saving product", {
@@ -388,7 +392,7 @@ const AddProduct = () => {
 
   return (
     <form
-      className="flex flex-col gap-5 px-5 pb-5 w-full h-[90vh]"
+      className="flex flex-col gap-5 px-2 md:px-5 pb-5 w-full h-[90vh]"
       onSubmit={handleSubmit(onSubmit)}
     >
       <Button className="absolute right-2 top-2" type="submit">
@@ -413,7 +417,7 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="description">Product Description</Label>
               <Textarea
-                className="dark:bg-neutral-900 min-h-[270px] max-h-[270px]"
+                className="dark:bg-neutral-900 min-h-[200px] max-h-[200px]"
                 {...register("description", {
                   onBlur: () => handleBlur("description"),
                 })}
@@ -542,11 +546,12 @@ const AddProduct = () => {
           </CardHeader>
           <CardContent className="flex gap-5 w-full max-xxl:w-full flex-col">
             {!isMultiVariant ? (
-              <span className="flex gap-5 flex-wrap w-full">
+              <span className="flex gap-5 w-full flex-col md:flex-row">
                 <GlobalInput
                   label="Price"
                   placeholder="रु 12"
-                  className="dark:bg-neutral-900 w-full min-w-[285px]"
+                  className="dark:bg-neutral-900 w-full "
+                  base="w-full"
                   error={errors.basePrice?.message}
                   type="text"
                   {...register("basePrice", {
@@ -557,7 +562,8 @@ const AddProduct = () => {
                 <GlobalInput
                   label="Stock"
                   placeholder="stock"
-                  className="dark:bg-neutral-900 w-full min-w-[285px]"
+                  className="dark:bg-neutral-900 w-full "
+                  base="w-full"
                   error={errors.stock?.message}
                   type="text"
                   {...register("stock", {
@@ -568,7 +574,8 @@ const AddProduct = () => {
                 <GlobalInput
                   label="Discount"
                   placeholder="discount"
-                  className="dark:bg-neutral-900 w-full min-w-[285px]"
+                  className="dark:bg-neutral-900 w-full "
+                  base="w-full"
                   error={errors.discount?.message}
                   type="text"
                   {...register("discount", {
@@ -589,7 +596,6 @@ const AddProduct = () => {
                       className="dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.size?.message}
                       {...register(`variants.${index}.size`, {
-                        valueAsNumber: true,
                         onBlur: () => handleBlur(`variants[${index}].size`),
                       })}
                     />
@@ -652,37 +658,37 @@ const AddProduct = () => {
           </CardContent>
         </Card>
         <Card className="w-[30%] min-w-[380px] max-lg:w-full flex flex-col gap-3">
-          <CardHeader>
-            <h1>Category</h1>
-          </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <span className="flex w-full gap-3 justify-center flex-col">
               <span className="flex w-full gap-3 items-end justify-center">
-                <Select
-                  onValueChange={(value: any) => {
-                    setValue("category", Number(value));
-                  }}
-                >
-                  <SelectTrigger className="dark:bg-[#171717]">
-                    <SelectValue placeholder="Select a Category">
-                      {!selectedCategory
-                        ? "Select a Category"
-                        : getcategory.find(
-                            (cat) =>
-                              cat.id.toString() == selectedCategory.toString()
-                          )?.name}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {getcategory.map(({ id, name }) => (
-                        <SelectItem key={id} value={id}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <span className="flex-col w-full space-y-2">
+                  <Label>Category</Label>
+                  <Select
+                    onValueChange={(value: any) => {
+                      setValue("category", Number(value));
+                    }}
+                  >
+                    <SelectTrigger className="dark:bg-[#171717]">
+                      <SelectValue placeholder="Select a Category">
+                        {!selectedCategory
+                          ? "Select a Category"
+                          : getcategory.find(
+                              (cat) =>
+                                cat.id.toString() == selectedCategory.toString()
+                            )?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {getcategory.map(({ id, name }) => (
+                          <SelectItem key={id} value={id}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </span>
                 {accessToken && <AddCategory token={accessToken} />}
               </span>
               {errors.category && (
@@ -691,32 +697,36 @@ const AddProduct = () => {
             </span>
             <span className="flex w-full gap-3 justify-center flex-col">
               <span className="flex w-full gap-3 items-end justify-center">
-                <Select
-                  onValueChange={(value: any) => {
-                    setValue("subCategory", Number(value));
-                  }}
-                >
-                  <SelectTrigger className="dark:bg-[#171717]">
-                    <SelectValue placeholder="Select a Sub Category">
-                      {!selectedSubCategory
-                        ? "Select a Sub Category"
-                        : getsubcategory.find(
-                            (cat) =>
-                              cat.id.toString() ==
-                              selectedSubCategory.toString()
-                          )?.name}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {getsubcategory.map(({ id, name }) => (
-                        <SelectItem key={id} value={id}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <span className="flex-col w-full space-y-2">
+                  <Label>Sub Category</Label>
+                  <Select
+                    onValueChange={(value: any) => {
+                      setValue("subCategory", Number(value));
+                    }}
+                    disabled={!selectedCategory}
+                  >
+                    <SelectTrigger className="dark:bg-[#171717]">
+                      <SelectValue placeholder="Select a Sub Category">
+                        {!selectedSubCategory
+                          ? "Select a Sub Category"
+                          : getsubcategory.find(
+                              (cat) =>
+                                cat.id.toString() ==
+                                selectedSubCategory.toString()
+                            )?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {getsubcategory.map(({ id, name }) => (
+                          <SelectItem key={id} value={id}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </span>
                 {accessToken && (
                   <AddSubCategory
                     getcategory={getcategory}

@@ -115,6 +115,7 @@ export default function UserTable({
   data,
   setSearch,
   isLoading,
+  searchLoading,
   dataperpage,
   refetch,
   page,
@@ -124,6 +125,7 @@ export default function UserTable({
   exclude_by: string;
   SetExcludeBy: any;
   isLoading: boolean;
+  searchLoading:boolean,
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   refetch: () => void;
@@ -338,7 +340,7 @@ export default function UserTable({
               className="h-8 w-[150px] lg:w-[350px] peer pe-9 ps-9  "
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
-              {isLoading ? (
+              {searchLoading ? (
                 <LoaderCircle
                   className="animate-spin"
                   size={16}

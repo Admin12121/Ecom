@@ -3,18 +3,17 @@ import dynamic from "next/dynamic";
 import React, { useState, useEffect } from "react";
 import {
   useProductsViewQuery,
-  useTrendingProductsViewQuery,
 } from "@/lib/store/Service/User_Auth_Api";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
-import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
+import { ProductCard, ProductSkeleton } from "@/components/global/admin-productcard";
 
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
   { ssr: false }
 );
 
-const CollectionPage = () => {
+const ProductPage = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const search = searchParams.get("search");
@@ -58,20 +57,17 @@ const CollectionPage = () => {
                     key={index}
                     className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
                   >
-                    <ProductCard
-                      data={product}
-                      base={index % 2 === 0 ? undefined : "bg-gradiant"}
-                    />
+                    <ProductCard data={product} />
                   </div>
                 ))
-                ) : (
-                  <div className="flex w-screen h-full ">
-                    <p className="text-themeTextGray">
-                      No results found. Please try searching with a different
-                      term.
-                    </p>
-                  </div>
-               )}
+              ) : (
+                <div className="flex w-screen h-full ">
+                  <p className="text-themeTextGray">
+                    No results found. Please try searching with a different
+                    term.
+                  </p>
+                </div>
+              )}
             </ProductSkeleton>
           </div>
         </div>
@@ -83,27 +79,8 @@ const CollectionPage = () => {
           </div>
         )}
       </section>
-      <RecommendedProducts />
     </>
   );
 };
 
-export const RecommendedProducts = ({className}:{className?:string}) => {
-  const { data, isLoading } = useTrendingProductsViewQuery({});
-  const [products, setProducts] = useState<Product[]>([]);
-  useEffect(() => {
-    if (data) {
-      setProducts(data);
-    }
-  }, [data]);
-  return (
-    <FeatureProduct
-      title="You may also like"
-      className={className}
-      products={products}
-      loading={isLoading}
-    />
-  );
-};
-
-export default CollectionPage;
+export default ProductPage;

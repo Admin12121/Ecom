@@ -7,12 +7,15 @@ import {
 } from "@/lib/store/Service/User_Auth_Api";
 import Image from "./image";
 import Spinner from "@/components/ui/spinner";
-
+import { authUser } from "@/hooks/use-auth-user";
 // import Reviewcards from "./components/reviewcards";
 
 const Sidebar = dynamic(() => import("./sidebar"), { ssr: false });
 const ProductNotFound = dynamic(() => import("./not-found"), { ssr: false });
-const FeatureProduct = dynamic(() => import("@/components/global/feature-product"), { ssr: false });
+const FeatureProduct = dynamic(
+  () => import("@/components/global/feature-product"),
+  { ssr: false }
+);
 
 interface Image {
   image: string;
@@ -45,7 +48,7 @@ interface Product {
   images: Image[];
 }
 
-const ProductObject = ({productslug}:{productslug:string}) => {
+const ProductObject = ({ productslug }: { productslug: string }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const { data, isLoading, error } = useProductsViewQuery({ productslug });
 
@@ -103,9 +106,14 @@ const ReviewsSection = () => (
 );
 
 export const RecommendedProducts = ({ product_id }: { product_id: number }) => {
-  const { data, isLoading } = useRecommendedProductsViewQuery({
-    product_id,
-  });
+  const { accessToken } = authUser();
+  const { data, isLoading } = useRecommendedProductsViewQuery(
+    {
+      product_id,
+      token: accessToken,
+    },
+    { skip: !accessToken }
+  );
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     if (data) {

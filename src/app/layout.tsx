@@ -8,12 +8,12 @@ import { auth } from "@/auth";
 import "@/styles/globals.css";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "./fonts/AtAero-Medium.woff2",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "./fonts/AtAero-Semibold.woff2",
   variable: "--font-geist-mono",
   weight: "100 900",
 });

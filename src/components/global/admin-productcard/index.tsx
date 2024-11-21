@@ -1,46 +1,39 @@
 "use client";
-
 import Link from "next/link";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/context";
-import { Button } from "@/components/ui/button";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { useUpdateQueryParams } from "@/lib/query-params";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
-import { getSizeCategory } from "@/app/(app)/(user)/collections/[productslug]/_components/sidebar";
-
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/context";
 import {
   ShoppingBag as HiOutlineShoppingBag,
   Heart as IoIosHeartEmpty,
   Star as FaStar,
 } from "lucide-react";
-
 import {
   Product,
   VariantObject,
   Image as InterfaceImage,
 } from "@/types/product";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/effect-fade";
-import WishList from "../wishlist-button";
+import { cn } from "@/lib/utils";
+import { useUpdateQueryParams } from "@/lib/query-params";
+import { getSizeCategory } from "@/app/(app)/(user)/collections/[productslug]/_components/sidebar";
 
 interface ProductCardProps {
   data: Product;
   width?: string | null;
-  base?: string;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({
-  data,
-  width,
-  base,
-}) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
+  const router = useRouter();
   const { convertPrice } = useAuth();
+  const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const updateQueryParams = useUpdateQueryParams();
   const [variantsData, setVariantsData] = useState<
     VariantObject[] | VariantObject | null
@@ -69,17 +62,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { convertedPrice, symbol } = convertPrice(
     getVariantData(variantsData, "price")
   );
-
-  const discount = getVariantData(variantsData, "discount");
-  const stocks = getVariantData(variantsData, "stock");
-  const finalPrice = useMemo(() => {
-    return convertedPrice - convertedPrice * (discount / 100);
-  }, [convertedPrice, discount]);
-  const productslug = data.productslug;
+  const variantId = getVariantData(variantsData, "id");
 
   const handleRoute = () => {
     updateQueryParams({ category: data?.categoryname }, "/collections");
   };
+
+  const productslug = data.productslug;
   return (
     <section className="relative w-full flex gap-5">
       <span
@@ -89,33 +78,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           "flex flex-col gap-1"
         )}
       >
-        <span
-          className={cn(
-            `absolute z-10 px-3 top-3 flex justify-between items-center h-5 w-full`
-          )}
-        >
-          {stocks === 0 ? (
-            <span className="absolute -top-1 left-1 w-[80px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
-              Out of stock
-            </span>
-          ) : (
-            <>
-              {data?.rating > 0 && (
-                <span className="w-[50px] -top-1 left-1 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
-                  {data?.rating ? data?.rating : 0.0} <FaStar size={10} />
-                </span>
-              )}
-              {discount > 0 && (
-                <span className="absolute -top-1 left-1 w-[50px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1 font-semibold font-custom">
-                  {discount}% Off
-                </span>
-              )}
-            </>
-          )}
-          <span className="h-full flex text-xs items-center justify-center absolute right-2">
-            {data.id && <WishList productId={data.id}/>}
-          </span>
-        </span>
         <Swiper
           navigation
           pagination={{ type: "bullets", clickable: true }}
@@ -143,12 +105,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </SwiperSlide>
             ))}
         </Swiper>
-        <span
-          className={cn(
-            "w-full h-[90px] flex flex-col rounded-lg p-3 py-2 justify-between  dark:bg-transparent",
-            base
-          )}
-        >
+        <span className=" w-full h-[55px] flex flex-col rounded-lg p-3 py-2 justify-between  dark:bg-transparent">
           <div className="flex gap-3 items-center">
             <div className="flex flex-col cursor-pointer">
               <p className="text-sm">{data.product_name}</p>
@@ -157,39 +114,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </p>
             </div>
           </div>
-          <div className="flex w-full justify-between items-center gap-1">
-            <span className="flex gap-2">
-              <p className="text-sm">
-                {discount > 0 && `${symbol} ${finalPrice}`}
-              </p>
-              <p
-                className={cn(
-                  "text-sm",
-                  discount > 0 && "text-neutral-500 line-through"
-                )}
-              >
-                {symbol} {convertedPrice}
-              </p>
-            </span>
-
+          {/* <div className="flex w-full justify-between items-center gap-1">
+            <p className="text-sm">
+              {symbol} {convertedPrice}
+            </p>
             <Button
               variant="active"
               size="sm"
-              className={cn("h-[30px] flex justify-center items-center text-sm gap-2", stocks === 0 && "shadow-none" )}
+              className="h-[30px] flex justify-center items-center text-sm gap-2"
               //   onClick={(event) => {
-              //     addToCart(data!.id, event, variantId);
-              //   }}
-            >
-              {stocks === 0 ? (
-                "Notify me"
-              ) : (
-                <>
-                  <HiOutlineShoppingBag className="w-3 h-3" />
-                  Add
-                </>
-              )}
+                //     addToCart(data!.id, event, variantId);
+                //   }}
+                >
+              <HiOutlineShoppingBag className="w-3 h-3" />
+              Add
             </Button>
-          </div>
+          </div> */}
         </span>
       </span>
     </section>

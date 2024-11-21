@@ -13,15 +13,17 @@ const FeatureProduct = ({
   products,
   loading,
   title,
+  className,
 }: {
   products: any;
   loading: boolean;
   title: string;
+  className?: string,
 }) => {
   return (
     <Section className="w-screen">
-      <Container>
-        <div className="px-2 lg:px-4 w-full flex items-center absolute mt-2">
+      <Container className={className}>
+        <div className="w-full flex items-center absolute mt-2">
           <h2 className="text-2xl">{title}</h2>
         </div>
         <Carousel className="mt-6 w-full">

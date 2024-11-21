@@ -1,17 +1,16 @@
 "use client";
+
 import * as z from "zod";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/context";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { Code } from "@/components/ui/code";
 import { ReviewSheet } from "./review-sheet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Badge as Chip } from "@/components/ui/badge";
 import { Separator as Divider } from "@/components/ui/separator";
 
 import {
@@ -25,13 +24,16 @@ import {
   Box as FiBox,
   Star as MdOutlineStar,
   OctagonAlert as PiWarningOctagon,
-  Heart as IoIosHeartEmpty,
 } from "lucide-react";
 
 import {
   useNotifyuserMutation,
   useGetnotifyuserQuery,
 } from "@/lib/store/Service/User_Auth_Api";
+import { authUser } from "@/hooks/use-auth-user";
+import { cn } from "@/lib/utils";
+import StockWarningMessage from "./stock-warning";
+import WishList from "@/components/global/wishlist-button";
 
 const EmailSchema = z.object({
   uid: z.string().min(1, { message: "UID is required" }),
@@ -81,6 +83,7 @@ export const getSizeCategory = (index: number) => {
 
 const Sidebar = ({ products }: { products: Product }) => {
   const router = useRouter();
+  const { status } = authUser();
   const { convertPrice } = useAuth();
   const [notifyuser] = useNotifyuserMutation();
 
@@ -162,23 +165,32 @@ const Sidebar = ({ products }: { products: Product }) => {
     }
   }, [selectedSize, variantsData]);
 
-  const getVariantData = (
-    variantsData: VariantObject[] | VariantObject | null,
-    key: keyof VariantObject,
-    index: number = 0
-  ): any => {
-    if (Array.isArray(variantsData)) {
-      const variant = variantsData.find((variant) => variant.id === index);
-      return variant ? variant[key] : null;
-    } else if (variantsData) {
-      return variantsData[key];
-    }
-    return null;
-  };
+  const getVariantData = useCallback(
+    (
+      variantsData: VariantObject[] | VariantObject | null,
+      key: keyof VariantObject,
+      index: number = 0
+    ): any => {
+      if (Array.isArray(variantsData)) {
+        const variant = variantsData.find((variant) => variant.id === index);
+        return variant ? variant[key] : null;
+      } else if (variantsData) {
+        return variantsData[key];
+      }
+      return null;
+    },
+    [variantsData]
+  );
 
   const { convertedPrice, symbol } = convertPrice(
     getVariantData(variantsData, "price", selectedSize?.id)
   );
+
+  const discount = getVariantData(variantsData, "discount", selectedSize?.id);
+  const stock = getVariantData(variantsData, "stock", selectedSize?.id);
+  const finalPrice = useMemo(() => {
+    return convertedPrice - convertedPrice * (discount / 100);
+  }, [convertedPrice, discount]);
 
   const handleRoute = () => {
     router.push(`/collections?category=${products?.categoryname}`);
@@ -208,41 +220,29 @@ const Sidebar = ({ products }: { products: Product }) => {
     <>
       <aside className="sidebar py-6 w-full sticky top-[65px] space-y-8 ">
         {outOfStock && !selectedVariantOutOfStock && (
-          <span className="w-full flex justify-center items-center px-2">
-            <Code className=" w-full text-base flex items-center justify-center flex-row bg-white dark:bg-neutral-950 rounded-md h-[50px]">
-              <p className="flex items-center justify-center flex-row gap-2 text-orange-500">
-                <PiWarningOctagon size={18} /> Some items are out of stock
-              </p>
-            </Code>
-          </span>
+          <StockWarningMessage message="Some items are out of stock" />
         )}
         {selectedVariantOutOfStock && (
-          <span className="w-full flex justify-center items-center px-2">
-            <Code className=" w-full text-base flex items-center justify-center flex-row bg-white dark:bg-neutral-950 rounded-md h-[50px]">
-              <p className="flex items-center justify-center flex-row gap-2 text-orange-500">
-                <PiWarningOctagon size={18} /> This item is out of stock
-              </p>
-            </Code>
-          </span>
+          <StockWarningMessage message="This item is out of stock" />
         )}
+        {stock > 0 && stock < 5 && (
+          <StockWarningMessage message="Few items left in stock!" />
+        )}
+
         <Card className=" w-full bg-transparent border-none border-0 shadow-none">
-          <CardHeader className="flex flex-row gap-3 justify-between px-4">
+          <CardHeader className="flex flex-row gap-3 justify-between items-center px-4">
             <div className="flex gap-3 items-center">
               <div className="flex flex-col">
                 <p className="text-2xl font-medium">{products?.product_name}</p>
                 <p
-                  className="text-sm text-slate-500 cursor-pointer"
+                  className="text-sm text-neutral-600 cursor-pointer"
                   onClick={handleRoute}
                 >
                   {products?.categoryname}
                 </p>
               </div>
             </div>
-            <div className="text-foreground/50 flex gap-2 items-center">
-              <span className="h-full flex text-xs items-center justify-center cursor-pointer">
-                <IoIosHeartEmpty size={22} color="#fff" />
-              </span>
-            </div>
+            <WishList productId={products.id} />
           </CardHeader>
           <CardBody className="flex flex-col p-4 gap-5 flex-initial ">
             {Array.isArray(variantsData) && (
@@ -285,40 +285,48 @@ const Sidebar = ({ products }: { products: Product }) => {
                 </Card>
               </>
             )}
+            {stock > 0 && stock < 5 && (
+              <span className="flex items-center gap-2 text-sm font-extralight">
+                <PiWarningOctagon className="w-4 h-4" /> {stock} items left
+              </span>
+            )}
             <span className="w-full flex gap-5 items-center">
               <span className="text-xs text-zinc-400 flex gap-2">
                 <FiBox size={16} /> Delivery on July 18th - 25th
               </span>
             </span>
             <span className="w-full flex gap-3 items-center">
-              <span className="text-lg">
-                {symbol} {convertedPrice}
+              <span className="flex gap-2">
+                <p className="text-lg">
+                  {discount > 0 && `${symbol} ${finalPrice}`}
+                </p>
+                <p
+                  className={cn(
+                    "text-lg",
+                    discount > 0 && "text-neutral-500 line-through"
+                  )}
+                >
+                  {symbol} {convertedPrice}
+                </p>
               </span>
-              <Chip className="text-xs bg-neutral-900 rounded-md text-orange-500">
-                $48 with 50% off
-              </Chip>
             </span>
             {!selectedVariantOutOfStock ? (
               <span className="flex gap-3">
                 <Button
-                  color="custom"
-                  variant="custom"
+                  variant="secondary"
                   size="sm"
                   className="w-full h-[40px] text-base"
                 >
                   Add to Cart
                 </Button>
-                {/* {isLoggedIn && (
+                {status && (
                   <Button
-                    color="secondary"
-                    variant="shadow"
-                    radius="sm"
-                    size="sm"
+                    variant="active"
                     className="w-full h-[40px] text-base"
                   >
                     Buy now
                   </Button>
-                )} */}
+                )}
               </span>
             ) : isLoading ? (
               <span className="flex w-full h-[185px] items-center justify-center">
@@ -355,21 +363,16 @@ const Sidebar = ({ products }: { products: Product }) => {
                   >
                     Notify me when available
                   </Button>
-                  <Button
-                    variant="custom"
-                    className="h-[40px] w-[40px] p-2 cursor-pointer"
-                  >
-                    <IoIosHeartEmpty className="w-9 h-9" color="#fff" />
-                  </Button>
+                  <WishList productId={products.id} custom={false}/>
                 </span>
               </form>
             )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
-            <span className="w-full px-2">
-              <Card className="w-full border-none border-0 bg-white dark:bg-neutral-950">
+            <span className="w-full p-0">
+              <Card className="w-full border-none border-0 bg-white dark:bg-neutral-950 p-0">
                 <CardHeader className="flex gap-3 p-3">
-                  <div className="w-full flex justify-between items-center">
+                  <div className="w-full flex justify-between items-center px-1">
                     <p className="text-md">Reviews({products.total_ratings})</p>
                     <span
                       onClick={() => handleDrawer()}

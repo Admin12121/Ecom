@@ -1,8 +1,11 @@
 import React from "react";
+import ProductPage from "./_components";
 
 const Page = () => {
   return (
-    <p>Products</p>
+    <div className="px-5">
+      <ProductPage />
+    </div>
   );
 };
 

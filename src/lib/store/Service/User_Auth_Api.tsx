@@ -2,15 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { authUser } from "@/hooks/use-auth-user";
 
 const createHeaders = (
-  isAuthRequired = false,
+  token?:string,
   contentType: string = "application/json"
 ) => {
   const headers: HeadersInit = { "Content-type": contentType };
-  if (isAuthRequired) {
-    const { accessToken } = authUser();
-    if (accessToken) {
-      headers["authorization"] = `Bearer ${accessToken}`;
-    }
+  if (token) {
+    headers["authorization"] = `Bearer ${token}`;
   }
   return headers;
 };
@@ -38,7 +35,7 @@ export const userAuthapi = createApi({
         url: "api/accounts/users/device/",
         method: "POST",
         body: user,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     allUsers: builder.query({
@@ -53,9 +50,7 @@ export const userAuthapi = createApi({
             exclude_by,
           })}`,
           method: "GET",
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+          headers: createHeaders(token),
         };
       },
     }),
@@ -63,16 +58,14 @@ export const userAuthapi = createApi({
       query: ({ token }) => ({
         url: "api/accounts/users/me/",
         method: "GET",
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
+        headers: createHeaders(token),
       }),
     }),
     getUserProfile: builder.query({
       query: ({ username }) => ({
         url: `accounts/users/?name=${username}`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     updateUserProfile: builder.mutation({
@@ -80,7 +73,7 @@ export const userAuthapi = createApi({
         url: `accounts/profile/?id=${id}`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     changeUserPassword: builder.mutation({
@@ -88,7 +81,7 @@ export const userAuthapi = createApi({
         url: "accounts/changepassword/",
         method: "POST",
         body: actualData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     refreshToken: builder.mutation({
@@ -100,14 +93,13 @@ export const userAuthapi = createApi({
       }),
     }),
     productsRegistration: builder.mutation({
-      query: (actualData) => {
-        const { accessToken } = authUser();
+      query: ({formData, token}) => {
         return {
           url: "api/products/products/",
           method: "POST",
-          body: actualData,
+          body: formData,
           headers: {
-            authorization: `Bearer ${accessToken}`,
+            authorization: `Bearer ${token}`,
           },
         };
       },
@@ -136,12 +128,12 @@ export const userAuthapi = createApi({
       }),
     }),
     recommendedProductsView: builder.query({
-      query: ({ product_id }) => ({
+      query: ({ product_id, token }) => ({
         url: `api/products/recommendations/${
           product_id ? `?product_id=${product_id}` : ""
         }`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(token),
       }),
     }),
     trendingProductsView: builder.query({
@@ -156,7 +148,7 @@ export const userAuthapi = createApi({
         url: "api/products/notifyuser/",
         method: "POST",
         body: actualData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     getnotifyuser: builder.query({
@@ -166,21 +158,21 @@ export const userAuthapi = createApi({
           variant,
         })}`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
         url: `api/products/products/?id=${id}`,
         method: "DELETE",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     cartView: builder.query({
       query: ({}) => ({
         url: `api/products/cart/`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     cartPost: builder.mutation({
@@ -188,7 +180,7 @@ export const userAuthapi = createApi({
         url: `api/products/cart/`,
         method: "POST",
         body: actualData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     cartUpdate: builder.mutation({
@@ -196,14 +188,14 @@ export const userAuthapi = createApi({
         url: `api/products/cart/${id}/`,
         method: "PATCH",
         body: actualData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     cartDelete: builder.mutation({
       query: ({ id }) => ({
         url: `api/products/cart/${id}/`,
         method: "DELETE",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     searchPost: builder.mutation({
@@ -212,7 +204,7 @@ export const userAuthapi = createApi({
           url: `api/accounts/search/`,
           method: "POST",
           body: actualData,
-          headers: createHeaders(true),
+          headers: createHeaders(),
         };
       },
     }),
@@ -229,9 +221,7 @@ export const userAuthapi = createApi({
           url: "api/products/categories/",
           method: "POST",
           body: formData,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+          headers: createHeaders(token),
         };
       },
     }),
@@ -240,38 +230,36 @@ export const userAuthapi = createApi({
         url: `products/category/?id=${id}`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
         url: `products/category/?id=${id}`,
         method: "DELETE",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     subCategoryView: builder.query({
       query: (storeCode) => ({
         url: `products/subcategory/?store=${storeCode}`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     addSubCategory: builder.mutation({
-      query: ({formData, token}) => ({
+      query: ({ formData, token }) => ({
         url: "api/products/subcategories/",
         method: "POST",
         body: formData,
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
+        headers: createHeaders(token),
       }),
     }),
     deleteSubCategory: builder.mutation({
       query: (id) => ({
         url: `products/subcategory/?id=${id}`,
         method: "DELETE",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     upgradeSubCategory: builder.mutation({
@@ -279,7 +267,7 @@ export const userAuthapi = createApi({
         url: `products/subcategory/?id=${id}`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     redeemCodeView: builder.query({
@@ -288,7 +276,7 @@ export const userAuthapi = createApi({
           code ? `&code=${code}` : ""
         }`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     addRedeemCode: builder.mutation({
@@ -296,7 +284,7 @@ export const userAuthapi = createApi({
         url: "sales/redeemcode/",
         method: "POST",
         body: actualData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     updateRedeemCode: builder.mutation({
@@ -304,33 +292,30 @@ export const userAuthapi = createApi({
         url: `sales/redeemcode/?id=${id}`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     deleteRedeemCode: builder.mutation({
       query: (id) => ({
         url: `sales/redeemcode/?id=${id}`,
         method: "DELETE",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     getlayout: builder.query({
       query: ({ layoutslug }) => ({
         url: `api/layout/layouts/${layoutslug ? `${layoutslug}/` : ""}`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     createorUpdatelayout: builder.mutation({
-      query: ({ layoutslug, NewFormData }) => {
-        const { accessToken } = authUser();
+      query: ({ layoutslug, NewFormData, token }) => {
         return {
           url: `api/layout/layouts/${layoutslug}/`,
           method: "PATCH",
           body: NewFormData,
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
+          headers: createHeaders(token),
         };
       },
     }),
@@ -387,15 +372,12 @@ export const userAuthapi = createApi({
       },
     }),
     postReview: builder.mutation({
-      query: (actualData) => {
-        const { accessToken } = authUser();
+      query: ({actualData, token}) => {
         return {
           url: "api/products/reviews/post/",
           method: "POST",
           body: actualData,
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
+          headers: createHeaders(token),
         };
       },
     }),
@@ -404,7 +386,7 @@ export const userAuthapi = createApi({
         url: `api/products/reviews/post/${id}/`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     getReview: builder.query({
@@ -416,7 +398,7 @@ export const userAuthapi = createApi({
           filter,
         })}`,
         method: "GET",
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
     postSale: builder.mutation({
@@ -424,7 +406,7 @@ export const userAuthapi = createApi({
         url: `api/sales/sales/`,
         method: "POST",
         body: actualData,
-        headers: createHeaders(true),
+        headers: createHeaders(),
       }),
     }),
   }),
