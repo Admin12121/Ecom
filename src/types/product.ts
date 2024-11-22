@@ -53,8 +53,8 @@ export interface VariantObject {
   id: number;
   product_stripe_id: string | null;
   size: string | null;
-  price: string;
-  discount: string;
+  price: number;
+  discount: number;
   stock: number;
   product: number;
 }

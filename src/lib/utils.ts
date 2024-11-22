@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import CryptoJS from 'crypto-js';
+import { toast } from "sonner";
 
 const NEXTAUTH_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
@@ -49,7 +50,6 @@ export const getWishlist = (): string[] => {
   return JSON.parse(CryptoJS.AES.decrypt(encryptedWishlist, NEXTAUTH_SECRET).toString(CryptoJS.enc.Utf8));
 };
 
-
 interface CartProduct {
   product: number;
   variant: number;
@@ -82,6 +82,7 @@ export const updateProductList = (newProduct: CartProduct, increment: boolean = 
   }
   const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(productList), NEXTAUTH_SECRET).toString();
   localStorage.setItem('productList', encryptedData);
+  toast.success("Added to Cart")
 };
 
 export const getDecryptedProductList = (): CartProduct[] => {
@@ -89,3 +90,9 @@ export const getDecryptedProductList = (): CartProduct[] => {
   if (!encryptedProductList) return [];
   return JSON.parse(CryptoJS.AES.decrypt(encryptedProductList, NEXTAUTH_SECRET).toString(CryptoJS.enc.Utf8));
 };
+
+
+export const encQueryData = (data:any) => {
+  const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), NEXTAUTH_SECRET).toString();
+  const encodedData = encodeURIComponent(encryptedData);
+}

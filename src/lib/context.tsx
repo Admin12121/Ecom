@@ -35,7 +35,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
 const getSymbol = (iso3: string) => {
   const symbols: { [key: string]: string } = {
     INR: "₹",
@@ -79,9 +78,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const { data } = await axios.get(
           "https://www.nrb.org.np/api/forex/v1/app-rate"
         );
-        if (data) {
+        const currencyData = Array.isArray(data) ? data : JSON.parse(data.replace(/.*\[(.*)\]/s, "[$1]"));
+        if (currencyData) {
           const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
-          const filteredData = data.filter((currency: CurrencyData) =>
+          const filteredData = currencyData.filter((currency: CurrencyData) =>
             requiredCurrencies.includes(currency.iso3)
           );
           const finalData = filteredData.map((currency: CurrencyData) => ({

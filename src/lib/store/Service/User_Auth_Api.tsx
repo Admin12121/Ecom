@@ -144,21 +144,21 @@ export const userAuthapi = createApi({
       }),
     }),
     notifyuser: builder.mutation({
-      query: (actualData) => ({
+      query: ({actualData, token}) => ({
         url: "api/products/notifyuser/",
         method: "POST",
         body: actualData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     getnotifyuser: builder.query({
-      query: ({ product, variant }) => ({
+      query: ({ product, variant, token }) => ({
         url: `api/products/notifyuser/${buildQueryParams({
           product,
           variant,
         })}`,
         method: "GET",
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     deleteProduct: builder.mutation({

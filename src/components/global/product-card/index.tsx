@@ -4,18 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/context";
-import { Button } from "@/components/ui/button";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useUpdateQueryParams } from "@/lib/query-params";
 import React, { useState, useEffect, useMemo } from "react";
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
-import { getSizeCategory } from "@/app/(app)/(user)/collections/[productslug]/_components/sidebar";
 
-import {
-  ShoppingBag as HiOutlineShoppingBag,
-  Heart as IoIosHeartEmpty,
-  Star as FaStar,
-} from "lucide-react";
+import { Star as FaStar } from "lucide-react";
 
 import {
   Product,
@@ -28,6 +22,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import WishList from "../wishlist-button";
+import Cartbutton from "./cart-button";
 
 interface ProductCardProps {
   data: Product;
@@ -42,39 +37,65 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { convertPrice } = useAuth();
   const updateQueryParams = useUpdateQueryParams();
-  const [variantsData, setVariantsData] = useState<
-    VariantObject[] | VariantObject | null
-  >(null);
+  const [variantsData, setVariantsData] = useState< VariantObject[] | VariantObject | null >(null);
+  const [selectedSize, setSelectedSize] = useState<{
+    id: number;
+    size: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    if (data?.variants && Array.isArray(data.variants)) {
+      const variants = data.variants;
+      const sortedVariants = [...variants].sort(
+        (a, b) => Number(a.size) - Number(b.size)
+      );
+      setVariantsData(sortedVariants);
+      if (sortedVariants.length > 0) {
+        setSelectedSize({
+          id: sortedVariants[0].id,
+          size: sortedVariants[0].size,
+        });
+      }
+    }
+  }, [data]);
 
   useEffect(() => {
     if (data?.variants) {
       setVariantsData(data.variants);
+      if (!Array.isArray(data.variants)) {
+        setSelectedSize({
+          id: data.variants.id,
+          size: data.variants.size,
+        });
+      }
     }
   }, [data]);
-
+  
   const getVariantData = (
     variantsData: VariantObject[] | VariantObject | null,
     key: keyof VariantObject,
     index: number = 0
   ): any => {
     if (Array.isArray(variantsData)) {
-      // const variant = variantsData.find((variant) => variant.id === index);
-      const variant = variantsData[index];
+      const variant = variantsData.find((variant) => variant.id === index);
       return variant ? variant[key] : null;
     } else if (variantsData) {
       return variantsData[key];
     }
     return null;
   };
+
   const { convertedPrice, symbol } = convertPrice(
-    getVariantData(variantsData, "price")
+    getVariantData(variantsData, "price", selectedSize?.id)
   );
 
-  const discount = getVariantData(variantsData, "discount");
-  const stocks = getVariantData(variantsData, "stock");
+  const discount = getVariantData(variantsData, "discount", selectedSize?.id);
+  const stocks = getVariantData(variantsData, "stock", selectedSize?.id);
+
   const finalPrice = useMemo(() => {
     return convertedPrice - convertedPrice * (discount / 100);
   }, [convertedPrice, discount]);
+
   const productslug = data.productslug;
 
   const handleRoute = () => {
@@ -113,7 +134,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </>
           )}
           <span className="h-full flex text-xs items-center justify-center absolute right-2">
-            {data.id && <WishList productId={data.id}/>}
+            {data.id && <WishList productId={data.id} />}
           </span>
         </span>
         <Swiper
@@ -158,7 +179,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           </div>
           <div className="flex w-full justify-between items-center gap-1">
-            <span className="flex gap-2">
+            <span className={cn("flex" , discount > 0 && " gap-2")}>
               <p className="text-sm">
                 {discount > 0 && `${symbol} ${finalPrice}`}
               </p>
@@ -171,24 +192,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 {symbol} {convertedPrice}
               </p>
             </span>
-
-            <Button
-              variant="active"
-              size="sm"
-              className={cn("h-[30px] flex justify-center items-center text-sm gap-2", stocks === 0 && "shadow-none" )}
-              //   onClick={(event) => {
-              //     addToCart(data!.id, event, variantId);
-              //   }}
-            >
-              {stocks === 0 ? (
-                "Notify me"
-              ) : (
-                <>
-                  <HiOutlineShoppingBag className="w-3 h-3" />
-                  Add
-                </>
-              )}
-            </Button>
+            {variantsData && <Cartbutton data={data.id} stocks={stocks} variantsData={variantsData} setSelectedSize={setSelectedSize} selectedSize={selectedSize} finalPrice={finalPrice} convertedPrice={convertedPrice} symbol={symbol}/>}
           </div>
         </span>
       </span>
@@ -230,42 +234,4 @@ export const ProductSkeleton = ({
     );
   }
   return <>{children}</>;
-};
-
-export const VariantCategory = ({
-  variantsData,
-}: {
-  variantsData: VariantObject[] | VariantObject | null;
-}) => {
-  if (!Array.isArray(variantsData)) {
-    return null;
-  }
-
-  const [selectedSize, setSelectedSize] = useState<{
-    id: number;
-    size: string | null;
-  } | null>(null);
-  const sortedVariants = Array.isArray(variantsData)
-    ? [...variantsData].sort((a, b) => Number(a.size) - Number(b.size))
-    : [];
-
-  return (
-    <span className="flex gap-2 items-center">
-      {sortedVariants.map((variant, index) => (
-        <Button
-          key={variant.id}
-          variant={selectedSize?.id === variant.id ? "active" : "secondary"}
-          size="sm"
-          onClick={() =>
-            setSelectedSize({
-              id: variant.id,
-              size: variant.size,
-            })
-          }
-        >
-          {getSizeCategory(index)}
-        </Button>
-      ))}
-    </span>
-  );
 };

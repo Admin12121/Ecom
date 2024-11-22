@@ -8,14 +8,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context";
-import {
-  ShoppingBag as HiOutlineShoppingBag,
-  Heart as IoIosHeartEmpty,
-  Star as FaStar,
-} from "lucide-react";
 import {
   Product,
   VariantObject,
@@ -23,7 +17,6 @@ import {
 } from "@/types/product";
 import { cn } from "@/lib/utils";
 import { useUpdateQueryParams } from "@/lib/query-params";
-import { getSizeCategory } from "@/app/(app)/(user)/collections/[productslug]/_components/sidebar";
 
 interface ProductCardProps {
   data: Product;
@@ -170,42 +163,4 @@ export const ProductSkeleton = ({
     );
   }
   return <>{children}</>;
-};
-
-export const VariantCategory = ({
-  variantsData,
-}: {
-  variantsData: VariantObject[] | VariantObject | null;
-}) => {
-  if (!Array.isArray(variantsData)) {
-    return null;
-  }
-
-  const [selectedSize, setSelectedSize] = useState<{
-    id: number;
-    size: string | null;
-  } | null>(null);
-  const sortedVariants = Array.isArray(variantsData)
-    ? [...variantsData].sort((a, b) => Number(a.size) - Number(b.size))
-    : [];
-
-  return (
-    <span className="flex gap-2 items-center">
-      {sortedVariants.map((variant, index) => (
-        <Button
-          key={variant.id}
-          variant={selectedSize?.id === variant.id ? "active" : "secondary"}
-          size="sm"
-          onClick={() =>
-            setSelectedSize({
-              id: variant.id,
-              size: variant.size,
-            })
-          }
-        >
-          {getSizeCategory(index)}
-        </Button>
-      ))}
-    </span>
-  );
 };

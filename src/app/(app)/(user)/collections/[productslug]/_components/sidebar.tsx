@@ -36,11 +36,7 @@ import StockWarningMessage from "./stock-warning";
 import WishList from "@/components/global/wishlist-button";
 
 const EmailSchema = z.object({
-  uid: z.string().min(1, { message: "UID is required" }),
-  token: z.string().min(1, { message: "Token is required" }),
-  password: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters long" }),
+  email: z.string().min(1, { message: "UID is required" }),
 });
 
 interface VariantObject {
@@ -94,6 +90,7 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [variantsData, setVariantsData] = useState<
     VariantObject[] | VariantObject | null
   >(null);
+  
   const [selectedVariantOutOfStock, setSelectedVariantOutOfStock] =
     useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
@@ -200,9 +197,12 @@ const Sidebar = ({ products }: { products: Product }) => {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm({
     resolver: zodResolver(EmailSchema),
   });
+
+  const emailValue = watch("email", "");
 
   const onSubmit = async (data: any) => {
     const actualData = {
@@ -359,7 +359,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                     variant="custom"
                     className="w-full h-[40px] text-base"
                     type="submit"
-                    disabled={notifyadded}
+                    disabled={notifyadded || !emailValue || !!errors.email}
                   >
                     Notify me when available
                   </Button>
