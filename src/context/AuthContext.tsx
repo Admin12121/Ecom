@@ -99,9 +99,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const fetchLiveRates = async () => {
       try {
         const { data } = await axios.get("https://www.nrb.org.np/api/forex/v1/app-rate");
-        if (data) {
+        const currencyData = Array.isArray(data) ? data : JSON.parse(data.replace(/.*\[(.*)\]/s, "[$1]"));
+        if (currencyData) {
           const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
-          const filteredData = data.filter((currency: CurrencyData) => requiredCurrencies.includes(currency.iso3));
+          const filteredData = currencyData.filter((currency: CurrencyData) => requiredCurrencies.includes(currency.iso3));
           const finalData = filteredData.map((currency: CurrencyData) => ({
             ...currency,
             unit: currency.iso3 === "INR" ? 1 : currency.unit,
