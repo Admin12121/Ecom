@@ -11,6 +11,7 @@ import Voucher from "./voucher";
 import BackdropGradient from "@/components/gobal/backdrop-gradient";
 import GlassCard from "@/components/gobal/glass-card";
 import GradientText from "@/components/gobal/gradient-text";
+import useAuth from "@/context/AuthContext";
 
 const Checkout = ({ params }: { params: { transitionuid: string } }) => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
   const { data: userData, isLoading: userDataisLoading } =
     useGetLoggedUserQuery({});
   const uid = params.transitionuid;
+  const { convertPriceToCurrency } = useAuth();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,8 +66,9 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
         }
       });
   
-      const conversionRate = 0.00747943156;
-      setUsdPrice(totalNpr * conversionRate);
+      const iso3 = "USD"
+      const { convertedPrice, symbol } = convertPriceToCurrency(totalNpr,iso3)
+      setUsdPrice(convertedPrice);
     }
   }, [ProductData, data]);
 

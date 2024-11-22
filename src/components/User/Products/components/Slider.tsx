@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { CiStar } from "react-icons/ci";
 import { IoIosHeartEmpty } from "react-icons/io";
-import { IoMdHeart } from "react-icons/io";
 import { FaStar } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -15,6 +13,7 @@ import { HiOutlineShoppingBag } from "react-icons/hi2";
 import useAuth from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useCart } from "@/context/CartState";
 
 interface Image {
   image: string;
@@ -34,7 +33,7 @@ interface Product {
   id: number;
   categoryname: string;
   subcategoryname: string;
-  comments: any[]; // Update to appropriate type if needed
+  comments: any[];
   product_name: string;
   rating: number;
   description: string;
@@ -52,6 +51,7 @@ interface DemoSliderProps {
 
 const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
   const router = useRouter();
+  const { addToCart } = useCart();
   const { convertPrice } = useAuth();
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const [variantsData, setVariantsData] = useState<
@@ -81,6 +81,7 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
   const { convertedPrice, symbol } = convertPrice(
     getVariantData(variantsData, "price")
   );
+  const variantId = getVariantData(variantsData, 'id')
   const handleRoute = () => {
     router.push(`/collections?category=${data?.categoryname}`);
   };
@@ -89,17 +90,16 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
     <section className="relative w-full flex gap-5">
       <span className={`${width ? `w-full` : "w-[350px]" } relative flex flex-col h-[500px] m-0 bg-neutral-950 rounded-lg `}>
         <span className={`absolute z-10 ${width ? `w-full ` : "w-[350px]" } px-3 top-3 flex justify-between items-center h-5 `}>
-          <span className="w-[50px] h-full flex bg-zinc-300 rounded-md text-xs items-center justify-center text-black gap-1">
-            {data?.rating ? data?.rating : 0.0} <FaStar size={10} />{" "}
-          </span>
-          <span className="h-full flex text-xs items-center justify-center">
+          {data?.rating > 0 && <span className="w-[50px] h-full flex bg-zinc-300 rounded-md text-xs items-center justify-center text-black gap-1">
+            {data?.rating ? data?.rating : 0.0} <FaStar size={10} />
+          </span>}
+          <span className="h-full flex text-xs items-center justify-center absolute right-4">
             <IoIosHeartEmpty size={18} color="#fff" />
           </span>
         </span>
         <Swiper
           navigation
           pagination={{ type: "bullets", clickable: true }}
-          // autoplay={{ delay: 5000 }}
           loop={true}
           effect="fade"
           modules={[Autoplay, Navigation, Pagination, EffectFade]}
@@ -142,6 +142,7 @@ const DemoSlider: React.FC<DemoSliderProps> = ({ data, width }) => {
               radius="sm"
               size="sm"
               className=" h-[30px] flex justify-center items-center text-sm"
+              onClick={(event) =>{addToCart(data!.id, event, variantId)}}
             >
               <HiOutlineShoppingBag size={14} />
               Add

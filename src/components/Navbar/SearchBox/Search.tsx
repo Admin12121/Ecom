@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation'
-import {animals} from "./data";
 import { cn } from "./cn";
 import {useSearchPostMutation} from '@/lib/store/Service/User_Auth_Api'
 export function PlaceholdersAndVanishInput({
@@ -30,8 +29,10 @@ export function PlaceholdersAndVanishInput({
   const newDataRef = useRef<any[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState<string>("");
+
   const [animating, setAnimating] = useState<boolean>(false);
   const [SearchPost] = useSearchPostMutation();
+  
   const draw = useCallback(() => {
     if (!inputRef.current) return;
     const canvas = canvasRef.current;

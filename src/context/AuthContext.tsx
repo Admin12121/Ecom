@@ -40,6 +40,7 @@ interface AuthContextType {
   selectedcurrencyiso: string;
   convertPrice: (price: number) => { convertedPrice: number; symbol: string };
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  convertPriceToCurrency: (price: number, iso3: string) => { convertedPrice: number; symbol: string };
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -233,6 +234,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { convertedPrice: price, symbol: "" };
   };
 
+  const convertPriceToCurrency = (price: number, iso3: string): { convertedPrice: number; symbol: string } => {
+    if (liveratedata) {
+      const desiredCurrency = liveratedata.find((currency) => currency.iso3 === iso3);
+      if (desiredCurrency) {
+        return { 
+          convertedPrice: parseFloat((price / parseFloat(desiredCurrency.sell)).toFixed(2)), 
+          symbol: desiredCurrency.symbol 
+        };
+      }
+    }
+    return { convertedPrice: price, symbol: "" };
+  };
+
   useEffect(() => {
     const { access_token } = getToken();
     if (status === "authenticated" && session?.access && session?.refresh && !access_token) {
@@ -257,6 +271,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         handleSelectionChange,
         selectedcurrencyiso,
         convertPrice,
+        convertPriceToCurrency,
       }}
     >
       {children}
