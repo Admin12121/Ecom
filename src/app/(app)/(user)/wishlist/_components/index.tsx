@@ -15,7 +15,7 @@ const WishList = () => {
   const wishlist = getWishlist();
   const [products, SetProducts] = useState<Product[] | null>([]);
   const { data, isLoading, refetch } = useProductsByIdsQuery(
-    { ids: wishlist },
+    { ids: wishlist, all:true },
     { skip: wishlist.length === 0 }
   );
   useEffect(() => {

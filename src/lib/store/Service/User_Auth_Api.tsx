@@ -121,8 +121,8 @@ export const userAuthapi = createApi({
       },
     }),
     productsByIds: builder.query({
-      query: ({ ids }) => ({
-        url: `api/products/get_products_by_ids/?ids=${ids}`,
+      query: ({ ids, all }) => ({
+        url: `api/products/get_products_by_ids/?ids=${ids}${all ? "&all=true":''}`,
         method: "GET",
         headers: createHeaders(),
       }),
@@ -169,18 +169,18 @@ export const userAuthapi = createApi({
       }),
     }),
     cartView: builder.query({
-      query: ({}) => ({
+      query: ({token}) => ({
         url: `api/products/cart/`,
         method: "GET",
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     cartPost: builder.mutation({
-      query: (actualData) => ({
+      query: ({actualData, token}) => ({
         url: `api/products/cart/`,
         method: "POST",
         body: actualData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     cartUpdate: builder.mutation({

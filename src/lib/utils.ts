@@ -2,6 +2,12 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import CryptoJS from 'crypto-js';
 import { toast } from "sonner";
+import { EventEmitter } from 'events';
+import {
+  useCartUpdateMutation,
+  useCartDeleteMutation,
+} from "@/lib/store/Service/User_Auth_Api";
+
 
 const NEXTAUTH_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
@@ -56,6 +62,19 @@ interface CartProduct {
   pcs?: number;
 }
 
+const cartEventEmitter = new EventEmitter();
+export const cartEvents = {
+  on: (event: string, listener: (...args: any[]) => void) => {
+    cartEventEmitter.on(event, listener);
+  },
+  emit: (event: string, ...args: any[]) => {
+    cartEventEmitter.emit(event, ...args);
+  },
+  off: (event: string, listener: (...args: any[]) => void) => {
+    cartEventEmitter.off(event, listener);
+  },
+};
+
 export const updateProductList = (newProduct: CartProduct, increment: boolean = true): void => {
   const encryptedProductList = localStorage.getItem('productList');
   const productList: CartProduct[] = encryptedProductList 
@@ -70,19 +89,23 @@ export const updateProductList = (newProduct: CartProduct, increment: boolean = 
       const existingProduct = productList[existingProductIndex];
       const currentPcs = existingProduct.pcs ?? 0;
       if (increment) {
-          existingProduct.pcs = currentPcs + 1; 
+        existingProduct.pcs = currentPcs + 1; 
+        cartEvents.emit('cartUpdated');
+        toast.success("Added to Cart",{position:"top-center"});
       } else {
-          existingProduct.pcs = currentPcs - 1; 
-          if (existingProduct.pcs <= 0) {
-              productList.splice(existingProductIndex, 1);
+        existingProduct.pcs = currentPcs - 1; 
+        if (existingProduct.pcs <= 0) {
+          productList.splice(existingProductIndex, 1);
+          toast.success("Removed from Cart",{position:"top-center"});
           }
       }
   } else if (increment) {
       productList.push({ ...newProduct, pcs: 1 });
+      toast.success("Added to Cart",{position:"top-center"});
+      cartEvents.emit('cartUpdated');
   }
   const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(productList), NEXTAUTH_SECRET).toString();
   localStorage.setItem('productList', encryptedData);
-  toast.success("Added to Cart")
 };
 
 export const getDecryptedProductList = (): CartProduct[] => {
@@ -90,9 +113,3 @@ export const getDecryptedProductList = (): CartProduct[] => {
   if (!encryptedProductList) return [];
   return JSON.parse(CryptoJS.AES.decrypt(encryptedProductList, NEXTAUTH_SECRET).toString(CryptoJS.enc.Utf8));
 };
-
-
-export const encQueryData = (data:any) => {
-  const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), NEXTAUTH_SECRET).toString();
-  const encodedData = encodeURIComponent(encryptedData);
-}
