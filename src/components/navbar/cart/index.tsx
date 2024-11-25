@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/cart-context";
 import FeatureProduct from "./feature-products";
+import Spinner from "@/components/ui/spinner";
 
 export default function Cart() {
   const { convertPrice } = useAuth();
@@ -131,13 +132,13 @@ export default function Cart() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-0 w-[97vw] mr-[1.5vw] md:min-w-[500px] h-[98vh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 p-3">
+      <SheetContent className="border-0 w-[97dvw] mr-[1.5dvw] md:min-w-[500px] h-[98dvh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 p-3">
         <SheetHeader>
           <SheetTitle className="text-base">Cart</SheetTitle>
         </SheetHeader>
         {totalPieces > 0 ? (
           <>
-            <div className="py-2 flex flex-col gap-3 h-[83vh] overflow-y-auto">
+            <div className="py-2 flex flex-col gap-3 h-[83dvh] overflow-y-auto">
               <div className="text-neutral-800 dark:text-zinc-400 text-sm bg-white dark:bg-neutral-900 p-3 rounded-md ">
                 Make changes to your profile here. Click save when you&apos;re
                 done.
@@ -221,7 +222,7 @@ export default function Cart() {
 
 const CartItem = ({ data }: { data: any }) => {
   const { convertPrice } = useAuth();
-  const { HandleIncreaseItems, HandledecreaseItems } = useCart();
+  const { HandleIncreaseItems, HandledecreaseItems, loading } = useCart();
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
   const discount = data.variantDetails.discount;
   const finalPrice = useMemo(() => {
@@ -250,19 +251,22 @@ const CartItem = ({ data }: { data: any }) => {
           </span>
           <span className="flex items-start flex-col gap-2 justify-between">
             <span className="flex flex-col gap-0">
-              <p className="text-base">
-                {truncateText(data.product_name, 25)}
+              <p className="text-base ">
+                {truncateText(data.product_name, 14)}
+              </p>
+              <p className="text-xs text-zinc-400">
+                {data.categoryname}{" "}
                 {data.variantDetails.size
-                  ? ` - ${data.variantDetails.size}cm`
+                  ? ` ( ${data.variantDetails.size}cm )`
                   : ""}
               </p>
-              <p className="text-xs text-zinc-400">{data.categoryname}</p>
             </span>
             <span className="flex items-center gap-5">
               <Button
                 variant="outline"
                 aria-label="Like"
                 className="cursor-pointer bg-transparent max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
+                disabled={loading}
                 onClick={() =>
                   HandledecreaseItems({
                     product: data.product,
@@ -289,7 +293,7 @@ const CartItem = ({ data }: { data: any }) => {
                     variant="outline"
                     aria-label="Like"
                     className="cursor-pointer bg-transparent max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
-                    disabled={data.variantDetails.stock === data.pcs}
+                    disabled={data.variantDetails.stock === data.pcs || loading}
                     onClick={() =>
                       HandleIncreaseItems({
                         product: data.product,
@@ -303,12 +307,13 @@ const CartItem = ({ data }: { data: any }) => {
                       className="stroke-black dark:stroke-white"
                     />
                   </Button>
+                  {loading && <Spinner size="sm" color="secondary" />}
                 </>
               )}
             </span>
           </span>
         </span>
-        <span className="flex items-end gap-8 justify-between flex-col h-full">
+        <span className="flex items-end gap-8 justify-between flex-col h-full ">
           <p className="text-sm bg-secondary-500 rounded-md text-center px-2 text-white">
             {discount ? `-${discount}%` : "for you"}
           </p>

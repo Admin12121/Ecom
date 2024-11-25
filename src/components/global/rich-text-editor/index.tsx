@@ -142,7 +142,7 @@ const BlockTextEditor = ({
                 tippyOptions={{
                   placement: "top",
                 }}
-                className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-muted bg-themeBlack text-themeTextGray shadow-xl"
+                className="flex w-fit max-w-[90dvw] overflow-hidden rounded border border-muted bg-themeBlack text-themeTextGray shadow-xl"
               >
                 <NodeSelector open={openNode} onOpenChange={setOpenNode} />
                 <LinkSelector open={openLink} onOpenChange={setOpenLink} />

@@ -61,7 +61,7 @@ export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
           Show all
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-none border-0 max-h-[98vh] my-[1vh] dark:bg-[#141414] mx-2 rounded-md p-0 max-w-md w-[98vw]">
+      <SheetContent className="border-0 w-[97dvw] mr-[1.5dvw] md:min-w-[500px] h-[98dvh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 p-3">
         <SheetHeader className="px-6 py-4">
           <SheetTitle className="text-sm font-medium">
             Reviews ({data?.count})

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/context";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/lib/cart-context";
 import { ReviewSheet } from "./review-sheet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import { Spinner } from "@/components/ui/spinner";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator as Divider } from "@/components/ui/separator";
-
 import {
   Card,
   CardContent as CardBody,
@@ -81,6 +81,7 @@ const Sidebar = ({ products }: { products: Product }) => {
   const router = useRouter();
   const { status } = authUser();
   const { convertPrice } = useAuth();
+  const { updateProductList } = useCart();
   const [notifyuser] = useNotifyuserMutation();
 
   const [selectedSize, setSelectedSize] = useState<{
@@ -90,7 +91,7 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [variantsData, setVariantsData] = useState<
     VariantObject[] | VariantObject | null
   >(null);
-  
+
   const [selectedVariantOutOfStock, setSelectedVariantOutOfStock] =
     useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
@@ -197,7 +198,7 @@ const Sidebar = ({ products }: { products: Product }) => {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm({
     resolver: zodResolver(EmailSchema),
   });
@@ -216,9 +217,14 @@ const Sidebar = ({ products }: { products: Product }) => {
     }
   };
 
+  const handleAddToCart = () =>
+    updateProductList({
+      product: products.id,
+      variant: getVariantData(variantsData, "id", selectedSize?.id),
+    });
   return (
     <>
-      <aside className="sidebar py-6 w-full sticky top-[65px] space-y-8 ">
+      <aside className="sidebar  w-full sticky top-[65px] space-y-8 ">
         {outOfStock && !selectedVariantOutOfStock && (
           <StockWarningMessage message="Some items are out of stock" />
         )}
@@ -229,7 +235,7 @@ const Sidebar = ({ products }: { products: Product }) => {
           <StockWarningMessage message="Few items left in stock!" />
         )}
 
-        <Card className=" w-full bg-transparent border-none border-0 shadow-none">
+        <Card className=" w-full bg-transparent border-none border-0 shadow-none p-0 pt-3">
           <CardHeader className="flex flex-row gap-3 justify-between items-center px-4">
             <div className="flex gap-3 items-center">
               <div className="flex flex-col">
@@ -316,6 +322,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                   variant="secondary"
                   size="sm"
                   className="w-full h-[40px] text-base"
+                  onClick={handleAddToCart}
                 >
                   Add to Cart
                 </Button>
@@ -363,7 +370,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                   >
                     Notify me when available
                   </Button>
-                  <WishList productId={products.id} custom={false}/>
+                  <WishList productId={products.id} custom={false} />
                 </span>
               </form>
             )}

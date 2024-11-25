@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 export interface SpinnerProps {
@@ -14,19 +15,16 @@ export interface SpinnerProps {
 
 const sizeMap = {
   sm: "1.5em",
-
   md: "3.25em",
   lg: "5em",
 };
 
 const colorMap = {
-  default: "#27272a",
+  default: "#27272a ",
   primary: "blue",
   secondary: "gray",
   success: "green",
-
   warning: "orange",
-
   danger: "red",
 };
 
@@ -51,11 +49,8 @@ export const Spinner: React.FC<SpinnerProps> = ({
           fill: "none",
           stroke: colorMap[color],
           strokeWidth: 2,
-
           strokeDasharray: "1, 200",
-
           strokeDashoffset: 0,
-
           strokeLinecap: "round",
           animation: "dash4 1.5s ease-in-out infinite",
         }}
@@ -63,27 +58,17 @@ export const Spinner: React.FC<SpinnerProps> = ({
       <style>
         {`
           @keyframes rotate4 {
-
             100% {
-
               transform: rotate(360deg);
-
             }
-
           }
           @keyframes dash4 {
-
             0% {
-
               stroke-dasharray: 1, 200;
-
               stroke-dashoffset: 0;
-
             }
             50% {
-
               stroke-dasharray: 90, 200;
-
               stroke-dashoffset: -35px;
             }
             100% {

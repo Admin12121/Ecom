@@ -561,7 +561,7 @@ const DeleteModal = ({
   setDeleteModalId: React.Dispatch<React.SetStateAction<number | null>>;
 }) => {
   return (
-    <section className="flex flex-col fixed w-[100vw] h-[100vh] bg-neutral-950/50 z-50 backdrop-blur-sm top-0 left-0 items-center justify-center">
+    <section className="flex flex-col fixed w-[100dvw] h-[100dvh] bg-neutral-950/50 z-50 backdrop-blur-sm top-0 left-0 items-center justify-center">
       <Card className=" rounded-lg min-h-[150px] w-[300px]">
         <CardHeader className="pb-2">
           <h1 className="text-lg font-normal">Delete Course</h1>

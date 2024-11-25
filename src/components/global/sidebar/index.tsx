@@ -263,10 +263,10 @@ const SidebarContent = ({
         className={cn(
           "group flex flex-col gap-4 data-[collapsed=true]:py-2 w-full overflow-hidden overflow-y-auto",
           {
-            "h-[calc(100vh-80px)]": !headerContent,
-            "h-[calc(100vh-70px)]": headerContent && !footerContent,
-            "h-[calc(100vh-130px)]": headerContent && footerContent,
-            "h-[calc(100vh-185px)]":
+            "h-[calc(100dvh-80px)]": !headerContent,
+            "h-[calc(100dvh-70px)]": headerContent && !footerContent,
+            "h-[calc(100dvh-130px)]": headerContent && footerContent,
+            "h-[calc(100dvh-185px)]":
               headerContent && footerContent && SearchContent,
           },
           className

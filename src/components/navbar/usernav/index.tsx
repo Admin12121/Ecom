@@ -60,11 +60,11 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+        <Button variant="ghost" className="relative p-0 h-12 w-12 rounded-lg">
+          <Avatar className="h-12 w-12 rounded-lg">
             <AvatarImage src={user?.profile || ""} alt={user?.username} />
             <AvatarFallback>
-              <UserRound className="w-4 h-4" />
+              <UserRound className="w-5 h-5" />
             </AvatarFallback>
           </Avatar>
         </Button>

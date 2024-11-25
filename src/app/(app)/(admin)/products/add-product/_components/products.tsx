@@ -278,16 +278,13 @@ const AddProduct = () => {
   };
 
   const onSubmit = async (data: FormValues) => {
-    // Clean up the data before submission
     const cleanedData = { ...data };
 
     if (data.isMultiVariant) {
-      // Remove single variant fields if isMultiVariant is true
       delete cleanedData.basePrice;
       delete cleanedData.stock;
       delete cleanedData.discount;
     } else {
-      // Remove variants array if isMultiVariant is false
       delete cleanedData.variants;
     }
 
@@ -299,7 +296,6 @@ const AddProduct = () => {
     const toastId = toast.loading("Preparing data...", {
       position: "top-center",
     });
-    // Prepare form data
     const formData = new FormData();
     formData.append("product_name", cleanedData.productName);
     formData.append("description", cleanedData.description);
@@ -309,6 +305,7 @@ const AddProduct = () => {
 
     if (!cleanedData.isMultiVariant) {
       formData.append("price", cleanedData.basePrice!.toString());
+      formData.append("size", "0");
       formData.append("stock", cleanedData.stock!.toString());
       formData.append("discount", cleanedData.discount!.toString());
     } else {
@@ -392,7 +389,7 @@ const AddProduct = () => {
 
   return (
     <form
-      className="flex flex-col gap-5 px-2 md:px-5 pb-5 w-full h-[90vh]"
+      className="flex flex-col gap-5 px-2 md:px-5 pb-5 w-full h-[90dvh]"
       onSubmit={handleSubmit(onSubmit)}
     >
       <Button className="absolute right-2 top-2" type="submit">

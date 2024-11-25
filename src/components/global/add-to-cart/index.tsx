@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { cn, updateProductList } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import React from "react";
 import { ShoppingBag } from "lucide-react";
+import { useCart } from "@/lib/cart-context";
 
 interface AddToCartProps {
   product: number;
@@ -10,6 +11,7 @@ interface AddToCartProps {
 }
 
 const AddToCart: React.FC<AddToCartProps> = ({ product, variant, className }) => {
+  const { updateProductList } = useCart();
   const handleAddToCart = () => updateProductList({ product, variant });
   return (
     <Button

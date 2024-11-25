@@ -5,17 +5,15 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/context";
 import { cn } from "@/lib/utils";
 
-export const CurrencySelector: React.FC = ({}) => {
-  const { liveratedata, handleSelectionChange, selectedcurrencyiso } =
-    useAuth();
+export const CurrencySelector = ({className}:{className?:string}) => {
+  const { liveratedata, handleSelectionChange, selectedcurrencyiso } = useAuth();
   return (
     <>
       {liveratedata && selectedcurrencyiso && (
@@ -27,7 +25,7 @@ export const CurrencySelector: React.FC = ({}) => {
           }
           defaultValue={selectedcurrencyiso}
         >
-          <SelectTrigger className="w-[180px] border-0 border-none">
+          <SelectTrigger className={cn("w-[180px] border-0 border-none bg-transparent", className)}>
             <SelectValue placeholder="Country / Region" />
           </SelectTrigger>
           <SelectContent className={cn("p-0 rounded-xl dark:bg-zinc-800")}>

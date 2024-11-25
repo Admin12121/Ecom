@@ -71,17 +71,17 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
 };
 
 const LoadingSection = () => (
-  <section className="w-full h-[100vh] flex flex-col items-center justify-center">
+  <section className="w-full h-[100dvh] flex flex-col items-center justify-center">
     <Spinner />
   </section>
 );
 
 const ProductSection = ({ product }: { product: Product }) => (
-  <section className="min-w-[100vw] justify-center items-center flex">
-    <div className="post-section !pb-2 text-gray-900 grid container mmd:grid-cols-6  gap-4 p-5 pt-0 max-w-[95rem]">
+  <section className="min-w-[100dvw] justify-center items-center flex">
+    <div className="post-section !pb-2 text-gray-900 grid container mmd:grid-cols-6  gap-4 p-2 md:p-5 pt-0 max-w-[95rem]">
       <div className="PostCon col-span-7 mmd:col-span-4">
         <div className="flex flex-col">
-          <div className="postWrapper py-6 flex mmd:flex-wrap max-mmd:flex-col gap-3">
+          <div className="postWrapper flex mmd:flex-wrap max-mmd:flex-col gap-3">
             {product && product.images && <Image images={product.images} />}
           </div>
         </div>
@@ -94,8 +94,8 @@ const ProductSection = ({ product }: { product: Product }) => (
 );
 
 const ReviewsSection = () => (
-  <section className="w-full h-full py-10 flex flex-col items-center justify-center">
-    <h1 className="text-5xl font-bold text-center w-[450px]">
+  <section className="w-full h-full py-10 flex overflow-hidden flex-col items-center justify-center">
+    <h1 className="text-5xl font-bold text-center w-[350px] md:w-[450px]">
       What people say about Nassau
     </h1>
     <p>Don&apos;t just take our word for it.</p>

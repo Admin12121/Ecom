@@ -77,7 +77,7 @@ const CollectionPage = () => {
         </div>
         {filters && (
           <div className="w-[500px] p-[10px] max-md:w-full max-md:top-[120px] max-md:z-50">
-            <span className="flex w-full rounded-md sticky top-[130px] h-[82vh] max-md:bg-neutral-950 ">
+            <span className="flex w-full rounded-md sticky top-[130px] h-[82dvh] max-md:bg-neutral-950 ">
               {/* <Sidebar/> */}
             </span>
           </div>

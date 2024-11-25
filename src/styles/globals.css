@@ -9,6 +9,7 @@
 body {
   font-family: var(--font-geist-sans);
   overflow-x: hidden;
+  max-width: 100dvw;
   background: hsl(var(--custombg));
 }
 

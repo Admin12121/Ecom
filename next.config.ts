@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
+        protocol: "http",
+        hostname: "192.168.1.85",
+        port: "8000",
+        pathname: "/**",
+      },
+      {
         protocol: "https",
         hostname: "backendcore.vickytajpuriya.com",
         pathname: "/media/**",

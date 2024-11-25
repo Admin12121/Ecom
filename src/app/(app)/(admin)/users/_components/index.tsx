@@ -30,7 +30,7 @@ const Accounts = () => {
   }, [search]);
 
   return (
-    <div className="lg:px-6 max-w-[95rem] mx-auto w-full flex flex-col gap-4 h-[90vh] m-0 p-3 overflow-y-auto scroll">
+    <div className="lg:px-6 max-w-[95rem] mx-auto w-full flex flex-col gap-4 h-[90dvh] m-0 p-3 overflow-y-auto scroll">
       <div className="max-w-[95rem] h-[75vh] mx-auto w-full">
         <UserTable
           SetExcludeBy={SetExcludeBy}

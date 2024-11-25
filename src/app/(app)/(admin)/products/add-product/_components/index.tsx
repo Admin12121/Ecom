@@ -557,7 +557,7 @@ const AddProduct = () => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-5 px-5 pb-5 h-[90vh] scroll">
+        <div className="flex flex-col gap-5 px-5 pb-5 h-[90dvh] scroll">
           <span className="flex items-center justify-end">
             <Button color="secondary" type="submit" isLoading={isLoading}>
               Save Product

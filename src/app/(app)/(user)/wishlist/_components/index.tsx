@@ -69,7 +69,7 @@ const WishList = () => {
           </ProductSkeleton>
         </div>
       </div>
-      {products && products.length > 0 && <RecommendedProducts className="!px-0 max-w-[95vw] mx-0"/>}
+      {products && products.length > 0 && <RecommendedProducts className="!px-0 max-w-[95dvw] mx-0"/>}
     </div>
   );
 };

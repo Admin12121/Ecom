@@ -20,7 +20,7 @@ const DemoSlider = ({
 }) => {
   return (
     <section className="w-full flex items-center justify-center ">
-      <span className="relative w-[90vw] flex flex-col h-[500px] m-0 dark:bg-neutral-950 rounded-lg">
+      <span className="relative w-[95dvw] flex flex-col h-[500px] m-0 dark:bg-neutral-950 rounded-lg">
         <Swiper
           navigation
           pagination={{ type: "bullets", clickable: true }}

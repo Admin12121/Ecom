@@ -184,19 +184,21 @@ export const userAuthapi = createApi({
       }),
     }),
     cartUpdate: builder.mutation({
-      query: ({ id, actualData }) => ({
-        url: `api/products/cart/${id}/`,
+      query: ({ actualData, token }) => ({
+        url: `api/products/cart/12/`,
         method: "PATCH",
         body: actualData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     cartDelete: builder.mutation({
-      query: ({ id }) => ({
-        url: `api/products/cart/${id}/`,
-        method: "DELETE",
-        headers: createHeaders(),
-      }),
+      query: ({ id,variantId, token }) => {
+        return {
+          url: `api/products/cart/${id}/variant/${variantId}/`,
+          method: "DELETE",
+          headers: createHeaders(token),
+        };
+      },
     }),
     searchPost: builder.mutation({
       query: ({ actualData }) => {
