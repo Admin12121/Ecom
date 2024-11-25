@@ -58,7 +58,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
             </Link>
           </Button>
           {status ? (
-            <UserNav />
+            <UserNav align="center" />
           ) : (
             <Button variant="ghost" size="icon" className="h-8 w-20 px-1">
               <Link href="/auth/login">Sign Up</Link>

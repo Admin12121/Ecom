@@ -1,8 +1,8 @@
 import { Textarea } from "@/components/ui/textarea"
 import { ErrorMessage } from "@hookform/error-message"
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Input } from "../../ui/input"
+import { Label } from "../../ui/label"
 
 type FormGeneratorProps = {
   type?: "text" | "email" | "password" | "number"
@@ -14,6 +14,8 @@ type FormGeneratorProps = {
   name: string
   errors: FieldErrors<FieldValues>
   lines?: number
+  disabled?: boolean 
+  className?:string
 }
 
 export const FormGenerator = ({
@@ -26,18 +28,21 @@ export const FormGenerator = ({
   errors,
   type,
   lines,
+  disabled, 
+  className
 }: FormGeneratorProps) => {
   switch (inputType) {
     case "input":
       return (
-        <Label className="flex flex-col gap-2" htmlFor={`input-${label}`}>
+        <Label className={`flex flex-col gap-2 ${className}`} htmlFor={`input-${label}`}>
           {label && label}
           <Input
             id={`input-${label}`}
             type={type}
             placeholder={placeholder}
-            className="bg-themeBlack border-themeGray text-themeTextGray h-10"
+            className={`bg-themeBlack border-themeGray text-themeTextGray `}
             {...register(name)}
+            disabled={disabled}
           />
           <ErrorMessage
             errors={errors}
@@ -58,6 +63,7 @@ export const FormGenerator = ({
             id={`select-${label}`}
             className="w-full bg-transparent border-[1px] p-3 rounded-lg"
             {...register(name)}
+            disabled={disabled}
           >
             {options?.length &&
               options.map((option) => (
@@ -91,6 +97,7 @@ export const FormGenerator = ({
             placeholder={placeholder}
             {...register(name)}
             rows={lines}
+            disabled={disabled}
           />
           <ErrorMessage
             errors={errors}

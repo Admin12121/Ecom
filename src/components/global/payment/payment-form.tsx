@@ -1,7 +1,7 @@
 "use client";
 
-import { FormGenerator } from "@/components/gobal/form-generator"
-import { Loader } from "@/components/gobal/loader"
+import { FormGenerator } from "@/components/global/form-generator"
+import { Loader } from "@/components/global/loader"
 import { Button } from "@/components/ui/button"
 import { usePayments } from "@/hooks/payment"
 import { ErrorMessage } from "@hookform/error-message"

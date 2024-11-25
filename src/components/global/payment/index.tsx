@@ -1,4 +1,4 @@
-import { StripeElements } from "@/components/gobal/stripe/elements"
+import { StripeElements } from "@/components/global/payment/stripe"
 import PaymentForm from "./payment-form"
 
 type Props = {

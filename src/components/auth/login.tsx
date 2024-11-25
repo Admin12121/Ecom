@@ -62,7 +62,7 @@ const Login = () => {
   return (
     <Cardwrapper
       title="Login"
-      headerLabel="Network with people from around the world, join groups, create your own, watch courses and become the best version of yourself."
+      headerLabel="Welcome back!"
       backButtonLabel="Don't have an account?"
       backButtonHref="/auth/register"
       showSocial

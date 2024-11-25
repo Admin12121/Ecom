@@ -29,10 +29,10 @@ const Cardwrapper = ({
   backButtonLabel,
   backButtonHref,
   showSocial,
-  classNames = {}, // Provide default empty object
+  classNames = {},
 }: CardwrapperProps) => {
   return (
-    <Card className={`w-full border-0 shadow-none ${classNames.card || ""}`}>
+    <Card className={`w-full border-0 shadow-none p-7 ${classNames.card || ""}`}>
       <Header title={title} label={headerLabel} className={classNames.header || ""} />
       <CardContent className={classNames.content || ""}>{children}</CardContent>
       {showSocial && (

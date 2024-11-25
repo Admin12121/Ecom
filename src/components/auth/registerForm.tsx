@@ -11,7 +11,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
@@ -42,7 +41,7 @@ const RegisterForm = () => {
   return (
     <Cardwrapper
       title="Signup"
-      headerLabel="Network with people from around the world, join groups, create your own, watch courses and become the best version of yourself."
+      headerLabel="Create account"
       backButtonLabel="Already have an account?"
       backButtonHref="/auth/login"
       showSocial

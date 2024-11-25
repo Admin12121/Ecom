@@ -34,6 +34,7 @@ import { authUser } from "@/hooks/use-auth-user";
 import { cn } from "@/lib/utils";
 import StockWarningMessage from "./stock-warning";
 import WishList from "@/components/global/wishlist-button";
+import { encryptproduct } from "@/lib/transition";
 
 const EmailSchema = z.object({
   email: z.string().min(1, { message: "UID is required" }),
@@ -222,6 +223,21 @@ const Sidebar = ({ products }: { products: Product }) => {
       product: products.id,
       variant: getVariantData(variantsData, "id", selectedSize?.id),
     });
+
+  const handleenc = async () => {
+    if (status) {
+      const data = [
+        {
+          id: products?.id,
+          variantId: getVariantData(variantsData, "id", selectedSize?.id),
+          pcs: 1,
+        },
+      ];
+      await encryptproduct(data, router);
+    } else {
+      router.push(`/login`);
+    }
+  };
   return (
     <>
       <aside className="sidebar  w-full sticky top-[65px] space-y-8 ">
@@ -330,6 +346,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                   <Button
                     variant="active"
                     className="w-full h-[40px] text-base"
+                    onClick={handleenc}
                   >
                     Buy now
                   </Button>

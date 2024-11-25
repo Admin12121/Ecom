@@ -7,7 +7,7 @@ const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET as string; // Replace with 
 const iv = randomBytes(16);
 
 export async function encryptproduct(data: object, router: any): Promise<string> {
-    const text = JSON.stringify(data); // Convert object to JSON string
+    const text = JSON.stringify(data);
     const salt = 'salt';
     const key = await pbkdf2(secretKey, salt, 100000, 32, 'sha256');
     const cipher = createCipheriv(algorithm, key, iv);

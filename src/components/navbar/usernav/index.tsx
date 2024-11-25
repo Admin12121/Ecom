@@ -11,7 +11,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/User_Auth_Api";
 import { UserRound } from "lucide-react";
 import { authUser } from "@/hooks/use-auth-user";
@@ -29,8 +29,8 @@ interface UserData {
   dob: string | null;
 }
 
-export function UserNav() {
-  const router = useRouter()
+export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
+  const router = useRouter();
   const { accessToken, signOut } = authUser();
   const [user, setUser] = useState<UserData>();
   const { data, isLoading, refetch } = useGetLoggedUserQuery(
@@ -71,7 +71,7 @@ export function UserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-56 border-none border-0 dark:bg-neutral-900/60 backdrop-blur"
-        align="end"
+        align={align || "end"}
         forceMount
       >
         <DropdownMenuLabel className="font-normal">
@@ -87,20 +87,22 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {user?.role == "Admin" && (
-            <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+            <DropdownMenuItem onClick={() => router.push("/dashboard")}>
               Dashboard
               <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem onClick={() => router.push('/wishlist')}>
+          <DropdownMenuItem onClick={() => router.push("/wishlist")}>
             Wishlist
             <DropdownMenuShortcut>⌘W</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings')}>
+          <DropdownMenuItem onClick={() => router.push("/settings")}>
             Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/help&feedback')}>Help & Feedback</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/help&feedback")}>
+            Help & Feedback
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => Logout()}>

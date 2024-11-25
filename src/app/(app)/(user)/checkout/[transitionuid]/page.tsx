@@ -1,9 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-const Checkout = dynamic(() => import("./_components"), {
-  ssr: false,
-});
+const Checkout = dynamic(() => import("./_components"));
 
 export default function Page({
   params,

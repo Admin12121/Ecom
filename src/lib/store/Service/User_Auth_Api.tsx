@@ -281,6 +281,14 @@ export const userAuthapi = createApi({
         headers: createHeaders(),
       }),
     }),
+    verifyRedeemCode: builder.mutation({
+      query: ({code, token}) => ({
+        url: `api/sales/redeemcode/verify-code/`,
+        method: "POST",
+        body: code,
+        headers: createHeaders(token),
+      }),
+    }),
     addRedeemCode: builder.mutation({
       query: (actualData) => ({
         url: "sales/redeemcode/",
@@ -444,6 +452,7 @@ export const {
   useDeleteSubCategoryMutation,
   useUpgradeSubCategoryMutation,
   useRedeemCodeViewQuery,
+  useVerifyRedeemCodeMutation,
   useAddRedeemCodeMutation,
   useDeleteRedeemCodeMutation,
   useUpdateRedeemCodeMutation,
