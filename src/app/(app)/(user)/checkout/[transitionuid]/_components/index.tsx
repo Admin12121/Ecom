@@ -12,15 +12,19 @@ import BackdropGradient from "@/components/global/backdrop-gradient";
 import GlassCard from "@/components/global/glass-card";
 import GradientText from "@/components/global/gradient-text";
 import { useAuth } from "@/lib/context";
+import { authUser } from "@/hooks/use-auth-user";
 
-const Checkout = ({ params }: { params: { transitionuid: string } }) => {
+const Checkout = ({ params }: { params: string }) => {
+  const uid = params;
   const router = useRouter();
+  const { accessToken } = authUser()
   const [data, setData] = useState<any>(null);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
   const { data: userData, isLoading: userDataisLoading } =
-    useGetLoggedUserQuery({});
-  const uid = params.transitionuid;
+    useGetLoggedUserQuery({token:accessToken});
+
   const { convertPriceToCurrency } = useAuth();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,7 +35,7 @@ const Checkout = ({ params }: { params: { transitionuid: string } }) => {
       }
     };
     fetchData();
-  }, [params.transitionuid, router]);
+  }, [params, router]);
 
   const productIds = data ? JSON.parse(data).map((item: any) => item.id) : [];
 

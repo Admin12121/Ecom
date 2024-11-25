@@ -132,13 +132,13 @@ export default function Cart() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-0 w-[97dvw] mr-[1.5dvw] md:min-w-[500px] h-[98dvh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 p-3">
+      <SheetContent className="border-0 w-[97dvw] mr-[1.5dvw] md:min-w-[500px] h-[98dvh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 p-2">
         <SheetHeader>
           <SheetTitle className="text-base">Cart</SheetTitle>
         </SheetHeader>
         {totalPieces > 0 ? (
-          <>
-            <div className="py-2 flex flex-col gap-3 h-[83dvh] overflow-y-auto">
+          <div className="relative h-[93.5dvh]">
+            <div className="py-2 flex flex-col gap-3 h-[85dvh] overflow-y-auto">
               <div className="text-neutral-800 dark:text-zinc-400 text-sm bg-white dark:bg-neutral-900 p-3 rounded-md ">
                 Make changes to your profile here. Click save when you&apos;re
                 done.
@@ -194,8 +194,8 @@ export default function Cart() {
               </Card>
               <FeatureProduct title="You may also like" skip={isSheetOpen} />
             </div>
-            <SheetFooter className="flex !flex-col gap-1 items-center relative bottom-0 py-2">
-              <Icons />
+            <SheetFooter className="flex !flex-col gap-1 items-center absolute w-full bottom-0 py-2  z-50">
+              <Icons className="bg-neutral-200 dark:bg-neutral-950 pt-1"/>
               <Separator
                 className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"
@@ -204,7 +204,7 @@ export default function Cart() {
                 Checkout
               </Button>
             </SheetFooter>
-          </>
+          </div>
         ) : (
           <SheetFooter className="flex !flex-col gap-1 items-center !justify-center h-full relative bottom-0 py-2">
             <h2 className="text-neutral-600">Why is your cart empty?</h2>

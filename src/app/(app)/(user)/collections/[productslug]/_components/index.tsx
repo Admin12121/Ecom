@@ -65,7 +65,7 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
     <>
       <ProductSection product={product} />
       <ReviewsSection />
-      <RecommendedProducts product_id={product!.id} />
+      <RecommendedProducts product_id={product!.id} className="mb-14"/>
     </>
   );
 };
@@ -105,14 +105,13 @@ const ReviewsSection = () => (
   </section>
 );
 
-export const RecommendedProducts = ({ product_id }: { product_id: number }) => {
+export const RecommendedProducts = ({ product_id, className }: { product_id: number, className:string }) => {
   const { accessToken } = authUser();
   const { data, isLoading } = useRecommendedProductsViewQuery(
     {
       product_id,
       token: accessToken,
-    },
-    { skip: !accessToken }
+    }
   );
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
@@ -125,6 +124,7 @@ export const RecommendedProducts = ({ product_id }: { product_id: number }) => {
       title="You may also like"
       products={products}
       loading={isLoading}
+      className={className}
     />
   );
 };

@@ -23,11 +23,11 @@ const WishList = () => {
   }, [data]);
 
   return (
-    <div className="p-3 px-4 lg:px-14 flex gap-3 flex-col">
+    <div className="pt-3 px-1 lg:px-14 flex gap-3 flex-col pb-10">
       {!status && (
-        <span className="w-full flex justify-end gap-3">
-          <Code className="flex gap-2 text-sm items-center bg-neutral-200 dark:bg-neutral-900 rounded-md">
-            <OctagonAlert />
+        <span className="flex items-end justify-end gap-3 flex-col md:flex-row">
+          <Code className="flex gap-2 h-9 text-sm items-center bg-neutral-200 dark:bg-neutral-900 rounded-md">
+            <OctagonAlert className="w-4 h-4"/>
             <p>Login and save your wishlist forever</p>
           </Code>
           <Button>login</Button>
@@ -69,7 +69,7 @@ const WishList = () => {
           </ProductSkeleton>
         </div>
       </div>
-      {products && products.length > 0 && <RecommendedProducts className="!px-0 max-w-[95dvw] mx-0"/>}
+      {products && products.length > 0 && <RecommendedProducts className="!px-0" base="w-[98dvw]"/>}
     </div>
   );
 };

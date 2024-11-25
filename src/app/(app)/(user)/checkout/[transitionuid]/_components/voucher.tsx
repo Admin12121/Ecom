@@ -53,7 +53,7 @@ const Voucher = ({
     <div className="flex items-center justify-center w-full">
       <GlassCard className=" w-full flex flex-row gap-5 p-2 rounded-lg">
         <Image
-          src={product.images[0].image}
+          src={product.images.image}
           alt="product"
           width={100}
           height={80}

@@ -9,6 +9,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { store, AppStore } from "@/lib/store/store";
 import { AuthProvider } from "@/lib/context";
 import { CartProvider } from "@/lib/cart-context";
+import { ReactQueryProvider } from "@/lib/store/react-query-provider";
 
 export const Provider = ({ children, ...props }: ThemeProviderProps) => {
   const storeRef = useRef<AppStore>();
@@ -31,11 +32,11 @@ export const Provider = ({ children, ...props }: ThemeProviderProps) => {
         position="bottom-right"
       />
       <ReduxProvider store={storeRef.current}>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </AuthProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <CartProvider>{children}</CartProvider>
+          </AuthProvider>
+        </ReactQueryProvider>
       </ReduxProvider>
     </NextThemesProvider>
   );

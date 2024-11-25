@@ -1,8 +1,9 @@
+import { cn } from "@/components/costum/craft";
 import React from "react";
 
-const Icons = () => {
+const Icons = ({className}:{className:string}) => {
   return (
-    <div className="w-full justify-end flex items-center gap-2">
+    <div className={cn("w-full justify-end flex items-center gap-2", className)}>
       <span data-payment-method="esewa" aria-hidden="true">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
           <path

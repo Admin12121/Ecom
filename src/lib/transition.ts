@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 const pbkdf2 = promisify(pbkdf2Callback);
 const algorithm = 'aes-256-ctr';
-const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET as string; // Replace with your actual secret key
+const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET as string;
 const iv = randomBytes(16);
 
 export async function encryptproduct(data: object, router: any): Promise<string> {
@@ -42,7 +42,7 @@ export async function decrypt(encryptedText: string, router: any): Promise<strin
         return decrypted.toString();
     } catch (error) {
         console.error('Decryption failed:', error);
-        router.push('/collections/');
+        // router.push('/collections/');
         return '';
     }
 }

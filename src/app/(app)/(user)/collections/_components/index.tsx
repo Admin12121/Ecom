@@ -31,7 +31,7 @@ const CollectionPage = () => {
 
   return (
     <>
-      <section className="flex flex-col gap-5 pt-5">
+      <section className="flex flex-col gap-5 pt-5 w-full">
         {search && (
           <span className="">
             <p className="text-neutral-600 dark:text-themeTextGray ">
@@ -83,12 +83,12 @@ const CollectionPage = () => {
           </div>
         )}
       </section>
-      <RecommendedProducts />
+      <RecommendedProducts className="pb-14"/>
     </>
   );
 };
 
-export const RecommendedProducts = ({className}:{className?:string}) => {
+export const RecommendedProducts = ({className, base}:{className?:string, base?:string}) => {
   const { data, isLoading } = useTrendingProductsViewQuery({});
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
@@ -100,6 +100,7 @@ export const RecommendedProducts = ({className}:{className?:string}) => {
     <FeatureProduct
       title="You may also like"
       className={className}
+      base={base}
       products={products}
       loading={isLoading}
     />

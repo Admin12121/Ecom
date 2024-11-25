@@ -27,12 +27,12 @@ const FeatureProduct = ({
       {title && <div className="w-full flex items-center mt-2">
         <h2 className="text-2xl">{title}</h2>
       </div>}
-      <div className="flex flex-wrap gap-2 items-center justify-center w-full">
+      <div className="flex flex-wrap gap-2 items-center justify-center w-full pb-5">
         <ProductSkeleton loading={isLoading}>
         {products &&
           products.map((product: any, index: any) => (
             <div
-              className={`slider-slide flex items-center w-full justify-center p-2 transition duration-500 ease-in-out`}
+              className={`slider-slide flex items-center w-full justify-center transition duration-500 ease-in-out`}
               key={index}
             >
               <ProductCard

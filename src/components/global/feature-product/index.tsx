@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Section, Container } from "@/components/costum/craft";
+import { Section, Container, cn } from "@/components/costum/craft";
 import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
 import {
   Carousel,
@@ -14,20 +14,22 @@ const FeatureProduct = ({
   loading,
   title,
   className,
+  base
 }: {
   products: any;
   loading: boolean;
   title: string;
-  className?: string,
+  className?: string;
+  base?: string;
 }) => {
   return (
-    <Section className="w-screen">
+    <Section className={cn("w-screen", base)}>
       <Container className={className}>
-        <div className="w-full flex items-center absolute mt-2">
+        <div className="w-full flex items-center mt-2">
           <h2 className="text-2xl">{title}</h2>
         </div>
-        <Carousel className="mt-6 w-full">
-          <CarouselContent className="-ml-1 mt-5">
+        <Carousel className="w-full">
+          <CarouselContent className="-ml-1">
             <ProductSkeleton loading={loading}>
               {products &&
                 products.map((product: any, index: any) => (
@@ -39,14 +41,16 @@ const FeatureProduct = ({
                   >
                     <ProductCard
                       data={product}
-                      width={index === 0 ? "md:w-[515px]" : "w-[390px]"}
+                      width={
+                        index === 0 ? "w-[390px] md:w-[515px]" : "w-[390px]"
+                      }
                     />
                   </div>
                 ))}
             </ProductSkeleton>
           </CarouselContent>
-          <CarouselPrevious className="absolute top-0 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[60px] left-auto" />
-          <CarouselNext className="absolute top-0 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[20px]" />
+          <CarouselPrevious className="absolute -top-4 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[60px] left-auto" />
+          <CarouselNext className="absolute -top-4 h-[30px] w-[30px] flex items-center justify-center p-2 rounded-lg right-[20px]" />
         </Carousel>
       </Container>
     </Section>

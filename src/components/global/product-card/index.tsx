@@ -24,6 +24,7 @@ import "swiper/css/effect-fade";
 import WishList from "../wishlist-button";
 import Cartbutton from "./cart-button";
 
+
 interface ProductCardProps {
   data: Product;
   width?: string | null;
@@ -37,7 +38,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { convertPrice } = useAuth();
   const updateQueryParams = useUpdateQueryParams();
-  const [variantsData, setVariantsData] = useState< VariantObject[] | VariantObject | null >(null);
+  const [variantsData, setVariantsData] = useState<
+    VariantObject[] | VariantObject | null
+  >(null);
   const [selectedSize, setSelectedSize] = useState<{
     id: number;
     size: string | null;
@@ -70,7 +73,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       }
     }
   }, [data]);
-  
+
   const getVariantData = (
     variantsData: VariantObject[] | VariantObject | null,
     key: keyof VariantObject,
@@ -101,6 +104,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const handleRoute = () => {
     updateQueryParams({ category: data?.categoryname }, "/collections");
   };
+
   return (
     <section className="relative w-full flex gap-5">
       <span
@@ -156,8 +160,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                       src={data.image}
                       width={600}
                       height={600}
+                      priority 
                       className=" w-full cursor-pointer h-[350px]  object-contain"
-                      alt="Image 1"
+                      alt={productslug}
+                      
                     />
                   </Link>
                 </div>
@@ -179,7 +185,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           </div>
           <div className="flex w-full justify-between items-center gap-1">
-            <span className={cn("flex" , discount > 0 && " gap-2")}>
+            <span className={cn("flex", discount > 0 && " gap-2")}>
               <p className="text-sm">
                 {discount > 0 && `${symbol} ${finalPrice}`}
               </p>
@@ -192,7 +198,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 {symbol} {convertedPrice}
               </p>
             </span>
-            {variantsData && <Cartbutton data={data.id} stocks={stocks} variantsData={variantsData} setSelectedSize={setSelectedSize} selectedSize={selectedSize} finalPrice={finalPrice} convertedPrice={convertedPrice} symbol={symbol}/>}
+            {variantsData && (
+              <Cartbutton
+                data={data.id}
+                stocks={stocks}
+                variantsData={variantsData}
+                setSelectedSize={setSelectedSize}
+                selectedSize={selectedSize}
+                finalPrice={finalPrice}
+                convertedPrice={convertedPrice}
+                symbol={symbol}
+              />
+            )}
           </div>
         </span>
       </span>
@@ -202,7 +219,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
 export const Skeleton = () => {
   return (
-    <section className="w-[350px] p-1 h-full flex flex-col gap-1 rounded-lg">
+    <section className="w-full min-w-[350px] p-1 h-full flex flex-col gap-1 rounded-lg">
       <div className="w-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[390px] rounded-lg"></div>
       <div className="w-full flex flex-col p-2 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[100px] rounded-lg ">
         <span className="w-full h-[40px] flex">

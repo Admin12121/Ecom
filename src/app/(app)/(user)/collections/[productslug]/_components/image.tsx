@@ -72,9 +72,11 @@ export default function Page({ images }: { images: Images[] }) {
             key={index}
             className="relative mmd:w-[49%] bg-white dark:bg-neutral-950 flex items-center justify-center rounded-xl p-3"
           >
-            {index == 0 &&<span className="absolute bg-neutral-100 dark:bg-secondary-500 text-secondary-foreground top-[10px] left-[10px] h-[20px] w-[60px] flex  rounded-md text-xs items-center justify-center gap-1 font-semibold font-custom">
-              50% Off
-            </span>}
+            {index == 0 && (
+              <span className="absolute bg-neutral-100 dark:bg-secondary-500 text-secondary-foreground top-[10px] left-[10px] h-[20px] w-[60px] flex  rounded-md text-xs items-center justify-center gap-1 font-semibold font-custom">
+                50% Off
+              </span>
+            )}
             <Image
               className="w-full h-[500px] object-contain"
               src={image}

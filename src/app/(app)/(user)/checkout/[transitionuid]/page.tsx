@@ -3,10 +3,11 @@ import dynamic from "next/dynamic";
 
 const Checkout = dynamic(() => import("./_components"));
 
-export default function Page({
+export default async function Page({
   params,
 }: {
-  params: { transitionuid: string };
+  params: Promise<{ transitionuid: string }>;
 }) {
-  return <Checkout params={params} />;
+  const uid = (await params).transitionuid;
+  return <Checkout params={uid} />;
 }
