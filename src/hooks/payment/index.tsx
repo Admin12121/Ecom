@@ -1,16 +1,16 @@
 "use client";
 
-import {
-  onGetStripeClientSecret,
-} from "@/actions/payments";
+import { onGetStripeClientSecret } from "@/actions/payments";
 import { CreateSalesSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
-import { useMutation , useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -21,11 +21,11 @@ export const useStripeElements = () => {
 };
 
 export const usePayments = (
-  userId: string,
-  usdPrice?: number | null,
-  grand_total? : number | null,
-  stripeId?: string,
-  products?: any
+  user: string,
+  total_amt?: number | null,
+  discount?: number,
+  products?: any,
+  redeemData?: any
 ) => {
   const [postSale, { isLoading }] = usePostSaleMutation();
   const stripe = useStripe();
@@ -33,28 +33,42 @@ export const usePayments = (
   const router = useRouter();
 
   const {
-    reset,
     handleSubmit,
     formState: { errors },
     register,
     setValue,
-    watch,
   } = useForm<z.infer<typeof CreateSalesSchema>>({
     resolver: zodResolver(CreateSalesSchema),
+    defaultValues: {
+      transactionuid: uuidv4(),
+      shipping: 0,
+    },
   });
 
+  useEffect(() => {
+    setValue(
+      "sub_total",
+      total_amt ? total_amt + (discount ? discount : 0) : 0
+    );
+    setValue("total_amt", total_amt || 0);
+    setValue("discount", discount);
+    setValue("email", user);
+  }, [total_amt, discount, redeemData, user, setValue]);
 
   const { data: Intent, isPending: creatingIntent } = useQuery({
-    queryKey: ["payment-intent"],
+    queryKey: ["payment-intent", total_amt],
     queryFn: () => {
-      if (grand_total && products && userId) {
-        return onGetStripeClientSecret({ amount: grand_total, products, user: userId });
+      if (total_amt && products && user) {
+        return onGetStripeClientSecret({
+          amount: total_amt,
+          products,
+          user: user,
+        });
       }
       return null;
     },
-    enabled: !!grand_total && !!products && !!userId,
-  })
-
+    enabled: !!total_amt && !!products && !!user,
+  });
 
   const { mutateAsync: createGroup, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof CreateSalesSchema>) => {
@@ -73,21 +87,21 @@ export const usePayments = (
       if (error) {
         return toast("Error", {
           description: "Oops! something went wrong, try again later",
-        })
+        });
       }
 
       if (paymentIntent?.status === "succeeded") {
         const actualData = {
           ...data,
-          userId,
-          usdPrice,
-          stripeId,
+          total_amt,
           products,
+          redeemData,
           paymentIntentId: paymentIntent.id,
         };
-        const res = await postSale({actualData});
+        const res = await postSale({ actualData });
         if (res.data) {
-          router.push("/orders");
+          toast.success("Payment SuccessFull", { position: "top-center" });
+          router.push(`/orders/${data.transactionuid}`);
         }
       }
     },
@@ -103,12 +117,12 @@ export const usePayments = (
 
   return {
     handlePaymentSubmission,
+    isLoading,
     isPending,
     register,
     errors,
     formState: { errors },
     creatingIntent,
     setValue,
-    watch,
   };
 };

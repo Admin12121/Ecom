@@ -2,16 +2,17 @@ import { StripeElements } from "@/components/global/payment/stripe"
 import PaymentForm from "./payment-form"
 
 type Props = {
-  userId: string
-  stripeId?: string
-  usdPrice: number | null
+  user: string
+  total_amt: number | null
+  discount?: number
   products : any
+  redeemData: any
 }
 
-const Payment = ({ userId, stripeId , usdPrice, products}: Props) => {
+const Payment = ({ user, total_amt, discount, products, redeemData}: Props) => {
   return (
     <StripeElements>
-      <PaymentForm userId={userId}  stripeId={stripeId}  usdPrice={usdPrice} products={products}/>
+      <PaymentForm user={user} discount={discount} total_amt={total_amt}  products={products} redeemData={redeemData}/>
     </StripeElements>
   )
 }

@@ -31,6 +31,11 @@ interface AuthContextType {
     price: number,
     iso3: string
   ) => { convertedPrice: number; symbol: string };
+  getRates: (
+    price: number,
+    currencyType: "INR" | "USD" | "CNY" | "AUD" | "NPR"
+  ) => { convertedPrice: number; symbol: string };
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,6 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     null
   );
   const [reloaddata, setreloaddata] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedcurrency, setSelectedCurrency] = useState<{
     sell: number;
     symbol: string;
@@ -74,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const fetchLiveRates = async () => {
+      setLoading(true);
       try {
         const { data } = await axios.get(
           "https://www.nrb.org.np/api/forex/v1/app-rate"
@@ -110,9 +117,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setreloaddata((prev) => !prev);
         }
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching live rate data:", error);
         setreloaddata((prev) => !prev);
+        setLoading(false);
       }
     };
     fetchLiveRates();
@@ -150,6 +159,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { convertedPrice: price, symbol: "" };
   };
 
+  console.log(loading);
+
+  const getRates = (
+    price: number,
+    currencyType: "INR" | "USD" | "CNY" | "AUD" | "NPR"
+  ): { convertedPrice: number; symbol: string } => {
+    if (liveratedata) {
+      const desiredCurrency = liveratedata.find(
+        (currency) => currency.iso3 === currencyType
+      );
+      if (desiredCurrency) {
+        let symbol = "";
+        switch (currencyType) {
+          case "USD":
+            symbol = "$";
+            break;
+          case "INR":
+            symbol = "₹";
+            break;
+          case "CNY":
+            symbol = "¥";
+            break;
+          case "AUD":
+            symbol = "A$";
+            break;
+          case "NPR":
+            symbol = "रु";
+            break;
+          default:
+            symbol = "";
+        }
+        return {
+          convertedPrice: parseFloat(
+            (price / parseFloat(desiredCurrency.sell)).toFixed(2)
+          ),
+          symbol: symbol,
+        };
+      }
+    }
+    return { convertedPrice: price, symbol: "" };
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -158,6 +209,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         selectedcurrencyiso,
         convertPrice,
         convertPriceToCurrency,
+        getRates,
+        loading,
       }}
     >
       {children}

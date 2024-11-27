@@ -35,7 +35,6 @@ import Spinner from "@/components/ui/spinner";
 export default function Cart() {
   const { convertPrice } = useAuth();
   const { cartdata, totalPieces } = useCart();
-
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const productIds = Array.from(new Set(cartdata.map((item) => item.product)));
   const { data, isLoading, refetch } = useProductsByIdsQuery(

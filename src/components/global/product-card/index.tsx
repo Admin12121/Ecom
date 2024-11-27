@@ -131,7 +131,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </span>
               )}
               {discount > 0 && (
-                <span className="absolute -top-1 left-1 w-[50px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1 font-semibold font-custom">
+                <span className="absolute -top-1 left-1 w-[50px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1 font-semibold">
                   {discount}% Off
                 </span>
               )}

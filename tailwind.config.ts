@@ -114,16 +114,11 @@ const config: Config = {
         gooey: "var(--spring-easing)",
       },
       fontFamily: {
-        "custom": [
-          "AtAero",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-          "Apple Color Emoji",
-          "Segoe UI Emoji",
-          "Segoe UI Symbol",
-          "Noto Color Emoji",
-        ],
+        light: ["var(--font-geist-sans-light)"],
+        normal: ["var(--font-geist-sans-regular)"],
+        medium: ["var(--font-geist-sans-medium)"],
+        semibold: ["var(--font-geist-sans-semibold)"],
+        bold: ["var(--font-geist-sans-bold)"],
       },
     },
     screens: {

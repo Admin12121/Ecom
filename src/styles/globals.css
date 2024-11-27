@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-geist-sans-medium);
   overflow-x: hidden;
   max-width: 100dvw;
   background: hsl(var(--custombg));

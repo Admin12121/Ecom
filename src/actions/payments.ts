@@ -3,12 +3,11 @@ import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   typescript: true,
-  apiVersion: "2024-06-20",
+  apiVersion: "2024-11-20.acacia",
 })
 
 export const onGetStripeClientSecret = async ({ amount, products , user}: any) => {
   try {
-    // Validate amount
     if (amount <= 0) {
       throw new Error("Amount must be greater than zero.");
     }

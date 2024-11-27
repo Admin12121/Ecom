@@ -1,83 +1,75 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import { useAuth } from "@/lib/context";
-import { authUser } from "@/hooks/use-auth-user";
-import GlassCard from "@/components/global/glass-card";
+import { Card, CardContent as CardBody } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { useCallback, useMemo } from "react";
 
-interface VariantObject {
-  id: number;
-  product_stripe_id: string | null;
-  size: string | null;
-  price: string;
-  discount: string;
-  stock: number;
-  product: number;
-}
-
-const Voucher = ({
-  product,
-  variantId,
-  pcs,
-}: {
-  product: any;
-  variantId: any;
-  pcs: any;
-}) => {
-  const [variantsData, setVariantsData] = React.useState<
-    VariantObject[] | VariantObject | null
-  >(null);
-
+const Voucher = ({ data }: { data: any }) => {
   const { convertPrice } = useAuth();
-  const getVariantData = (
-    variantsData: VariantObject[] | VariantObject | null,
-    key: keyof VariantObject,
-    variantId: number
-  ): any => {
-    if (Array.isArray(variantsData)) {
-      const variant = variantsData.find((variant) => variant.id === variantId);
-      return variant ? variant[key] : null;
-    } else if (variantsData) {
-      return variantsData[key];
-    }
-    return null;
-  };
+  const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
+  const discount = data.variantDetails.discount;
+  const finalPrice = useMemo(() => {
+    return convertedPrice - convertedPrice * (discount / 100);
+  }, [convertedPrice, discount]);
 
-  const variantPrice = getVariantData(product.variants, "price", variantId);
-  const { convertedPrice: convertedvariantPrice } = convertPrice(variantPrice);
-  const totalPrice = variantPrice ? parseFloat(variantPrice) * pcs : 0;
-  const { convertedPrice, symbol } = convertPrice(totalPrice);
-
+  const truncateText = useCallback(
+    (text: string, maxLength: number): string => {
+      return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    },
+    []
+  );
   return (
-    <div className="flex items-center justify-center w-full">
-      <GlassCard className=" w-full flex flex-row gap-5 p-2 rounded-lg">
-        <Image
-          src={product.images.image}
-          alt="product"
-          width={100}
-          height={80}
-          className="rounded-md object-contain p-1 px-3 bg-zinc-950"
-        />
-        <span className="flex flex-col gap-1">
-          <p className="text-sm font-semibold">{product.product_name}</p>
-          <p className="text-sm text-zinc-400">
-            {product.categoryname} / {product.subcategoryname}
-          </p>
-          <span className="flex flex-col justify-between">
-            <span className="flex gap-3">
-              <p>{pcs}</p> *{" "}
-              <p className="text-sm text-zinc-400">
-                {symbol} {convertedvariantPrice}
+    <Card className="p-2 w-full rounded-md shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
+      <CardBody className="flex justify-between flex-row items-center h-full">
+        <span className="flex gap-5 items-center h-full">
+          <span className="h-full rounded-md w-[80px] dark:bg-zinc-700/50">
+            <Image
+              alt="nextui logo"
+              height={100}
+              src={data.images.image}
+              width={80}
+              className="w-[80px] h-full object-contain"
+            />
+          </span>
+          <span className="flex items-start flex-col gap-2 justify-between h-full">
+            <span className="flex flex-col gap-0">
+              <p className="text-base ">
+                {truncateText(data.product_name, 14)}
+              </p>
+              <p className="text-xs text-zinc-400">
+                {data.categoryname}{" "}
+                {data.variantDetails.size
+                  ? ` ( ${data.variantDetails.size}cm )`
+                  : ""}
               </p>
             </span>
-            <p>
-              {symbol} {convertedPrice}
+            <span>
+              <p className="text-xs text-zinc-400 pb-1">qty: {data.pcs}</p>
+            </span>
+          </span>
+        </span>
+        <span className="flex items-end gap-8 justify-between flex-col h-full ">
+          <p className="text-sm bg-secondary-500 rounded-md text-center px-2 text-white ">
+            {discount ? `-${discount}%` : "for you"}
+          </p>
+          <span className={cn("flex", discount > 0 && " gap-2")}>
+            <p className="text-sm">
+              {discount > 0 && `${symbol} ${finalPrice * data.pcs}`}
+            </p>
+            <p
+              className={cn(
+                "text-sm",
+                discount > 0 && "text-neutral-500 line-through"
+              )}
+            >
+              {symbol} {convertedPrice * data.pcs}
             </p>
           </span>
         </span>
-      </GlassCard>
-    </div>
+      </CardBody>
+    </Card>
   );
 };
 

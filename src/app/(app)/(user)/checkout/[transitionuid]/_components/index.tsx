@@ -1,83 +1,212 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { decrypt } from "@/lib/transition";
-import { useRouter } from "next/navigation";
 import Payment from "@/components/global/payment";
+import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import { decryptData } from "@/lib/transition";
+import { useRouter } from "next/navigation";
 import {
   useProductsByIdsQuery,
-  useGetLoggedUserQuery,
+  useVerifyRedeemCodeMutation,
 } from "@/lib/store/Service/User_Auth_Api";
 import Voucher from "./voucher";
 import BackdropGradient from "@/components/global/backdrop-gradient";
-import GlassCard from "@/components/global/glass-card";
+import { Card, CardContent as CardBody } from "@/components/ui/card";
 import GradientText from "@/components/global/gradient-text";
 import { useAuth } from "@/lib/context";
 import { authUser } from "@/hooks/use-auth-user";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import GlassCard from "@/components/global/glass-card";
+
+interface Product {
+  product: number;
+  variant: number;
+  pcs: number;
+}
+
+interface State {
+  redeemData: any;
+  discount: number;
+  productData: Product[];
+  cartItemsWithDetails: any[];
+  totalPrice: { price: number; symbol: string };
+  totalPriceAfterDiscount: { price: number; symbol: string };
+}
+
+type Action =
+  | { type: "SET_REDEEM_DATA"; payload: any }
+  | { type: "SET_DISCOUNT"; payload: number }
+  | { type: "SET_CART_ITEMS_WITH_DETAILS"; payload: any[] }
+  | { type: "SET_TOTAL_PRICE"; payload: { price: number; symbol: string } }
+  | {
+      type: "SET_TOTAL_PRICE_AFTER_DISCOUNT";
+      payload: { price: number; symbol: string };
+    };
+
+const initialState: State = {
+  redeemData: null,
+  discount: 0,
+  productData: [],
+  cartItemsWithDetails: [],
+  totalPrice: { price: 0, symbol: "" },
+  totalPriceAfterDiscount: { price: 0, symbol: "" },
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "SET_REDEEM_DATA":
+      return { ...state, redeemData: action.payload };
+    case "SET_DISCOUNT":
+      return { ...state, discount: action.payload };
+    case "SET_CART_ITEMS_WITH_DETAILS":
+      return { ...state, cartItemsWithDetails: action.payload };
+    case "SET_TOTAL_PRICE":
+      return { ...state, totalPrice: action.payload };
+    case "SET_TOTAL_PRICE_AFTER_DISCOUNT":
+      return { ...state, totalPriceAfterDiscount: action.payload };
+    default:
+      return state;
+  }
+};
+
+const schema = z.object({
+  code: z.string().min(1, { message: "Code is required" }),
+});
 
 const Checkout = ({ params }: { params: string }) => {
-  const uid = params;
   const router = useRouter();
-  const { accessToken } = authUser()
-  const [data, setData] = useState<any>(null);
-  const [usdPrice, setUsdPrice] = useState<number | null>(null);
-  const { data: userData, isLoading: userDataisLoading } =
-    useGetLoggedUserQuery({token:accessToken});
+  const { accessToken, user } = authUser();
+  const { getRates, loading } = useAuth();
+  const [redeemCode] = useVerifyRedeemCodeMutation();
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    productData: decryptData(params, router) || [],
+  });
 
-  const { convertPriceToCurrency } = useAuth();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const decryptedData = await decrypt(uid, router);
-        setData(decryptedData);
-      } catch (error) {
-        console.error("Failed to decrypt data:", error);
-      }
-    };
-    fetchData();
-  }, [params, router]);
-
-  const productIds = data ? JSON.parse(data).map((item: any) => item.id) : [];
-
-  const {
-    data: ProductData,
-    isLoading,
-    refetch,
-  } = useProductsByIdsQuery(
-    { ids: productIds.join(",") },
+  const productIds = useMemo(
+    () => Array.from(new Set(state.productData.map((item) => item.product))),
+    [state.productData]
+  );
+  const { data: products, isLoading } = useProductsByIdsQuery(
+    { ids: productIds },
     { skip: productIds.length === 0 }
   );
 
-  useEffect(() => {
-    if (ProductData && data) {
-      let totalNpr = 0;
-      const parsedData = JSON.parse(data);
+  const totalPieces = useMemo(() => {
+    return state.productData.reduce((acc, item) => acc + (item.pcs ?? 0), 0);
+  }, [state.productData]);
 
-      ProductData.results.forEach((product: any) => {
-        const productData = parsedData.find(
-          (item: any) => item.id === product.id
+  const getCartItemsWithDetails = useCallback(() => {
+    if (!products) return [];
+    return state.productData
+      .map((cartItem) => {
+        const product = products.results.find(
+          (p: any) => p.id === cartItem.product
         );
-        if (productData && product.variants) {
-          const variant = Array.isArray(product.variants)
-            ? product.variants.find((v: any) => v.id === productData.variantId)
-            : product.variants;
+        if (!product) return null;
 
-          if (variant) {
-            const price = parseFloat(variant.price);
-            const pcs = productData.pcs || 1;
-            if (!isNaN(price)) {
-              totalNpr += price * pcs;
-            }
-          }
-        }
-      });
+        const variantDetails = Array.isArray(product.variants)
+          ? product.variants.find((v: any) => v.id === cartItem.variant)
+          : product.variants;
 
-      const iso3 = "USD";
-      const { convertedPrice, symbol } = convertPriceToCurrency(totalNpr, iso3);
-      setUsdPrice(convertedPrice);
+        return {
+          ...cartItem,
+          categoryname: product.categoryname,
+          description: product.description,
+          images: product.images,
+          product_name: product.product_name,
+          productslug: product.productslug,
+          variantDetails: variantDetails || {},
+        };
+      })
+      .filter((item) => item !== null);
+  }, [products, state.productData]);
+
+  const getTotalPrice = (items: any[]) => {
+    return items.reduce(
+      (acc, item) => {
+        const price = parseFloat(item.variantDetails.price);
+        const discount = item.variantDetails.discount;
+        const pcs = item.pcs ?? 0;
+        const finalPrice = price - price * (discount / 100);
+        acc.totalPrice += finalPrice * pcs;
+        return acc;
+      },
+      { totalPrice: 0 }
+    );
+  };
+
+  const calculateDiscount = (totalPrice: number, discountData: any) => {
+    if (discountData.type === "percentage") {
+      return totalPrice * (discountData.discount / 100);
+    } else if (discountData.type === "amount") {
+      return discountData.discount;
     }
-  }, [ProductData, data]);
+    return 0;
+  };
 
+  const applyDiscount = (discountAmount: number) => {
+    const newTotalPrice = state.totalPrice.price - discountAmount;
+    dispatch({
+      type: "SET_TOTAL_PRICE_AFTER_DISCOUNT",
+      payload: { price: newTotalPrice, symbol: state.totalPrice.symbol },
+    });
+    toast.success(newTotalPrice.toString());
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      const itemsWithDetails = getCartItemsWithDetails();
+      const { totalPrice } = getTotalPrice(itemsWithDetails);
+      const { convertedPrice, symbol } = getRates(totalPrice, "USD");
+      dispatch({
+        type: "SET_CART_ITEMS_WITH_DETAILS",
+        payload: itemsWithDetails,
+      });
+      dispatch({
+        type: "SET_TOTAL_PRICE",
+        payload: { price: convertedPrice, symbol: symbol },
+      });
+    }
+  }, [products, loading]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = async (data: z.infer<typeof schema>) => {
+    const code = { code: data.code };
+    const res = await redeemCode({ code: code, token: accessToken });
+
+    if (res.error) {
+      setError("code", { message: (res.error as any).data?.error });
+      return;
+    }
+
+    dispatch({ type: "SET_REDEEM_DATA", payload: res.data });
+    if (state.totalPrice.price > res.data.minimum) {
+      const discountAmount = calculateDiscount(
+        state.totalPrice.price,
+        res.data
+      );
+      dispatch({ type: "SET_DISCOUNT", payload: discountAmount });
+      applyDiscount(discountAmount);
+      toast.success(res.data?.message || JSON.stringify(res));
+    } else {
+      setError("code", { message: "Minimum purchase amount not met" });
+    }
+  };
   return (
     <>
       <div className="flex h-full lg:h-[90vh]">
@@ -85,56 +214,109 @@ const Checkout = ({ params }: { params: string }) => {
           className="w-8/12 h-2/6 opacity-50 flex"
           container="gap-10"
         >
-          <h5 className="text-2xl font-bold text-themeTextWhite">Ecom.</h5>
           <span className="flex gap-5 flex-col">
             <GradientText element="H2" className="text-4xl font-semibold py-1">
               Proceed to Payment
             </GradientText>
-            {ProductData &&
-              data &&
-              ProductData.results.map((product: any) => {
-                const parsedData = JSON.parse(data);
-                const productData = parsedData.find(
-                  (item: any) => item.id === product.id
-                );
-                return (
-                  <Voucher
-                    key={product.id}
-                    product={product}
-                    variantId={productData.variantId}
-                    pcs={productData.pcs}
-                  />
-                );
+            {state.cartItemsWithDetails &&
+              state.cartItemsWithDetails.map((product: any) => {
+                return <Voucher key={Math.random()} data={product} />;
               })}
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <span className="flex flex-col gap-2">
+                <Label>Add Coupon or Gift Card</Label>
+                <span className="flex gap-2">
+                  <Input
+                    className={cn(
+                      "w-full bg-white dark:bg-neutral-950 rounded-md",
+                      errors.code && "!ring-red-500 !bg-red-500/10"
+                    )}
+                    placeholder="Enter your code"
+                    disabled={state.redeemData}
+                    {...register("code")}
+                  />
+                  <Button
+                    variant="custom"
+                    type="submit"
+                    disabled={state.redeemData}
+                  >
+                    Apply
+                  </Button>
+                </span>
+                {errors.code && (
+                  <p className="text-red-500 text-xs font-normal">
+                    {errors.code.message}
+                  </p>
+                )}
+              </span>
+            </form>
+
+            <Card className="min-h-[105px] border !border-zinc-400/50 dark:!border-zinc-800">
+              <CardBody className="flex text-sm gap-1 flex-col">
+                <span className="flex w-full justify-between items-center">
+                  <p>Subtotal • {totalPieces} items</p>
+                  <p>
+                    {state.totalPrice.symbol} {state.totalPrice.price}
+                  </p>
+                </span>
+                {state.discount > 0 && (
+                  <span className="flex w-full justify-between items-center">
+                    <p>Discount </p>
+                    <p>
+                      - {state.totalPrice.symbol} {state.discount}
+                    </p>
+                  </span>
+                )}
+                <span className="flex w-full justify-between items-center">
+                  <p>Shipping </p>
+                  <p>Free</p>
+                </span>
+                <Separator
+                  className="my-1 bg-zinc-800/20 dark:bg-zinc-400/50"
+                  orientation="horizontal"
+                />
+                <span className="flex w-full justify-between items-center">
+                  <p>Total </p>
+                  <p>
+                    {state.totalPriceAfterDiscount.price > 0
+                      ? `${state.totalPriceAfterDiscount.symbol} ${state.totalPriceAfterDiscount.price}`
+                      : `${state.totalPrice.symbol} ${state.totalPrice.price}`}
+                  </p>
+                </span>
+              </CardBody>
+            </Card>
           </span>
         </BackdropGradient>
       </div>
       <div className="pb-5">
-        <BackdropGradient
-          className="w-6/12 h-3/6 opacity-40 "
-          container="lg:items-center"
-        >
-          <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-7 ">
-            <div className="px-7 flex flex-col">
-              <h5 className="font-bold text-base text-themeTextWhite">
+        <div className="lg:items-center relative w-full flex flex-col pb-14 lg:pb-0 ">
+          <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-4 ">
+            <div className="px-4 flex flex-col">
+              <h5 className="font-bold text-base dark:text-themeTextWhite">
                 Payment Method
               </h5>
               <p className="text-themeTextGray leading-tight">
                 Easy to pay with One Click. No hidden fees.
               </p>
             </div>
-            <div className="min-h-[300px] w-full flex items-center justify-center">
-              {userData && (
+            <div className="min-h-[200px] w-full flex items-center justify-center">
+              {user?.email && (
                 <Payment
-                  userId={userData.email}
-                  stripeId={""}
-                  usdPrice={usdPrice}
-                  products={JSON.parse(data)}
+                  user={user.email}
+                  total_amt={
+                    state.totalPriceAfterDiscount.price
+                      ? state.totalPriceAfterDiscount.price
+                      : state.totalPrice.price
+                  }
+                  discount={state.discount}
+                  products={state.productData}
+                  redeemData={state.redeemData}
                 />
               )}
             </div>
           </GlassCard>
-        </BackdropGradient>
+        </div>
       </div>
     </>
   );

@@ -34,7 +34,7 @@ import { authUser } from "@/hooks/use-auth-user";
 import { cn } from "@/lib/utils";
 import StockWarningMessage from "./stock-warning";
 import WishList from "@/components/global/wishlist-button";
-import { encryptproduct } from "@/lib/transition";
+import { encryptData } from "@/lib/transition";
 
 const EmailSchema = z.object({
   email: z.string().min(1, { message: "UID is required" }),
@@ -224,16 +224,16 @@ const Sidebar = ({ products }: { products: Product }) => {
       variant: getVariantData(variantsData, "id", selectedSize?.id),
     });
 
-  const handleenc = async () => {
+  const handleenc = () => {
     if (status) {
       const data = [
         {
-          id: products?.id,
-          variantId: getVariantData(variantsData, "id", selectedSize?.id),
+          product: products?.id,
+          variant: getVariantData(variantsData, "id", selectedSize?.id),
           pcs: 1,
         },
       ];
-      await encryptproduct(data, router);
+      encryptData(data, router);
     } else {
       router.push(`/login`);
     }

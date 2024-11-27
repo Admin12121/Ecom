@@ -7,15 +7,34 @@ import { auth } from "@/auth";
 
 import "@/styles/globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/AtAero-Medium.woff2",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const geistSansLight = localFont({
+  src: "./fonts/AtAero-Light.woff2",
+  variable: "--font-geist-sans-light",
+  weight: "300",
 });
-const geistMono = localFont({
+
+const geistSansRegular = localFont({
+  src: "./fonts/AtAero-Regular.woff2",
+  variable: "--font-geist-sans-regular",
+  weight: "400",
+});
+
+const geistSansMedium = localFont({
+  src: "./fonts/AtAero-Medium.woff2",
+  variable: "--font-geist-sans-medium",
+  weight: "500",
+});
+
+const geistSansSemibold = localFont({
   src: "./fonts/AtAero-Semibold.woff2",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+  variable: "--font-geist-sans-semibold",
+  weight: "600",
+});
+
+const geistSansBold = localFont({
+  src: "./fonts/AtAero-Bold.woff2",
+  variable: "--font-geist-sans-bold",
+  weight: "700",
 });
 
 export const metadata: Metadata = {
@@ -28,13 +47,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
+  const session = await auth();
 
   return (
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSansLight.variable} ${geistSansRegular.variable} ${geistSansMedium.variable} ${geistSansSemibold.variable} ${geistSansBold.variable} antialiased`}
         >
           <Provider>{children}</Provider>
         </body>
