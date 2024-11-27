@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
   useProductsViewQuery,
   useTrendingProductsViewQuery,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
 import { ProductCard, ProductSkeleton } from "@/components/global/product-card";

@@ -329,58 +329,6 @@ export const userAuthapi = createApi({
         };
       },
     }),
-    postLayoutCard: builder.mutation({
-      query: ({ formData, layoutslug, image_id, title_id, link_id, id }) => {
-        let url = `api/layout/layouts/${layoutslug}/`;
-        const { accessToken } = useAuthUser();
-        const headers: HeadersInit = {
-          authorization: `Bearer ${accessToken}`,
-        };
-        if (image_id) {
-          url += `${image_id}/image/`;
-        } else {
-          headers["Content-Type"] = "application/json"; // Only set this for JSON data
-          if (title_id) {
-            url += `${title_id}/title/`;
-          } else if (link_id) {
-            url += `${link_id}/link/`;
-          }
-        }
-        return {
-          url,
-          method: "POST",
-          body: formData, // Do not stringify formData
-          headers,
-        };
-      },
-    }),
-    updateLayoutCard: builder.mutation({
-      query: ({ formData, layoutslug, image_id, title_id, link_id, id }) => {
-        let url = `api/layout/layouts/${layoutslug}/`;
-        const { accessToken } = useAuthUser();
-        const headers: HeadersInit = {
-          authorization: `Bearer ${accessToken}`,
-        };
-        if (image_id) {
-          url += `image/${image_id}/`;
-        } else {
-          headers["Content-Type"] = "application/json"; // Only set this for JSON data
-          if (title_id) {
-            url += `title/${title_id}/`;
-          } else if (link_id) {
-            url += `link/${link_id}/`;
-          } else if (id) {
-            url += `activate/${id}/`;
-          }
-        }
-        return {
-          url,
-          method: "PATCH",
-          body: formData, // Do not stringify formData
-          headers,
-        };
-      },
-    }),
     postReview: builder.mutation({
       query: ({actualData, token}) => {
         return {
@@ -458,8 +406,6 @@ export const {
   useUpdateRedeemCodeMutation,
   useGetlayoutQuery,
   useCreateorUpdatelayoutMutation,
-  usePostLayoutCardMutation,
-  useUpdateLayoutCardMutation,
   usePostReviewMutation,
   useUpdateReviewMutation,
   useGetReviewQuery,

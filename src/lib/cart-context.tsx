@@ -13,7 +13,7 @@ import {
   useCartPostMutation,
   useCartDeleteMutation,
   useCartUpdateMutation,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { toast } from "sonner";
 import CryptoJS from "crypto-js";

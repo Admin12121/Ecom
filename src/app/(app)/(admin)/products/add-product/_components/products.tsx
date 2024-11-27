@@ -7,7 +7,7 @@ import { useForm, useFieldArray, Form } from "react-hook-form";
 import {
   useCategoryViewQuery,
   useProductsRegistrationMutation,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import {

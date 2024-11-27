@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import ImageContainer from "./image";
 import Spinner from "@/components/ui/spinner";
 import { useAuthUser } from "@/hooks/use-auth-user";

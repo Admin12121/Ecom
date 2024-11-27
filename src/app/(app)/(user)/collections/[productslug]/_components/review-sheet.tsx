@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useGetReviewQuery } from "@/lib/store/Service/User_Auth_Api";
+import { useGetReviewQuery } from "@/lib/store/Service/api";
 import { Reviews, ReviewsImage } from "@/types/product";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Star } from "lucide-react";

@@ -7,7 +7,7 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { usePostSaleMutation } from "@/lib/store/Service/User_Auth_Api";
+import { usePostSaleMutation } from "@/lib/store/Service/api";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";

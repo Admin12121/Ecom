@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShoppingBag as PiHandbag, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useProductsByIdsQuery } from "@/lib/store/Service/User_Auth_Api";
+import { useProductsByIdsQuery } from "@/lib/store/Service/api";
 import Image from "next/image";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import { Plus, Minus, Trash } from "lucide-react";

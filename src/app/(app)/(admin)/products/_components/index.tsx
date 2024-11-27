@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import React, { useState, useEffect } from "react";
 import {
   useProductsViewQuery,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
 import { ProductCard, ProductSkeleton } from "@/components/global/admin-productcard";

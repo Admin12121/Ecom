@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import {
   useNotifyuserMutation,
   useGetnotifyuserQuery,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 
 const EmailSchema = z.object({

@@ -14,7 +14,7 @@ import {
     useAddCategoryMutation,
     useAddSubCategoryMutation,
     useProductsRegistrationMutation,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 
 
 import {

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   useProductsByIdsQuery,
   useVerifyRedeemCodeMutation,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import Voucher from "./voucher";
 import BackdropGradient from "@/components/global/backdrop-gradient";
 import { Card, CardContent as CardBody } from "@/components/ui/card";

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { getWishlist } from "@/lib/utils";
-import { useProductsByIdsQuery } from "@/lib/store/Service/User_Auth_Api";
+import { useProductsByIdsQuery } from "@/lib/store/Service/api";
 import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
 import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";

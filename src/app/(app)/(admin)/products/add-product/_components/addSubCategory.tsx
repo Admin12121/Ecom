@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import DynamicForm from "@/constants/formhandler";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
-import { useAddSubCategoryMutation } from "@/lib/store/Service/User_Auth_Api";
+import { useAddSubCategoryMutation } from "@/lib/store/Service/api";
 
 interface subCategory {
   category: number;

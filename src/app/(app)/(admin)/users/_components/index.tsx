@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useAllUsersQuery } from "@/lib/store/Service/User_Auth_Api";
+import { useAllUsersQuery } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import UserTable from "./table";
 

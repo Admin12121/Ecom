@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import DynamicForm from "@/constants/formhandler";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
-import { useAddCategoryMutation } from "@/lib/store/Service/User_Auth_Api";
+import { useAddCategoryMutation } from "@/lib/store/Service/api";
 
 interface Category {
   category: string;

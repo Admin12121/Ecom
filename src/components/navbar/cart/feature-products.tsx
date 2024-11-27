@@ -3,7 +3,7 @@ import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
 import {
   useProductsViewQuery,
   useTrendingProductsViewQuery,
-} from "@/lib/store/Service/User_Auth_Api";
+} from "@/lib/store/Service/api";
 import { Product } from "@/types/product";
 
 const FeatureProduct = ({
