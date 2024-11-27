@@ -11,8 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-type Props = {};
-
 const OtpInput = dynamic(
   () => import("@/components/global/otp-input").then((component) => component.default),
   { ssr: false }
@@ -39,7 +37,7 @@ const TermsSection = () => (
   </div>
 );
 
-const SignUpForm = (props: Props) => {
+const SignUpForm = () => {
   const { register, errors, verifying, creating, onGenerateCode, onInitiateUserRegistration, code, setCode, getValues } = useAuthSignUp();
 
   return (

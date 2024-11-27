@@ -7,11 +7,11 @@ import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { Code } from "@/components/ui/code";
 import { OctagonAlert } from "lucide-react";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { RecommendedProducts } from "../../collections/_components";
 
 const WishList = () => {
-  const { status } = authUser();
+  const { status } = useAuthUser();
   const wishlist = getWishlist();
   const [products, SetProducts] = useState<Product[] | null>([]);
   const { data, isLoading, refetch } = useProductsByIdsQuery(

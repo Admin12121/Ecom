@@ -7,13 +7,13 @@ import { siteConfig } from "@/config/site";
 import { ArchiveRestore, Heart, Search } from "lucide-react";
 import { CurrencySelector } from "./currency";
 import { Button } from "@/components/ui/button";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { Icons } from "@/components/navbar/icons";
 import { MainNav } from "@/components/navbar/main-nav";
 import { ModeSwitcher } from "@/components/navbar/mood-switcher";
 
 export function SiteHeader({ children }: { children: React.ReactNode }) {
-  const { status } = authUser();
+  const { status } = useAuthUser();
 
   return (
     <>

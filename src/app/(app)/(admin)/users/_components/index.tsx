@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useAllUsersQuery } from "@/lib/store/Service/User_Auth_Api";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import UserTable from "./table";
 
 const Accounts = () => {
-  const { accessToken } = authUser();
+  const { accessToken } = useAuthUser();
   const [search, setSearch] = useState<string>("");
   const [rowsperpage, setRowsPerPage] = useState<number | null>(null);
   const [page, setPage] = useState<number>(1);

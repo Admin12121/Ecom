@@ -54,7 +54,7 @@ const Loader = () => {
       geometry.attributes.position.needsUpdate = true;
     }
     let mat = Math.PI;
-    let speed = Math.PI / 120;
+    const speed = Math.PI / 120;
     let forwards = 1;
     const render = () => {
       requestAnimationFrame(render);

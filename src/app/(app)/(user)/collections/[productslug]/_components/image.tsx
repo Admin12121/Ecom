@@ -50,7 +50,7 @@ const DemoSlider = ({
   );
 };
 
-export default function Page({ images }: { images: Images[] }) {
+export default function ImageContainer({ images }: { images: Images[] }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function Page({ images }: { images: Images[] }) {
   return (
     <>
       {isMobile ? (
-        <DemoSlider images={images} />
+        <DemoSlider images={images}/>
       ) : (
         images.map(({ image }: { image: string }, index) => (
           <span

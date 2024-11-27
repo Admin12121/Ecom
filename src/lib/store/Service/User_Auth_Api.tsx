@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 const createHeaders = (
   token?:string,
@@ -332,7 +332,7 @@ export const userAuthapi = createApi({
     postLayoutCard: builder.mutation({
       query: ({ formData, layoutslug, image_id, title_id, link_id, id }) => {
         let url = `api/layout/layouts/${layoutslug}/`;
-        const { accessToken } = authUser();
+        const { accessToken } = useAuthUser();
         const headers: HeadersInit = {
           authorization: `Bearer ${accessToken}`,
         };
@@ -357,7 +357,7 @@ export const userAuthapi = createApi({
     updateLayoutCard: builder.mutation({
       query: ({ formData, layoutslug, image_id, title_id, link_id, id }) => {
         let url = `api/layout/layouts/${layoutslug}/`;
-        const { accessToken } = authUser();
+        const { accessToken } = useAuthUser();
         const headers: HeadersInit = {
           authorization: `Bearer ${accessToken}`,
         };

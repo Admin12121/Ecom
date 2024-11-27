@@ -32,7 +32,7 @@ import { Label } from "@/components/ui/label";
 import GlobalInput from "@/components/global/input";
 import AddCategory from "./addCategory";
 import AddSubCategory from "./addSubCategory";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 interface GetCategory {
   id: string;
@@ -141,7 +141,7 @@ const AddProduct = () => {
   const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
   const [addProduct, { isLoading }] = useProductsRegistrationMutation();
 
-  const { accessToken } = authUser();
+  const { accessToken } = useAuthUser();
 
   const {
     register,

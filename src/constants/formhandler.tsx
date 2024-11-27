@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const DynamicForm = <T extends Object>(initialState: T) => {
+const DynamicForm = <T extends object>(initialState: T) => {
   const [formData, setFormData] = useState<T>(initialState);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 

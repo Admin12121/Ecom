@@ -14,7 +14,7 @@ import {
   useCartDeleteMutation,
   useCartUpdateMutation,
 } from "@/lib/store/Service/User_Auth_Api";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { toast } from "sonner";
 import CryptoJS from "crypto-js";
 
@@ -46,7 +46,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { status, accessToken } = authUser();
+  const { status, accessToken } = useAuthUser();
 
   const [cartdata, setCartItems] = useState(getDecryptedProductList());
 
@@ -125,7 +125,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
 
     return { missingInCart, missingInServer };
-  }, [cartdata, serverCart]);
+  }, [cartdata, serverCart, status]);
 
   useEffect(() => {
     if (serverCart && !hasSyncedRef.current) {

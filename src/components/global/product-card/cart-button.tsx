@@ -16,7 +16,7 @@ import {
   useNotifyuserMutation,
   useGetnotifyuserQuery,
 } from "@/lib/store/Service/User_Auth_Api";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 const EmailSchema = z.object({
   email: z.string().min(1, { message: "UID is required" }),
@@ -185,11 +185,11 @@ const Cartbutton = ({
                 </CardBody>
               </Card>
             )}
-            <AddToCart
+            {selectedSize?.id && <AddToCart
               className="w-full mt-2"
               product={data}
-              variant={selectedSize?.id!}
-            />
+              variant={selectedSize?.id}
+            />}
           </>
         ) : (
           <NotifyForm
@@ -220,7 +220,7 @@ const NotifyForm = ({
   stock,
   setDisplay,
 }: NotifyFormProps) => {
-  const { accessToken } = authUser();
+  const { accessToken } = useAuthUser();
   const [notifyuser,{isLoading}] = useNotifyuserMutation();
   const [notifyadded, setNotifyAdded] = useState<boolean>(false);
   const { data: Notify, isLoading:loading } = useGetnotifyuserQuery(

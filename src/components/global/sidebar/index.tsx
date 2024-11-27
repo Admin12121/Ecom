@@ -1024,8 +1024,9 @@ const Navigationbar = () => {
                           asChild
                           className="justify-start"
                           variant="ghost"
+                          key={subIndex}
                         >
-                          <Link href={subLink.href || "#"} key={subIndex}>
+                          <Link href={subLink.href || "#"}>
                             {subLink.title}
                           </Link>
                         </Button>

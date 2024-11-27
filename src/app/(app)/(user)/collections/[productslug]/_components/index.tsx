@@ -5,9 +5,9 @@ import {
   useProductsViewQuery,
   useRecommendedProductsViewQuery,
 } from "@/lib/store/Service/User_Auth_Api";
-import Image from "./image";
+import ImageContainer from "./image";
 import Spinner from "@/components/ui/spinner";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 // import Reviewcards from "./components/reviewcards";
 
 const Sidebar = dynamic(() => import("./sidebar"), { ssr: false });
@@ -82,7 +82,7 @@ const ProductSection = ({ product }: { product: Product }) => (
       <div className="PostCon col-span-7 mmd:col-span-4">
         <div className="flex flex-col">
           <div className="postWrapper flex mmd:flex-wrap max-mmd:flex-col gap-3">
-            {product && product.images && <Image images={product.images} />}
+            {product && product.images && <ImageContainer images={product.images} />}
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@ const ReviewsSection = () => (
 );
 
 export const RecommendedProducts = ({ product_id, className }: { product_id: number, className:string }) => {
-  const { accessToken } = authUser();
+  const { accessToken } = useAuthUser();
   const { data, isLoading } = useRecommendedProductsViewQuery(
     {
       product_id,

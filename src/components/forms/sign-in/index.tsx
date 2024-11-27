@@ -10,9 +10,7 @@ import { FormError } from "@/components/forms/Form-error";
 import { FormSuccess } from "@/components/forms/Form-success";
 import Link from "next/link";
 
-type Props = {};
-
-const SignInForm = (props: Props) => {
+const SignInForm = () => {
   const { isPending, onAuthenticateUser, register, errors , error, success} = useAuthSignIn();
 
   return (

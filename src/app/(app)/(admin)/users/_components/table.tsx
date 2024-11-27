@@ -182,7 +182,7 @@ export default function UserTable({
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    const filteredUsers = [...users];
     if (statusFilter !== "all") {
       const selectedStatuses = Array.from(statusFilter);
 
@@ -198,7 +198,7 @@ export default function UserTable({
     }
 
     return filteredUsers;
-  }, [users, page, filterValue, statusFilter, SetExcludeBy]);
+  }, [users, page, statusFilter, SetExcludeBy]);
 
   const sortedItems = React.useMemo(() => {
     return [...filteredItems].sort((a: Users, b: Users) => {
@@ -208,7 +208,7 @@ export default function UserTable({
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, users, page, statusFilter, exclude_by]);
+  }, [sortDescriptor, users, page, statusFilter, exclude_by, filteredItems]);
 
   const renderCell = React.useCallback((users: Users, columnKey: React.Key) => {
     const cellValue = users[columnKey as keyof Users];
@@ -306,7 +306,7 @@ export default function UserTable({
       default:
         return cellValue;
     }
-  }, []);
+  }, [router]);
 
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dataperpage(Number(e.target.value));
@@ -471,7 +471,7 @@ export default function UserTable({
         </span>
       </div>
     );
-  }, [selectedKeys, filteredItems.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, filteredItems.length, page, pages, hasSearchFilter, setPage]);
 
   const classNames = React.useMemo(
     () => ({

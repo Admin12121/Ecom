@@ -12,7 +12,7 @@ import BackdropGradient from "@/components/global/backdrop-gradient";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import GradientText from "@/components/global/gradient-text";
 import { useAuth } from "@/lib/context";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -81,7 +81,7 @@ const schema = z.object({
 
 const Checkout = ({ params }: { params: string }) => {
   const router = useRouter();
-  const { accessToken, user } = authUser();
+  const { accessToken, user } = useAuthUser();
   const { getRates, loading } = useAuth();
   const [redeemCode] = useVerifyRedeemCodeMutation();
   const [state, dispatch] = useReducer(reducer, {

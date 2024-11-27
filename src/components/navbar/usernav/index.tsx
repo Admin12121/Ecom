@@ -14,7 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/User_Auth_Api";
 import { UserRound } from "lucide-react";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { toast } from "sonner";
 
 interface UserData {
@@ -31,7 +31,7 @@ interface UserData {
 
 export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
   const router = useRouter();
-  const { accessToken, signOut } = authUser();
+  const { accessToken, signOut } = useAuthUser();
   const [user, setUser] = useState<UserData>();
   const { data, isLoading, refetch } = useGetLoggedUserQuery(
     { token: accessToken },

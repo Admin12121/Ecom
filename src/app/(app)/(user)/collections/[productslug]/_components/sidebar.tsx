@@ -30,7 +30,7 @@ import {
   useNotifyuserMutation,
   useGetnotifyuserQuery,
 } from "@/lib/store/Service/User_Auth_Api";
-import { authUser } from "@/hooks/use-auth-user";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { cn } from "@/lib/utils";
 import StockWarningMessage from "./stock-warning";
 import WishList from "@/components/global/wishlist-button";
@@ -80,7 +80,7 @@ export const getSizeCategory = (index: number) => {
 
 const Sidebar = ({ products }: { products: Product }) => {
   const router = useRouter();
-  const { status } = authUser();
+  const { status } = useAuthUser();
   const { convertPrice } = useAuth();
   const { updateProductList } = useCart();
   const [notifyuser] = useNotifyuserMutation();
@@ -178,7 +178,7 @@ const Sidebar = ({ products }: { products: Product }) => {
       }
       return null;
     },
-    [variantsData]
+    []
   );
 
   const { convertedPrice, symbol } = convertPrice(

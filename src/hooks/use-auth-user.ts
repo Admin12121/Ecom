@@ -1,6 +1,6 @@
 import { useSession, signOut } from "next-auth/react";
 
-export const authUser = () => {
+export const useAuthUser = () => {
     const session = useSession();
     return {
         user: session.data?.user,
