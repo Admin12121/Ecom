@@ -159,7 +159,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { convertedPrice: price, symbol: "" };
   };
 
-  console.log(loading);
 
   const getRates = (
     price: number,

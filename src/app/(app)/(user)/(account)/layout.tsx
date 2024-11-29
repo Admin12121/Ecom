@@ -8,12 +8,16 @@ export const metadata: Metadata = {
 
 const sidebarNavItems = [
   {
-    title: "Account",
+    title: "My Orders",
+    href: "/orders",
+  },
+  {
+    title: "Profile Info",
     href: "/profile",
   },
   {
-    title: "My Orders",
-    href: "/orders",
+    title: "Shipping Address",
+    href: "/shipping",
   },
   {
     title: "Notifications",
@@ -22,7 +26,7 @@ const sidebarNavItems = [
   {
     title: "My Reviews",
     href: "/reviews",
-  }
+  },
 ]
 
 interface SettingsLayoutProps {

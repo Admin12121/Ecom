@@ -31,8 +31,13 @@ import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/cart-context";
 import FeatureProduct from "./feature-products";
 import Spinner from "@/components/ui/spinner";
+import { encryptData } from "@/lib/transition";
+import { useRouter } from "next/navigation";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 export default function Cart() {
+  const router = useRouter();
+  const { status } = useAuthUser();
   const { convertPrice } = useAuth();
   const { cartdata, totalPieces } = useCart();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -119,6 +124,14 @@ export default function Cart() {
     setSymbol(symbol);
   }, [isSheetOpen, cartdata, data, convertPrice]);
 
+  const handleenc = () => {
+    if (status) {
+      encryptData(cartdata, router);
+    } else {
+      router.push(`/login`);
+    }
+  };
+
   return (
     <Sheet onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
@@ -199,7 +212,7 @@ export default function Cart() {
                 className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"
               />
-              <Button type="submit" className="w-full !m-0" variant="custom">
+              <Button type="submit" className="w-full !m-0" variant="custom" onClick={handleenc}>
                 Checkout
               </Button>
             </SheetFooter>

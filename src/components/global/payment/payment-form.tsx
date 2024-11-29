@@ -74,7 +74,7 @@ const PaymentForm = ({ user, total_amt, discount, products, redeemData}: Props) 
               className="dark:bg-themeBlack border-none"
               disabled={isPending || creatingIntent || isLoading}
             >
-              <Loader loading={isPending || isLoading}>Proceed to Pay</Loader>
+              <Loader loading={isPending || isLoading}>Place order</Loader>
             </Button>
           </div>
         </form>

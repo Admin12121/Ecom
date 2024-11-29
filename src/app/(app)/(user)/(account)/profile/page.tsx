@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import ProfileForm from "./_components";
 
 const Page = () => {
-  return (
-    <div>Page</div>
-  )
-}
+  return <ProfileForm />;
+};
 
-export default Page
+export default Page;

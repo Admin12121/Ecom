@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
           { status: 401 }
         );
       }
-      console.log('result', result)
       return NextResponse.json(
         { message: "Login Successful", success: true, redirectUrl: Default_Login_Redirect, },
         { status: 200 }

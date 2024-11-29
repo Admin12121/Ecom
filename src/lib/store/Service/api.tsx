@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { useAuthUser } from "@/hooks/use-auth-user";
 
 const createHeaders = (
   token?:string,
@@ -63,22 +62,24 @@ export const userAuthapi = createApi({
     }),
     getUserProfile: builder.query({
       query: ({ username }) => ({
-        url: `accounts/users/?name=${username}`,
+        url: `api/accounts/users/?name=${username}`,
         method: "GET",
         headers: createHeaders(),
       }),
     }),
     updateUserProfile: builder.mutation({
-      query: ({ NewFormData, id }) => ({
-        url: `accounts/profile/?id=${id}`,
+      query: ({ NewFormData, token }) => ({
+        url: `api/accounts/users/12/`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(),
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       }),
     }),
     changeUserPassword: builder.mutation({
       query: ({ actualData }) => ({
-        url: "accounts/changepassword/",
+        url: "api/accounts/changepassword/",
         method: "POST",
         body: actualData,
         headers: createHeaders(),
@@ -86,7 +87,7 @@ export const userAuthapi = createApi({
     }),
     refreshToken: builder.mutation({
       query: (refreshToken) => ({
-        url: "accounts/token/refresh/",
+        url: "api/accounts/token/refresh/",
         method: "POST",
         body: refreshToken,
         headers: createHeaders(),
@@ -367,6 +368,36 @@ export const userAuthapi = createApi({
         headers: createHeaders(),
       }),
     }),
+    getshipping: builder.query({
+      query: ({ token }) => ({
+        url: `api/accounts/shipping/`,
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
+    getdefaultshipping: builder.query({
+      query: ({ token }) => ({
+        url: `api/accounts/default-address/`,
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
+    shipping: builder.mutation({
+      query: ({actualData, token})=>({
+        url: `api/accounts/shipping/`,
+        method: "POST",
+        body: actualData,
+        headers: createHeaders(token),
+      })
+    }),
+    updateshipping: builder.mutation({
+      query: ({actualData, token})=>({
+        url: `api/accounts/shipping/${actualData.id}/`,
+        method: "PATCH",
+        body: actualData,
+        headers: createHeaders(token),
+      })
+    })
   }),
 });
 
@@ -410,4 +441,8 @@ export const {
   useUpdateReviewMutation,
   useGetReviewQuery,
   usePostSaleMutation,
+  useGetshippingQuery,
+  useGetdefaultshippingQuery,
+  useShippingMutation,
+  useUpdateshippingMutation,
 } = userAuthapi;

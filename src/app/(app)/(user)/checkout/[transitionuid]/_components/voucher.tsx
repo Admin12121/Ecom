@@ -73,4 +73,49 @@ const Voucher = ({ data }: { data: any }) => {
   );
 };
 
+export const Skeleton = () => {
+  return (
+    <div className="p-2 w-full rounded-md shadow-none bg-transparent h-24 bg-white dark:bg-black">
+      <div className="flex justify-between flex-row items-center h-full animate-pulse">
+        <span className="flex gap-5 items-center h-full">
+          <div className="h-full rounded-md w-20 dark:bg-gray-900"></div>
+          <span className="flex items-start flex-col gap-2 justify-between h-full">
+            <span className="flex flex-col gap-0">
+              <div className="h-4 bg-gray-200 rounded w-3/5 mb-1"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </span>
+            <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+          </span>
+        </span>
+        <span className="flex items-end gap-8 justify-between flex-col h-full">
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          <span>
+            <div className="h-3 bg-gray-200 rounded w-1/3 inline-block"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/4 inline-block ml-1"></div>
+          </span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export const VoucherSkleton = ({
+  loading,
+  children,
+}: {
+  loading: boolean;
+  children: React.ReactNode;
+}) => {
+  if (loading) {
+    return (
+      <>
+        {Array.from({ length: 2 }, (_, index) => (
+          <Skeleton key={index} />
+        ))}
+      </>
+    );
+  }
+  return <>{children}</>;
+};
+
 export default Voucher;

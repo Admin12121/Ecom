@@ -51,10 +51,9 @@ export default {
       async authorize(credentials) {
         const ValidateFields = LoginSchema.safeParse(credentials);
         if (!ValidateFields.success) {
-          return null; // Validation failed
+          return null;
         }
         const { email, password } = ValidateFields.data;
-        console.log(process.env.BACKEND_URL)
         const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/users/login/`, {
           method: 'POST',
           headers: {
@@ -69,7 +68,6 @@ export default {
           throw new Error(errorMessage);
         }
         if (data.message === 'Acivation link sent to your email') {
-          console.log("first")
           return {
             id: email,
             email: email,

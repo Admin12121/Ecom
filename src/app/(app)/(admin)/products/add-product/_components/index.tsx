@@ -364,7 +364,6 @@ const AddProduct = () => {
         });
       }
     } catch (error: any) {
-      console.log("Error", error.message);
       toast.error("Error saving product", {
         id: toastId,
         position: "top-center",
@@ -380,7 +379,6 @@ const AddProduct = () => {
       const selectedCat = getcategory.find(
         (cat) => String(cat.id) === String(selectedCategory)
       );
-      console.log("selectedCat:", selectedCat);
       setGetSubCategory(selectedCat ? selectedCat.subcategories : []);
     } else {
       setGetSubCategory([]);

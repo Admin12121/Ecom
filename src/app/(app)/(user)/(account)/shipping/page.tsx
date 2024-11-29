@@ -1,9 +1,9 @@
 import React from 'react'
-import Orders from './_components.tsx'
+import Shipping from './_components'
 
 const Page = () => {
   return (
-    <Orders/>
+    <Shipping/>
   )
 }
 

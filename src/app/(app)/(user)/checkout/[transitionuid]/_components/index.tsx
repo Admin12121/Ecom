@@ -7,7 +7,7 @@ import {
   useProductsByIdsQuery,
   useVerifyRedeemCodeMutation,
 } from "@/lib/store/Service/api";
-import Voucher from "./voucher";
+import Voucher, { VoucherSkleton } from "./voucher";
 import BackdropGradient from "@/components/global/backdrop-gradient";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import GradientText from "@/components/global/gradient-text";
@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import GlassCard from "@/components/global/glass-card";
+import Address from "./address";
 
 interface Product {
   product: number;
@@ -97,7 +98,6 @@ const Checkout = ({ params }: { params: string }) => {
     { ids: productIds },
     { skip: productIds.length === 0 }
   );
-
   const totalPieces = useMemo(() => {
     return state.productData.reduce((acc, item) => acc + (item.pcs ?? 0), 0);
   }, [state.productData]);
@@ -202,7 +202,6 @@ const Checkout = ({ params }: { params: string }) => {
       );
       dispatch({ type: "SET_DISCOUNT", payload: discountAmount });
       applyDiscount(discountAmount);
-      toast.success(res.data?.message || JSON.stringify(res));
     } else {
       setError("code", { message: "Minimum purchase amount not met" });
     }
@@ -218,10 +217,15 @@ const Checkout = ({ params }: { params: string }) => {
             <GradientText element="H2" className="text-4xl font-semibold py-1">
               Proceed to Payment
             </GradientText>
-            {state.cartItemsWithDetails &&
-              state.cartItemsWithDetails.map((product: any) => {
-                return <Voucher key={Math.random()} data={product} />;
-              })}
+
+            <Address accessToken={accessToken} />
+
+            <VoucherSkleton loading={true}>
+              {state.cartItemsWithDetails &&
+                state.cartItemsWithDetails.map((product: any) => {
+                  return <Voucher key={Math.random()} data={product} />;
+                })}
+            </VoucherSkleton>
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <span className="flex flex-col gap-2">
@@ -278,11 +282,14 @@ const Checkout = ({ params }: { params: string }) => {
                 />
                 <span className="flex w-full justify-between items-center">
                   <p>Total </p>
-                  <p>
-                    {state.totalPriceAfterDiscount.price > 0
-                      ? `${state.totalPriceAfterDiscount.symbol} ${state.totalPriceAfterDiscount.price}`
-                      : `${state.totalPrice.symbol} ${state.totalPrice.price}`}
-                  </p>
+                  <span className="flex gap-1">
+                    <p className="text-[9px] text-zinc-500">{`(All taxes included )`}</p>
+                    <p>
+                      {state.totalPriceAfterDiscount.price > 0
+                        ? `${state.totalPriceAfterDiscount.symbol} ${state.totalPriceAfterDiscount.price}`
+                        : `${state.totalPrice.symbol} ${state.totalPrice.price}`}
+                    </p>
+                  </span>
                 </span>
               </CardBody>
             </Card>
@@ -292,13 +299,15 @@ const Checkout = ({ params }: { params: string }) => {
       <div className="pb-5">
         <div className="lg:items-center relative w-full flex flex-col pb-14 lg:pb-0 ">
           <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-4 ">
-            <div className="px-4 flex flex-col">
-              <h5 className="font-bold text-base dark:text-themeTextWhite">
-                Payment Method
-              </h5>
-              <p className="text-themeTextGray leading-tight">
-                Easy to pay with One Click. No hidden fees.
-              </p>
+            <div className="px-4 flex flex-col gap-3">
+              <span>
+                <h5 className="font-bold text-base dark:text-themeTextWhite">
+                  Payment Method
+                </h5>
+                <p className="text-themeTextGray leading-tight">
+                  Easy to pay with One Click. No hidden fees.
+                </p>
+              </span>
             </div>
             <div className="min-h-[200px] w-full flex items-center justify-center">
               {user?.email && (

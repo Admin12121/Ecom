@@ -5,7 +5,6 @@ const DynamicForm = <T extends object>(initialState: T) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleInputChange = (value: string, field: keyof T) => {
-    console.log(value)
     setFormData((prevState) => ({
       ...prevState,
       [field]: value,

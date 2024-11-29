@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck as GoShieldCheck, OctagonAlert as IoAlertOutline} from "lucide-react";
 
-// import Loader from './loader'
 const Loader = dynamic(() => import('./loader'), {
   ssr: false,
   loading: () => <span className='w-full h-[150px] flex items-center justify-center'><Spinner/></span>, 
@@ -34,7 +33,6 @@ const Activate = () => {
           },
         });
         if (!response.ok) {
-          console.log(response.status)
           if (response.status === 400) {
             setIcon(<IoAlertOutline/>)
             setColor('text-destructive')
