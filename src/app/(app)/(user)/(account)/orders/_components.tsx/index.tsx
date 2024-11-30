@@ -7,25 +7,33 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { OnShipping } from "./onshipping";
 
-interface Product {
+interface CartItem {
   id: number;
   price: number;
   qty: number;
   total: number;
   transition: number;
-  product: number;
-  variant: number;
+  product: string;
+  variant: string;
+  categoryname?: string;
+  description?: string;
+  images?: string;
+  product_name?: string;
+  productslug?: string;
 }
 
-interface Order {
+export interface Order {
   id: number;
-  products: Product[];
+  products: CartItem[];
   costumer_name: string;
   transactionuid: string;
   status: string;
   total_amt: number;
   sub_total: number;
-  shipping: number;
+  shipping: {
+    city: string;
+    country: string;
+  };
   discount: number;
   payment_method: string;
   redeem_data: any;
@@ -100,6 +108,24 @@ const Orders = () => {
     );
   }
 
+
+  return (
+    <section className="w-full h-[calc(100vh_-_170px)] flex flex-col">
+      {!data ? (
+        <span className="space-y-2">
+          <h1 className="text-xl">Orders</h1>
+          <p>Your account has no orders. Yet.</p>
+          <Button>Shop Now</Button>
+        </span>
+      ) : (
+        <MyOrders data={data} />
+      )}
+    </section>
+  );
+};
+
+const MyOrders = ({ data }: { data: any }) => {
+
   function categorizeOrders(orders: Order[]): CategorizedOrders {
     const categorized: CategorizedOrders = {
       onShipping: [],
@@ -135,22 +161,6 @@ const Orders = () => {
   const categorizedOrders = categorizeOrders(data.results);
 
   return (
-    <section className="w-full h-[calc(100vh_-_170px)] flex flex-col">
-      {!data ? (
-        <span className="space-y-2">
-          <h1 className="text-xl">Orders</h1>
-          <p>Your account has no orders. Yet.</p>
-          <Button>Shop Now</Button>
-        </span>
-      ) : (
-        <MyOrders data={categorizedOrders} />
-      )}
-    </section>
-  );
-};
-
-const MyOrders = ({ data }: { data: any }) => {
-  return (
     <Tabs defaultValue="shipping" className="w-full">
       <TabsList className="w-full">
         <TabsTrigger className="w-full" value="shipping">
@@ -164,7 +174,7 @@ const MyOrders = ({ data }: { data: any }) => {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="shipping" className="w-full">
-        {data.onShipping && <OnShipping data={data.onShipping} />}
+        {categorizedOrders.onShipping && <OnShipping data={categorizedOrders.onShipping} />}
       </TabsContent>
       <TabsContent value="arrived">
         <Arravied />

@@ -8,12 +8,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useProductsByIdsQuery } from "@/lib/store/Service/api";
-import { ChevronDown, MapPin, ShoppingCart, Truck } from "lucide-react";
+import { MapPin, ShoppingCart, Truck } from "lucide-react";
 import Voucher, {
   VoucherSkleton,
 } from "../../../checkout/[transitionuid]/_components/voucher";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Order as OrderData } from ".";
 
 interface Product {
   id: string;
@@ -23,29 +24,6 @@ interface Product {
   images: string[];
   product_name: string;
   productslug: string;
-}
-
-interface CartItem {
-  product: string;
-  variant: string;
-  categoryname?: string;
-  description?: string;
-  images?: string[];
-  product_name?: string;
-  productslug?: string;
-  qty:number;
-}
-
-interface OrderData {
-  products: CartItem[];
-  status: string;
-  created: string;
-  shipping: {
-    city: string;
-    country: string;
-  };
-  total_amt: number;
-  transactionuid: string;
 }
 
 const renderBadge = (status: string) => {
