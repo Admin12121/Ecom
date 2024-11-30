@@ -34,6 +34,7 @@ import Spinner from "@/components/ui/spinner";
 import { encryptData } from "@/lib/transition";
 import { useRouter } from "next/navigation";
 import { useAuthUser } from "@/hooks/use-auth-user";
+import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 
 export default function Cart() {
   const router = useRouter();
@@ -159,9 +160,11 @@ export default function Cart() {
                 Your cart total is {symbol} {convertedPrice}
               </h1>
               <span className="flex flex-col gap-2">
-                {cartItemsWithDetails.map((data, index) => (
-                  <CartItem data={data} key={index} />
-                ))}
+                <VoucherSkleton loading={isLoading}>
+                  {cartItemsWithDetails.map((data, index) => (
+                    <CartItem data={data} key={index} />
+                  ))}
+                </VoucherSkleton>
               </span>
               <Accordion type="single" collapsible>
                 <AccordionItem
@@ -207,12 +210,17 @@ export default function Cart() {
               <FeatureProduct title="You may also like" skip={isSheetOpen} />
             </div>
             <SheetFooter className="flex !flex-col gap-1 items-center absolute w-full bottom-0 py-2  z-50">
-              <Icons className="bg-neutral-200 dark:bg-neutral-950 pt-1"/>
+              <Icons className="bg-neutral-200 dark:bg-neutral-950 pt-1" />
               <Separator
                 className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"
               />
-              <Button type="submit" className="w-full !m-0" variant="custom" onClick={handleenc}>
+              <Button
+                type="submit"
+                className="w-full !m-0"
+                variant="custom"
+                onClick={handleenc}
+              >
                 Checkout
               </Button>
             </SheetFooter>
@@ -249,7 +257,7 @@ const CartItem = ({ data }: { data: any }) => {
   );
 
   return (
-    <Card className="p-2 w-full rounded-md shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
+    <Card className="p-1 w-full rounded-md shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
       <CardBody className="flex justify-between flex-row items-center h-full">
         <span className="flex gap-5 items-center h-full">
           <span className="h-full rounded-md w-[80px] dark:bg-zinc-700/50">

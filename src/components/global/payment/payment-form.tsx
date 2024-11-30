@@ -8,15 +8,19 @@ import { ErrorMessage } from "@hookform/error-message"
 import { CardElement } from "@stripe/react-stripe-js"
 
 type Props = {
-  user: string;
-  total_amt: number | null;
-  products: any;
-  discount?: number
-  redeemData: any;
+  data: {
+    user: string;
+    total_amt: number | null;
+    products: any;
+    discount?: number;
+    redeemData: any;
+    shipping: string;
+  };
 };
 
-const PaymentForm = ({ user, total_amt, discount, products, redeemData}: Props) => {
 
+const PaymentForm = ({ data}: Props) => {
+  const { user, total_amt, discount, products, redeemData, shipping } = data;
   const {
     handlePaymentSubmission,
     isPending,
@@ -24,12 +28,12 @@ const PaymentForm = ({ user, total_amt, discount, products, redeemData}: Props) 
     register,
     errors,
     creatingIntent,
-  } = usePayments(user, total_amt, discount, products, redeemData);
+  } = usePayments(user, total_amt, discount, products, redeemData, shipping);
 
   return (
     <Loader loading={creatingIntent}>
         <form className="pt-5 relative z-50 w-full" onSubmit={handlePaymentSubmission}>
-          <div className="px-4 mb-2">
+          <div className=" mb-2">
             <ErrorMessage
               errors={errors}
               name={"email"}
@@ -40,7 +44,7 @@ const PaymentForm = ({ user, total_amt, discount, products, redeemData}: Props) 
               )}
             />
           </div>
-          <div className="px-4 mt-3">
+          <div className=" mt-3">
             <FormGenerator
               register={register}
               name="email"
@@ -51,7 +55,7 @@ const PaymentForm = ({ user, total_amt, discount, products, redeemData}: Props) 
               disabled={true}
             />
           </div>
-          <div className="px-4 my-3">
+          <div className=" my-3">
             <CardElement
               options={{
                 style: {
@@ -67,7 +71,7 @@ const PaymentForm = ({ user, total_amt, discount, products, redeemData}: Props) 
               className="dark:bg-themeBlack border-[1px] dark:border-themeGray outline-none rounded-lg p-3 "
             />
           </div>
-          <div className="px-4 flex flex-col gap-3">
+          <div className=" flex flex-col gap-3">
             <Button
               variant="custom"
               type="submit"

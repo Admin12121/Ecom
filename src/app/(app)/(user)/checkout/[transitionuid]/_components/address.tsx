@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChevronDown } from "lucide-react";
 import {
@@ -9,12 +10,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
-import {
-  useGetshippingQuery,
-} from "@/lib/store/Service/api";
-import { Button } from "@/components/ui/button";
+import { useGetshippingQuery } from "@/lib/store/Service/api";
 import Shipping from "./shipping";
-
 
 interface AddressItem {
   id: number;
@@ -26,14 +23,10 @@ interface AddressItem {
   user: number;
 }
 
-const Address = ({ accessToken }: { accessToken?: string }) => {
-  const { data: Address, isLoading: AddressLoading } = useGetshippingQuery(
+const Address = ({ accessToken, shipping, dispatch }: { accessToken?: string, shipping:string, dispatch:any }) => {
+  const { data: Address, isLoading } = useGetshippingQuery(
     { token: accessToken },
     { skip: !accessToken }
-  );
-
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
-    undefined
   );
 
   useEffect(() => {
@@ -42,17 +35,16 @@ const Address = ({ accessToken }: { accessToken?: string }) => {
         (addr: AddressItem) => addr.default
       );
       if (defaultAddress) {
-        setSelectedAddress(defaultAddress.id.toString());
+        dispatch({type: "SET_SHIPPING", payload: defaultAddress.id.toString()})
       } else if (Address.results.length > 0) {
         const randomIndex = Math.floor(Math.random() * Address.results.length);
-        setSelectedAddress(Address.results[randomIndex].id.toString());
+        dispatch({type: "SET_SHIPPING", payload: Address.results[randomIndex].id.toString()})
       }
     }
   }, [Address]);
 
   return (
     <>
-      <h1>Shipping Address</h1>
       <Accordion type="single" collapsible className="space-y-1">
         <AccordionItem
           value={`address`}
@@ -62,36 +54,38 @@ const Address = ({ accessToken }: { accessToken?: string }) => {
             icon={<ChevronDown className="w-4 h-4" />}
             className="text-left hover:no-underline pl-2 py-3 lg:min-w-[450px]"
           >
-            {selectedAddress && (
-              <span className="flex flex-col">
-                <p className="text-zinc-500">
-                  {
-                    Address.results.find(
-                      (addr: any) => addr.id.toString() === selectedAddress
-                    )?.address
-                  }
-                </p>
-                <p className="text-zinc-500">
-                  {
-                    Address.results.find(
-                      (addr: any) => addr.id.toString() === selectedAddress
-                    )?.zipcode
-                  }
-                  ,{" "}
-                  {
-                    Address.results.find(
-                      (addr: any) => addr.id.toString() === selectedAddress
-                    )?.city
-                  }
-                  ,{" "}
-                  {
-                    Address.results.find(
-                      (addr: any) => addr.id.toString() === selectedAddress
-                    )?.country
-                  }
-                </p>
-              </span>
-            )}
+            <Skeleton loading={isLoading}>
+              {shipping && (
+                <span className="flex flex-col">
+                  <p className="">
+                    {
+                      Address.results.find(
+                        (addr: any) => addr.id.toString() === shipping
+                      )?.address
+                    }
+                  </p>
+                  <p className="text-zinc-500">
+                    {
+                      Address.results.find(
+                        (addr: any) => addr.id.toString() === shipping
+                      )?.zipcode
+                    }
+                    ,{" "}
+                    {
+                      Address.results.find(
+                        (addr: any) => addr.id.toString() === shipping
+                      )?.city
+                    }
+                    ,{" "}
+                    {
+                      Address.results.find(
+                        (addr: any) => addr.id.toString() === shipping
+                      )?.country
+                    }
+                  </p>
+                </span>
+              )}
+            </Skeleton>
           </AccordionTrigger>
           <AccordionContent>
             <fieldset className="space-y-4">
@@ -100,8 +94,8 @@ const Address = ({ accessToken }: { accessToken?: string }) => {
               </legend>
               <RadioGroup
                 className="gap-0 -space-y-px rounded-lg shadow-sm shadow-black/5"
-                value={selectedAddress}
-                onValueChange={setSelectedAddress}
+                value={shipping}
+                onValueChange={(value) => dispatch({ type: "SET_SHIPPING", payload: value })}
               >
                 {Address?.results &&
                   Address.results.length > 0 &&
@@ -139,7 +133,7 @@ const Address = ({ accessToken }: { accessToken?: string }) => {
                     </div>
                   ))}
                 <div className="relative flex flex-col gap-4 border border-input p-4 first:rounded-t-lg last:rounded-b-lg has-[[data-state=checked]]:z-10 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
-                  <Shipping accessToken={accessToken}/>
+                  <Shipping accessToken={accessToken} />
                 </div>
               </RadioGroup>
             </fieldset>
@@ -148,6 +142,24 @@ const Address = ({ accessToken }: { accessToken?: string }) => {
       </Accordion>
     </>
   );
+};
+
+const Skeleton = ({
+  loading,
+  children,
+}: {
+  loading: boolean;
+  children: React.ReactNode;
+}) => {
+  if (loading) {
+    return (
+      <div className="w-full gap-1 flex flex-col h-10">
+        <span className="w-[100px] rounded-md h-5 bg-neutral-800/10 dark:bg-neutral-100/10"></span>
+        <span className="w-[200px] rounded-md h-5 bg-neutral-800/10 dark:bg-neutral-100/10"></span>
+      </div>
+    );
+  }
+  return <>{children}</>;
 };
 
 export default Address;

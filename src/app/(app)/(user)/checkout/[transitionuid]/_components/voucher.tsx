@@ -4,16 +4,15 @@ import Image from "next/image";
 import { useAuth } from "@/lib/context";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useCallback, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
 
-const Voucher = ({ data }: { data: any }) => {
+const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
   const { convertPrice } = useAuth();
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
   const discount = data.variantDetails.discount;
   const finalPrice = useMemo(() => {
     return convertedPrice - convertedPrice * (discount / 100);
   }, [convertedPrice, discount]);
-
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {
       return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
@@ -21,7 +20,7 @@ const Voucher = ({ data }: { data: any }) => {
     []
   );
   return (
-    <Card className="p-2 w-full rounded-md shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
+    <Card className="p-1 w-full rounded-lg shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
       <CardBody className="flex justify-between flex-row items-center h-full">
         <span className="flex gap-5 items-center h-full">
           <span className="h-full rounded-md w-[80px] dark:bg-zinc-700/50">
@@ -50,7 +49,7 @@ const Voucher = ({ data }: { data: any }) => {
             </span>
           </span>
         </span>
-        <span className="flex items-end gap-8 justify-between flex-col h-full ">
+        {price && <span className="flex items-end gap-8 justify-between flex-col h-full ">
           <p className="text-sm bg-secondary-500 rounded-md text-center px-2 text-white ">
             {discount ? `-${discount}%` : "for you"}
           </p>
@@ -67,7 +66,7 @@ const Voucher = ({ data }: { data: any }) => {
               {symbol} {convertedPrice * data.pcs}
             </p>
           </span>
-        </span>
+        </span>}
       </CardBody>
     </Card>
   );
@@ -75,25 +74,17 @@ const Voucher = ({ data }: { data: any }) => {
 
 export const Skeleton = () => {
   return (
-    <div className="p-2 w-full rounded-md shadow-none bg-transparent h-24 bg-white dark:bg-black">
-      <div className="flex justify-between flex-row items-center h-full animate-pulse">
-        <span className="flex gap-5 items-center h-full">
-          <div className="h-full rounded-md w-20 dark:bg-gray-900"></div>
-          <span className="flex items-start flex-col gap-2 justify-between h-full">
-            <span className="flex flex-col gap-0">
-              <div className="h-4 bg-gray-200 rounded w-3/5 mb-1"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-            </span>
-            <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-          </span>
-        </span>
-        <span className="flex items-end gap-8 justify-between flex-col h-full">
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <span>
-            <div className="h-3 bg-gray-200 rounded w-1/3 inline-block"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/4 inline-block ml-1"></div>
-          </span>
-        </span>
+    <div className="p-1 flex justify-between w-full rounded-md bg-white dark:bg-neutral-900 h-[90px] shadow-none">
+      <div className="flex gap-1 w-60 h-full">
+        <span className="min-w-[80px] h-full rounded-md bg-neutral-800/10 dark:bg-neutral-100/10 animate-pulse"></span>
+        <div className="flex w-full h-full gap-1 flex-col">
+          <span className="w-full rounded-md h-10 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 "></span>
+          <span className="w-1/2 rounded-md h-10 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 "></span>
+        </div>
+      </div>
+      <div className="h-full w-28 flex gap-1 flex-col items-end">
+        <span className="w-full rounded-md h-10 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 "></span>
+        <span className="w-1/2 rounded-md h-10 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 "></span>
       </div>
     </div>
   );
@@ -106,7 +97,8 @@ export const VoucherSkleton = ({
   loading: boolean;
   children: React.ReactNode;
 }) => {
-  if (loading) {
+  const load = useDeferredValue(loading)
+  if (load) {
     return (
       <>
         {Array.from({ length: 2 }, (_, index) => (

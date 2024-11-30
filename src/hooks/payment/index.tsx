@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useAuthUser } from "../use-auth-user";
 
 export const useStripeElements = () => {
   const StripePromise = async () =>
@@ -20,14 +21,17 @@ export const useStripeElements = () => {
   return { StripePromise };
 };
 
+
 export const usePayments = (
   user: string,
   total_amt?: number | null,
   discount?: number,
   products?: any,
-  redeemData?: any
+  redeemData?: any,
+  shipping?: string
 ) => {
   const [postSale, { isLoading }] = usePostSaleMutation();
+  const { accessToken } = useAuthUser();
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -97,8 +101,9 @@ export const usePayments = (
           products,
           redeemData,
           paymentIntentId: paymentIntent.id,
+          shipping
         };
-        const res = await postSale({ actualData });
+        const res = await postSale({ actualData, token: accessToken });
         if (res.data) {
           toast.success("Payment SuccessFull", { position: "top-center" });
           router.push(`/orders/${data.transactionuid}`);

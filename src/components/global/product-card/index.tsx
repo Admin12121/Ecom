@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/context";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useUpdateQueryParams } from "@/lib/query-params";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useDeferredValue, useEffect, useMemo } from "react";
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
 
 import { Star as FaStar } from "lucide-react";
@@ -23,7 +23,6 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import WishList from "../wishlist-button";
 import Cartbutton from "./cart-button";
-
 
 interface ProductCardProps {
   data: Product;
@@ -131,7 +130,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </span>
               )}
               {discount > 0 && (
-                <span className="absolute -top-1 left-1 w-[50px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1 font-semibold">
+                <span className="absolute -top-1 left-1 w-[60px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1 font-semibold">
                   {discount}% Off
                 </span>
               )}
@@ -160,10 +159,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                       src={data.image}
                       width={600}
                       height={600}
-                      priority 
+                      priority
                       className=" w-full cursor-pointer h-[350px]  object-contain"
                       alt={productslug}
-                      
                     />
                   </Link>
                 </div>
@@ -241,7 +239,8 @@ export const ProductSkeleton = ({
   loading: boolean;
   children: React.ReactNode;
 }) => {
-  if (loading) {
+  const load = useDeferredValue(loading);
+  if (load) {
     return (
       <>
         {Array.from({ length: 4 }, (_, index) => (

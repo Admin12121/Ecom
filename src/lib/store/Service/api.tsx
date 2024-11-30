@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const createHeaders = (
-  token?:string,
+  token?: string,
   contentType: string = "application/json"
 ) => {
   const headers: HeadersInit = { "Content-type": contentType };
@@ -94,7 +94,7 @@ export const userAuthapi = createApi({
       }),
     }),
     productsRegistration: builder.mutation({
-      query: ({formData, token}) => {
+      query: ({ formData, token }) => {
         return {
           url: "api/products/products/",
           method: "POST",
@@ -123,7 +123,9 @@ export const userAuthapi = createApi({
     }),
     productsByIds: builder.query({
       query: ({ ids, all }) => ({
-        url: `api/products/get_products_by_ids/?ids=${ids}${all ? "&all=true":''}`,
+        url: `api/products/get_products_by_ids/?ids=${ids}${
+          all ? "&all=true" : ""
+        }`,
         method: "GET",
         headers: createHeaders(),
       }),
@@ -145,7 +147,7 @@ export const userAuthapi = createApi({
       }),
     }),
     notifyuser: builder.mutation({
-      query: ({actualData, token}) => ({
+      query: ({ actualData, token }) => ({
         url: "api/products/notifyuser/",
         method: "POST",
         body: actualData,
@@ -170,14 +172,14 @@ export const userAuthapi = createApi({
       }),
     }),
     cartView: builder.query({
-      query: ({token}) => ({
+      query: ({ token }) => ({
         url: `api/products/cart/`,
         method: "GET",
         headers: createHeaders(token),
       }),
     }),
     cartPost: builder.mutation({
-      query: ({actualData, token}) => ({
+      query: ({ actualData, token }) => ({
         url: `api/products/cart/`,
         method: "POST",
         body: actualData,
@@ -193,7 +195,7 @@ export const userAuthapi = createApi({
       }),
     }),
     cartDelete: builder.mutation({
-      query: ({ id,variantId, token }) => {
+      query: ({ id, variantId, token }) => {
         return {
           url: `api/products/cart/${id}/variant/${variantId}/`,
           method: "DELETE",
@@ -283,7 +285,7 @@ export const userAuthapi = createApi({
       }),
     }),
     verifyRedeemCode: builder.mutation({
-      query: ({code, token}) => ({
+      query: ({ code, token }) => ({
         url: `api/sales/redeemcode/verify-code/`,
         method: "POST",
         body: code,
@@ -331,7 +333,7 @@ export const userAuthapi = createApi({
       },
     }),
     postReview: builder.mutation({
-      query: ({actualData, token}) => {
+      query: ({ actualData, token }) => {
         return {
           url: "api/products/reviews/post/",
           method: "POST",
@@ -361,11 +363,11 @@ export const userAuthapi = createApi({
       }),
     }),
     postSale: builder.mutation({
-      query: ({ actualData }) => ({
+      query: ({ actualData, token }) => ({
         url: `api/sales/sales/`,
         method: "POST",
         body: actualData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     getshipping: builder.query({
@@ -383,21 +385,28 @@ export const userAuthapi = createApi({
       }),
     }),
     shipping: builder.mutation({
-      query: ({actualData, token})=>({
+      query: ({ actualData, token }) => ({
         url: `api/accounts/shipping/`,
         method: "POST",
         body: actualData,
         headers: createHeaders(token),
-      })
+      }),
     }),
     updateshipping: builder.mutation({
-      query: ({actualData, token})=>({
+      query: ({ actualData, token }) => ({
         url: `api/accounts/shipping/${actualData.id}/`,
         method: "PATCH",
         body: actualData,
         headers: createHeaders(token),
-      })
-    })
+      }),
+    }),
+    getOrders: builder.query({
+      query: ({ token }) => ({
+        url: `api/sales/sales/`,
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
   }),
 });
 
@@ -445,4 +454,5 @@ export const {
   useGetdefaultshippingQuery,
   useShippingMutation,
   useUpdateshippingMutation,
+  useGetOrdersQuery,
 } = userAuthapi;

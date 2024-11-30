@@ -38,6 +38,7 @@ interface State {
   cartItemsWithDetails: any[];
   totalPrice: { price: number; symbol: string };
   totalPriceAfterDiscount: { price: number; symbol: string };
+  shipping: string;
 }
 
 type Action =
@@ -48,7 +49,8 @@ type Action =
   | {
       type: "SET_TOTAL_PRICE_AFTER_DISCOUNT";
       payload: { price: number; symbol: string };
-    };
+    }
+  | { type: "SET_SHIPPING"; payload: string };
 
 const initialState: State = {
   redeemData: null,
@@ -57,6 +59,7 @@ const initialState: State = {
   cartItemsWithDetails: [],
   totalPrice: { price: 0, symbol: "" },
   totalPriceAfterDiscount: { price: 0, symbol: "" },
+  shipping: "",
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -71,6 +74,8 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, totalPrice: action.payload };
     case "SET_TOTAL_PRICE_AFTER_DISCOUNT":
       return { ...state, totalPriceAfterDiscount: action.payload };
+    case "SET_SHIPPING":
+      return { ...state, shipping: action.payload };
     default:
       return state;
   }
@@ -94,7 +99,7 @@ const Checkout = ({ params }: { params: string }) => {
     () => Array.from(new Set(state.productData.map((item) => item.product))),
     [state.productData]
   );
-  const { data: products, isLoading } = useProductsByIdsQuery(
+  const { data: products } = useProductsByIdsQuery(
     { ids: productIds },
     { skip: productIds.length === 0 }
   );
@@ -217,16 +222,13 @@ const Checkout = ({ params }: { params: string }) => {
             <GradientText element="H2" className="text-4xl font-semibold py-1">
               Proceed to Payment
             </GradientText>
-
-            <Address accessToken={accessToken} />
-
-            <VoucherSkleton loading={true}>
+            <Address accessToken={accessToken} shipping={state.shipping} dispatch={dispatch}/>
+            <VoucherSkleton loading={loading}>
               {state.cartItemsWithDetails &&
                 state.cartItemsWithDetails.map((product: any) => {
                   return <Voucher key={Math.random()} data={product} />;
                 })}
             </VoucherSkleton>
-
             <form onSubmit={handleSubmit(onSubmit)}>
               <span className="flex flex-col gap-2">
                 <Label>Add Coupon or Gift Card</Label>
@@ -255,7 +257,6 @@ const Checkout = ({ params }: { params: string }) => {
                 )}
               </span>
             </form>
-
             <Card className="min-h-[105px] border !border-zinc-400/50 dark:!border-zinc-800">
               <CardBody className="flex text-sm gap-1 flex-col">
                 <span className="flex w-full justify-between items-center">
@@ -298,8 +299,8 @@ const Checkout = ({ params }: { params: string }) => {
       </div>
       <div className="pb-5">
         <div className="lg:items-center relative w-full flex flex-col pb-14 lg:pb-0 ">
-          <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-4 ">
-            <div className="px-4 flex flex-col gap-3">
+          <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-4 p-2 !rounded-lg">
+            <div className="px-2 flex flex-col gap-3">
               <span>
                 <h5 className="font-bold text-base dark:text-themeTextWhite">
                   Payment Method
@@ -309,7 +310,7 @@ const Checkout = ({ params }: { params: string }) => {
                 </p>
               </span>
             </div>
-            <div className="min-h-[200px] w-full flex items-center justify-center">
+            <div className="w-full flex items-center justify-center">
               {user?.email && (
                 <Payment
                   user={user.email}
@@ -321,6 +322,7 @@ const Checkout = ({ params }: { params: string }) => {
                   discount={state.discount}
                   products={state.productData}
                   redeemData={state.redeemData}
+                  shipping={state.shipping}
                 />
               )}
             </div>
