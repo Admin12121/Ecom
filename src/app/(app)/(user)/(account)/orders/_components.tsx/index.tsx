@@ -1,11 +1,11 @@
 "use client";
-import React, { useCallback, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
+import React from "react";
 import { useGetOrdersQuery } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { OnShipping } from "./onshipping";
+import { OrderComponent } from "./order-component";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface CartItem {
   id: number;
@@ -49,50 +49,6 @@ interface CategorizedOrders {
   delivered: Order[];
 }
 
-const renderBadge = (status: string) => {
-  const statusMap: {
-    [key: string]: {
-      varaint?:
-        | "default"
-        | "secondary"
-        | "warning"
-        | "success"
-        | "danger"
-        | "destructive"
-        | "outline"
-        | null
-        | undefined;
-      color: string;
-      label: string;
-    };
-  } = {
-    pending: { varaint: "warning", color: "orange", label: "Pending" },
-    verified: { varaint: "warning", color: "blue", label: "Verified" },
-    proceed: { color: "blue", label: "Proceed" },
-    packed: { color: "blue", label: "Packed" },
-    delivered: { varaint: "success", color: "green", label: "Delivered" },
-    successful: { varaint: "success", color: "green", label: "Successful" },
-    cancled: { varaint: "danger", color: "red", label: "Canceled" },
-  };
-
-  const { varaint, color, label } = statusMap[status] || {
-    varaint: "default",
-    color: "gray",
-    label: "Unknown",
-  };
-  return (
-    <Badge variant={varaint} className={`relative border-0 gap-1`}>
-      <span
-        className={`animate-ping absolute inline-flex h-2 w-2  rounded-full bg-${color}-500 opacity-75`}
-      ></span>
-      <span
-        className={` inline-flex h-2 w-2 right-0 top-0 rounded-full bg-${color}-500 opacity-75`}
-      ></span>
-      {label}
-    </Badge>
-  );
-};
-
 const Orders = () => {
   const { accessToken } = useAuthUser();
   const { data, isLoading, isFetching } = useGetOrdersQuery(
@@ -102,30 +58,20 @@ const Orders = () => {
 
   if (isLoading || isFetching) {
     return (
-      <section className="w-full h-[calc(100vh_-_170px)] flex items-center justify-center">
+      <section className="w-full h-[calc(100dvh_-_145px)] flex items-center justify-center">
         <p>Loading your orders...</p>
       </section>
     );
   }
 
-
   return (
-    <section className="w-full h-[calc(100vh_-_170px)] flex flex-col">
-      {!data ? (
-        <span className="space-y-2">
-          <h1 className="text-xl">Orders</h1>
-          <p>Your account has no orders. Yet.</p>
-          <Button>Shop Now</Button>
-        </span>
-      ) : (
-        <MyOrders data={data} />
-      )}
+    <section className="w-full min-h-[calc(100dvh_-_145px)] flex flex-col">
+      {data && <MyOrders data={data} />}
     </section>
   );
 };
 
 const MyOrders = ({ data }: { data: any }) => {
-
   function categorizeOrders(orders: Order[]): CategorizedOrders {
     const categorized: CategorizedOrders = {
       onShipping: [],
@@ -161,37 +107,44 @@ const MyOrders = ({ data }: { data: any }) => {
   const categorizedOrders = categorizeOrders(data.results);
 
   return (
-    <Tabs defaultValue="shipping" className="w-full">
-      <TabsList className="w-full">
-        <TabsTrigger className="w-full" value="shipping">
-          On Shipping
-        </TabsTrigger>
-        <TabsTrigger className="w-full" value="arrived">
-          Arrived
-        </TabsTrigger>
-        <TabsTrigger className="w-full" value="cancled">
-          Cancled
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="shipping" className="w-full">
-        {categorizedOrders.onShipping && <OnShipping data={categorizedOrders.onShipping} />}
-      </TabsContent>
-      <TabsContent value="arrived">
-        <Arravied />
-      </TabsContent>
-      <TabsContent value="cancled">
-        <Cancled />
-      </TabsContent>
-    </Tabs>
+    <>
+      <Tabs defaultValue="shipping" className="w-full min-h-[60dvh] mb-10">
+        <TabsList className="w-full">
+          <TabsTrigger className="w-full" value="shipping">
+            On Shipping{" "}
+            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
+              {categorizedOrders.onShipping.length}
+            </p>
+          </TabsTrigger>
+          <TabsTrigger className="w-full" value="arrived">
+            Arrived
+            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
+              {categorizedOrders.arrived.length}
+            </p>
+          </TabsTrigger>
+          <TabsTrigger className="w-full" value="cancled">
+            Cancled
+            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
+              {categorizedOrders.canceled.length}
+            </p>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="shipping" className="w-full h-full">
+          <OrderComponent data={categorizedOrders.onShipping} />
+        </TabsContent>
+        <TabsContent value="arrived" className="w-full h-full">
+          <OrderComponent data={categorizedOrders.arrived} />
+        </TabsContent>
+        <TabsContent value="cancled" className="w-full h-full">
+          <OrderComponent data={categorizedOrders.canceled} />
+        </TabsContent>
+      </Tabs>
+      <Card className=" bg-white w-full h-16 flex items-center justify-between">
+        <h1>Order history</h1>
+        <Button> View </Button>
+      </Card>
+    </>
   );
-};
-
-const Arravied = () => {
-  return <></>;
-};
-
-const Cancled = () => {
-  return <></>;
 };
 
 export default Orders;

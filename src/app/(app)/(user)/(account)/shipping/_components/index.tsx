@@ -145,7 +145,7 @@ const Shipping = () => {
   );
 
   return (
-    <section className="w-full h-full pb-10 min-h-[calc(100vh_-_170px)] flex items-center flex-col gap-2">
+    <section className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex items-center flex-col gap-2">
       <h1 className="text-2xl">Shipping address</h1>
       <Accordion type="single" collapsible className="space-y-1 w-full">
         {data &&

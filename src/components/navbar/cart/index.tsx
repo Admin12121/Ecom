@@ -36,6 +36,41 @@ import { useRouter } from "next/navigation";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 
+interface Variant {
+  id: number;
+  size: string;
+  price: string;
+  discount: number;
+  stock: number;
+  product: number;
+}
+
+interface Product {
+  id: number;
+  categoryname: string;
+  description: string;
+  images: { image: string };
+  product_name: string;
+  productslug: string;
+  variants: Variant[];
+}
+
+interface CartProduct {
+  user?: number;
+  product: number;
+  variant: number;
+  pcs?: number;
+}
+
+interface CartItemWithDetails extends CartProduct {
+  categoryname: string;
+  description: string;
+  images: { image: string };
+  product_name: string;
+  productslug: string;
+  variantDetails: Variant;
+}
+
 export default function Cart() {
   const router = useRouter();
   const { status } = useAuthUser();
@@ -58,33 +93,66 @@ export default function Cart() {
     setIsSheetOpen(open);
   };
 
+  // const getCartItemsWithDetails = useCallback(() => {
+  //   if (!data) return [];
+  //   return cartdata
+  //     .map((cartItem) => {
+  //       const product = data.results.find(
+  //         (p: {
+  //           id: number;
+  //           variants: any[];
+  //           categoryname: string;
+  //           description: string;
+  //           images: { image: string };
+  //           product_name: string;
+  //           productslug: string;
+  //         }) => p.id === cartItem.product
+  //       );
+  //       if (!product) return null;
+
+  //       let variantDetails;
+  //       if (Array.isArray(product.variants)) {
+  //         variantDetails = product.variants.find(
+  //           (v: { id: number }) => v.id === cartItem.variant
+  //         );
+  //       } else {
+  //         variantDetails = product.variants;
+  //       }
+
+  //       return {
+  //         ...cartItem,
+  //         categoryname: product.categoryname,
+  //         description: product.description,
+  //         images: product.images,
+  //         product_name: product.product_name,
+  //         productslug: product.productslug,
+  //         variantDetails: variantDetails || {},
+  //       };
+  //     })
+  //     .filter((item) => item !== null);
+  // }, [data, cartdata]);
+
   const getCartItemsWithDetails = useCallback(() => {
-    if (!data) return [];
-    return cartdata
-      .map((cartItem) => {
-        const product = data.results.find(
-          (p: {
-            id: number;
-            variants: any[];
-            categoryname: string;
-            description: string;
-            images: { image: string };
-            product_name: string;
-            productslug: string;
-          }) => p.id === cartItem.product
+    if (!data) return { availableItems: [], outOfStockItems: [] };
+
+    const availableItems: CartItemWithDetails[] = [];
+    const outOfStockItems: CartItemWithDetails[] = [];
+
+    cartdata.forEach((cartItem) => {
+      const product = data.results.find((p: any) => p.id === cartItem.product);
+      if (!product) return;
+
+      let variantDetails;
+      if (Array.isArray(product.variants)) {
+        variantDetails = product.variants.find(
+          (v: { id: number }) => v.id === cartItem.variant
         );
-        if (!product) return null;
+      } else {
+        variantDetails = product.variants;
+      }
 
-        let variantDetails;
-        if (Array.isArray(product.variants)) {
-          variantDetails = product.variants.find(
-            (v: { id: number }) => v.id === cartItem.variant
-          );
-        } else {
-          variantDetails = product.variants;
-        }
-
-        return {
+      if (variantDetails) {
+        const item: CartItemWithDetails = {
           ...cartItem,
           categoryname: product.categoryname,
           description: product.description,
@@ -93,8 +161,15 @@ export default function Cart() {
           productslug: product.productslug,
           variantDetails: variantDetails || {},
         };
-      })
-      .filter((item) => item !== null);
+        if (variantDetails.stock > 0) {
+          availableItems.push(item);
+        } else {
+          outOfStockItems.push(item);
+        }
+      }
+    });
+
+    return { availableItems, outOfStockItems };
   }, [data, cartdata]);
 
   const getTotalPrice = (items: any[]) => {
@@ -110,17 +185,22 @@ export default function Cart() {
       { totalPrice: 0 }
     );
   };
-
-  const [cartItemsWithDetails, setCartItemsWithDetails] = useState<any[]>([]);
+  const [outOfStockItems, setOutOfStockItems] = useState<CartItemWithDetails[]>(
+    []
+  );
+  const [cartItemsWithDetails, setCartItemsWithDetails] = useState<
+    CartItemWithDetails[]
+  >([]);
   const [convertedPrice, setConvertedPrice] = useState(0);
   const [symbol, setSymbol] = useState("");
 
   useEffect(() => {
-    const itemsWithDetails = getCartItemsWithDetails();
-    const { totalPrice } = getTotalPrice(itemsWithDetails);
+    const { availableItems, outOfStockItems } = getCartItemsWithDetails();
+    const { totalPrice } = getTotalPrice(availableItems);
     const { convertedPrice, symbol } = convertPrice(totalPrice);
 
-    setCartItemsWithDetails(itemsWithDetails);
+    setOutOfStockItems(outOfStockItems);
+    setCartItemsWithDetails(availableItems);
     setConvertedPrice(convertedPrice);
     setSymbol(symbol);
   }, [isSheetOpen, cartdata, data, convertPrice]);
@@ -207,6 +287,11 @@ export default function Cart() {
                   </span>
                 </CardBody>
               </Card>
+              {outOfStockItems.length > 0 && <VoucherSkleton loading={isLoading}>
+                {outOfStockItems.map((data, index) => (
+                  <CartItem data={data} key={index} outstock={true}/>
+                ))}
+              </VoucherSkleton>}
               <FeatureProduct title="You may also like" skip={isSheetOpen} />
             </div>
             <SheetFooter className="flex !flex-col gap-1 items-center absolute w-full bottom-0 py-2  z-50">
@@ -240,7 +325,7 @@ export default function Cart() {
   );
 }
 
-const CartItem = ({ data }: { data: any }) => {
+const CartItem = ({ data, outstock=false }: { data: any, outstock?:boolean }) => {
   const { convertPrice } = useAuth();
   const { HandleIncreaseItems, HandledecreaseItems, loading } = useCart();
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
@@ -257,7 +342,8 @@ const CartItem = ({ data }: { data: any }) => {
   );
 
   return (
-    <Card className="p-1 w-full rounded-md shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
+    <Card className="p-1 w-full rounded-md relative shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
+      {outstock && <div className="w-full absolute h-full top-0 left-0 bg-neutral-950/20 rounded-md z-50"></div>}
       <CardBody className="flex justify-between flex-row items-center h-full">
         <span className="flex gap-5 items-center h-full">
           <span className="h-full rounded-md w-[80px] dark:bg-zinc-700/50">
@@ -305,7 +391,7 @@ const CartItem = ({ data }: { data: any }) => {
                 )}
               </Button>
               {data.variantDetails.stock === 0 ? (
-                <Chip>out of stock</Chip>
+                <Chip variant="danger">out of stock</Chip>
               ) : (
                 <>
                   <p className="text-sm">{data.pcs}</p>

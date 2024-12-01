@@ -35,6 +35,8 @@ import { cn } from "@/lib/utils";
 import StockWarningMessage from "./stock-warning";
 import WishList from "@/components/global/wishlist-button";
 import { encryptData } from "@/lib/transition";
+import { parseDescription } from "@/lib/parse-decsription";
+import { renderUI } from "./description-automation";
 
 const EmailSchema = z.object({
   email: z.string().min(1, { message: "UID is required" }),
@@ -83,7 +85,6 @@ const Sidebar = ({ products }: { products: Product }) => {
   const { status } = useAuthUser();
   const { convertPrice } = useAuth();
   const { updateProductList } = useCart();
-  const [notifyuser] = useNotifyuserMutation();
 
   const [selectedSize, setSelectedSize] = useState<{
     id: number;
@@ -97,16 +98,6 @@ const Sidebar = ({ products }: { products: Product }) => {
     useState<boolean>(false);
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
-  const [notifyadded, setNotifyAdded] = useState<boolean>(false);
-
-  const { data, isLoading, refetch } = useGetnotifyuserQuery(
-    { product: products, variant: selectedVariant },
-    { skip: !products || !selectedVariant || selectedVariantOutOfStock }
-  );
-
-  useEffect(() => {
-    setNotifyAdded(data?.requested || false);
-  }, [data]);
 
   const handleDrawer = () => {};
 
@@ -195,29 +186,6 @@ const Sidebar = ({ products }: { products: Product }) => {
     router.push(`/collections?category=${products?.categoryname}`);
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm({
-    resolver: zodResolver(EmailSchema),
-  });
-
-  const emailValue = watch("email", "");
-
-  const onSubmit = async (data: any) => {
-    const actualData = {
-      ...data,
-      variant: selectedVariant,
-      product: products.id,
-    };
-    const res = await notifyuser(actualData);
-    if (res.error) {
-      toast.error("Something went wrong, try again later");
-    }
-  };
-
   const handleAddToCart = () =>
     updateProductList({
       product: products.id,
@@ -238,6 +206,22 @@ const Sidebar = ({ products }: { products: Product }) => {
       router.push(`/login`);
     }
   };
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+    });
+  };
+  const calculateEstimatedArrival = (): string => {
+    const today = new Date();
+    const weekAhead = new Date(today);
+    weekAhead.setDate(today.getDate() + 7);
+    const tenDaysAhead = new Date(today);
+    tenDaysAhead.setDate(today.getDate() + 10);
+    return `${formatDate(weekAhead)} - ${formatDate(tenDaysAhead)}`;
+  };
+  const arrivalDate = calculateEstimatedArrival();
+  const description = parseDescription(products.description);
   return (
     <>
       <aside className="sidebar  w-full sticky top-[65px] space-y-8 ">
@@ -251,7 +235,7 @@ const Sidebar = ({ products }: { products: Product }) => {
           <StockWarningMessage message="Few items left in stock!" />
         )}
 
-        <Card className=" w-full bg-transparent border-none border-0 shadow-none p-0 pt-3">
+        <Card className=" w-full !bg-transparent border-none border-0 shadow-none p-0 pt-3">
           <CardHeader className="flex flex-row gap-3 justify-between items-center px-4">
             <div className="flex gap-3 items-center">
               <div className="flex flex-col">
@@ -314,7 +298,7 @@ const Sidebar = ({ products }: { products: Product }) => {
             )}
             <span className="w-full flex gap-5 items-center">
               <span className="text-xs text-zinc-400 flex gap-2">
-                <FiBox size={16} /> Delivery on July 18th - 25th
+                <FiBox size={16} /> Delivery on {arrivalDate}
               </span>
             </span>
             <span className="w-full flex gap-3 items-center">
@@ -352,44 +336,16 @@ const Sidebar = ({ products }: { products: Product }) => {
                   </Button>
                 )}
               </span>
-            ) : isLoading ? (
-              <span className="flex w-full h-[185px] items-center justify-center">
-                <Spinner color="default" />
-              </span>
             ) : (
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className=" flex flex-col gap-2 py-5"
-              >
-                <span>
-                  <h1 className="text-xl font-medium text-neutral-600 dark:text-zinc-300">
-                    This item is out of stock!
-                  </h1>
-                  <p className="text-sm text-zinc-400">
-                    Enter your email and we&apos;ll notify you when it&apos;s
-                    back in stock
-                  </p>
-                </span>
-                <Input
-                  {...register("email")}
-                  type="email"
-                  placeholder="Enter your email"
-                  className="dark:bg-custom/40 border-0 bg-white outline-none focus:ring-0 focus:border-transparent"
-                  disabled={notifyadded}
-                />
-                <span className="flex gap-2">
-                  <Button
-                    color="default"
-                    variant="custom"
-                    className="w-full h-[40px] text-base"
-                    type="submit"
-                    disabled={notifyadded || !emailValue || !!errors.email}
-                  >
-                    Notify me when available
-                  </Button>
-                  <WishList productId={products.id} custom={false} />
-                </span>
-              </form>
+              <>
+                {selectedSize && (
+                  <NotifyForm
+                    product={products.id}
+                    stock={stock}
+                    selectedVariant={selectedSize.id}
+                  />
+                )}
+              </>
             )}
           </CardBody>
           <CardFooter className="gap-5 flex flex-col pb-0">
@@ -420,11 +376,108 @@ const Sidebar = ({ products }: { products: Product }) => {
                   />
                 </CardBody>
               </Card>
+              {description && renderUI(description)}
             </span>
           </CardFooter>
         </Card>
       </aside>
     </>
+  );
+};
+
+interface NotifyFormProps {
+  product: number;
+  selectedVariant: number;
+  stock: number;
+}
+
+const NotifyForm = ({ product, selectedVariant, stock }: NotifyFormProps) => {
+  const { accessToken } = useAuthUser();
+  const [notifyuser, { isLoading }] = useNotifyuserMutation();
+  const [notifyadded, setNotifyAdded] = useState<boolean>(false);
+  const { data: Notify, isLoading: loading } = useGetnotifyuserQuery(
+    { product: product, variant: selectedVariant, token: accessToken },
+    { skip: !product || !selectedVariant || stock !== 0 }
+  );
+  useEffect(() => {
+    setNotifyAdded(Notify?.requested || false);
+  }, [Notify]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
+    resolver: zodResolver(EmailSchema),
+  });
+
+  const emailValue = watch("email", "");
+
+  const onSubmit = async (data: any) => {
+    const actualData = {
+      ...data,
+      variant: selectedVariant,
+      product: product,
+    };
+    const res = await notifyuser({ actualData, token: accessToken });
+    if (res.data) {
+      toast.success("Added to waiting list");
+    }
+    if (res.error) {
+      toast.error("Something went wrong, try again later");
+    }
+  };
+
+  if (loading) {
+    return (
+      <span className="flex w-full h-[185px] items-center justify-center">
+        <Spinner color="default" />
+      </span>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className=" flex flex-col gap-2 py-5"
+    >
+      <span>
+        <h1 className="text-xl font-medium text-neutral-600 dark:text-zinc-300">
+          This item is out of stock!
+        </h1>
+        <p className="text-sm text-zinc-400">
+          Enter your email and we&apos;ll notify you when it&apos;s back in
+          stock
+        </p>
+      </span>
+      <Input
+        {...register("email")}
+        type="email"
+        placeholder={
+          notifyadded ? "You will be notify soon!!" : "Enter your email"
+        }
+        className={cn(
+          "dark:bg-custom/40 border-0 bg-white outline-none focus:ring-0 focus:border-transparent",
+          notifyadded && "border-ring ring-2 ring-orange-400/50 ring-offset-2"
+        )}
+        disabled={notifyadded}
+      />
+      <span className="flex gap-2">
+        <Button
+          color="default"
+          variant="custom"
+          className={cn(
+            "w-full h-[40px] text-base disabled:cursor-not-allowed"
+          )}
+          type="submit"
+          disabled={notifyadded || !emailValue || !!errors.email}
+        >
+          Notify me when available
+        </Button>
+        <WishList productId={product} custom={false} />
+      </span>
+    </form>
   );
 };
 

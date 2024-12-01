@@ -86,19 +86,24 @@ export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {user?.role == "Admin" && (
+          {user?.role == "Admin" ? (
             <DropdownMenuItem onClick={() => router.push("/dashboard")}>
               Dashboard
-              <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+              <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+              Profile
+              <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
           )}
+          <DropdownMenuItem onClick={() => router.push("/orders")}>
+            My orders
+            <DropdownMenuShortcut>⌘O</DropdownMenuShortcut>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/wishlist")}>
             Wishlist
             <DropdownMenuShortcut>⌘W</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/settings")}>
-            Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/help&feedback")}>
             Help & Feedback
