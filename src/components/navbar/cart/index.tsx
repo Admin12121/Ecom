@@ -287,11 +287,13 @@ export default function Cart() {
                   </span>
                 </CardBody>
               </Card>
-              {outOfStockItems.length > 0 && <VoucherSkleton loading={isLoading}>
-                {outOfStockItems.map((data, index) => (
-                  <CartItem data={data} key={index} outstock={true}/>
-                ))}
-              </VoucherSkleton>}
+              {outOfStockItems.length > 0 && (
+                <VoucherSkleton loading={isLoading}>
+                  {outOfStockItems.map((data, index) => (
+                    <CartItem data={data} key={index} outstock={true} />
+                  ))}
+                </VoucherSkleton>
+              )}
               <FeatureProduct title="You may also like" skip={isSheetOpen} />
             </div>
             <SheetFooter className="flex !flex-col gap-1 items-center absolute w-full bottom-0 py-2  z-50">
@@ -300,14 +302,16 @@ export default function Cart() {
                 className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"
               />
-              <Button
-                type="submit"
-                className="w-full !m-0"
-                variant="custom"
-                onClick={handleenc}
-              >
-                Checkout
-              </Button>
+              <SheetClose asChild>
+                <Button
+                  type="submit"
+                  className="w-full !m-0"
+                  variant="custom"
+                  onClick={handleenc}
+                >
+                  Checkout
+                </Button>
+              </SheetClose>
             </SheetFooter>
           </div>
         ) : (
@@ -325,7 +329,13 @@ export default function Cart() {
   );
 }
 
-const CartItem = ({ data, outstock=false }: { data: any, outstock?:boolean }) => {
+const CartItem = ({
+  data,
+  outstock = false,
+}: {
+  data: any;
+  outstock?: boolean;
+}) => {
   const { convertPrice } = useAuth();
   const { HandleIncreaseItems, HandledecreaseItems, loading } = useCart();
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
@@ -343,7 +353,9 @@ const CartItem = ({ data, outstock=false }: { data: any, outstock?:boolean }) =>
 
   return (
     <Card className="p-1 w-full rounded-md relative shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
-      {outstock && <div className="w-full absolute h-full top-0 left-0 bg-neutral-950/20 rounded-md z-50"></div>}
+      {outstock && (
+        <div className="w-full absolute h-full top-0 left-0 bg-neutral-950/20 rounded-md z-50"></div>
+      )}
       <CardBody className="flex justify-between flex-row items-center h-full">
         <span className="flex gap-5 items-center h-full">
           <span className="h-full rounded-md w-[80px] dark:bg-zinc-700/50">

@@ -338,7 +338,9 @@ export const userAuthapi = createApi({
           url: "api/products/reviews/post/",
           method: "POST",
           body: actualData,
-          headers: createHeaders(token),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         };
       },
     }),

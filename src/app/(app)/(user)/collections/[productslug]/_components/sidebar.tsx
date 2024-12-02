@@ -37,6 +37,7 @@ import WishList from "@/components/global/wishlist-button";
 import { encryptData } from "@/lib/transition";
 import { parseDescription } from "@/lib/parse-decsription";
 import { renderUI } from "./description-automation";
+import WriteReview from "./write-review";
 
 const EmailSchema = z.object({
   email: z.string().min(1, { message: "UID is required" }),
@@ -354,12 +355,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                 <CardHeader className="flex gap-3 p-3">
                   <div className="w-full flex justify-between items-center px-1">
                     <p className="text-md">Reviews({products.total_ratings})</p>
-                    <span
-                      onClick={() => handleDrawer()}
-                      className="cursor-pointer hover:text-zinc-600 transition text-small text-default-500"
-                    >
-                      Write a Review
-                    </span>
+                    <WriteReview link={true} product={products}/>
                   </div>
                 </CardHeader>
                 <CardBody className="gap-3 p-3 flex flex-col">
@@ -373,6 +369,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                   <ReviewSheet
                     rating={products.rating}
                     slug={products.productslug}
+                    product={products}
                   />
                 </CardBody>
               </Card>

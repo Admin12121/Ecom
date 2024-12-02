@@ -1,14 +1,11 @@
 "use client";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import React, { useState, useEffect } from "react";
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -19,13 +16,23 @@ import { Reviews, ReviewsImage } from "@/types/product";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
+import WriteReview from "./write-review";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ReviewSheetProps {
   slug: string;
   rating: number;
+  product: any;
 }
 
-export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
+export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [star, setStar] = useState("0");
@@ -61,15 +68,15 @@ export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
           Show all
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-0 w-[97dvw] mr-[1.5dvw] md:min-w-[500px] h-[98dvh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 p-3">
-        <SheetHeader className="px-6 py-4">
+      <SheetContent className="border-0 w-[97dvw] mr-[1.5dvw] md:min-w-[500px] h-[98dvh] top-[1vh] rounded-lg bg-neutral-200 dark:bg-neutral-950 md:mr-2 py-3 px-0">
+        <SheetHeader className="px-2 py-4">
           <SheetTitle className="text-sm font-medium">
             Reviews ({data?.count})
           </SheetTitle>
         </SheetHeader>
-        <main className="px-2 space-y-2">
+        <main className="space-y-2">
           <span className="flex gap-2 px-2">
-            <Card className="w-full p-3 px-3 rounded-lg flex flex-row justify-between items-center bg-neutral-100 dark:bg-[#27272a]">
+            <Card className="w-full p-3 rounded-lg flex flex-row justify-between items-center bg-neutral-100 dark:bg-[#1b1b1c]">
               <p className="text-sm">Overall Rating</p>
               <p className=" text-sm flex gap-1 items-center justify-center">
                 {rating} <Star stroke="transparent" fill="orange" />
@@ -77,11 +84,47 @@ export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
             </Card>
           </span>
           <div className="max-h-[580px] overflow-y-auto px-2">
+            <span className="flex w-full gap-2 my-3">
+              <Select
+                defaultValue="all"
+                // onValueChange={(value: string) => setValue("score", value)}
+              >
+                <SelectTrigger className="dark:bg-[#171717]">
+                  <SelectValue placeholder="Select a Rating" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">Read all</SelectItem>
+                    {["1", "2", "3", "4", "5"].map((num, index) => (
+                      <SelectItem key={index + 1} value={num}>
+                        {"★".repeat(Number(num))}
+                        {"★".repeat(5 - Number(num)).replace(/./g, "")}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Select
+                defaultValue="relevent"
+                // onValueChange={(value: string) => setValue("score", value)}
+              >
+                <SelectTrigger className="dark:bg-[#171717]">
+                  <SelectValue placeholder="Select a Rating" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                  <SelectItem value="relevent">Most relevent</SelectItem>
+                  <SelectItem value="recent">Most recent</SelectItem>
+                  <SelectItem value="rating">By Rating</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </span>
             <ReviewsCard isLoading={isLoading}>
               {reviewData &&
                 reviewData.map((review: Reviews) => (
                   <Card
-                    className="flex flex-col p-2 dark:bg-zinc-800"
+                    className="flex flex-col p-2 dark:bg-neutral-900"
                     key={Math.random()}
                   >
                     <CardHeader className="flex flex-row items-center justify-between pb-1">
@@ -99,7 +142,7 @@ export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
                       </span>
                     </CardHeader>
                     {review?.review_images[0]?.image && (
-                      <span className="relative p-2 pt-0">
+                      <span className="relative pt-0">
                         <Image
                           src={review.review_images[0].image}
                           width={100}
@@ -111,7 +154,7 @@ export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
                         />
                       </span>
                     )}
-                    <span className="flex flex-col p-2">
+                    <span className="flex flex-col">
                       <h1 className="font-semibold">{review.title}</h1>
                       <p className="text-sm">{review.content}</p>
                     </span>
@@ -134,11 +177,9 @@ export function ReviewSheet({ slug, rating }: ReviewSheetProps) {
             </ReviewsCard>
           </div>
         </main>
-        <SheetFooter className="p-2">
+        <SheetFooter className="p-2 relative bottom-0">
           <SheetClose asChild>
-            <Button className="bg-foreground w-full text-background" size="sm">
-              Write a Review
-            </Button>
+            <WriteReview product={product} />
           </SheetClose>
         </SheetFooter>
       </SheetContent>
