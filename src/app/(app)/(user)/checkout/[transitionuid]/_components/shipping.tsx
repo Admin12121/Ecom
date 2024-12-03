@@ -33,8 +33,9 @@ const AddressSchema = z.object({
 
 type AddressFormValues = z.infer<typeof AddressSchema>;
 
-const Shipping = ({ accessToken }: { accessToken?: string }) => {
+const Shipping = ({ accessToken, refetch }: { accessToken?: string, refetch:any }) => {
   const [addShipping, { isLoading }] = useShippingMutation();
+
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(AddressSchema),
     mode: "onChange",
@@ -58,6 +59,7 @@ const Shipping = ({ accessToken }: { accessToken?: string }) => {
         },
       });
       form.reset();
+      refetch()
     } else {
       console.log(res.error);
     }
@@ -65,7 +67,7 @@ const Shipping = ({ accessToken }: { accessToken?: string }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Add Shipping address</Button>
+        <Button className="w-full relative z-50">Add Shipping address</Button>
       </DialogTrigger>
       <DialogContent className="w-[95dvw] rounded-md md:max-w-[425px]">
         <DialogHeader>

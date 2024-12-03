@@ -124,25 +124,25 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
               {reviewData &&
                 reviewData.map((review: Reviews) => (
                   <Card
-                    className="flex flex-col p-2 bg-white dark:bg-neutral-900"
+                    className="flex flex-col p-1 bg-white dark:bg-neutral-900"
                     key={Math.random()}
                   >
-                    <CardHeader className="flex flex-row items-center justify-between pb-1">
+                    <CardHeader className="flex flex-row items-center justify-between px-1">
                       <span>
                         {" "}
                         {[...Array(review.rating)].map((_, index) => (
                           <span key={index}>★</span>
                         ))}{" "}
                       </span>{" "}
-                      <span>
+                      <p className="text-xs">
                         {new Date(review.created_at).toLocaleDateString(
                           "en-US",
                           { month: "short", year: "numeric", day: "numeric" }
                         )}
-                      </span>
+                      </p>
                     </CardHeader>
                     {review?.review_images[0]?.image && (
-                      <span className="relative pt-0">
+                      <span className="flex px-1">
                         <Image
                           src={review.review_images[0].image}
                           width={100}
@@ -150,13 +150,13 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
                           layout="responsive"
                           objectFit="cover"
                           alt={review.title}
-                          className="w-full h-full object-contain rounded-lg"
+                          className="w-full h-full object-contain rounded-lg bg-neutral-800"
                         />
                       </span>
                     )}
-                    <span className="flex flex-col">
-                      <h1 className="font-semibold">{review.title}</h1>
-                      <p className="text-sm">{review.content}</p>
+                    <span className="flex flex-col p-2">
+                    <h1 className="text-sm font-normal">{review.title}</h1>
+                    <p className="text-xs font-light">{review.content}</p>
                     </span>
                   </Card>
                 ))}

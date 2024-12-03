@@ -364,6 +364,14 @@ export const userAuthapi = createApi({
         headers: createHeaders(),
       }),
     }),
+    getUserReview: builder.query({
+      query: ({token}) => ({
+        url: `api/products/reviews/user/`,
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
+
     postSale: builder.mutation({
       query: ({ actualData, token }) => ({
         url: `api/sales/sales/`,
@@ -399,6 +407,13 @@ export const userAuthapi = createApi({
         url: `api/accounts/shipping/${actualData.id}/`,
         method: "PATCH",
         body: actualData,
+        headers: createHeaders(token),
+      }),
+    }),
+    deleteshipping: builder.mutation({
+      query: ({ id, token }) => ({
+        url: `api/accounts/shipping/${id}/`,
+        method: "DELETE",
         headers: createHeaders(token),
       }),
     }),
@@ -451,10 +466,12 @@ export const {
   usePostReviewMutation,
   useUpdateReviewMutation,
   useGetReviewQuery,
+  useGetUserReviewQuery,
   usePostSaleMutation,
   useGetshippingQuery,
   useGetdefaultshippingQuery,
   useShippingMutation,
   useUpdateshippingMutation,
+  useDeleteshippingMutation,
   useGetOrdersQuery,
 } = userAuthapi;

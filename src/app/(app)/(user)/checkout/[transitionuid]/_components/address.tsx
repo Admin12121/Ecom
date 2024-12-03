@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -23,8 +23,16 @@ interface AddressItem {
   user: number;
 }
 
-const Address = ({ accessToken, shipping, dispatch }: { accessToken?: string, shipping:string, dispatch:any }) => {
-  const { data: Address, isLoading } = useGetshippingQuery(
+const Address = ({
+  accessToken,
+  shipping,
+  dispatch,
+}: {
+  accessToken?: string;
+  shipping: string;
+  dispatch: any;
+}) => {
+  const { data: Address, isLoading, refetch } = useGetshippingQuery(
     { token: accessToken },
     { skip: !accessToken }
   );
@@ -35,13 +43,28 @@ const Address = ({ accessToken, shipping, dispatch }: { accessToken?: string, sh
         (addr: AddressItem) => addr.default
       );
       if (defaultAddress) {
-        dispatch({type: "SET_SHIPPING", payload: defaultAddress.id.toString()})
+        dispatch({
+          type: "SET_SHIPPING",
+          payload: defaultAddress.id.toString(),
+        });
       } else if (Address.results.length > 0) {
         const randomIndex = Math.floor(Math.random() * Address.results.length);
-        dispatch({type: "SET_SHIPPING", payload: Address.results[randomIndex].id.toString()})
+        dispatch({
+          type: "SET_SHIPPING",
+          payload: Address.results[randomIndex].id.toString(),
+        });
       }
     }
   }, [Address]);
+
+  if (!shipping) {
+    return (
+      <div className="text-left hover:no-underline pl-2 py-3 lg:min-w-[450px] space-y-2 rounded-lg shadow-none bg-white dark:bg-neutral-900 px-2 transition-all ">
+        <h1 className="flex gap-1 items-center font-normal"> <MapPin className="w-4 h-4"/> Add Shipping Address</h1>
+        <Shipping refetch={refetch} accessToken={accessToken} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -95,7 +118,9 @@ const Address = ({ accessToken, shipping, dispatch }: { accessToken?: string, sh
               <RadioGroup
                 className="gap-0 -space-y-px rounded-lg shadow-sm shadow-black/5"
                 value={shipping}
-                onValueChange={(value) => dispatch({ type: "SET_SHIPPING", payload: value })}
+                onValueChange={(value) =>
+                  dispatch({ type: "SET_SHIPPING", payload: value })
+                }
               >
                 {Address?.results &&
                   Address.results.length > 0 &&
@@ -133,7 +158,7 @@ const Address = ({ accessToken, shipping, dispatch }: { accessToken?: string, sh
                     </div>
                   ))}
                 <div className="relative flex flex-col gap-4 border border-input p-4 first:rounded-t-lg last:rounded-b-lg has-[[data-state=checked]]:z-10 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
-                  <Shipping accessToken={accessToken} />
+                  <Shipping refetch={refetch} accessToken={accessToken} />
                 </div>
               </RadioGroup>
             </fieldset>

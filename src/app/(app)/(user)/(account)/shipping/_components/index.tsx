@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPinned } from "lucide-react";
+import { MapPinned, Trash } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuthUser } from "@/hooks/use-auth-user";
@@ -26,11 +26,11 @@ import { Separator } from "@/components/ui/separator";
 import {
   useShippingMutation,
   useGetshippingQuery,
-  useUpdateshippingMutation
+  useUpdateshippingMutation,
+  useDeleteshippingMutation,
 } from "@/lib/store/Service/api";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-
 
 const AddressSchema = z.object({
   address: z.string().min(2, { message: "address must not be empty" }),
@@ -67,8 +67,10 @@ const Shipping = () => {
     { token: accessToken },
     { skip: !accessToken }
   );
-  const [addShipping, {isLoading}] = useShippingMutation();
-  const [updateShipping, {isLoading : Updataing}] = useUpdateshippingMutation();
+  const [addShipping, { isLoading }] = useShippingMutation();
+  const [ removeShipping ] = useDeleteshippingMutation();
+  const [updateShipping, { isLoading: Updataing }] = useUpdateshippingMutation();
+
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(AddressSchema),
     mode: "onChange",
@@ -144,6 +146,19 @@ const Shipping = () => {
     []
   );
 
+  const onDelete = useCallback(
+    async (id: number) => {
+      const res = await removeShipping({ id, token: accessToken });
+      if (res.data) {
+        refetch();
+        toast.success("Shipping Address Removed");
+      } else {
+        toast.error("Something went wrong!");
+      }
+    },
+    []
+  );
+
   return (
     <section className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex items-center flex-col gap-2">
       <h1 className="text-2xl">Shipping address</h1>
@@ -155,7 +170,7 @@ const Shipping = () => {
               value={`address-${addressData.id}`}
               className="rounded-lg shadow-none bg-white dark:bg-neutral-900 px-2 transition-all "
             >
-              <AccordionTrigger className="text-left hover:no-underline pl-2 py-3 w-full md:min-w-[450px]">
+              <AccordionTrigger className="relative text-left hover:no-underline pl-2 py-3 w-full md:min-w-[450px]">
                 <span className="flex flex-col">
                   <h1 className="flex items-center gap-3">
                     {addressData.default
@@ -167,6 +182,9 @@ const Shipping = () => {
                     {addressData.zipcode}, {addressData.city},{" "}
                     {addressData.country}
                   </p>
+                </span>
+                <span onClick={()=>{onDelete(addressData.id)}} className="absolute right-9 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md cursor-pointer">
+                  <Trash className="w-4 h-4" />
                 </span>
               </AccordionTrigger>
               <AccordionContent className="flex w-full ">

@@ -206,7 +206,7 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
             <span className="p-2 border-1 rounded-xl">
               <p className="text-sm flex items-center gap-1">
                 <MapPin className="w-4 h-4" />
-                {order.shipping.city}, {order.shipping.country}
+                {order?.shipping?.city}, {order?.shipping?.country}
               </p>
             </span>
           </div>
