@@ -128,7 +128,7 @@ const WriteReview = ({ product, link }: any) => {
             Write a Review
           </SheetTitle>
           <main className="flex flex-col gap-5">
-            <span className=" flex flex-row gap-2 mt-2 dark:bg-neutral-900 p-1 rounded-lg">
+            <span className=" flex flex-row gap-2 mt-2 bg-white dark:bg-neutral-900 p-1 rounded-lg">
               <Image
                 src={product.images[0].image}
                 alt="product"

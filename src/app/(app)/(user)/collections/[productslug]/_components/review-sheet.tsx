@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useGetReviewQuery } from "@/lib/store/Service/api";
-import { Reviews, ReviewsImage } from "@/types/product";
+import { Reviews } from "@/types/product";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
@@ -83,18 +83,18 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
               </p>
             </Card>
           </span>
-          <div className="max-h-[580px] overflow-y-auto px-2">
+          <div className="h-[76dvh] overflow-y-auto px-2">
             <span className="flex w-full gap-2 my-3">
               <Select
-                defaultValue="all"
-                // onValueChange={(value: string) => setValue("score", value)}
+                defaultValue="0"
+                onValueChange={(value: string) => setStar(value)}
               >
                 <SelectTrigger className="dark:bg-[#171717]">
                   <SelectValue placeholder="Select a Rating" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="all">Read all</SelectItem>
+                    <SelectItem value="0">Read all</SelectItem>
                     {["1", "2", "3", "4", "5"].map((num, index) => (
                       <SelectItem key={index + 1} value={num}>
                         {"★".repeat(Number(num))}
@@ -106,7 +106,7 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
               </Select>
               <Select
                 defaultValue="relevent"
-                // onValueChange={(value: string) => setValue("score", value)}
+                onValueChange={(value: string) => setFilter(value)}
               >
                 <SelectTrigger className="dark:bg-[#171717]">
                   <SelectValue placeholder="Select a Rating" />
@@ -124,7 +124,7 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
               {reviewData &&
                 reviewData.map((review: Reviews) => (
                   <Card
-                    className="flex flex-col p-2 dark:bg-neutral-900"
+                    className="flex flex-col p-2 bg-white dark:bg-neutral-900"
                     key={Math.random()}
                   >
                     <CardHeader className="flex flex-row items-center justify-between pb-1">

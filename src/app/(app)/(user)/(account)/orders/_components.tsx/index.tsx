@@ -4,8 +4,6 @@ import { useGetOrdersQuery } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrderComponent } from "./order-component";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 interface CartItem {
   id: number;
@@ -104,12 +102,19 @@ const MyOrders = ({ data }: { data: any }) => {
 
     return categorized;
   }
+
   const categorizedOrders = categorizeOrders(data.results);
 
   return (
     <>
-      <Tabs defaultValue="shipping" className="w-full min-h-[60dvh] mb-10">
-        <TabsList className="w-full">
+      <Tabs defaultValue="all" className="w-full min-h-[60dvh] mb-10">
+        <TabsList className="w-full overflow-hidden overflow-x-auto justify-start md:justify-center">
+          <TabsTrigger className="w-full" value="all">
+            All
+            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
+              {data.results.length}
+            </p>
+          </TabsTrigger>
           <TabsTrigger className="w-full" value="shipping">
             On Shipping{" "}
             <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
@@ -122,6 +127,12 @@ const MyOrders = ({ data }: { data: any }) => {
               {categorizedOrders.arrived.length}
             </p>
           </TabsTrigger>
+          <TabsTrigger className="w-full" value="delivered">
+            Delivered
+            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
+              {categorizedOrders.delivered.length}
+            </p>
+          </TabsTrigger>
           <TabsTrigger className="w-full" value="cancled">
             Cancled
             <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
@@ -129,20 +140,22 @@ const MyOrders = ({ data }: { data: any }) => {
             </p>
           </TabsTrigger>
         </TabsList>
+        <TabsContent value="all" className="w-full h-full">
+          <OrderComponent data={data?.results} />
+        </TabsContent>
         <TabsContent value="shipping" className="w-full h-full">
           <OrderComponent data={categorizedOrders.onShipping} />
         </TabsContent>
         <TabsContent value="arrived" className="w-full h-full">
           <OrderComponent data={categorizedOrders.arrived} />
         </TabsContent>
+        <TabsContent value="delivered" className="w-full h-full">
+          <OrderComponent data={categorizedOrders.delivered} />
+        </TabsContent>
         <TabsContent value="cancled" className="w-full h-full">
           <OrderComponent data={categorizedOrders.canceled} />
         </TabsContent>
       </Tabs>
-      <Card className=" bg-white w-full h-16 flex items-center justify-between">
-        <h1>Order history</h1>
-        <Button> View </Button>
-      </Card>
     </>
   );
 };

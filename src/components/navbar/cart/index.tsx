@@ -93,45 +93,6 @@ export default function Cart() {
     setIsSheetOpen(open);
   };
 
-  // const getCartItemsWithDetails = useCallback(() => {
-  //   if (!data) return [];
-  //   return cartdata
-  //     .map((cartItem) => {
-  //       const product = data.results.find(
-  //         (p: {
-  //           id: number;
-  //           variants: any[];
-  //           categoryname: string;
-  //           description: string;
-  //           images: { image: string };
-  //           product_name: string;
-  //           productslug: string;
-  //         }) => p.id === cartItem.product
-  //       );
-  //       if (!product) return null;
-
-  //       let variantDetails;
-  //       if (Array.isArray(product.variants)) {
-  //         variantDetails = product.variants.find(
-  //           (v: { id: number }) => v.id === cartItem.variant
-  //         );
-  //       } else {
-  //         variantDetails = product.variants;
-  //       }
-
-  //       return {
-  //         ...cartItem,
-  //         categoryname: product.categoryname,
-  //         description: product.description,
-  //         images: product.images,
-  //         product_name: product.product_name,
-  //         productslug: product.productslug,
-  //         variantDetails: variantDetails || {},
-  //       };
-  //     })
-  //     .filter((item) => item !== null);
-  // }, [data, cartdata]);
-
   const getCartItemsWithDetails = useCallback(() => {
     if (!data) return { availableItems: [], outOfStockItems: [] };
 
