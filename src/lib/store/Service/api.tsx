@@ -105,6 +105,18 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    productsUpdate: builder.mutation({
+      query: ({ formData, token, id }) => {
+        return {
+          url: `api/products/products/${id}/`,
+          method: "PATCH",
+          body: formData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+      },
+    }),
     productsView: builder.query({
       query: ({ productslug, id, search, ids, category }) => {
         const queryParams = buildQueryParams({
@@ -371,7 +383,6 @@ export const userAuthapi = createApi({
         headers: createHeaders(token),
       }),
     }),
-
     postSale: builder.mutation({
       query: ({ actualData, token }) => ({
         url: `api/sales/sales/`,
@@ -436,6 +447,7 @@ export const {
   useChangeUserPasswordMutation,
   useRefreshTokenMutation,
   useProductsRegistrationMutation,
+  useProductsUpdateMutation,
   useProductsViewQuery,
   useProductsByIdsQuery,
   useRecommendedProductsViewQuery,

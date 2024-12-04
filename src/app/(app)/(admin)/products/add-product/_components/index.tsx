@@ -394,7 +394,7 @@ const AddProduct = () => {
         Save Product
       </Button>
       <span className="flex w-full gap-5 max-lg:flex-col ">
-        <Card className="w-[70%] max-lg:w-full p-3 flex flex-col gap-3">
+        <Card className="bg-default-100 w-[70%] max-lg:w-full p-3 flex flex-col gap-3">
           <CardHeader>
             <h1>General information</h1>
           </CardHeader>
@@ -402,7 +402,7 @@ const AddProduct = () => {
             <GlobalInput
               label="Product Name"
               placeholder="buddha statue"
-              className="dark:bg-neutral-900"
+              className="bg-white dark:bg-neutral-900"
               error={errors.productName?.message}
               type="text"
               {...register("productName", {
@@ -412,7 +412,7 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="description">Product Description</Label>
               <Textarea
-                className="dark:bg-neutral-900 min-h-[200px] max-h-[200px]"
+                className="bg-white dark:bg-neutral-900 min-h-[200px] max-h-[200px]"
                 {...register("description", {
                   onBlur: () => handleBlur("description"),
                 })}
@@ -444,7 +444,7 @@ const AddProduct = () => {
             </span>
           </CardContent>
         </Card>
-        <Card className="w-[30%] min-w-[380px] max-lg:w-full flex flex-col gap-3">
+        <Card className="bg-default-100 w-[30%] min-w-[380px] max-lg:w-full flex flex-col gap-3">
           <CardHeader>
             <span className="flex w-full justify-between px-1">
               <h1>Images</h1>
@@ -470,7 +470,7 @@ const AddProduct = () => {
             <div className="flex w-full gap-5 flex-col h-full custom-md:flex-row">
               <Button
                 variant="secondary"
-                className={`w-full h-80 flex justify-center items-center bg-default-100 p-0 custom-md:w-[50%] dark:bg-neutral-900 hover:!bg-neutral-800 ${
+                className={`bg-white w-full h-80 flex justify-center items-center p-0 custom-md:w-[50%] dark:bg-neutral-900 hover:dark:!bg-neutral-800 ${
                   isDragging && draggingIndex === 0 ? "dragging" : ""
                 }`}
                 onDrop={(e: any) => handleDrop(e, 0)}
@@ -497,7 +497,7 @@ const AddProduct = () => {
                   <Button
                     variant="secondary"
                     key={index}
-                    className={`w-20 h-20 items-center justify-center bg-default-100 custom-md:w-[48%] custom-md:h-[48%] p-0 dark:bg-neutral-900 hover:!bg-zinc-800 ${
+                    className={`bg-white w-20 h-20 items-center justify-center custom-md:w-[48%] custom-md:h-[48%] p-0 dark:bg-neutral-900 hover:dark:!bg-zinc-800 ${
                       isDragging && draggingIndex === index ? "dragging" : ""
                     }`}
                     onDrop={(e: any) => handleDrop(e, index)}
@@ -535,7 +535,7 @@ const AddProduct = () => {
         </Card>
       </span>
       <span className="flex w-full gap-5 max-lg:flex-col pb-5">
-        <Card className="w-[70%] max-lg:w-full flex flex-col gap-3">
+        <Card className="bg-default-100 w-[70%] max-lg:w-full flex flex-col gap-3">
           <CardHeader>
             <h1>Pricing And Stock</h1>
           </CardHeader>
@@ -545,7 +545,7 @@ const AddProduct = () => {
                 <GlobalInput
                   label="Price"
                   placeholder="रु 12"
-                  className="dark:bg-neutral-900 w-full "
+                  className="bg-white dark:bg-neutral-900 w-full "
                   base="w-full"
                   error={errors.basePrice?.message}
                   type="text"
@@ -557,7 +557,7 @@ const AddProduct = () => {
                 <GlobalInput
                   label="Stock"
                   placeholder="stock"
-                  className="dark:bg-neutral-900 w-full "
+                  className="bg-white dark:bg-neutral-900 w-full "
                   base="w-full"
                   error={errors.stock?.message}
                   type="text"
@@ -569,7 +569,7 @@ const AddProduct = () => {
                 <GlobalInput
                   label="Discount"
                   placeholder="discount"
-                  className="dark:bg-neutral-900 w-full "
+                  className="bg-white dark:bg-neutral-900 w-full "
                   base="w-full"
                   error={errors.discount?.message}
                   type="text"
@@ -588,7 +588,7 @@ const AddProduct = () => {
                     <GlobalInput
                       label="Size"
                       placeholder="Size"
-                      className="dark:bg-neutral-900 w-full"
+                      className="bg-white dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.size?.message}
                       {...register(`variants.${index}.size`, {
                         onBlur: () => handleBlur(`variants[${index}].size`),
@@ -597,7 +597,7 @@ const AddProduct = () => {
                     <GlobalInput
                       label="Price"
                       placeholder="Price"
-                      className="dark:bg-neutral-900 w-full"
+                      className="bg-white dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.price?.message}
                       {...register(`variants.${index}.price`, {
                         valueAsNumber: true,
@@ -607,7 +607,7 @@ const AddProduct = () => {
                     <GlobalInput
                       label="Stock"
                       placeholder="Stock"
-                      className="dark:bg-neutral-900 w-full"
+                      className="bg-white dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.stock?.message}
                       {...register(`variants.${index}.stock`, {
                         valueAsNumber: true,
@@ -617,7 +617,7 @@ const AddProduct = () => {
                     <GlobalInput
                       label="Discount"
                       placeholder="Discount"
-                      className="dark:bg-neutral-900 w-full"
+                      className="bg-white dark:bg-neutral-900 w-full"
                       error={errors.variants?.[index]?.discount?.message}
                       {...register(`variants.${index}.discount`, {
                         valueAsNumber: true,
@@ -652,7 +652,7 @@ const AddProduct = () => {
             )}
           </CardContent>
         </Card>
-        <Card className="w-[30%] min-w-[380px] max-lg:w-full flex flex-col gap-3">
+        <Card className="bg-default-100 w-[30%] min-w-[380px] max-lg:w-full flex flex-col gap-3">
           <CardContent className="flex flex-col gap-3">
             <span className="flex w-full gap-3 justify-center flex-col">
               <span className="flex w-full gap-3 items-end justify-center">

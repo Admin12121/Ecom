@@ -146,6 +146,7 @@ export default function Cart() {
       { totalPrice: 0 }
     );
   };
+
   const [outOfStockItems, setOutOfStockItems] = useState<CartItemWithDetails[]>(
     []
   );
@@ -168,7 +169,12 @@ export default function Cart() {
 
   const handleenc = () => {
     if (status) {
-      encryptData(cartdata, router);
+      const availableCartItems = cartItemsWithDetails.map((item) => ({
+        product: item.product,
+        variant: item.variantDetails.id,
+        pcs: item.pcs,
+      }));
+      encryptData(availableCartItems, router);
     } else {
       router.push(`/login`);
     }

@@ -786,7 +786,6 @@ const SidebarHeader = ({ logo, label, children, menuItems }: HeaderProps) => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  asChild
                   variant="ghost"
                   className={cn(
                     "flex items-start justify-start h-[50px] p-0 px-1",
@@ -1114,7 +1113,7 @@ const CommandMenu = ({ children }: { children?: React.ReactNode }) => {
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search"
-                  className="pl-8 border-0 focus:outline-none focus-visible:ring-0"
+                  className="bg-white dark:bg-neutral-900 pl-8 border-0 focus:outline-none focus-visible:ring-0"
                 />
                 <Kbd
                   keys={["command"]}

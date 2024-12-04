@@ -25,7 +25,7 @@ const Providers = ({ children }: ProvidersProps) => {
       <main className="h-svh p-2 w-full">
         <div
           className={cn(
-            "relative flex h-full flex-1 flex-col dark:bg-[#18181b]",
+            "relative flex h-full flex-1 flex-col bg-white dark:bg-[#18181b]",
             " md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
             "rounded-xl overflow-y-auto"
           )}

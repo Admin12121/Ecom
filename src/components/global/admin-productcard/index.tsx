@@ -85,7 +85,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
             data.images.map((data: InterfaceImage, index: number) => (
               <SwiperSlide key={index}>
                 <div className="h-full w-full left-0 top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
-                  <Link href={`/collections/${productslug}`}>
+                  <Link href={`/products/${productslug}`}>
                     <Image
                       src={data.image}
                       width={600}

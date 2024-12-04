@@ -1,5 +1,5 @@
 "use client";
-import dynamic from "next/dynamic";
+
 import React, { useState, useEffect } from "react";
 import {
   useProductsViewQuery,
@@ -7,11 +7,6 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
 import { ProductCard, ProductSkeleton } from "@/components/global/admin-productcard";
-
-const FeatureProduct = dynamic(
-  () => import("@/components/global/feature-product"),
-  { ssr: false }
-);
 
 const ProductPage = () => {
   const searchParams = useSearchParams();
@@ -21,16 +16,15 @@ const ProductPage = () => {
     category,
     search,
   });
-  const [products, SetProducts] = useState<Product[] | null>([]);
-  const [filters, setFilters] = useState<boolean>(false);
 
+  const [products, SetProducts] = useState<Product[] | null>([]);
   useEffect(() => {
     SetProducts(data?.results);
   }, [data]);
 
   return (
     <>
-      <section className="flex flex-col gap-5 pt-5">
+      <section className="flex flex-col gap-5 pb-5">
         {search && (
           <span className="">
             <p className="text-neutral-600 dark:text-themeTextGray ">
@@ -71,13 +65,6 @@ const ProductPage = () => {
             </ProductSkeleton>
           </div>
         </div>
-        {filters && (
-          <div className="w-[500px] p-[10px] max-md:w-full max-md:top-[120px] max-md:z-50">
-            <span className="flex w-full rounded-md sticky top-[130px] h-[82dvh] max-md:bg-neutral-950 ">
-              {/* <Sidebar/> */}
-            </span>
-          </div>
-        )}
       </section>
     </>
   );

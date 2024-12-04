@@ -115,22 +115,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       >
         <span
           className={cn(
-            `absolute z-10 px-3 top-3 flex justify-between items-center h-5 w-full`
+            `absolute z-10 pl-1 top-2 flex items-center gap-1 h-5 w-full font-normal`
           )}
         >
           {stocks === 0 ? (
-            <span className="absolute -top-1 left-1 w-[80px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
+            <span className="absolute left-1 w-[80px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
               Out of stock
             </span>
           ) : (
             <>
               {data?.rating > 0 && (
                 <span className="w-[50px] -top-1 left-1 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
-                  {data?.rating ? data?.rating : 0.0} <FaStar size={10} />
+                  {data?.rating ? data?.rating : 0.0} <FaStar className="stroke-5 w-3 h-3" />
                 </span>
               )}
               {discount > 0 && (
-                <span className="absolute -top-1 left-1 w-[60px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1 font-semibold">
+                <span className="w-[60px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
                   {discount}% Off
                 </span>
               )}
