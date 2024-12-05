@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuthUser } from "@/hooks/use-auth-user";
+import { delay } from "@/lib/utils";
 
 const reviewSchema = z.object({
   score: z.string().nonempty("Score is required"),
@@ -74,6 +75,10 @@ const WriteReview = ({ product, link }: any) => {
   const deliveryValue = watch("delivery");
 
   const onSubmit = async (data: any) => {
+    const toastId = toast.loading("Posting Review...", {
+      position: "top-center",
+    });
+    await delay(500);
     const actualData = new FormData();
     actualData.append("rating", data.score);
     actualData.append("title", data.title);
@@ -87,9 +92,15 @@ const WriteReview = ({ product, link }: any) => {
     }
     const response = await postReview({ actualData, token: accessToken });
     if (response.data) {
-      toast.success("Review Posted Successfully");
+      toast.success("Review Posted Successfully", {
+        id: toastId,
+        position: "top-center",
+      });
     } else {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong", {
+        id: toastId,
+        position: "top-center",
+      });
     }
   };
 

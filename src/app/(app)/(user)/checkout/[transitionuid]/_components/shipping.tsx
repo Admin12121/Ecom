@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useShippingMutation } from "@/lib/store/Service/api";
+import { delay } from "@/lib/utils";
 
 const AddressSchema = z.object({
   address: z.string().min(2, { message: "address must not be empty" }),
@@ -49,10 +50,14 @@ const Shipping = ({ accessToken, refetch }: { accessToken?: string, refetch:any 
   });
   const onSubmit = useCallback(async (data: AddressFormValues) => {
     const actualData = { ...data };
-
+    const toastId = toast.loading("Adding Shipping Address...", {
+      position: "top-center",
+    });
+    await delay(500);
     const res = await addShipping({ actualData, token: accessToken });
     if (res.data) {
       toast.success("New Shipping Address Added", {
+        id: toastId,
         action: {
           label: "X",
           onClick: () => toast.dismiss(),
@@ -61,7 +66,10 @@ const Shipping = ({ accessToken, refetch }: { accessToken?: string, refetch:any 
       form.reset();
       refetch()
     } else {
-      console.log(res.error);
+      toast.error("Something went wrong!", {
+        id: toastId,
+        position: "top-center",
+      });
     }
   }, []);
   return (

@@ -14,13 +14,13 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useAuthUser } from "../use-auth-user";
+import { delay } from "@/lib/utils";
 
 export const useStripeElements = () => {
   const StripePromise = async () =>
     await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISH_KEY as string);
   return { StripePromise };
 };
-
 
 export const usePayments = (
   user: string,
@@ -79,6 +79,10 @@ export const usePayments = (
       if (!stripe || !elements || !Intent) {
         return null;
       }
+      const toastId = toast.loading("Processing Payment...", {
+        position: "top-center",
+      });
+      await delay(500);
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         Intent.secret!,
         {
@@ -89,24 +93,43 @@ export const usePayments = (
       );
 
       if (error) {
-        return toast("Error", {
-          description: "Oops! something went wrong, try again later",
+        toast.error("Oops! Failed to process payment", {
+          id: toastId,
+          position: "top-center",
         });
       }
 
       if (paymentIntent?.status === "succeeded") {
+        toast.success("Payment SuccessFull", {
+          id: toastId,
+          position: "top-center",
+        });
         const actualData = {
           ...data,
           total_amt,
           products,
           redeemData,
           paymentIntentId: paymentIntent.id,
-          shipping
+          shipping,
         };
+        await delay(500);
+        toast.loading("Placing Order...", {
+          id: toastId,
+          position: "top-center",
+        });
         const res = await postSale({ actualData, token: accessToken });
+        await delay(500);
         if (res.data) {
-          toast.success("Payment SuccessFull", { position: "top-center" });
+          toast.success("Order Placed Successfully", {
+            id: toastId,
+            position: "top-center",
+          });
           router.push(`/orders/${data.transactionuid}`);
+        } else {
+          toast.error("Something went wrong!", {
+            id: toastId,
+            position: "top-center",
+          });
         }
       }
     },

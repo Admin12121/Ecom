@@ -117,6 +117,17 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    variantDelete: builder.mutation({
+      query: ({ token, id }) => {
+        return {
+          url: `api/products/product-variants/${id}/`,
+          method: "DELETE",
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+      },
+    }),
     productsView: builder.query({
       query: ({ productslug, id, search, ids, category }) => {
         const queryParams = buildQueryParams({
@@ -288,12 +299,10 @@ export const userAuthapi = createApi({
       }),
     }),
     redeemCodeView: builder.query({
-      query: ({ storeCode, code }) => ({
-        url: `sales/redeemcode/?store=${storeCode}${
-          code ? `&code=${code}` : ""
-        }`,
+      query: ({ token }) => ({
+        url: `api/sales/redeemcode/`,
         method: "GET",
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     verifyRedeemCode: builder.mutation({
@@ -305,26 +314,26 @@ export const userAuthapi = createApi({
       }),
     }),
     addRedeemCode: builder.mutation({
-      query: (actualData) => ({
-        url: "sales/redeemcode/",
+      query: ({ actualData, token }) => ({
+        url: "api/sales/redeemcode/",
         method: "POST",
         body: actualData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     updateRedeemCode: builder.mutation({
-      query: ({ NewFormData, id }) => ({
-        url: `sales/redeemcode/?id=${id}`,
+      query: ({ actualData, token }) => ({
+        url: `api/sales/redeemcode/?id=${actualData.id}`,
         method: "PATCH",
-        body: NewFormData,
-        headers: createHeaders(),
+        body: actualData,
+        headers: createHeaders(token),
       }),
     }),
     deleteRedeemCode: builder.mutation({
-      query: (id) => ({
-        url: `sales/redeemcode/?id=${id}`,
+      query: ({ id, token }) => ({
+        url: `api/sales/redeemcode/${id}/`,
         method: "DELETE",
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     getlayout: builder.query({
@@ -448,6 +457,7 @@ export const {
   useRefreshTokenMutation,
   useProductsRegistrationMutation,
   useProductsUpdateMutation,
+  useVariantDeleteMutation,
   useProductsViewQuery,
   useProductsByIdsQuery,
   useRecommendedProductsViewQuery,

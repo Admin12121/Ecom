@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { delay } from "@/lib/utils";
 
 interface User {
   id: number;
@@ -129,18 +130,26 @@ export default function ProfileForm() {
       if (profileImage) {
         NewFormData.append("profile", profileImage);
       }
+      const toastId = toast.loading("Updating Profile...", {
+        position: "top-center",
+      });
+      await delay(500);
       const res = await updateProfile({ NewFormData, token: accessToken});
       if (res.data) {
         setProfileImage(null);
         refetch();
         toast.success(res.data, {
+          id: toastId,
           action: {
             label: "X",
             onClick: () => toast.dismiss(),
           },
         });
       } else {
-        console.log(res.error);
+        toast.error("Something went wrong!", {
+          id: toastId,
+          position: "top-center",
+        });
       }
     }
   }, [user, accessToken]);

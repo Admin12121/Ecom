@@ -38,6 +38,7 @@ import { encryptData } from "@/lib/transition";
 import { parseDescription } from "@/lib/parse-decsription";
 import { renderUI } from "./description-automation";
 import WriteReview from "./write-review";
+import { delay } from "@/lib/utils";
 
 const EmailSchema = z.object({
   email: z.string().min(1, { message: "UID is required" }),
@@ -412,17 +413,27 @@ const NotifyForm = ({ product, selectedVariant, stock }: NotifyFormProps) => {
   const emailValue = watch("email", "");
 
   const onSubmit = async (data: any) => {
+    const toastId = toast.loading("Adding to waiting list...", {
+      position: "top-center",
+    });
     const actualData = {
       ...data,
       variant: selectedVariant,
       product: product,
     };
+    await delay(500);
     const res = await notifyuser({ actualData, token: accessToken });
     if (res.data) {
-      toast.success("Added to waiting list");
+      toast.success("Added to waiting list", {
+        id: toastId,
+        position: "top-center",
+      });
     }
     if (res.error) {
-      toast.error("Something went wrong, try again later");
+      toast.error("Something went wrong, try again later", {
+        id: toastId,
+        position: "top-center",
+      });
     }
   };
 

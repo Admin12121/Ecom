@@ -9,6 +9,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export function getCookie(name: string): string | null {
   const nameEQ = name + "=";
   const cookiesArray = document.cookie.split(";");

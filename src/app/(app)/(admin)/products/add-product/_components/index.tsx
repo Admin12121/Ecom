@@ -150,8 +150,6 @@ const AddProduct = () => {
     formState: { errors },
     setValue,
     watch,
-    setError,
-    clearErrors,
     control,
     reset,
   } = useForm<FormValues>({

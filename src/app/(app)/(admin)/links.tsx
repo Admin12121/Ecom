@@ -29,7 +29,8 @@ export const Links = [
       { title: "Products", href: "/products" },
       { title: "Add Products", href: "/products/add-product" },
       { title: "category", href: "/products/category" },
-      { title: "Stock", href: "#" },
+      { title: "Stock", href: "/products/stock" },
+      { title: "Discounts & Coupons", href: "/products/discounts" },
     ],
   },
   {

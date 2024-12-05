@@ -31,7 +31,7 @@ import {
 } from "@/lib/store/Service/api";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import { delay } from "@/lib/utils";
 const AddressSchema = z.object({
   address: z.string().min(2, { message: "address must not be empty" }),
   country: z.string().min(2, { message: "must not be empty" }),
@@ -68,8 +68,9 @@ const Shipping = () => {
     { skip: !accessToken }
   );
   const [addShipping, { isLoading }] = useShippingMutation();
-  const [ removeShipping ] = useDeleteshippingMutation();
-  const [updateShipping, { isLoading: Updataing }] = useUpdateshippingMutation();
+  const [removeShipping] = useDeleteshippingMutation();
+  const [updateShipping, { isLoading: Updataing }] =
+    useUpdateshippingMutation();
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(AddressSchema),
@@ -99,14 +100,7 @@ const Shipping = () => {
   useEffect(() => {
     if (data) {
       data.results.forEach((addressData: Address) => {
-        updateform.reset({
-          id: addressData.id,
-          address: addressData.address,
-          country: addressData.country,
-          city: addressData.city,
-          zipcode: addressData.zipcode,
-          default: addressData.default,
-        });
+        updateform.reset(addressData);
       });
     }
   }, [data, updateform]);
@@ -146,18 +140,25 @@ const Shipping = () => {
     []
   );
 
-  const onDelete = useCallback(
-    async (id: number) => {
-      const res = await removeShipping({ id, token: accessToken });
-      if (res.data) {
-        refetch();
-        toast.success("Shipping Address Removed");
-      } else {
-        toast.error("Something went wrong!");
-      }
-    },
-    []
-  );
+  const onDelete = useCallback(async (id: number) => {
+    const toastId = toast.loading("Deleting Shipping Address...", {
+      position: "top-center",
+    });
+    await delay(500);
+    const res = await removeShipping({ id, token: accessToken });
+    if (res.data) {
+      refetch();
+      toast.success("Shipping Address Removed", {
+        id: toastId,
+        position: "top-center",
+      });
+    } else {
+      toast.error("Something went wrong!", {
+        id: toastId,
+        position: "top-center",
+      });
+    }
+  }, []);
 
   return (
     <section className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex items-center flex-col gap-2">
@@ -183,7 +184,12 @@ const Shipping = () => {
                     {addressData.country}
                   </p>
                 </span>
-                <span onClick={()=>{onDelete(addressData.id)}} className="absolute right-9 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md cursor-pointer">
+                <span
+                  onClick={() => {
+                    onDelete(addressData.id);
+                  }}
+                  className="absolute right-9 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md cursor-pointer"
+                >
                   <Trash className="w-4 h-4" />
                 </span>
               </AccordionTrigger>

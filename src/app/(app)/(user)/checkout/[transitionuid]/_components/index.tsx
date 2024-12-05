@@ -1,4 +1,5 @@
 "use client";
+
 import Payment from "@/components/global/payment";
 import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 import { decryptData } from "@/lib/transition";
@@ -24,7 +25,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import GlassCard from "@/components/global/glass-card";
 import Address from "./address";
-
+import { delay } from "@/lib/utils";
 interface Product {
   product: number;
   variant: number;
@@ -162,7 +163,6 @@ const Checkout = ({ params }: { params: string }) => {
       type: "SET_TOTAL_PRICE_AFTER_DISCOUNT",
       payload: { price: newTotalPrice, symbol: state.totalPrice.symbol },
     });
-    toast.success(newTotalPrice.toString());
   };
 
   useEffect(() => {
@@ -192,9 +192,21 @@ const Checkout = ({ params }: { params: string }) => {
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     const code = { code: data.code };
+    const toastId = toast.loading("Verifying Redeem Code...", {
+      position: "top-center",
+    });
+    await delay(500);
     const res = await redeemCode({ code: code, token: accessToken });
-
-    if (res.error) {
+    if (res.data) {
+      toast.success("Code Verified", {
+        id: toastId,
+        position: "top-center",
+      });
+    } else {
+      toast.error((res.error as any).data?.error || "Something went wrong!", {
+        id: toastId,
+        position: "top-center",
+      });
       setError("code", { message: (res.error as any).data?.error });
       return;
     }
