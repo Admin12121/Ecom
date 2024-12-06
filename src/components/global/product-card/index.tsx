@@ -177,7 +177,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex gap-3 items-center">
             <div className="flex flex-col cursor-pointer">
               <p className="text-sm">{data.product_name}</p>
-              <p className="text-xs text-slate-500" onClick={handleRoute}>
+              <p className="text-xs font-normal text-zinc-100/80" onClick={handleRoute}>
                 {data.categoryname}
               </p>
             </div>
@@ -190,7 +190,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <p
                 className={cn(
                   "text-sm",
-                  discount > 0 && "text-neutral-500 line-through"
+                  discount > 0 && "text-neutral-400 line-through"
                 )}
               >
                 {symbol} {convertedPrice}

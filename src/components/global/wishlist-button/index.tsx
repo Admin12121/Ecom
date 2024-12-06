@@ -37,6 +37,9 @@ const WishList = ({ productId, className, custom = true }: WishlistProps) => {
           isInWishlist && "fill-black dark:fill-white"
         )}
       />
+      <span className="sr-only">
+        Add to wishlist
+      </span>
     </Button>
   );
 };

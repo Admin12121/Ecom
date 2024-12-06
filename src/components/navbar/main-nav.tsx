@@ -19,7 +19,7 @@ export function MainNav() {
           {siteConfig.name}
         </span>
       </Link>
-      <nav className="flex items-center gap-4 text-sm xl:gap-6 w-full">
+      <div className="flex items-center gap-4 text-sm xl:gap-6 w-full">
         <Link
           href="/collections"
           className={cn(
@@ -32,7 +32,7 @@ export function MainNav() {
         <div className="w-full md:flex flex-1 md:w-auto md:flex-none flex-row gap-5">
           <PlaceholdersAndVanishInput />
         </div>
-      </nav>
+      </div>
     </div>
   );
 }

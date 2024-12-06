@@ -199,6 +199,9 @@ export function PlaceholdersAndVanishInput() {
           )}
           ref={canvasRef}
         />
+        <label className="sr-only">
+          Search
+        </label>
         <input
           onChange={(e) => {
             if (!animating) {
