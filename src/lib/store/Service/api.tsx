@@ -117,14 +117,22 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    variantUpdate: builder.mutation({
+      query: ({ token, actualData }) => {
+        return {
+          url: `api/products/product-variants/${actualData.id}/`,
+          method: "PATCH",
+          body: actualData,
+          headers: createHeaders(token),
+        };
+      },
+    }),
     variantDelete: builder.mutation({
       query: ({ token, id }) => {
         return {
           url: `api/products/product-variants/${id}/`,
           method: "DELETE",
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+          headers: createHeaders(token),
         };
       },
     }),
@@ -444,6 +452,13 @@ export const userAuthapi = createApi({
         headers: createHeaders(token),
       }),
     }),
+    getStocks: builder.query({
+      query: ({ token }) => ({
+        url: `api/products/stocks/`,
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
   }),
 });
 
@@ -457,6 +472,7 @@ export const {
   useRefreshTokenMutation,
   useProductsRegistrationMutation,
   useProductsUpdateMutation,
+  useVariantUpdateMutation,
   useVariantDeleteMutation,
   useProductsViewQuery,
   useProductsByIdsQuery,
@@ -496,4 +512,5 @@ export const {
   useUpdateshippingMutation,
   useDeleteshippingMutation,
   useGetOrdersQuery,
+  useGetStocksQuery,
 } = userAuthapi;

@@ -207,7 +207,7 @@ const ReedemCode = () => {
   }, []);
 
   return (
-    <section className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
+    <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
       <h1 className="text-2xl">Discounts</h1>
       <Accordion type="single" collapsible className="space-y-1 w-full">
         {data &&
@@ -654,7 +654,7 @@ const ReedemCode = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-    </section>
+    </main>
   );
 };
 

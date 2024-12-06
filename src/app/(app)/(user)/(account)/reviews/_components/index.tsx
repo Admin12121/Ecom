@@ -64,7 +64,7 @@ const Reviews = () => {
         {data?.results.length > 0 ? (
           data?.results.map((review: Review) => (
             <Card
-              className="mb-4 break-inside-avoid flex flex-col gap-1 p-1"
+              className="mb-2 break-inside-avoid flex flex-col gap-1 p-1"
               key={Math.random()}
             >
               <Link
@@ -168,7 +168,7 @@ const ReviewsCard = ({
       </div>
     );
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">{children}</div>
+    <div className="columns-1 sm:columns-2 lg:columns-3 gap-2">{children}</div>
   );
 };
 
