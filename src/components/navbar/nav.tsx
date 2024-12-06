@@ -44,14 +44,14 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
       {children}
       <footer className="flex md:hidden h-16 bottom-0 fixed z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none border-0">
         <div className="flex w-full h-full items-center px-4 gap-2 justify-between">
-          <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
-            <Link href="/collections" rel="noreferrer">
+          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+            <Link href="/collections" rel="noreferrer" className="w-full h-full flex items-center justify-center">
               <ArchiveRestore className="h-4 w-4" />
               <span className="sr-only">collections</span>
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
-            <Link href="/wishlist" rel="noreferrer">
+          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+            <Link href="/wishlist" rel="noreferrer" className="w-full h-full flex items-center justify-center">
               <Heart className="h-4 w-4" />
               <span className="sr-only">Wishlist</span>
             </Link>

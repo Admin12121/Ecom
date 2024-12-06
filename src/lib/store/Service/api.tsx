@@ -323,7 +323,7 @@ export const userAuthapi = createApi({
     }),
     updateRedeemCode: builder.mutation({
       query: ({ actualData, token }) => ({
-        url: `api/sales/redeemcode/?id=${actualData.id}`,
+        url: `api/sales/redeemcode/${actualData.id}/`,
         method: "PATCH",
         body: actualData,
         headers: createHeaders(token),
