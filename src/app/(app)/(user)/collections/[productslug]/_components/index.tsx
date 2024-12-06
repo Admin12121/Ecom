@@ -62,11 +62,11 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
   if (isLoading || !product) return <LoadingSection />;
 
   return (
-    <>
+    <main>
       <ProductSection product={product} />
       <ReviewsSection />
       <RecommendedProducts product_id={product!.id} className="mb-14"/>
-    </>
+    </main>
   );
 };
 
