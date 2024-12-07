@@ -4,13 +4,12 @@ import React, {
   useState,
   DragEvent,
   FormEvent,
+  useCallback,
 } from "react";
-import {
-  Plus as FiPlus,
-  Trash as FiTrash,
-  Flame as FaFire,
-} from "lucide-react";
-import { motion } from "framer-motion";
+import { Plus as FiPlus, ShoppingCart, Truck } from "lucide-react";
+import { color, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface CartItem {
   id: number;
@@ -56,49 +55,37 @@ export interface CategorizedOrders {
 
 export const CustomKanban = ({ data }: { data: CategorizedOrders }) => {
   return (
-    <div className="h-screen w-full dark:bg-neutral-900 dark:text-neutral-50">
-      <Board categorizedOrders={data} />
-    </div>
-  );
-};
-
-interface BoardProps {
-  categorizedOrders: CategorizedOrders;
-}
-
-const Board = ({ categorizedOrders }: BoardProps) => {
-  const [cards, setCards] = useState(DEFAULT_CARDS);
-
-  return (
-    <div className="flex h-full w-full gap-3 overflow-scroll p-12">
-      <Column
-        title="OnShipping"
-        column="onshipping"
-        headingColor="text-orange-400"
-        cards={categorizedOrders.onShipping}
-        setCards={setCards}
-      />
-      <Column
-        title="Arrived"
-        column="arrived"
-        headingColor="text-blue-400"
-        cards={categorizedOrders.arrived}
-        setCards={setCards}
-      />
-      <Column
-        title="Delivered"
-        column="delivered"
-        headingColor="text-green-400"
-        cards={categorizedOrders.delivered}
-        setCards={setCards}
-      />
-      <Column
-        title="Canceled"
-        column="canceled"
-        headingColor="text-red-400"
-        cards={categorizedOrders.canceled}
-        setCards={setCards}
-      />
+    <div className="h-screen w-full">
+      <div className="grid grid-cols-4 h-full w-full gap-3 overflow-scroll px-6">
+        <Column
+          title="OnShipping"
+          column="onshipping"
+          headingColor="text-orange-400"
+          headingBgColor="bg-orange-400"
+          cards={data.onShipping}
+        />
+        <Column
+          title="Arrived"
+          column="arrived"
+          headingColor="text-blue-400"
+          headingBgColor="bg-blue-400"
+          cards={data.arrived}
+        />
+        <Column
+          title="Delivered"
+          column="delivered"
+          headingColor="text-green-400"
+          headingBgColor="bg-green-400"
+          cards={data.delivered}
+        />
+        <Column
+          title="Canceled"
+          column="canceled"
+          headingColor="text-red-400"
+          headingBgColor="bg-red-400"
+          cards={data.canceled}
+        />
+      </div>
     </div>
   );
 };
@@ -106,17 +93,17 @@ const Board = ({ categorizedOrders }: BoardProps) => {
 type ColumnProps = {
   title: string;
   headingColor: string;
+  headingBgColor: string;
   cards: Order[];
   column: ColumnType;
-  setCards: Dispatch<SetStateAction<CardType[]>>;
 };
 
 const Column = ({
   title,
   headingColor,
+  headingBgColor,
   cards,
   column,
-  setCards,
 }: ColumnProps) => {
   const [active, setActive] = useState(false);
 
@@ -222,12 +209,26 @@ const Column = ({
   };
 
   return (
-    <div className="w-56 shrink-0">
+    <div className="w-full shrink-0">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className={`font-medium ${headingColor}`}>{title}</h3>
-        <span className="rounded text-sm text-neutral-400">
-          {cards.length}
-        </span>
+        <h3
+          className={`font-medium flex gap-2 relative items-center px-2 ${headingColor}`}
+        >
+          <span
+            className={cn(
+              "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
+              headingBgColor
+            )}
+          ></span>
+          <span
+            className={cn(
+              "inline-flex h-2 w-2 right-0 top-0 rounded-full ",
+              headingBgColor
+            )}
+          ></span>
+          {title}
+        </h3>
+        <span className="rounded text-sm text-neutral-400">{cards.length}</span>
       </div>
       <div
         onDrop={handleDragEnd}
@@ -241,7 +242,6 @@ const Column = ({
           return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
         })}
         <DropIndicator beforeId={null} column={column} />
-        <AddCard column={column} setCards={setCards} />
       </div>
     </div>
   );
@@ -255,9 +255,31 @@ const Card = ({
   transactionuid,
   id,
   status,
-  costumer_name,
+  total_amt,
+  created,
   handleDragStart,
 }: CardProps) => {
+  const truncateText = useCallback(
+    (text: string, maxLength: number): string => {
+      return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    },
+    []
+  );
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+  const calculateEstimatedArrival = (
+    created: string,
+    daysToAdd: number
+  ): string => {
+    const createdDate = new Date(created);
+    createdDate.setDate(createdDate.getDate() + daysToAdd);
+    return formatDate(createdDate);
+  };
   return (
     <>
       <DropIndicator beforeId={id.toString()} column={status} />
@@ -266,11 +288,19 @@ const Card = ({
         layoutId={id.toString()}
         draggable="true"
         onDragStart={(e) => handleDragStart(e, { transactionuid, id, status })}
-        className="cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 active:cursor-grabbing"
+        className="cursor-grab rounded-lg border border-neutral-700 bg-neutral-800 p-2 active:cursor-grabbing"
       >
-        <p className="text-sm text-neutral-100">
-          {transactionuid} {costumer_name}
+        <p className="text-sm text-neutral-100 flex items-center gap-1">
+          <Truck className="w-4 h-4" />
+          {truncateText(transactionuid, 15)}
         </p>
+        <p className="text-sm text-neutral-500 flex items-center gap-1 pt-2">
+          Estimated arrival: {calculateEstimatedArrival(created, 7)}
+        </p>
+        <div className="w-full flex justify-between items-end">
+          <p>Total: $ {total_amt}</p>
+          <Button size="sm">Details</Button>
+        </div>
       </motion.div>
     </>
   );
