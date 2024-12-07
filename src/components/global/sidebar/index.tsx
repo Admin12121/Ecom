@@ -63,10 +63,7 @@ const SidebarContext = React.createContext<SidebarContextType | undefined>(
   undefined
 );
 
-const Sidebar = ({
-  navCollapsedSize = 4,
-  children,
-}: SidebarProps) => {
+const Sidebar = ({ navCollapsedSize = 4, children }: SidebarProps) => {
   const layout = getCookie("react-resizable-panels:layout:mail");
   const collapsed = getCookie("react-resizable-panels:collapsed");
   const defaultLayout = layout ? JSON.parse(layout) : [20, 80];
@@ -245,7 +242,7 @@ const SidebarContent = ({
 
   const determineVariant = React.useCallback(
     (href: string | undefined): "default" | "ghost" => {
-      return pathname === href ? "default" : "ghost";
+      return pathname.startsWith(href || "") ? "default" : "ghost";
     },
     [pathname]
   );
@@ -297,7 +294,7 @@ const SidebarContent = ({
                       </Link>
                     </TooltipTrigger>
                   </DropdownMenuTrigger>
-                  {!link.href && link.subLinks && (
+                  {link.subLinks && (
                     <DropdownMenuContent
                       className={cn(
                         "w-56 dark:bg-[#1B1B1B] border-0 outline-0",
@@ -980,7 +977,6 @@ const Navigationbar = () => {
   if (!context) {
     throw new Error("Navigationbar must be used within a Sidebar component.");
   }
-
   const { links } = context;
   const router = useRouter();
   const pathname = usePathname();
@@ -989,11 +985,11 @@ const Navigationbar = () => {
   );
 
   const determineVariant = (href: string | undefined): "default" | "ghost" => {
-    return pathname === href ? "default" : "ghost";
+    return pathname.startsWith(href || "") ? "default" : "ghost";
   };
 
   const handleLinkClick = (index: number, link: any) => {
-    if (link.href) {
+    if (link.href && !link.subLinks) {
       router.push(link.href);
       setActiveLinkIndex(null);
     } else if (link.subLinks) {
@@ -1020,14 +1016,14 @@ const Navigationbar = () => {
                     {links[activeLinkIndex].subLinks.map(
                       (subLink, subIndex) => (
                         <Button
-                          asChild
                           className="justify-start"
                           variant="ghost"
                           key={subIndex}
+                          onClick={() => {
+                            router.push(subLink.href || "#");
+                          }}
                         >
-                          <Link href={subLink.href || "#"}>
-                            {subLink.title}
-                          </Link>
+                          {subLink.title}
                         </Button>
                       )
                     )}

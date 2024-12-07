@@ -1,8 +1,9 @@
 import React from 'react'
+import Category from './_components'
 
 const Page = () => {
   return (
-    <div>Page</div>
+    <Category />
   )
 }
 

@@ -62,67 +62,69 @@ const Reviews = () => {
       </div>
       <ReviewsCard loading={isLoading}>
         {data?.results.length > 0 ? (
-          data?.results.map((review: Review) => (
-            <Card
-              className="mb-2 break-inside-avoid flex flex-col gap-1 p-1"
-              key={Math.random()}
-            >
-              <Link
-                href={`/collections/${review.productslug}`}
-                className=" flex flex-row gap-2 bg-white dark:bg-neutral-800 p-1 rounded-lg"
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-2">
+            {data?.results.map((review: Review) => (
+              <Card
+                className="mb-2 break-inside-avoid flex flex-col gap-1 p-1"
+                key={Math.random()}
               >
-                <Image
-                  src={review.product_image}
-                  alt="product"
-                  width={70}
-                  height={70}
-                  className="rounded-md object-cover p-1 px-3 bg-zinc-950"
-                />
-                <span className="flex flex-col">
-                  <p className="text-sm">{review.product_name}</p>
-                  <p className="text-xs text-zinc-400">
-                    {review.category_name}
-                  </p>
-                </span>
-              </Link>
-              <div className="bg-white dark:bg-neutral-900 shadow rounded-lg">
-                <CardHeader className="flex flex-row items-center justify-between px-1">
-                  <span>
-                    {" "}
-                    {[...Array(review.rating)].map((_, index) => (
-                      <span key={index}>★</span>
-                    ))}{" "}
-                  </span>{" "}
-                  <p className="text-xs">
-                    {new Date(review.created_at).toLocaleDateString("en-US", {
-                      month: "short",
-                      year: "numeric",
-                      day: "numeric",
-                    })}
-                  </p>
-                </CardHeader>
-                {review?.review_images[0]?.image && (
-                  <span className="flex px-1">
-                    <Image
-                      src={review.review_images[0].image}
-                      width={100}
-                      height={100}
-                      layout="responsive"
-                      objectFit="cover"
-                      alt={review.title}
-                      className="w-full h-full object-contain rounded-lg bg-neutral-800"
-                    />
+                <Link
+                  href={`/collections/${review.productslug}`}
+                  className=" flex flex-row gap-2 bg-white dark:bg-neutral-800 p-1 rounded-lg"
+                >
+                  <Image
+                    src={review.product_image}
+                    alt="product"
+                    width={70}
+                    height={70}
+                    className="rounded-md object-cover p-1 px-3 bg-zinc-950"
+                  />
+                  <span className="flex flex-col">
+                    <p className="text-sm">{review.product_name}</p>
+                    <p className="text-xs text-zinc-400">
+                      {review.category_name}
+                    </p>
                   </span>
-                )}
-                <span className="flex flex-col p-2">
-                  <h1 className="text-sm font-normal">{review.title}</h1>
-                  <p className="text-xs font-light">{review.content}</p>
-                </span>
-              </div>
-            </Card>
-          ))
+                </Link>
+                <div className="bg-white dark:bg-neutral-900 shadow rounded-lg">
+                  <CardHeader className="flex flex-row items-center justify-between px-1">
+                    <span>
+                      {" "}
+                      {[...Array(review.rating)].map((_, index) => (
+                        <span key={index}>★</span>
+                      ))}{" "}
+                    </span>{" "}
+                    <p className="text-xs">
+                      {new Date(review.created_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        year: "numeric",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </CardHeader>
+                  {review?.review_images[0]?.image && (
+                    <span className="flex px-1">
+                      <Image
+                        src={review.review_images[0].image}
+                        width={100}
+                        height={100}
+                        layout="responsive"
+                        objectFit="cover"
+                        alt={review.title}
+                        className="w-full h-full object-contain rounded-lg bg-neutral-800"
+                      />
+                    </span>
+                  )}
+                  <span className="flex flex-col p-2">
+                    <h1 className="text-sm font-normal">{review.title}</h1>
+                    <p className="text-xs font-light">{review.content}</p>
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
         ) : (
-          <span className="space-y-2">
+          <span className="space-y-2 flex flex-col items-center justify-center w-full h-full">
             <h1 className="text-xl">Reviews</h1>
             <p>Your account has no reviews. Yet.</p>
             <Button>Shop Now</Button>
@@ -167,9 +169,7 @@ const ReviewsCard = ({
         ))}
       </div>
     );
-  return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 gap-2">{children}</div>
-  );
+  return <>{children}</>;
 };
 
 export default Reviews;

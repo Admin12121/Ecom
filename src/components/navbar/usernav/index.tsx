@@ -92,7 +92,7 @@ export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
               <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+            <DropdownMenuItem onClick={() => router.push("/profile")}>
               Profile
               <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>

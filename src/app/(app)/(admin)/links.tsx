@@ -24,6 +24,7 @@ export const Links = [
     label: "9",
     collapsible: true,
     isactive: true,
+    href: "/products",
     icon: Package,
     subLinks: [
       { title: "Products", href: "/products" },
