@@ -35,10 +35,10 @@ export const Links = [
     ],
   },
   {
-    title: "Orders",
+    title: "Sales",
     label: "9",
     icon: BadgePercent,
-    href: "/orders",
+    href: "/sales",
   },
   {
     title: "Reviews",

@@ -251,6 +251,13 @@ export const userAuthapi = createApi({
         headers: createHeaders(),
       }),
     }),
+    getCategory: builder.query({
+      query: ({token}) => ({
+        url: "api/products/get_category/",
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
     addCategory: builder.mutation({
       query: ({ formData, token }) => {
         return {
@@ -487,6 +494,7 @@ export const {
   useCartDeleteMutation,
   useSearchPostMutation,
   useCategoryViewQuery,
+  useGetCategoryQuery,
   useAddCategoryMutation,
   useUpgradeCategoryMutation,
   useDeleteCategoryMutation,
