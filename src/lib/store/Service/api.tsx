@@ -453,8 +453,12 @@ export const userAuthapi = createApi({
       }),
     }),
     getOrders: builder.query({
-      query: ({ token, status }) => ({
-        url: `api/sales/sales/${status ? `status/${status}/` : ""}`,
+      query: ({ token, status, search, rowsperpage, page }) => ({
+        url: `api/sales/sales/${status ? `status/${status}/` : ""}${buildQueryParams({
+          search,
+          page_size: rowsperpage,
+          page,
+        })}`,
         method: "GET",
         headers: createHeaders(token),
       }),

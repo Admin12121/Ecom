@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import GlassCard from "@/components/global/glass-card";
 import Address from "./address";
 import { delay } from "@/lib/utils";
+import { handleClick } from "./animation";
 interface Product {
   product: number;
   variant: number;
@@ -219,6 +220,7 @@ const Checkout = ({ params }: { params: string }) => {
       );
       dispatch({ type: "SET_DISCOUNT", payload: discountAmount });
       applyDiscount(discountAmount);
+      handleClick();
     } else {
       setError("code", { message: "Minimum purchase amount not met" });
     }
