@@ -1,15 +1,11 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useState,
-  DragEvent,
-  FormEvent,
-  useCallback,
-} from "react";
-import { Plus as FiPlus, ShoppingCart, Truck } from "lucide-react";
-import { color, motion, PanInfo } from "framer-motion";
+import React, { useState, DragEvent, useCallback } from "react";
+import { Badge, BadgeCheck, Truck } from "lucide-react";
+import { motion, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useGetOrdersQuery } from "@/lib/store/Service/api";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 interface CartItem {
   id: number;
@@ -53,7 +49,7 @@ export interface CategorizedOrders {
   delivered: Order[];
 }
 
-export const CustomKanban = ({ data }: { data: CategorizedOrders }) => {
+export const CustomKanban = () => {
   return (
     <div className="h-screen w-full">
       <div className="grid grid-cols-4 h-full w-full gap-3 overflow-scroll px-6">
@@ -62,28 +58,24 @@ export const CustomKanban = ({ data }: { data: CategorizedOrders }) => {
           column="onshipping"
           headingColor="text-orange-400"
           headingBgColor="bg-orange-400"
-          cards={data.onShipping}
         />
         <Column
           title="Arrived"
           column="arrived"
           headingColor="text-blue-400"
           headingBgColor="bg-blue-400"
-          cards={data.arrived}
         />
         <Column
           title="Delivered"
           column="delivered"
           headingColor="text-green-400"
           headingBgColor="bg-green-400"
-          cards={data.delivered}
         />
         <Column
           title="Canceled"
           column="canceled"
           headingColor="text-red-400"
           headingBgColor="bg-red-400"
-          cards={data.canceled}
         />
       </div>
     </div>
@@ -94,7 +86,6 @@ type ColumnProps = {
   title: string;
   headingColor: string;
   headingBgColor: string;
-  cards: Order[];
   column: any;
 };
 
@@ -102,54 +93,51 @@ const Column = ({
   title,
   headingColor,
   headingBgColor,
-  cards,
   column,
 }: ColumnProps) => {
+  const { accessToken } = useAuthUser();
+  const { data, isLoading, isFetching } = useGetOrdersQuery(
+    { token: accessToken, status: column },
+    { skip: !accessToken }
+  );
+
+  // if (isLoading || isFetching) {
+  //   return (
+  //     <section className="w-full h-full flex items-center justify-center">
+  //       <p>Loading your orders...</p>
+  //     </section>
+  //   );
+  // }
+  
   const [active, setActive] = useState(false);
 
   const handleDragStart = (e: DragEvent, card: CardType) => {
-    e.dataTransfer.setData("cardId", card.id);
+    const nonDraggableStatuses = ["pending", "proceed", "delivered"];
+    if (nonDraggableStatuses.includes(card.status)) {
+      toast.error("This order isn't verified yet", { position: "top-center" });
+      e.preventDefault();
+      return;
+    }
+
+    e.dataTransfer.setData("cardId", card.id.toString());
+    e.dataTransfer.setData("status", card.status);
   };
 
   const handleDragEnd = (e: DragEvent) => {
     const cardId = e.dataTransfer.getData("cardId");
-
+    const status = e.dataTransfer.getData("status");
     setActive(false);
     clearHighlights();
 
     const indicators = getIndicators();
     const { element } = getNearestIndicator(e, indicators);
 
-    const before = element.dataset.before || "-1";
-
-    // if (before !== cardId) {
-    //   let copy = [...cards];
-
-    //   let cardToTransfer = copy.find((c) => c.id === cardId);
-    //   if (!cardToTransfer) return;
-    //   cardToTransfer = { ...cardToTransfer, column };
-
-    //   copy = copy.filter((c) => c.id !== cardId);
-
-    //   const moveToBack = before === "-1";
-
-    //   if (moveToBack) {
-    //     copy.push(cardToTransfer);
-    //   } else {
-    //     const insertAtIndex = copy.findIndex((el) => el.id === before);
-    //     if (insertAtIndex === undefined) return;
-
-    //     copy.splice(insertAtIndex, 0, cardToTransfer);
-    //   }
-
-    //   setCards(copy);
-    // }
+    if (!element) return;
   };
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     highlightIndicator(e);
-
     setActive(true);
   };
 
@@ -228,7 +216,7 @@ const Column = ({
           ></span>
           {title}
         </h3>
-        <span className="rounded text-sm text-neutral-400">{cards.length}</span>
+        <span className="rounded text-sm text-neutral-400">{data?.count}</span>
       </div>
       <div
         onDrop={handleDragEnd}
@@ -238,13 +226,50 @@ const Column = ({
           active ? "bg-neutral-800/50" : "bg-neutral-800/0"
         }`}
       >
-        {cards.map((c) => {
-          return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
-        })}
+        {data?.results.length > 0 ? (
+          data?.results.map((c) => {
+            return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
+          })
+        ) : (
+          <div className="w-full h-full flex justify-center">
+            <p className="text-neutral-400 py-10">No orders found</p>
+          </div>
+        )}
         <DropIndicator beforeId={null} column={column} />
       </div>
     </div>
   );
+};
+
+const statusMap: Record<string, boolean> = {
+  pending: false,
+  verified: true,
+  proceed: false,
+  packed: true,
+  delivered: false,
+  successful: true,
+};
+
+const relevantStatuses: Record<string, string[]> = {
+  pending: ["pending"],
+  verified: ["verified"],
+  proceed: ["verified", "proceed"],
+  packed: ["verified", "packed"],
+  delivered: ["verified", "packed", "delivered"],
+  successful: ["verified", "packed", "successful"],
+};
+
+const getAchievedBadges = (currentStatus: string): JSX.Element[] => {
+  const relevant = relevantStatuses[currentStatus] || [];
+
+  return relevant.map((status) => {
+    const isVerified = statusMap[status];
+    return isVerified ? (
+      <BadgeCheck className="w-4 h-4 stroke-blue-500" key={status} />
+    ) : (
+      <Badge className="w-4 h-4 stroke-orange-500" key={status} />
+    );
+  });
 };
 
 type DragStartHandler = (e: DragEvent, card: CardType) => void;
@@ -280,7 +305,10 @@ const Card = ({
     createdDate.setDate(createdDate.getDate() + daysToAdd);
     return formatDate(createdDate);
   };
-  const handleMotionDragStart = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleMotionDragStart = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
     const dragEvent = event as unknown as DragEvent;
     handleDragStart(dragEvent, { transactionuid, id: id.toString(), status });
   };
@@ -295,10 +323,13 @@ const Card = ({
         onDragStart={handleMotionDragStart}
         className="cursor-grab rounded-lg border border-neutral-700 bg-neutral-800 p-2 active:cursor-grabbing"
       >
-        <p className="text-sm text-neutral-100 flex items-center gap-1">
-          <Truck className="w-4 h-4" />
-          {truncateText(transactionuid, 15)}
-        </p>
+        <span className="flex gap-2 items-center justify-between">
+          <p className="text-sm text-neutral-100 flex items-center gap-1">
+            <Truck className="w-4 h-4" />
+            {truncateText(transactionuid, 15)}
+          </p>
+          <div className="flex gap-1">{getAchievedBadges(status)}</div>
+        </span>
         <p className="text-sm text-neutral-500 flex items-center gap-1 pt-2">
           Estimated arrival: {calculateEstimatedArrival(created, 7)}
         </p>
@@ -325,9 +356,6 @@ const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
     />
   );
 };
-
-
-
 
 type CardType = {
   transactionuid: string;

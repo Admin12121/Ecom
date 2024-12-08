@@ -453,8 +453,8 @@ export const userAuthapi = createApi({
       }),
     }),
     getOrders: builder.query({
-      query: ({ token }) => ({
-        url: `api/sales/sales/`,
+      query: ({ token, status }) => ({
+        url: `api/sales/sales/${status ? `status/${status}/` : ""}`,
         method: "GET",
         headers: createHeaders(token),
       }),

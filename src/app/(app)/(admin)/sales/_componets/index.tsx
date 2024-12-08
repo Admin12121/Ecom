@@ -47,60 +47,15 @@ export interface CategorizedOrders {
 }
 
 const Sales = () => {
-  const { accessToken } = useAuthUser();
-  const { data, isLoading, isFetching } = useGetOrdersQuery(
-    { token: accessToken },
-    { skip: !accessToken }
-  );
-  if (isLoading || isFetching) {
-    return (
-      <section className="w-full h-[calc(100dvh_-_145px)] flex items-center justify-center">
-        <p>Loading your orders...</p>
-      </section>
-    );
-  }
-  function categorizeOrders(orders: Order[]): CategorizedOrders {
-    const categorized: CategorizedOrders = {
-      onShipping: [],
-      arrived: [],
-      canceled: [],
-      delivered: [],
-    };
 
-    orders.forEach((order) => {
-      switch (order.status) {
-        case "pending":
-        case "verified":
-          categorized.onShipping.push(order);
-          break;
-        case "proceed":
-        case "packed":
-          categorized.arrived.push(order);
-          break;
-        case "cancled":
-          categorized.canceled.push(order);
-          break;
-        case "delivered":
-        case "successful":
-          categorized.delivered.push(order);
-          break;
-        default:
-          break;
-      }
-    });
-
-    return categorized;
-  }
-
-  const categorizedOrders = categorizeOrders(data.results);
-
+ 
   return (
     <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
       <span className="flex justify-between items-center">
         <h1 className="text-2xl">Sales</h1>
       </span>
       <div>
-        <CustomKanban data={categorizedOrders} />
+        <CustomKanban />
       </div>
     </main>
   );
