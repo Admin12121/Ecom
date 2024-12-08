@@ -1,11 +1,11 @@
 import React, { useState, DragEvent, useCallback } from "react";
 import { Badge, BadgeCheck, Truck } from "lucide-react";
 import { motion, PanInfo } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useGetOrdersQuery } from "@/lib/store/Service/api";
-import { useAuthUser } from "@/hooks/use-auth-user";
+import { useGetOrdersQuery, useUpdateSaleMutation } from "@/lib/store/Service/api";
+import { useAuthUser } from "@/hooks/use-auth-user";  
 
 interface CartItem {
   id: number;
@@ -40,13 +40,6 @@ export interface Order {
   payment_intent_id: any;
   created: string;
   updated_at: string;
-}
-
-export interface CategorizedOrders {
-  onShipping: Order[];
-  arrived: Order[];
-  canceled: Order[];
-  delivered: Order[];
 }
 
 export const CustomKanban = () => {
@@ -89,6 +82,13 @@ type ColumnProps = {
   column: any;
 };
 
+const getStatusTransition = (currentIndex: number, targetIndex: number): string | null => {
+  if (currentIndex === 0 && targetIndex === 1) return "proceed";
+  if (currentIndex === 1 && targetIndex === 2) return "delivered";
+  if ((currentIndex === 0 && targetIndex === 3) || (currentIndex === 1 && targetIndex === 3)) return "canceled";
+  return null;
+};
+
 const Column = ({
   title,
   headingColor,
@@ -96,19 +96,12 @@ const Column = ({
   column,
 }: ColumnProps) => {
   const { accessToken } = useAuthUser();
+  const [updateSale, { isLoading: isUpdating }] = useUpdateSaleMutation();
   const { data, isLoading, isFetching } = useGetOrdersQuery(
     { token: accessToken, status: column },
     { skip: !accessToken }
   );
 
-  // if (isLoading || isFetching) {
-  //   return (
-  //     <section className="w-full h-full flex items-center justify-center">
-  //       <p>Loading your orders...</p>
-  //     </section>
-  //   );
-  // }
-  
   const [active, setActive] = useState(false);
 
   const handleDragStart = (e: DragEvent, card: CardType) => {
@@ -118,7 +111,6 @@ const Column = ({
       e.preventDefault();
       return;
     }
-
     e.dataTransfer.setData("cardId", card.id.toString());
     e.dataTransfer.setData("status", card.status);
   };
@@ -129,10 +121,39 @@ const Column = ({
     setActive(false);
     clearHighlights();
 
+    const targetColumn = e.currentTarget as HTMLElement;
+    const columnOrder = ["onshipping", "arrived", "delivered", "canceled"];
+    let currentColumnIndex = -1;
+    switch (status) {
+      case "pending":
+      case "verified":
+        currentColumnIndex = columnOrder.indexOf("onshipping");
+        break;
+      case "proceed":
+      case "packed":
+        currentColumnIndex = columnOrder.indexOf("arrived");
+        break;
+      case "delivered":
+      case "successful":
+        currentColumnIndex = columnOrder.indexOf("delivered");
+        break;
+      default:
+        currentColumnIndex = columnOrder.indexOf(status);
+    }
+    const targetColumnIndex = columnOrder.indexOf(column);
+    if (targetColumnIndex - currentColumnIndex > 1) {
+      toast.error("Cannot Skip Process", { position: "top-center" });
+    } else if (targetColumnIndex < currentColumnIndex) {
+      toast.error("No reverse drag available", { position: "top-center" });
+      return;
+    }
     const indicators = getIndicators();
     const { element } = getNearestIndicator(e, indicators);
-
     if (!element) return;
+    const transition = getStatusTransition(currentColumnIndex, targetColumnIndex);
+    if (transition) {
+      handleUpdateSale(parseInt(cardId), transition);
+    }
   };
 
   const handleDragOver = (e: DragEvent) => {
@@ -196,6 +217,32 @@ const Column = ({
     setActive(false);
   };
 
+  const handleUpdateSale = async (id: number, status: string) => {
+    const toastId = toast.loading(
+      `Updating status for order ${id} to ${status}`,
+      {
+        position: "top-center",
+      }
+    );
+    await delay(500);
+    toast.success(`Status updated to ${status} ${id}`, {
+      id: toastId,
+      position: "top-center",
+    });
+    // const res = await updateSale({ id, status, token: accessToken });
+    // if (res.data) {
+    //   toast.success("Status updated successfully", {
+    //     id: toastId,
+    //     position: "top-center",
+    //   });
+    // } else {
+    //   toast.error("Failed to update status", {
+    //     id: toastId,
+    //     position: "top-center",
+    //   });
+    // }
+  };
+
   return (
     <div className="w-full shrink-0">
       <div className="mb-3 flex items-center justify-between">
@@ -227,7 +274,7 @@ const Column = ({
         }`}
       >
         {data?.results.length > 0 ? (
-          data?.results.map((c) => {
+          data?.results.map((c: Order) => {
             return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
           })
         ) : (

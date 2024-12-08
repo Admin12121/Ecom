@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
 import { CustomKanban } from "./text";
-import { useGetOrdersQuery } from "@/lib/store/Service/api";
-import { useAuthUser } from "@/hooks/use-auth-user";
 
 interface CartItem {
   id: number;

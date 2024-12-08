@@ -466,6 +466,14 @@ export const userAuthapi = createApi({
         headers: createHeaders(token),
       }),
     }),
+    updateSale: builder.mutation({
+      query: ({ actualData, token }) => ({
+        url: `api/sales/sales/${actualData.id}/`,
+        method: "PATCH",
+        body: actualData,
+        headers: createHeaders(token),
+      }),
+    }),
   }),
 });
 
@@ -521,4 +529,5 @@ export const {
   useDeleteshippingMutation,
   useGetOrdersQuery,
   useGetStocksQuery,
+  useUpdateSaleMutation,
 } = userAuthapi;
