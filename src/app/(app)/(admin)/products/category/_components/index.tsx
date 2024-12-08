@@ -12,7 +12,6 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { z } from "zod";
 
 import { useGetCategoryQuery } from "@/lib/store/Service/api";
-import { CustomKanban } from "./text";
 
 const Category = () => {
   const { accessToken } = useAuthUser();
@@ -28,7 +27,7 @@ const Category = () => {
       </span>
       {/* <AddSubCategory token={accessToken || ""}/> */}
       <div>
-        <CustomKanban />
+
       </div>
     </main>
   );

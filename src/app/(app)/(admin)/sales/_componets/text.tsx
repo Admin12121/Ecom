@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { Plus as FiPlus, ShoppingCart, Truck } from "lucide-react";
-import { color, motion } from "framer-motion";
+import { color, motion, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -95,7 +95,7 @@ type ColumnProps = {
   headingColor: string;
   headingBgColor: string;
   cards: Order[];
-  column: ColumnType;
+  column: any;
 };
 
 const Column = ({
@@ -247,9 +247,7 @@ const Column = ({
   );
 };
 
-type CardProps = Order & {
-  handleDragStart: Function;
-};
+type DragStartHandler = (e: DragEvent, card: CardType) => void;
 
 const Card = ({
   transactionuid,
@@ -258,7 +256,9 @@ const Card = ({
   total_amt,
   created,
   handleDragStart,
-}: CardProps) => {
+}: Order & {
+  handleDragStart: DragStartHandler;
+}) => {
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {
       return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
@@ -280,6 +280,11 @@ const Card = ({
     createdDate.setDate(createdDate.getDate() + daysToAdd);
     return formatDate(createdDate);
   };
+  const handleMotionDragStart = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const dragEvent = event as unknown as DragEvent;
+    handleDragStart(dragEvent, { transactionuid, id: id.toString(), status });
+  };
+
   return (
     <>
       <DropIndicator beforeId={id.toString()} column={status} />
@@ -287,7 +292,7 @@ const Card = ({
         layout
         layoutId={id.toString()}
         draggable="true"
-        onDragStart={(e) => handleDragStart(e, { transactionuid, id, status })}
+        onDragStart={handleMotionDragStart}
         className="cursor-grab rounded-lg border border-neutral-700 bg-neutral-800 p-2 active:cursor-grabbing"
       >
         <p className="text-sm text-neutral-100 flex items-center gap-1">
@@ -321,105 +326,11 @@ const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
   );
 };
 
-type AddCardProps = {
-  column: ColumnType;
-  setCards: Dispatch<SetStateAction<CardType[]>>;
-};
 
-const AddCard = ({ column, setCards }: AddCardProps) => {
-  const [text, setText] = useState("");
-  const [adding, setAdding] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!text.trim().length) return;
-
-    const newCard = {
-      column,
-      title: text.trim(),
-      id: Math.random().toString(),
-    };
-
-    setCards((pv) => [...pv, newCard]);
-
-    setAdding(false);
-  };
-
-  return (
-    <>
-      {adding ? (
-        <motion.form layout onSubmit={handleSubmit}>
-          <textarea
-            onChange={(e) => setText(e.target.value)}
-            autoFocus
-            placeholder="Add new task..."
-            className="w-full rounded border border-violet-400 bg-violet-400/20 p-3 text-sm text-neutral-50 placeholder-violet-300 focus:outline-0"
-          />
-          <div className="mt-1.5 flex items-center justify-end gap-1.5">
-            <button
-              onClick={() => setAdding(false)}
-              className="px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 rounded bg-neutral-50 px-3 py-1.5 text-xs text-neutral-950 transition-colors hover:bg-neutral-300"
-            >
-              <span>Add</span>
-              <FiPlus />
-            </button>
-          </div>
-        </motion.form>
-      ) : (
-        <motion.button
-          layout
-          onClick={() => setAdding(true)}
-          className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
-        >
-          <span>Add card</span>
-          <FiPlus />
-        </motion.button>
-      )}
-    </>
-  );
-};
-
-type ColumnType = "onshipping" | "arrived" | "delivered" | "canceled";
 
 type CardType = {
-  title: string;
+  transactionuid: string;
   id: string;
-  column: ColumnType;
+  status: any;
 };
-
-const DEFAULT_CARDS: CardType[] = [
-  // BACKLOG
-  { title: "Look into render bug in dashboard", id: "1", column: "onshipping" },
-  { title: "SOX compliance checklist", id: "2", column: "onshipping" },
-  { title: "[SPIKE] Migrate to Azure", id: "3", column: "onshipping" },
-  { title: "Document Notifications service", id: "4", column: "onshipping" },
-  // TODO
-  {
-    title: "Research DB options for new microservice",
-    id: "5",
-    column: "arrived",
-  },
-  { title: "Postmortem for outage", id: "6", column: "arrived" },
-  { title: "Sync with product on Q3 roadmap", id: "7", column: "arrived" },
-
-  // DOING
-  {
-    title: "Refactor context providers to use Zustand",
-    id: "8",
-    column: "delivered",
-  },
-  { title: "Add logging to daily CRON", id: "9", column: "delivered" },
-  // DONE
-  {
-    title: "Set up DD dashboards for Lambda listener",
-    id: "10",
-    column: "canceled",
-  },
-];
