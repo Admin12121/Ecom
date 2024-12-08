@@ -1,5 +1,10 @@
 "use client";
-import React, { useState, DragEvent, useCallback, useDeferredValue } from "react";
+import React, {
+  useState,
+  DragEvent,
+  useCallback,
+  useDeferredValue,
+} from "react";
 import { Badge, BadgeCheck, Search, Truck } from "lucide-react";
 import { motion, PanInfo } from "framer-motion";
 import { cn, delay } from "@/lib/utils";
@@ -13,6 +18,7 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { Input } from "@/components/ui/input";
 import Kbd from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
+import { FaceIcon } from "@radix-ui/react-icons";
 
 interface CartItem {
   id: number;
@@ -50,8 +56,71 @@ export interface Order {
 }
 
 export default function SalesManagementKanban() {
+  const { accessToken } = useAuthUser();
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
+
+  const {
+    data: onShippingOrders,
+    refetch: refetchOnShipping,
+    isLoading: isLoadingOnShipping,
+  } = useGetOrdersQuery(
+    { token: accessToken, status: "onshipping", search: deferredSearch },
+    { skip: !accessToken }
+  );
+
+  const {
+    data: arrivedOrders,
+    refetch: refetchArrived,
+    isLoading: isLoadingArrived,
+  } = useGetOrdersQuery(
+    { token: accessToken, status: "arrived", search: deferredSearch },
+    { skip: !accessToken }
+  );
+
+  const {
+    data: deliveredOrders,
+    refetch: refetchDelivered,
+    isLoading: isLoadingDelivered,
+  } = useGetOrdersQuery(
+    { token: accessToken, status: "delivered", search: deferredSearch },
+    { skip: !accessToken }
+  );
+
+  const {
+    data: canceledOrders,
+    refetch: refetchCanceled,
+    isLoading: isLoadingCanceled,
+  } = useGetOrdersQuery(
+    { token: accessToken, status: "canceled", search: deferredSearch },
+    { skip: !accessToken }
+  );
+
+  const refetchData = (type: string, multiple: boolean) => {
+    switch (type) {
+      case "onshipping":
+        refetchOnShipping();
+        if (multiple) refetchArrived();
+        break;
+      case "arrived":
+        refetchArrived();
+        if (multiple) refetchDelivered();
+        break;
+      case "delivered":
+        refetchDelivered();
+        break;
+      case "canceled":
+        refetchCanceled();
+        if (multiple) {
+          refetchOnShipping();
+          refetchArrived();
+        }
+        break;
+      default:
+        console.warn(`Unknown refetch type: ${type}`);
+    }
+  };
+
   return (
     <main className="w-full h-full min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
       <span className="flex items-start justify-between gap-2 flex-col md:flex-row">
@@ -84,28 +153,36 @@ export default function SalesManagementKanban() {
             column="onshipping"
             headingColor="text-orange-400"
             headingBgColor="bg-orange-400"
-            search={search}
+            data={onShippingOrders}
+            refetchData={refetchData}
+            loading={isLoadingOnShipping}
           />
           <Column
             title="Arrived"
             column="arrived"
             headingColor="text-blue-400"
             headingBgColor="bg-blue-400"
-            search={search}
+            data={arrivedOrders}
+            refetchData={refetchData}
+            loading={isLoadingArrived}
           />
           <Column
             title="Delivered"
             column="delivered"
             headingColor="text-green-400"
             headingBgColor="bg-green-400"
-            search={search}
+            data={deliveredOrders}
+            refetchData={refetchData}
+            loading={isLoadingDelivered}
           />
           <Column
             title="Canceled"
             column="canceled"
             headingColor="text-red-400"
             headingBgColor="bg-red-400"
-            search={search}
+            data={canceledOrders}
+            refetchData={refetchData}
+            loading={isLoadingCanceled}
           />
         </div>
       </div>
@@ -118,7 +195,9 @@ type ColumnProps = {
   headingColor: string;
   headingBgColor: string;
   column: any;
-  search: string;
+  data: any;
+  refetchData: (type: string, multiple: boolean) => void;
+  loading: boolean;
 };
 
 const getStatusTransition = (
@@ -140,14 +219,12 @@ const Column = ({
   headingColor,
   headingBgColor,
   column,
-  search,
+  data,
+  refetchData,
+  loading,
 }: ColumnProps) => {
   const { accessToken } = useAuthUser();
   const [updateSale] = useUpdateSaleMutation();
-  const { data, refetch } = useGetOrdersQuery(
-    { token: accessToken, status: column, search },
-    { skip: !accessToken }
-  );
 
   const [active, setActive] = useState(false);
 
@@ -158,6 +235,7 @@ const Column = ({
       e.preventDefault();
       return;
     }
+
     e.dataTransfer.setData("cardId", card.id.toString());
     e.dataTransfer.setData("status", card.status);
   };
@@ -190,7 +268,7 @@ const Column = ({
     if (targetColumnIndex - currentColumnIndex > 1) {
       toast.error("Cannot Skip Process", { position: "top-center" });
     } else if (targetColumnIndex < currentColumnIndex) {
-      toast.error("No reverse drag available", { position: "top-center" });
+      toast.error("Reverse Process is not allowed", { position: "top-center" });
       return;
     }
     const indicators = getIndicators();
@@ -201,7 +279,7 @@ const Column = ({
       targetColumnIndex
     );
     if (transition) {
-      handleUpdateSale(parseInt(cardId), transition);
+      handleUpdateSale(parseInt(cardId), transition, currentColumnIndex, true);
     }
   };
 
@@ -266,7 +344,14 @@ const Column = ({
     setActive(false);
   };
 
-  const handleUpdateSale = async (id: number, status: string) => {
+  const handleUpdateSale = async (
+    id: number,
+    status: string,
+    currentStatus: number,
+    type: boolean = false
+  ) => {
+    const columnOrder = ["onshipping", "arrived", "delivered", "canceled"];
+    const currentColumn = columnOrder[currentStatus];
     const toastId = toast.loading(
       `Updating status for order ${id} to ${status}`,
       {
@@ -284,7 +369,7 @@ const Column = ({
         id: toastId,
         position: "top-center",
       });
-      refetch();
+      refetchData(currentColumn, type);
     } else {
       toast.error("Failed to update status", {
         id: toastId,
@@ -323,22 +408,24 @@ const Column = ({
           active ? "bg-neutral-800/50" : "bg-neutral-800/0"
         }`}
       >
-        {data?.results.length > 0 ? (
-          data?.results.map((c: Order) => {
-            return (
-              <Card
-                key={c.id}
-                {...c}
-                handleDragStart={handleDragStart}
-                handleUpdateSale={handleUpdateSale}
-              />
-            );
-          })
-        ) : (
-          <div className="w-full flex justify-center">
-            <p className="text-neutral-400 pt-10">No orders found</p>
-          </div>
-        )}
+        <SalesSkeleton loading={loading}>
+          {data?.results.length > 0 ? (
+            data?.results.map((c: Order) => {
+              return (
+                <Card
+                  key={c.id}
+                  {...c}
+                  handleDragStart={handleDragStart}
+                  handleUpdateSale={handleUpdateSale}
+                />
+              );
+            })
+          ) : (
+            <div className="w-full flex justify-center">
+              <p className="text-neutral-400 pt-10">No orders found</p>
+            </div>
+          )}
+        </SalesSkeleton>
         <DropIndicator beforeId={null} column={column} />
         {data?.next && (
           <div className="w-full flex justify-center">
@@ -424,21 +511,25 @@ const Card = ({
 
     const handleUpdate = () => {
       let state = "";
+      let currentIndex = -1;
       switch (currentStatus) {
         case "pending":
           state = "verified";
+          currentIndex = 0;
           break;
         case "proceed":
           state = "packed";
+          currentIndex = 1;
           break;
         case "delivered":
           state = "successful";
+          currentIndex = 2;
           break;
         default:
           toast.error("Not a valid state", { position: "top-center" });
           return;
       }
-      handleUpdateSale(id, state);
+      handleUpdateSale(id, state, currentIndex);
     };
 
     return relevant.map((status) => {
@@ -499,6 +590,43 @@ const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
       className="my-0.5 h-0.5 w-full bg-violet-400 opacity-0"
     />
   );
+};
+
+const Skeleton = () => {
+  return (
+    <div className="w-full h-24 flex flex-col justify-between bg-neutral-700/40 mb-2 rounded-lg border border-neutral-700 p-1">
+      <span className="flex gap-2">
+        <span className="animate-pulse w-full h-10 rounded-lg bg-neutral-700/50"></span>
+      </span>
+      <span className="flex gap-2 justify-between">
+        <span className="animate-pulse w-1/2 h-10 rounded-lg bg-neutral-700/50"></span>
+        <span className="animate-pulse w-20 h-10 rounded-lg bg-neutral-700/50"></span>
+      </span>
+    </div>
+  );
+};
+
+export const SalesSkeleton = ({
+  loading,
+  children,
+}: {
+  loading: boolean;
+  children: React.ReactNode;
+}) => {
+  const load = useDeferredValue(loading);
+  if (load) {
+    return (
+      <>
+        {Array.from(
+          { length: Math.floor(Math.random() * 4) + 1 },
+          (_, index) => (
+            <Skeleton key={index} />
+          )
+        )}
+      </>
+    );
+  }
+  return <>{children}</>;
 };
 
 type CardType = {

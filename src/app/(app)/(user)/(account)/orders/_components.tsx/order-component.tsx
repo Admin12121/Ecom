@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Order as OrderData } from ".";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -117,6 +118,7 @@ export const OrderComponent = ({ data }: { data: OrderData[] }) => {
 };
 
 const OrderDetails = ({ order }: { order: OrderData }) => {
+  const router = useRouter();
   const productIds = useMemo(() => {
     return order.products.map((item) => item.product);
   }, [order]);
@@ -221,7 +223,7 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
         <Separator className="mt-1" />
         <div className="w-full p-1 py-2 flex justify-between items-center">
           <p>Total: $ {order.total_amt}</p>
-          <Button>Details</Button>
+          <Button onClick={() => router.push(`/orders/${order.transactionuid}`)}>Details</Button>
         </div>
       </AccordionContent>
     </>

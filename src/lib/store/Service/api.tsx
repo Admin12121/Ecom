@@ -478,6 +478,13 @@ export const userAuthapi = createApi({
         headers: createHeaders(token),
       }),
     }),
+    salesRetrieve: builder.query({
+      query: ({ transactionuid, token }) => ({
+        url: `api/sales/sales/transaction/${transactionuid}/`,
+        method: "GET",
+        headers: createHeaders(token),
+      }),
+    }),
   }),
 });
 
@@ -534,4 +541,5 @@ export const {
   useGetOrdersQuery,
   useGetStocksQuery,
   useUpdateSaleMutation,
+  useSalesRetrieveQuery,
 } = userAuthapi;

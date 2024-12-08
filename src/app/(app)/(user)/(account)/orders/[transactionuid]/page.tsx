@@ -1,9 +1,9 @@
 import React from 'react'
+import OrderRetrieve from './_components'
 
-const Page = () => {
+export default async function Page({ params }: { params: Promise<{ transactionuid: string }> }) {
+ const transactionuid = (await params).transactionuid
   return (
-    <div>Page</div>
+    <OrderRetrieve transactionuid={transactionuid}/>
   )
 }
-
-export default Page
