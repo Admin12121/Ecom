@@ -10,6 +10,7 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
   const { convertPrice } = useAuth();
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
   const discount = data.variantDetails.discount;
+
   const finalPrice = useMemo(() => {
     return convertedPrice - convertedPrice * (discount / 100);
   }, [convertedPrice, discount]);
@@ -19,6 +20,7 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
     },
     []
   );
+  const { convertedPrice: productprice, symbol:pricesym } = convertPrice(data.variantDetails.price);
   return (
     <Card className="p-1 w-full rounded-lg shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
       <CardBody className="flex justify-between flex-row items-center h-full">
@@ -45,7 +47,8 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
               </p>
             </span>
             <span>
-              <p className="text-xs text-zinc-400 pb-1">qty: {data.pcs}</p>
+              <p className="text-xs text-zinc-300 pb-1">qty: {data.pcs}</p>
+              {!price && <p className="text-xs text-zinc-300">price: {pricesym} {productprice}</p>}
             </span>
           </span>
         </span>

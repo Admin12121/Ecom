@@ -18,7 +18,7 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { Input } from "@/components/ui/input";
 import Kbd from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
-import { FaceIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 interface CartItem {
   id: number;
@@ -147,12 +147,11 @@ export default function SalesManagementKanban() {
         </div>
       </span>
       <div className="h-[calc(100dvh_-_120px)] w-full overflow-hidden">
-        <div className="grid grid-cols-4 h-full w-full gap-3 px-6">
+        <div className="grid grid-cols-4 h-full w-full gap-1 px-6">
           <Column
             title="OnShipping"
             column="onshipping"
-            headingColor="text-orange-400"
-            headingBgColor="bg-orange-400"
+            headingColor="orange-400"
             data={onShippingOrders}
             refetchData={refetchData}
             loading={isLoadingOnShipping}
@@ -160,8 +159,7 @@ export default function SalesManagementKanban() {
           <Column
             title="Arrived"
             column="arrived"
-            headingColor="text-blue-400"
-            headingBgColor="bg-blue-400"
+            headingColor="blue-400"
             data={arrivedOrders}
             refetchData={refetchData}
             loading={isLoadingArrived}
@@ -169,8 +167,7 @@ export default function SalesManagementKanban() {
           <Column
             title="Delivered"
             column="delivered"
-            headingColor="text-green-400"
-            headingBgColor="bg-green-400"
+            headingColor="green-400"
             data={deliveredOrders}
             refetchData={refetchData}
             loading={isLoadingDelivered}
@@ -178,8 +175,7 @@ export default function SalesManagementKanban() {
           <Column
             title="Canceled"
             column="canceled"
-            headingColor="text-red-400"
-            headingBgColor="bg-red-400"
+            headingColor="red-400"
             data={canceledOrders}
             refetchData={refetchData}
             loading={isLoadingCanceled}
@@ -193,7 +189,6 @@ export default function SalesManagementKanban() {
 type ColumnProps = {
   title: string;
   headingColor: string;
-  headingBgColor: string;
   column: any;
   data: any;
   refetchData: (type: string, multiple: boolean) => void;
@@ -217,7 +212,6 @@ const getStatusTransition = (
 const Column = ({
   title,
   headingColor,
-  headingBgColor,
   column,
   data,
   refetchData,
@@ -382,18 +376,17 @@ const Column = ({
     <div className="w-full shrink-0">
       <div className="mb-3 flex items-center justify-between">
         <h3
-          className={`font-medium flex gap-2 relative items-center px-2 ${headingColor}`}
+          className={`font-medium flex gap-2 relative items-center px-2 text-${headingColor}`}
         >
           <span
             className={cn(
-              "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
-              headingBgColor
+              `animate-ping absolute inline-flex h-2 w-2  rounded-full bg-${headingColor}`
             )}
           ></span>
           <span
             className={cn(
-              "inline-flex h-2 w-2 right-0 top-0 rounded-full ",
-              headingBgColor
+              `inline-flex h-2 w-2 right-0 top-0 rounded-full 
+              bg-${headingColor}`
             )}
           ></span>
           {title}
@@ -404,7 +397,7 @@ const Column = ({
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`h-[calc(100dvh_-_145px)] pb-10 w-full overflow-y-auto transition-colors ${
+        className={`h-[calc(100dvh_-_145px)] pb-10 w-full overflow-y-auto transition-colors px-1 ${
           active ? "bg-neutral-800/50" : "bg-neutral-800/0"
         }`}
       >
@@ -415,6 +408,7 @@ const Column = ({
                 <Card
                   key={c.id}
                   {...c}
+                  title={title}
                   handleDragStart={handleDragStart}
                   handleUpdateSale={handleUpdateSale}
                 />
@@ -463,12 +457,16 @@ const Card = ({
   status,
   total_amt,
   created,
+  title,
   handleDragStart,
   handleUpdateSale,
 }: Order & {
   handleDragStart: DragStartHandler;
   handleUpdateSale: any;
+  title: string;
 }) => {
+  const route = useRouter();
+
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {
       return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
@@ -554,10 +552,13 @@ const Card = ({
         layoutId={id.toString()}
         draggable="true"
         onDragStart={handleMotionDragStart}
-        className="cursor-grab rounded-lg border border-neutral-700 bg-neutral-800 p-2 active:cursor-grabbing"
+        className={cn(
+          "cursor-grab rounded-lg border hover:ring-2 ring-offset-background hover:ring-offset-2 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 p-2 active:cursor-grabbing transition-all duration-500",
+          title === "OnShipping" && "ring-orange-400", title === "Arrived" && "ring-blue-400", title === "Delivered" && "ring-green-400", title === "Canceled" && "ring-red-400"
+        )}
       >
         <span className="flex gap-2 items-center justify-between">
-          <p className="text-sm text-neutral-100 flex items-center gap-1">
+          <p className="text-sm dark:text-neutral-100 flex items-center gap-1">
             <Truck className="w-4 h-4" />
             {truncateText(transactionuid, 15)}
           </p>
@@ -570,7 +571,12 @@ const Card = ({
         </p>
         <div className="w-full flex justify-between items-end">
           <p>Total: $ {total_amt}</p>
-          <Button size="sm">Details</Button>
+          <Button
+            size="sm"
+            onClick={() => route.push(`sales/${transactionuid}`)}
+          >
+            Details
+          </Button>
         </div>
       </motion.div>
     </>

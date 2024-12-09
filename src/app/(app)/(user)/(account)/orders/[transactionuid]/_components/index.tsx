@@ -1,15 +1,18 @@
 "use client";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useDeferredValue, useMemo } from "react";
 import {
   useSalesRetrieveQuery,
   useProductsByIdsQuery,
 } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { MapPin, ShoppingCart, Truck } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { LeftIcon, RightIcon } from "../../_components.tsx/icons";
+import { LeftIcon, RightIcon } from "../../_components/icons";
+import Voucher from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
+import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
+import { Separator } from "@/components/ui/separator";
+import { useDecryptedData } from "@/hooks/dec-data";
 
 interface Product {
   id: string;
@@ -56,98 +59,111 @@ export interface Order {
 }
 
 const renderBadge = (status: string) => {
-    const statusMap: {
-      [key: string]: {
-        varaint?:
-          | "default"
-          | "secondary"
-          | "warning"
-          | "success"
-          | "danger"
-          | "destructive"
-          | "outline"
-          | null
-          | undefined;
-        color: string;
-        label: string;
-      };
-    } = {
-      pending: { varaint: "warning", color: "bg-orange-500", label: "Pending" },
-      verified: { varaint: "warning", color: "bg-blue-500", label: "Verified" },
-      proceed: { color: "bg-blue-500", label: "Proceed" },
-      packed: { color: "bg-blue-500", label: "Packed" },
-      delivered: {
-        varaint: "success",
-        color: "bg-green-500",
-        label: "Delivered",
-      },
-      successful: {
-        varaint: "success",
-        color: "bg-green-500",
-        label: "Successful",
-      },
-      cancled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
+  const statusMap: {
+    [key: string]: {
+      varaint?:
+        | "default"
+        | "secondary"
+        | "warning"
+        | "success"
+        | "danger"
+        | "destructive"
+        | "outline"
+        | null
+        | undefined;
+      color: string;
+      label: string;
     };
-  
-    const { varaint, color, label } = statusMap[status] || {
-      varaint: "default",
-      color: "gray",
-      label: "Unknown",
-    };
-    return (
-      <Badge variant={varaint} className={`relative border-0 gap-1`}>
-        <span
-          className={cn(
-            "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
-            color
-          )}
-        ></span>
-        <span
-          className={cn("inline-flex h-2 w-2 right-0 top-0 rounded-full ", color)}
-        ></span>
-        {label}
-      </Badge>
-    );
+  } = {
+    pending: { varaint: "warning", color: "bg-orange-500", label: "Pending" },
+    verified: { varaint: "warning", color: "bg-blue-500", label: "Verified" },
+    proceed: { color: "bg-blue-500", label: "Proceed" },
+    packed: { color: "bg-blue-500", label: "Packed" },
+    delivered: {
+      varaint: "success",
+      color: "bg-green-500",
+      label: "Delivered",
+    },
+    successful: {
+      varaint: "success",
+      color: "bg-green-500",
+      label: "Successful",
+    },
+    cancled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
   };
 
+  const { varaint, color, label } = statusMap[status] || {
+    varaint: "default",
+    color: "gray",
+    label: "Unknown",
+  };
+  return (
+    <Badge variant={varaint} className={`relative border-0 gap-1`}>
+      <span
+        className={cn(
+          "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
+          color
+        )}
+      ></span>
+      <span
+        className={cn("inline-flex h-2 w-2 right-0 top-0 rounded-full ", color)}
+      ></span>
+      {label}
+    </Badge>
+  );
+};
 
 const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
   const { accessToken } = useAuthUser();
-  const { data, isLoading } = useSalesRetrieveQuery(
+  const { data: encryptedData, isLoading } = useSalesRetrieveQuery(
     { transactionuid, token: accessToken },
     { skip: !accessToken }
   );
+  const {data, loading} = useDecryptedData(encryptedData, isLoading);
+  console.log(data);
+  return (
+    <PageSkeleton loading={loading}>
+      {data && <ProductCard data={data} />}
+    </PageSkeleton>
+  );
+};
+
+const ProductCard = ({
+  data,
+}: {
+  data: Order;
+}) => {
+
   const productIds = useMemo(() => {
     return data?.products.map((item: CartItem) => item.product);
   }, [data]);
 
-//   const { data: products, isLoading: productsLoading } = useProductsByIdsQuery(
-//     { ids: productIds },
-//     { skip: !productIds || productIds.length === 0 }
-//   );
-  
-//   const productsWithData = useMemo(() => {
-//     if (!products) return [];
-//     return data?.products.map((cartItem: CartItem) => {
-//       const product = products.find(
-//         (p: Product) => p.id === cartItem.product
-//       );
-//       const variantDetails = Array.isArray(product.variants)
-//         ? product.variants.find((v: any) => v.id === cartItem.variant)
-//         : product.variants;
+  const { data: products, isLoading } = useProductsByIdsQuery(
+    { ids: productIds },
+    { skip: !productIds || productIds.length === 0 }
+  );
 
-//       return {
-//         ...cartItem,
-//         pcs: cartItem.qty,
-//         categoryname: product.categoryname,
-//         description: product.description,
-//         images: product.images,
-//         product_name: product.product_name,
-//         productslug: product.productslug,
-//         variantDetails: variantDetails || {},
-//       };
-//     });
-//   }, [products, data]);
+  const productsWithData = useMemo(() => {
+    if (!products) return [];
+    return data?.products.map((cartItem: CartItem) => {
+      const product = products.results.find((p: Product) => p.id === cartItem.product);
+      const variantDetails = Array.isArray(product.variants)
+        ? product.variants.find((v: any) => v.id === cartItem.variant)
+        : product.variants;
+
+      return {
+        ...cartItem,
+        pcs: cartItem.qty,
+        price: cartItem.price,
+        categoryname: product.categoryname,
+        description: product.description,
+        images: product.images,
+        product_name: product.product_name,
+        productslug: product.productslug,
+        variantDetails: variantDetails || {},
+      };
+    });
+  }, [products, data]);
 
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {
@@ -179,7 +195,7 @@ const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
         <div className="w-full p-2 flex justify-between items-center rounded-lg">
           <h1 className="flex gap-1">
             <ShoppingCart className="w-5 h-5" />{" "}
-            {/* {truncateText(data?.transactionuid, 15)} */}
+            {truncateText(data?.transactionuid, 15)}
           </h1>
           {renderBadge(data?.status)}
         </div>
@@ -206,8 +222,47 @@ const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
           </span>
         </div>
       </div>
+      <div className="p-2 pb-0 flex gap-2 flex-col">
+        <VoucherSkleton loading={isLoading}>
+          {productsWithData.map((product: any) => (
+            <Voucher key={product.productslug} data={product} price={false} />
+          ))}
+        </VoucherSkleton>
+        <Separator className="mt-1" />
+        <div className="w-full p-1 py-2 gap-2 flex items-center">
+          <p>Total :</p> {data.discount > 0 && <p>$ {data?.total_amt}</p>} <p className={cn(data?.discount > 0 && "line-through text-neutral-950/50")}> $ {data?.sub_total}</p>
+        </div>
+      </div>
     </div>
   );
+};
+
+const Skeleton = () => {
+  return (
+    <section className="w-full min-w-[350px] p-1 h-full flex flex-col gap-1 rounded-lg">
+      <div className="w-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[390px] rounded-lg"></div>
+    </section>
+  );
+};
+
+export const PageSkeleton = ({
+  loading,
+  children,
+}: {
+  loading: boolean;
+  children: React.ReactNode;
+}) => {
+  const load = useDeferredValue(loading);
+  if (load) {
+    return (
+      <>
+        {Array.from({ length: 4 }, (_, index) => (
+          <Skeleton key={index} />
+        ))}
+      </>
+    );
+  }
+  return <>{children}</>;
 };
 
 export default OrderRetrieve;

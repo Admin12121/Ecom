@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { LeftIcon, RightIcon } from "./icons";
 import {
@@ -13,7 +13,7 @@ import Voucher, {
   VoucherSkleton,
 } from "../../../checkout/[transitionuid]/_components/voucher";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Order as OrderData } from ".";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -109,7 +109,9 @@ export const OrderComponent = ({ data }: { data: OrderData[] }) => {
       ) : (
         <div className="flex flex-col w-full h-[50dvh] gap-2 items-center justify-center">
           <h1>Your Order list is empty</h1>
-          <p className="text-sm text-neutral-500">Start by exploring out Productsa and great deals!</p>
+          <p className="text-sm text-neutral-500">
+            Start by exploring out Productsa and great deals!
+          </p>
           <Button>Continue Shopping</Button>
         </div>
       )}
@@ -119,38 +121,6 @@ export const OrderComponent = ({ data }: { data: OrderData[] }) => {
 
 const OrderDetails = ({ order }: { order: OrderData }) => {
   const router = useRouter();
-  const productIds = useMemo(() => {
-    return order.products.map((item) => item.product);
-  }, [order]);
-
-  const { data: products, isLoading } = useProductsByIdsQuery(
-    { ids: productIds },
-    { skip: productIds.length === 0 }
-  );
-
-  const productsWithData = useMemo(() => {
-    if (!products) return [];
-    return order.products.map((cartItem) => {
-      const product = products.results.find(
-        (p: Product) => p.id === cartItem.product
-      );
-      const variantDetails = Array.isArray(product.variants)
-        ? product.variants.find((v: any) => v.id === cartItem.variant)
-        : product.variants;
-
-      return {
-        ...cartItem,
-        pcs: cartItem.qty,
-        categoryname: product.categoryname,
-        description: product.description,
-        images: product.images,
-        product_name: product.product_name,
-        productslug: product.productslug,
-        variantDetails: variantDetails || {},
-      };
-    });
-  }, [products, order]);
-
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {
       return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
@@ -176,56 +146,50 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
   };
 
   return (
-    <>
-      <AccordionTrigger
-        icon={<></>}
-        className="text-left hover:no-underline p-0 w-full lg:min-w-[450px] bg-white dark:bg-neutral-900/50 rounded-lg"
-      >
-        <div className="flex w-full rounded-lg p-1 flex-col">
-          <div className="w-full p-2 flex justify-between items-center rounded-lg">
-            <h1 className="flex gap-1">
-              <ShoppingCart className="w-5 h-5" />{" "}
-              {truncateText(order.transactionuid, 15)}
-            </h1>
-            {renderBadge(order.status)}
-          </div>
-          <div className="w-full p-2 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 rounded-lg">
-            <span className="p-2 border-1 rounded-xl">
-              <p className="text-sm flex items-center gap-1">
-                <Truck className="w-4 h-4" /> Kathmandu, Nepal
-              </p>
-            </span>
-            <span className="flex items-center justify-center">
-              <LeftIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
-              <span className="p-2 border-1 rounded-xl">
-                <p className="text-sm text-neutral-500">
-                  Estimated arrival:{" "}
-                  {calculateEstimatedArrival(order.created, 7)}
-                </p>
-              </span>
-              <RightIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
-            </span>
-            <span className="p-2 border-1 rounded-xl">
-              <p className="text-sm flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                {order?.shipping?.city}, {order?.shipping?.country}
-              </p>
-            </span>
-          </div>
+    <AccordionTrigger
+      icon={<></>}
+      className="text-left hover:no-underline p-0 w-full lg:min-w-[450px] bg-white dark:bg-neutral-900/50 rounded-lg"
+    >
+      <div className="flex w-full rounded-lg p-1 flex-col">
+        <div className="w-full p-2 flex justify-between items-center rounded-lg">
+          <h1 className="flex gap-1">
+            <ShoppingCart className="w-5 h-5" />{" "}
+            {truncateText(order.transactionuid, 15)}
+          </h1>
+          {renderBadge(order.status)}
         </div>
-      </AccordionTrigger>
-      <AccordionContent className="p-2 pb-0">
-        <VoucherSkleton loading={isLoading}>
-          {productsWithData.map((product: any) => (
-            <Voucher key={product.productslug} data={product} price={false} />
-          ))}
-        </VoucherSkleton>
-        <Separator className="mt-1" />
-        <div className="w-full p-1 py-2 flex justify-between items-center">
+        <div className="w-full p-2 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 rounded-lg">
+          <span className="p-2 border-1 rounded-xl">
+            <p className="text-sm flex items-center gap-1">
+              <Truck className="w-4 h-4" /> Kathmandu, Nepal
+            </p>
+          </span>
+          <span className="flex items-center justify-center">
+            <LeftIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
+            <span className="p-2 border-1 rounded-xl">
+              <p className="text-sm text-neutral-500">
+                Estimated arrival: {calculateEstimatedArrival(order.created, 7)}
+              </p>
+            </span>
+            <RightIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
+          </span>
+          <span className="p-2 border-1 rounded-xl">
+            <p className="text-sm flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              {order?.shipping?.city}, {order?.shipping?.country}
+            </p>
+          </span>
+        </div>
+        <div className="w-full p-2 flex justify-between items-center">
           <p>Total: $ {order.total_amt}</p>
-          <Button onClick={() => router.push(`/orders/${order.transactionuid}`)}>Details</Button>
+          <span
+            className={cn(buttonVariants({ variant: "default" }))}
+            onClick={() => router.push(`/orders/${order.transactionuid}`)}
+          >
+            Details
+          </span>
         </div>
-      </AccordionContent>
-    </>
+      </div>
+    </AccordionTrigger>
   );
 };

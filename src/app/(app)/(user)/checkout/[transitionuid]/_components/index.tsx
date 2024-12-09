@@ -27,6 +27,7 @@ import GlassCard from "@/components/global/glass-card";
 import Address from "./address";
 import { delay } from "@/lib/utils";
 import { handleClick } from "./animation";
+
 interface Product {
   product: number;
   variant: number;
@@ -91,7 +92,7 @@ const Checkout = ({ params }: { params: string }) => {
   const router = useRouter();
   const { accessToken, user } = useAuthUser();
   const { getRates, loading } = useAuth();
-  const [redeemCode] = useVerifyRedeemCodeMutation();
+  const [ redeemCode, { isLoading }] = useVerifyRedeemCodeMutation();
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     productData: decryptData(params, router) || [],
@@ -236,7 +237,11 @@ const Checkout = ({ params }: { params: string }) => {
             <GradientText element="H2" className="text-4xl font-semibold py-1">
               Proceed to Payment
             </GradientText>
-            <Address accessToken={accessToken} shipping={state.shipping} dispatch={dispatch}/>
+            <Address
+              accessToken={accessToken}
+              shipping={state.shipping}
+              dispatch={dispatch}
+            />
             <VoucherSkleton loading={loading}>
               {state.cartItemsWithDetails &&
                 state.cartItemsWithDetails.map((product: any) => {
@@ -259,6 +264,7 @@ const Checkout = ({ params }: { params: string }) => {
                   <Button
                     variant="custom"
                     type="submit"
+                    loading={isLoading}
                     disabled={state.redeemData}
                   >
                     Apply
