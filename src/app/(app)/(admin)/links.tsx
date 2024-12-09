@@ -44,7 +44,7 @@ export const Links = [
     title: "Reviews",
     label: "9",
     icon: MessageCircle,
-    href: "/reviews",
+    href: "/user-reviews",
   },
   {
     title: "Settings",

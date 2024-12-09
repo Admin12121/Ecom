@@ -10,6 +10,7 @@ import {
 import { Links } from "./links";
 import { cn } from "@/lib/utils";
 import Header from "./_components/header";
+import { siteConfig } from "@/config/site";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -19,8 +20,8 @@ const Providers = ({ children }: ProvidersProps) => {
   return (
     <Sidebar>
       <SidebarContent container="!bg-transparent" links={Links}>
-        <SidebarHeader label="Welcome" />
-        <CommandMenu />
+        <SidebarHeader logo="/logo.png" label={siteConfig.name} />
+        {/* <CommandMenu /> */}
       </SidebarContent>
       <main className="h-svh p-2 w-full">
         <div

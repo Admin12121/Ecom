@@ -1,8 +1,9 @@
 import React from 'react'
+import Reviews from './_components'
 
 const Page = () => {
   return (
-    <div>Page</div>
+    <Reviews/>
   )
 }
 

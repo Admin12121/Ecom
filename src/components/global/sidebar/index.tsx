@@ -747,6 +747,7 @@ SidebarMenuButton.displayName = "SidebarMenuButton";
 interface HeaderProps {
   logo?: string;
   label?: string;
+  link?: string;
   menuItems?: {
     title: string;
     icon: LucideIcon;
@@ -775,7 +776,7 @@ const SidebarHeader = ({ logo, label, children, menuItems }: HeaderProps) => {
         >
           <div
             className={cn(
-              "relative flex items-center px-1 gap-0 w-full [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
+              "relative flex  items-center px-1 gap-0 w-full [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
               isCollapsed &&
                 "flex h-9 w-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden"
             )}
@@ -784,40 +785,43 @@ const SidebarHeader = ({ logo, label, children, menuItems }: HeaderProps) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
+                  size="sm"
                   className={cn(
-                    "flex items-start justify-start h-[50px] p-0 px-1",
+                    "flex w-full items-center justify-center p-0 px-1 h-full",
                     isCollapsed && "px-0"
                   )}
+                  onClick={()=>router.push('/')}
                 >
-                  <div className="flex gap-2 items-center cursor-pointer w-full">
+                  <div className={cn("flex gap-2 items-center cursor-pointer w-full h-full", isCollapsed && "justify-center")}>
                     {logo && (
-                      <div className="logo">
+                      <div className="flex items-center justify-center w-full h-full">
                         <span
                           className={cn(
-                            "bg-white flex w-[40px] h-[40px] rounded-lg",
-                            isCollapsed && "w-[36px] h-[36px]"
+                            "flex w-[40px] h-[40px] rounded-lg",
+                            isCollapsed && "w-full h-full justify-center items-center"
                           )}
                         >
                           <Image
                             src={logo || ""}
-                            alt="logo"
-                            width={45}
-                            height={45}
-                            className="object-contain"
+                            alt="Nepal Heritage Handicraft Logo"
+                            priority
+                            width={100}
+                            height={100}
+                            className="object-contain dark:invert"
                           />
                         </span>
                       </div>
                     )}
-                    <h1
+                    {/* <h1
                       className={cn(
                         "font-semibold",
                         !logo && "px-2",
-                        !logo && isCollapsed && "text-2xl"
+                        !logo && isCollapsed && "text-2xl !m-0"
                       )}
                       style={{ fontFamily: "var(--font-geist-mono)" }}
                     >
                       {label && isCollapsed ? `${label.slice(0, 1)}` : label}
-                    </h1>
+                    </h1> */}
                     {menuItems && menuItems.length > 0 && (
                       <ChevronsUpDown className="w-4 h-4 absolute right-3" />
                     )}

@@ -1,17 +1,90 @@
+import { Metadata } from "next";
+
 export const siteConfig = {
-    name: "Ecom",
-    url: "https://ecom.biki.com.np",
-    ogImage: "https://ecom.biki.com.np/og.jpg",
-    description:
-      "Art and Sclpture store",
-    links: {
-      instagram: "https://twitter.com/shadcn",
+  title: "Nepal Heritage Handicraft",
+  name: "Heritage Craft",
+  shortName: "NHH",
+  url: "https://ecom.biki.com.np",
+  ogImage: "https://ecom.biki.com.np/og.jpg",
+  description:
+    "Authentic Nepalese art, sculptures, and handicrafts for cultural enthusiasts.",
+  links: {
+    instagram: "https://www.instagram.com/nepalheritagehandicraft/",
+  },
+};
+
+export type SiteConfig = typeof siteConfig;
+
+export const META_THEME_COLORS = {
+  light: "#ffffff",
+  dark: "#09090b",
+};
+
+export function absoluteUrl(path: string) {
+  return `${process.env.NEXTAUTH_URL}/${path}`;
+}
+
+export function constructMetadata({
+  title = "Nepal Heritage Handicraft",
+  description = "Authentic Nepalese art, sculptures, and handicrafts for cultural enthusiasts.",
+  image = absoluteUrl("/og"),
+  keywords = [],
+  ...props
+}: {
+  title?: string;
+  description?: string;
+  image?: string;
+  keywords?: string[];
+  [key: string]: Metadata[keyof Metadata];
+}): Metadata {
+  const baseKeywords = [
+    "Nepalese handicrafts",
+    "Traditional art",
+    "Cultural sculptures",
+    "Nepal art store",
+    "Handmade crafts",
+    "Next.js",
+    "Tailwind CSS",
+    "E-commerce platform",
+  ];
+  return {
+    title,
+    description,
+    keywords: [...baseKeywords, ...keywords],
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: `${title} - Authentic Nepalese Handicrafts`,
+        },
+      ],
     },
-  }
-  
-  export type SiteConfig = typeof siteConfig
-  
-  export const META_THEME_COLORS = {
-    light: "#ffffff",
-    dark: "#09090b",
-  }
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+      creator: "@vicky_tajpuriya",
+    },
+    icons: {
+      icon: "/favicon.ico",
+      apple: "/apple-touch-icon.png",
+    },
+    metadataBase: new URL("https://ecom.biki.com.np"),
+    authors: [
+      {
+        name: "vikcy",
+        url: "https://twitter.com/vicky_tajpuriya",
+      },
+    ],
+    creator: "vicky",
+    robots: "index, follow",
+    viewport: "width=device-width, initial-scale=1.0",
+    ...props,
+  };
+}
