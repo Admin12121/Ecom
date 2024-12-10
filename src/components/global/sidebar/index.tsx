@@ -807,7 +807,7 @@ const SidebarHeader = ({ logo, label, children, menuItems }: HeaderProps) => {
                             priority
                             width={100}
                             height={100}
-                            className="object-contain dark:invert"
+                            className="object-contain"
                           />
                         </span>
                       </div>

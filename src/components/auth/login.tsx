@@ -81,7 +81,7 @@ const Login = () => {
                       disabled={isLoading}
                       type="email"
                       placeholder="Email"
-                      className=" "
+                      className="dark:bg-muted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -100,7 +100,7 @@ const Login = () => {
                       type="password"
                       placeholder="Password"
                       autoComplete="off"
-                      className=" "
+                      className="dark:bg-muted "
                     />
                   </FormControl>
                   <FormMessage />

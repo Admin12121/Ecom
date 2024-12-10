@@ -21,7 +21,6 @@ const Providers = ({ children }: ProvidersProps) => {
     <Sidebar>
       <SidebarContent container="!bg-transparent" links={Links}>
         <SidebarHeader logo="/logo.png" label={siteConfig.name} />
-        {/* <CommandMenu /> */}
       </SidebarContent>
       <main className="h-svh p-2 w-full">
         <div

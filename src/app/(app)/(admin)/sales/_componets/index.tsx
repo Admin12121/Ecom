@@ -1,5 +1,6 @@
 "use client";
 import React, {
+  useReducer,
   useState,
   DragEvent,
   useCallback,
@@ -55,46 +56,88 @@ export interface Order {
   updated_at: string;
 }
 
+
+interface State {
+  onShippingOrders: Order[];
+  arrivedOrders: Order[];
+  deliveredOrders: Order[];
+  canceledOrders: Order[];
+  onShippingPage: number;
+  arrivedPage: number;
+  deliveredPage: number;
+  canceledPage: number;
+}
+
+type Action =
+  | { type: 'SET_ONSHIPPING_ORDERS'; payload: Order[] }
+  | { type: 'SET_ARRIVED_ORDERS'; payload: Order[] }
+  | { type: 'SET_DELIVERED_ORDERS'; payload: Order[] }
+  | { type: 'SET_CANCELED_ORDERS'; payload: Order[] }
+  | { type: 'INCREMENT_ONSHIPPING_PAGE' }
+  | { type: 'INCREMENT_ARRIVED_PAGE' }
+  | { type: 'INCREMENT_DELIVERED_PAGE' }
+  | { type: 'INCREMENT_CANCELED_PAGE' };
+
+const initialState: State = {
+  onShippingOrders: [],
+  arrivedOrders: [],
+  deliveredOrders: [],
+  canceledOrders: [],
+  onShippingPage: 1,
+  arrivedPage: 1,
+  deliveredPage: 1,
+  canceledPage: 1,
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_ONSHIPPING_ORDERS':
+      return { ...state, onShippingOrders: [...state.onShippingOrders, ...action.payload] };
+    case 'SET_ARRIVED_ORDERS':
+      return { ...state, arrivedOrders: [...state.arrivedOrders, ...action.payload] };
+    case 'SET_DELIVERED_ORDERS':
+      return { ...state, deliveredOrders: [...state.deliveredOrders, ...action.payload] };
+    case 'SET_CANCELED_ORDERS':
+      return { ...state, canceledOrders: [...state.canceledOrders, ...action.payload] };
+    case 'INCREMENT_ONSHIPPING_PAGE':
+      return { ...state, onShippingPage: state.onShippingPage + 1 };
+    case 'INCREMENT_ARRIVED_PAGE':
+      return { ...state, arrivedPage: state.arrivedPage + 1 };
+    case 'INCREMENT_DELIVERED_PAGE':
+      return { ...state, deliveredPage: state.deliveredPage + 1 };
+    case 'INCREMENT_CANCELED_PAGE':
+      return { ...state, canceledPage: state.canceledPage + 1 };
+    default:
+      return state;
+  }
+};
+
 export default function SalesManagementKanban() {
   const { accessToken } = useAuthUser();
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  const {
-    data: onShippingOrders,
-    refetch: refetchOnShipping,
-    isLoading: isLoadingOnShipping,
-  } = useGetOrdersQuery(
-    { token: accessToken, status: "onshipping", search: deferredSearch },
+    const { data: onShippingOrders, refetch: refetchOnShipping, isLoading: isLoadingOnShipping } = useGetOrdersQuery(
+    { token: accessToken, status: "onshipping", search: deferredSearch, page: state.onShippingPage },
     { skip: !accessToken }
   );
 
-  const {
-    data: arrivedOrders,
-    refetch: refetchArrived,
-    isLoading: isLoadingArrived,
-  } = useGetOrdersQuery(
-    { token: accessToken, status: "arrived", search: deferredSearch },
+  const { data: arrivedOrders, refetch: refetchArrived, isLoading: isLoadingArrived } = useGetOrdersQuery(
+    { token: accessToken, status: "arrived", search: deferredSearch, page: state.arrivedPage },
     { skip: !accessToken }
   );
 
-  const {
-    data: deliveredOrders,
-    refetch: refetchDelivered,
-    isLoading: isLoadingDelivered,
-  } = useGetOrdersQuery(
-    { token: accessToken, status: "delivered", search: deferredSearch },
+  const { data: deliveredOrders, refetch: refetchDelivered, isLoading: isLoadingDelivered } = useGetOrdersQuery(
+    { token: accessToken, status: "delivered", search: deferredSearch, page: state.deliveredPage },
     { skip: !accessToken }
   );
 
-  const {
-    data: canceledOrders,
-    refetch: refetchCanceled,
-    isLoading: isLoadingCanceled,
-  } = useGetOrdersQuery(
-    { token: accessToken, status: "canceled", search: deferredSearch },
+  const { data: canceledOrders, refetch: refetchCanceled, isLoading: isLoadingCanceled } = useGetOrdersQuery(
+    { token: accessToken, status: "canceled", search: deferredSearch, page: state.canceledPage },
     { skip: !accessToken }
   );
+
 
   const refetchData = (type: string, multiple: boolean) => {
     switch (type) {
@@ -118,6 +161,25 @@ export default function SalesManagementKanban() {
         break;
       default:
         console.warn(`Unknown refetch type: ${type}`);
+    }
+  };
+
+  const loadMore = (type: string) => {
+    switch (type) {
+      case "onshipping":
+        dispatch({ type: 'INCREMENT_ONSHIPPING_PAGE' });
+        break;
+      case "arrived":
+        dispatch({ type: 'INCREMENT_ARRIVED_PAGE' });
+        break;
+      case "delivered":
+        dispatch({ type: 'INCREMENT_DELIVERED_PAGE' });
+        break;
+      case "canceled":
+        dispatch({ type: 'INCREMENT_CANCELED_PAGE' });
+        break;
+      default:
+        console.warn(`Unknown load more type: ${type}`);
     }
   };
 
@@ -154,6 +216,7 @@ export default function SalesManagementKanban() {
             headingColor="orange-400"
             data={onShippingOrders}
             refetchData={refetchData}
+            loadMore={() => loadMore("onshipping")}
             loading={isLoadingOnShipping}
           />
           <Column
@@ -162,6 +225,7 @@ export default function SalesManagementKanban() {
             headingColor="blue-400"
             data={arrivedOrders}
             refetchData={refetchData}
+            loadMore={() => loadMore("arrived")}
             loading={isLoadingArrived}
           />
           <Column
@@ -170,6 +234,7 @@ export default function SalesManagementKanban() {
             headingColor="green-400"
             data={deliveredOrders}
             refetchData={refetchData}
+            loadMore={() => loadMore("delivered")}
             loading={isLoadingDelivered}
           />
           <Column
@@ -178,6 +243,7 @@ export default function SalesManagementKanban() {
             headingColor="red-400"
             data={canceledOrders}
             refetchData={refetchData}
+            loadMore={() => loadMore("canceled")}
             loading={isLoadingCanceled}
           />
         </div>
@@ -192,6 +258,7 @@ type ColumnProps = {
   column: any;
   data: any;
   refetchData: (type: string, multiple: boolean) => void;
+  loadMore: () => void;
   loading: boolean;
 };
 
@@ -215,6 +282,7 @@ const Column = ({
   column,
   data,
   refetchData,
+  loadMore,
   loading,
 }: ColumnProps) => {
   const { accessToken } = useAuthUser();
@@ -423,7 +491,7 @@ const Column = ({
         <DropIndicator beforeId={null} column={column} />
         {data?.next && (
           <div className="w-full flex justify-center">
-            <Button>Load more</Button>
+            <Button onClick={loadMore}>Load more</Button>
           </div>
         )}
       </div>

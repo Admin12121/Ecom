@@ -48,7 +48,6 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
             </span>
             <span>
               <p className="text-xs text-zinc-300 pb-1">qty: {data.pcs}</p>
-              {!price && <p className="text-xs text-zinc-300">price: {pricesym} {productprice}</p>}
             </span>
           </span>
         </span>

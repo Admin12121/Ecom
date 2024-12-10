@@ -17,7 +17,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
   return (
     <>
       <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none border-0">
-        <nav className="flex h-16 items-center px-4 w-full">
+        <nav className="flex h-16 items-center px-2 md:px-4 w-full">
           <MainNav />
           <div className="hidden md:flex flex-1 items-center justify-end gap-2 md:justify-end">
             <div className="flex items-center gap-1 w-full justify-end">
@@ -50,12 +50,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
               <span className="sr-only">collections</span>
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-            <Link href="/wishlist" rel="noreferrer" className="w-full h-full flex items-center justify-center">
-              <Heart className="h-4 w-4" />
-              <span className="sr-only">Wishlist</span>
-            </Link>
-          </Button>
+          <CurrencySelector className="flex" />
           {status ? (
             <UserNav align="center" />
           ) : (
