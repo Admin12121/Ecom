@@ -44,6 +44,7 @@ import * as z from "zod";
 import { Label } from "@/components/ui/label";
 import GlobalInput from "@/components/global/input";
 import { useAuthUser } from "@/hooks/use-auth-user";
+import DeleteProduct from "./delete-product";
 
 interface GetCategory {
   id: string;
@@ -125,6 +126,7 @@ interface FormValues {
 }
 
 const ProductPage = ({ productslug }: { productslug: string }) => {
+  const { accessToken } = useAuthUser();
   const [images, setImages] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<File[]>([]);
   const [isMultiVariant, setIsMultiVariant] = useState<boolean>(false);
@@ -137,14 +139,13 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
     data: productData,
     isLoading: ProductDataLoading,
     refetch,
-  } = useProductsViewQuery({ productslug }, { skip: !productslug });
-  const [updateProduct, { isLoading: updateProductLoading }] =
+  } = useProductsViewQuery({ productslug , token:accessToken}, { skip: !productslug });
+  const [updateProduct] =
     useProductsUpdateMutation();
-  const [deleteVariant, { isLoading: deleteVariantLoading }] =
+  const [deleteVariant] =
     useVariantDeleteMutation();
   const getcategory = useMemo(() => (data as GetCategory[]) || [], [data]);
   const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
-  const { accessToken } = useAuthUser();
   const {
     register,
     handleSubmit,
@@ -428,9 +429,12 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
       className="flex flex-col gap-5 px-2 md:px-5 pb-5 w-full h-[90dvh]"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Button className="absolute right-2 top-2" type="submit">
+      <span className="md:absolute right-2 top-2 flex gap-2 ">
+      <Button className="" type="submit">
         Update Product
       </Button>
+      {accessToken && <DeleteProduct token={accessToken} refetch={refetch}  id={productData?.id} active={productData?.deactive}/>}
+      </span>
       <span className="flex w-full gap-5 max-lg:flex-col ">
         <Card className="bg-default-100 w-[70%] max-lg:w-full p-3 flex flex-col gap-3">
           <CardHeader>
@@ -650,6 +654,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
+                            type="button"
                             variant="destructive"
                             className="w-full md:w-auto p-2"
                             disabled={fields.length === 1}
@@ -686,6 +691,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
                   </div>
                 ))}
                 <Button
+                  type="button"
                   variant="secondary"
                   onClick={(e) => {
                     e.preventDefault();

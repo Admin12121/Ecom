@@ -137,8 +137,9 @@ export const userAuthapi = createApi({
       },
     }),
     productsView: builder.query({
-      query: ({ productslug, id, search, ids, category }) => {
+      query: ({ productslug, id, search, page, ids, category, token }) => {
         const queryParams = buildQueryParams({
+          page,
           productslug,
           id,
           search,
@@ -148,7 +149,7 @@ export const userAuthapi = createApi({
         return {
           url: `api/products/products/${queryParams}`,
           method: "GET",
-          headers: createHeaders(),
+          headers: createHeaders(token),
         };
       },
     }),
@@ -175,6 +176,13 @@ export const userAuthapi = createApi({
         url: "api/products/trending/",
         method: "GET",
         headers: createHeaders(),
+      }),
+    }),
+    deleteProducts: builder.mutation({
+      query: ({token, id}) => ({
+        url: `api/products/products/${id}/`,
+        method: "DELETE",
+        headers: createHeaders(token),
       }),
     }),
     notifyuser: builder.mutation({
@@ -510,6 +518,7 @@ export const {
   useProductsByIdsQuery,
   useRecommendedProductsViewQuery,
   useTrendingProductsViewQuery,
+  useDeleteProductsMutation,
   useNotifyuserMutation,
   useGetnotifyuserQuery,
   useDeleteProductMutation,

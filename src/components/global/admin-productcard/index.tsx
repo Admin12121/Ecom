@@ -82,21 +82,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
         >
           {data &&
             data?.images &&
-            data.images.map((data: InterfaceImage, index: number) => (
-              <SwiperSlide key={index}>
-                <div className="h-full w-full left-0 top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
-                  <Link href={`/products/${productslug}`}>
-                    <Image
-                      src={data.image}
-                      width={600}
-                      height={600}
-                      className=" w-full cursor-pointer h-[350px]  object-contain"
-                      alt="Image 1"
-                    />
-                  </Link>
-                </div>
-              </SwiperSlide>
-            ))}
+            data.images.map((data: InterfaceImage, index: number) => {
+              const isPng = data.image.endsWith("-not.png");
+              const imageClassName = isPng ? "w-full h-full object-cover" : "";
+              return (
+                <SwiperSlide key={index}>
+                  <div className="h-full w-full left-0 top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
+                    <Link href={`/products/${productslug}`} className={cn(imageClassName)}>
+                      <Image
+                        src={data.image}
+                        width={600}
+                        height={600}
+                      className={cn(" w-full cursor-pointer h-[350px]  object-contain", imageClassName)}
+                        alt="Image 1"
+                      />
+                    </Link>
+                  </div>
+                </SwiperSlide>
+              );
+            })}
         </Swiper>
         <span className=" w-full h-[55px] flex flex-col rounded-lg p-3 py-2 justify-between  dark:bg-transparent">
           <div className="flex gap-3 items-center">
@@ -107,22 +111,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
               </p>
             </div>
           </div>
-          {/* <div className="flex w-full justify-between items-center gap-1">
-            <p className="text-sm">
-              {symbol} {convertedPrice}
-            </p>
-            <Button
-              variant="active"
-              size="sm"
-              className="h-[30px] flex justify-center items-center text-sm gap-2"
-              //   onClick={(event) => {
-                //     addToCart(data!.id, event, variantId);
-                //   }}
-                >
-              <HiOutlineShoppingBag className="w-3 h-3" />
-              Add
-            </Button>
-          </div> */}
         </span>
       </span>
     </section>

@@ -147,26 +147,29 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           effect="fade"
           modules={[Autoplay, Navigation, Pagination, EffectFade]}
           style={{ margin: "0px" }}
-          className={cn(`w-full h-[390px] rounded-lg`, width)}
+          className={cn(`w-full h-[390px] rounded-lg `, width)}
         >
           {data &&
             data?.images &&
-            data.images.map((data: InterfaceImage, index: number) => (
+            data.images.map((data: InterfaceImage, index: number) => {
+              const isPng = data.image.endsWith("-not.png");
+              const imageClassName = isPng ?  "w-full h-full object-cover" : "";
+              return(
               <SwiperSlide key={index}>
-                <div className="h-full w-full left-0 top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
-                  <Link href={`/collections/${productslug}`}>
+                <div className="h-full w-full left-0 overflow-hidden top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
+                  <Link href={`/collections/${productslug}`} className={cn(imageClassName )}>
                     <Image
                       src={data.image}
                       width={600}
                       height={600}
                       priority
-                      className=" w-full cursor-pointer h-[350px]  object-contain"
+                      className={cn(" w-full cursor-pointer h-[350px]  object-contain", imageClassName)}
                       alt={productslug}
                     />
                   </Link>
                 </div>
               </SwiperSlide>
-            ))}
+            )})}
         </Swiper>
         <span
           className={cn(

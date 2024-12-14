@@ -8,6 +8,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
 import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
+import InfiniteScroll from "@/components/global/infinite-scroll";
 
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
@@ -18,16 +19,31 @@ const CollectionPage = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const search = searchParams.get("search");
-  const { data, isLoading, refetch } = useProductsViewQuery({
-    category,
-    search,
-  });
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
   const [products, SetProducts] = useState<Product[] | null>([]);
   const [filters, setFilters] = useState<boolean>(false);
-
+  const { data, isLoading } = useProductsViewQuery({
+    category,
+    search,
+    page
+  });
+  
   useEffect(() => {
-    SetProducts(data?.results);
+    if (page === 1) {
+      SetProducts(data?.results);
+      setHasMore(data?.next ? true : false);
+    } else {
+      SetProducts((prev) => [...(prev || []), ...(data?.results || [])]);
+    }
   }, [data]);
+
+  const loadMoreProducts = () => {
+    if (data?.next) {
+      setPage(page + 1);
+      setHasMore(data?.next ? true : false);
+    }
+  };
 
   return (
     <>
@@ -45,25 +61,30 @@ const CollectionPage = () => {
         <div className="flex flex-col gap-1">
           <span>
             <p className="text-sm text-neutral-600 dark:text-themeTextGray">
-              {products?.length} products
+              {data?.count} products
             </p>
           </span>
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none`}
+          <InfiniteScroll
+            loading={isLoading}
+            hasMore={hasMore}
+            loadMore={loadMoreProducts}
           >
-            <ProductSkeleton loading={isLoading}>
-              {products && products.length > 0 ? (
-                products.map((product, index) => (
-                  <div
-                    key={index}
-                    className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
-                  >
-                    <ProductCard
-                      data={product}
-                      base={index % 2 === 0 ? undefined : "bg-gradiant"}
-                    />
-                  </div>
-                ))
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none`}
+            >
+              <ProductSkeleton loading={isLoading}>
+                {products && products.length > 0 ? (
+                  products.map((product, index) => (
+                    <div
+                      key={index}
+                      className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
+                    >
+                      <ProductCard
+                        data={product}
+                        base={index % 2 === 0 ? undefined : "bg-gradiant"}
+                      />
+                    </div>
+                  ))
                 ) : (
                   <div className="flex w-screen h-full ">
                     <p className="text-themeTextGray">
@@ -71,9 +92,10 @@ const CollectionPage = () => {
                       term.
                     </p>
                   </div>
-               )}
-            </ProductSkeleton>
-          </div>
+                )}
+              </ProductSkeleton>
+            </div>
+          </InfiniteScroll>
         </div>
         {filters && (
           <div className="w-[500px] p-[10px] max-md:w-full max-md:top-[120px] max-md:z-50">
@@ -83,12 +105,18 @@ const CollectionPage = () => {
           </div>
         )}
       </section>
-      <RecommendedProducts className="pb-14"/>
+      <RecommendedProducts className="pb-14" />
     </>
   );
 };
 
-export const RecommendedProducts = ({className, base}:{className?:string, base?:string}) => {
+export const RecommendedProducts = ({
+  className,
+  base,
+}: {
+  className?: string;
+  base?: string;
+}) => {
   const { data, isLoading } = useTrendingProductsViewQuery({});
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
