@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useUpdateQueryParams } from "@/lib/query-params";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useSearchPostMutation } from "@/lib/store/Service/api";
 
 export function PlaceholdersAndVanishInput() {
   const placeholders = React.useMemo(
@@ -34,6 +35,7 @@ export function PlaceholdersAndVanishInput() {
   );
   const updateQueryParams = useUpdateQueryParams();
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
+  const [SearchPost] = useSearchPostMutation();
 
   useEffect(() => {
     const startAnimation = () => {
@@ -179,7 +181,7 @@ export function PlaceholdersAndVanishInput() {
     vanishAndSubmit();
     const actualData = { keyword: value };
     updateQueryParams({ search: value }, "/collections");
-    // SearchPost({actualData});
+    SearchPost({actualData});
   };
 
   return (

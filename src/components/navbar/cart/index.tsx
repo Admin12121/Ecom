@@ -139,7 +139,7 @@ export default function Cart() {
         const price = parseFloat(item.variantDetails.price);
         const discount = item.variantDetails.discount;
         const pcs = item.pcs ?? 0;
-        const finalPrice = price - price * (discount / 100);
+        const finalPrice = Number((price - price * (discount / 100)).toFixed(2));
         acc.totalPrice += finalPrice * pcs;
         return acc;
       },
@@ -308,7 +308,7 @@ const CartItem = ({
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
   const discount = data.variantDetails.discount;
   const finalPrice = useMemo(() => {
-    return convertedPrice - convertedPrice * (discount / 100);
+    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
   }, [convertedPrice, discount]);
 
   const truncateText = useCallback(

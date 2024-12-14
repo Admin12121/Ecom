@@ -95,7 +95,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const stocks = getVariantData(variantsData, "stock", selectedSize?.id);
 
   const finalPrice = useMemo(() => {
-    return convertedPrice - convertedPrice * (discount / 100);
+    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
   }, [convertedPrice, discount]);
 
   const productslug = data.productslug;

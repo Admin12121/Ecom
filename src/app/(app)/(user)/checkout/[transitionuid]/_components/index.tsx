@@ -142,7 +142,7 @@ const Checkout = ({ params }: { params: string }) => {
         const price = parseFloat(item.variantDetails.price);
         const discount = item.variantDetails.discount;
         const pcs = item.pcs ?? 0;
-        const finalPrice = price - price * (discount / 100);
+        const finalPrice = Number((price - price * (discount / 100)).toFixed(2));
         acc.totalPrice += finalPrice * pcs;
         return acc;
       },
@@ -152,7 +152,7 @@ const Checkout = ({ params }: { params: string }) => {
 
   const calculateDiscount = (totalPrice: number, discountData: any) => {
     if (discountData.type === "percentage") {
-      return totalPrice * (discountData.discount / 100);
+      return Number((totalPrice * (discountData.discount / 100)).toFixed(2));
     } else if (discountData.type === "amount") {
       return discountData.discount;
     }

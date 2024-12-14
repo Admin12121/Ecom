@@ -12,7 +12,7 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
   const discount = data.variantDetails.discount;
 
   const finalPrice = useMemo(() => {
-    return convertedPrice - convertedPrice * (discount / 100);
+    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
   }, [convertedPrice, discount]);
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {

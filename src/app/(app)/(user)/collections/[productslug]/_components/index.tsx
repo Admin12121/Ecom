@@ -64,7 +64,7 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
   return (
     <main>
       <ProductSection product={product} />
-      <ReviewsSection />
+      {product.reviews && <ReviewsSection product_name={product.product_name}/>}
       <RecommendedProducts product_id={product!.id} className="mb-14"/>
     </main>
   );
@@ -93,10 +93,10 @@ const ProductSection = ({ product }: { product: Product }) => (
   </section>
 );
 
-const ReviewsSection = () => (
+const ReviewsSection = ({product_name}:{product_name:string}) => (
   <section className="w-full h-full py-10 flex overflow-hidden flex-col items-center justify-center">
     <h1 className="text-5xl font-bold text-center w-[350px] md:w-[450px]">
-      What people say about Nassau
+      What people say about {product_name}
     </h1>
     <p>Don&apos;t just take our word for it.</p>
     <div className="flex flex-wrap gap-4 pt-10 items-center justify-center">

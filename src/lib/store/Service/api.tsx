@@ -401,8 +401,14 @@ export const userAuthapi = createApi({
       }),
     }),
     getUserReview: builder.query({
-      query: ({token}) => ({
-        url: `api/products/reviews/user/`,
+      query: ({token, search, page, page_size, star, filter}) => ({
+        url: `api/products/reviews/user/${buildQueryParams({
+          page,
+          page_size,
+          star,
+          filter,
+          search
+        })}`,
         method: "GET",
         headers: createHeaders(token),
       }),

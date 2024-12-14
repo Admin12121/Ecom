@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ): { convertedPrice: number; symbol: string } => {
     if (selectedcurrency) {
       return {
-        convertedPrice: parseFloat((price / selectedcurrency.sell).toFixed(2)),
+        convertedPrice: Number((price / selectedcurrency.sell).toFixed(2)),
         symbol: selectedcurrency.symbol,
       };
     }

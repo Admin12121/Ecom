@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useDeferredValue } from "react";
+import React, { useState, useDeferredValue, useEffect } from "react";
 import { useGetUserReviewQuery } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -39,18 +39,42 @@ export interface Review {
 const Reviews = () => {
   const { accessToken } = useAuthUser();
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [star, setStar] = useState("0");
   const [filter, setFilter] = useState("relevant");
+  const deferredSearch = useDeferredValue(search);
   const { data, isLoading } = useGetUserReviewQuery(
-    { token: accessToken },
+    {
+      token: accessToken,
+      page: page,
+      page_size: pageSize,
+      star,
+      filter,
+      search: deferredSearch,
+    },
     { skip: !accessToken }
   );
-  const deferredSearch = useDeferredValue(search);
+  const [reviewData, setReviewData] = useState<Review[] | null>(null);
+  useEffect(() => {
+    if (data?.results) {
+      if (page === 1) {
+        setReviewData(data.results);
+      } else {
+        setReviewData((prevData) => [...(prevData || []), ...data.results]);
+      }
+    }
+  }, [data]);
+
+  const handleShowMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
 
   return (
     <div className="h-screen space-y-3 px-3">
-      <div className="flex justify-between w-full items-center">
+      <div className="flex justify-between w-full md:items-center md:flex-row flex-col">
         <h1>Reviews</h1>
-        <span className="flex gap-2">
+        <span className="flex gap-2 md:flex-row flex-col">
           <div
             className={`relative dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white rounded-lg`}
           >
@@ -72,10 +96,29 @@ const Reviews = () => {
             ></Kbd>
           </div>
           <Select
+            defaultValue="0"
+            onValueChange={(value: string) => setStar(value)}
+          >
+            <SelectTrigger className="md:w-40 dark:bg-[#171717]">
+              <SelectValue placeholder="Select a Rating" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="0">Read all</SelectItem>
+                {["1", "2", "3", "4", "5"].map((num, index) => (
+                  <SelectItem key={index + 1} value={num}>
+                    {"★".repeat(Number(num))}
+                    {"★".repeat(5 - Number(num)).replace(/./g, "")}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select
             defaultValue="recent"
             onValueChange={(value: string) => setFilter(value)}
           >
-            <SelectTrigger className="w-40 dark:bg-[#171717]">
+            <SelectTrigger className="md:w-40 dark:bg-[#171717]">
               <SelectValue placeholder="Select a Rating" />
             </SelectTrigger>
             <SelectContent>
@@ -89,9 +132,9 @@ const Reviews = () => {
         </span>
       </div>
       <ReviewsCard loading={isLoading}>
-        {data?.results.length > 0 ? (
+        {reviewData && reviewData.length > 0 ? (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-2">
-            {data?.results.map((review: Review) => (
+            {reviewData.map((review: Review) => (
               <Card
                 className="mb-2 break-inside-avoid flex flex-col gap-1 p-1"
                 key={Math.random()}
@@ -159,6 +202,9 @@ const Reviews = () => {
           </span>
         )}
       </ReviewsCard>
+      {data?.next && <div className="flex justify-center">
+        <Button onClick={handleShowMore}>Show More</Button>
+      </div>}
     </div>
   );
 };

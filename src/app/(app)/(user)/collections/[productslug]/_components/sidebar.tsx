@@ -181,7 +181,7 @@ const Sidebar = ({ products }: { products: Product }) => {
   const discount = getVariantData(variantsData, "discount", selectedSize?.id);
   const stock = getVariantData(variantsData, "stock", selectedSize?.id);
   const finalPrice = useMemo(() => {
-    return convertedPrice - convertedPrice * (discount / 100);
+    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
   }, [convertedPrice, discount]);
 
   const handleRoute = () => {
