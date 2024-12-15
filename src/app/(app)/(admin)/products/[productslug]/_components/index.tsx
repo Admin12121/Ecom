@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { toast } from "sonner";
-import { Trash as DeleteIcon } from "lucide-react";
+import { Trash as DeleteIcon, Settings } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,7 @@ import { Label } from "@/components/ui/label";
 import GlobalInput from "@/components/global/input";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import DeleteProduct from "./delete-product";
+import Uploader from "./image-uploader";
 
 interface GetCategory {
   id: string;
@@ -125,9 +126,14 @@ interface FormValues {
   }>;
 }
 
+interface ImageData {
+  id: string | null;
+  src: string;
+}
+
 const ProductPage = ({ productslug }: { productslug: string }) => {
   const { accessToken } = useAuthUser();
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageData[]>([]);
   const [productImages, setProductImages] = useState<File[]>([]);
   const [isMultiVariant, setIsMultiVariant] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -139,11 +145,12 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
     data: productData,
     isLoading: ProductDataLoading,
     refetch,
-  } = useProductsViewQuery({ productslug , token:accessToken}, { skip: !productslug });
-  const [updateProduct] =
-    useProductsUpdateMutation();
-  const [deleteVariant] =
-    useVariantDeleteMutation();
+  } = useProductsViewQuery(
+    { productslug, token: accessToken },
+    { skip: !productslug }
+  );
+  const [updateProduct] = useProductsUpdateMutation();
+  const [deleteVariant] = useVariantDeleteMutation();
   const getcategory = useMemo(() => (data as GetCategory[]) || [], [data]);
   const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
   const {
@@ -217,7 +224,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
         newProductImages.push(file);
         const reader = new FileReader();
         reader.onload = (e) => {
-          newImages[newIndex] = e.target?.result as string;
+          newImages[newIndex] = { id: null, src: e.target?.result as string };
           newIndex++;
           setImages([...newImages]);
           setLoadingIndex(null);
@@ -232,6 +239,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
     setProductImages(newProductImages);
     setTimeout(() => setLoadingIndex(null), 2000);
   };
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -397,7 +405,9 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
 
   useEffect(() => {
     if (productData) {
-      setImages(productData.images.map((img: any) => img.image));
+      setImages(
+        productData.images.map((img: any) => ({ id: img.id, src: img.image }))
+      );
       if (Array.isArray(productData.variants)) {
         setIsMultiVariant(true);
         reset({ variants: [] });
@@ -430,10 +440,17 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <span className="md:absolute right-2 top-2 flex gap-2 ">
-      <Button className="" type="submit">
-        Update Product
-      </Button>
-      {accessToken && <DeleteProduct token={accessToken} refetch={refetch}  id={productData?.id} active={productData?.deactive}/>}
+        <Button className="" type="submit">
+          Update Product
+        </Button>
+        {accessToken && (
+          <DeleteProduct
+            token={accessToken}
+            refetch={refetch}
+            id={productData?.id}
+            active={productData?.deactive}
+          />
+        )}
       </span>
       <span className="flex w-full gap-5 max-lg:flex-col ">
         <Card className="bg-default-100 w-[70%] max-lg:w-full p-3 flex flex-col gap-3">
@@ -499,19 +516,16 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
               <Button
                 type="button"
                 variant="secondary"
-                className={`bg-white w-full h-80 flex justify-center items-center p-0 custom-md:w-[50%] dark:bg-neutral-900 hover:dark:!bg-neutral-800 ${
+                className={`group bg-white w-full h-80 flex justify-center items-center p-0 custom-md:w-[50%] dark:bg-neutral-900 hover:dark:!bg-neutral-800 ${
                   isDragging && draggingIndex === 0 ? "dragging" : ""
                 }`}
-                onDrop={(e: any) => handleDrop(e, 0)}
-                onDragOver={(e: any) => handleDragOver(e, 0)}
-                onDragLeave={handleDragLeave}
-                onClick={() => handleImageUpload(0)}
               >
+                <Settings className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500" />
                 {loadingIndex === 0 ? (
                   <Spinner color="secondary" />
                 ) : images[0] ? (
                   <Image
-                    src={images[0]}
+                    src={images[0].src}
                     className="h-80 w-full max-lg:h-full max-lg:w-full object-contain"
                     alt="Uploaded"
                     width={800}
@@ -527,21 +541,24 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
                     type="button"
                     variant="secondary"
                     key={index}
-                    className={`bg-white w-20 h-20 items-center justify-center custom-md:w-[48%] custom-md:h-[48%] p-0 dark:bg-neutral-900 hover:dark:!bg-zinc-800 ${
+                    className={`group bg-white w-20 h-20 items-center justify-center custom-md:w-[48%] custom-md:h-[48%] p-0 dark:bg-neutral-900 hover:dark:!bg-zinc-800 svg:hidden hover::svg:flex ${
                       isDragging && draggingIndex === index ? "dragging" : ""
                     }`}
-                    onDrop={(e: any) => handleDrop(e, index)}
-                    onDragOver={(e: any) => handleDragOver(e, index)}
-                    onDragLeave={handleDragLeave}
-                    onClick={() => handleImageUpload(index)}
+                    onDrop={(e: any) => !images[index] && handleDrop(e, index)}
+                    onDragOver={(e: any) =>
+                      !images[index] && handleDragOver(e, index)
+                    }
+                    onDragLeave={() => !images[index] && handleDragLeave()}
+                    onClick={() => !images[index] && handleImageUpload(index)}
                   >
                     {loadingIndex === index ? (
                       <Spinner color="secondary" />
                     ) : images[index] ? (
                       <>
+                        <Uploader images={images[index]} token={accessToken} className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500"/>
                         <Image
                           className="object-contain h-20 w-20 max-lg:h-full max-lg:w-full"
-                          src={images[index]}
+                          src={images[index].src}
                           alt={`Uploaded ${index}`}
                           width={800}
                           height={800}

@@ -117,6 +117,29 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    productImage: builder.mutation({
+      query: ({ formData, token, id }) => {
+        return {
+          url: `api/products/product-images/${id}/`,
+          method: "PATCH",
+          body: formData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+      },
+    }),
+    deleteproductImage: builder.mutation({
+      query: ({ token, id }) => {
+        return {
+          url: `api/products/product-images/${id}/`,
+          method: "DELETE",
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+      },
+    }),
     variantUpdate: builder.mutation({
       query: ({ token, actualData }) => {
         return {
@@ -512,6 +535,8 @@ export const {
   useRefreshTokenMutation,
   useProductsRegistrationMutation,
   useProductsUpdateMutation,
+  useProductImageMutation,
+  useDeleteproductImageMutation,
   useVariantUpdateMutation,
   useVariantDeleteMutation,
   useProductsViewQuery,
