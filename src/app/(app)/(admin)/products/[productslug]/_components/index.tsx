@@ -240,7 +240,6 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
     setTimeout(() => setLoadingIndex(null), 2000);
   };
 
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -524,13 +523,12 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
                 {loadingIndex === 0 ? (
                   <Spinner color="secondary" />
                 ) : images[0] ? (
-                  <Image
-                    src={images[0].src}
-                    className="h-80 w-full max-lg:h-full max-lg:w-full object-contain"
-                    alt="Uploaded"
-                    width={800}
-                    height={800}
-                  />
+                  <Uploader
+                  images={images[0]}
+                  token={accessToken}
+                  product="h-80 w-full max-lg:h-full max-lg:w-full object-contain"
+                  className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500"
+                />
                 ) : (
                   "Click or Drop here"
                 )}
@@ -554,16 +552,11 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
                     {loadingIndex === index ? (
                       <Spinner color="secondary" />
                     ) : images[index] ? (
-                      <>
-                        <Uploader images={images[index]} token={accessToken} className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500"/>
-                        <Image
-                          className="object-contain h-20 w-20 max-lg:h-full max-lg:w-full"
-                          src={images[index].src}
-                          alt={`Uploaded ${index}`}
-                          width={800}
-                          height={800}
-                        />
-                      </>
+                      <Uploader
+                        images={images[index]}
+                        token={accessToken}
+                        className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500"
+                      />
                     ) : (
                       "+"
                     )}

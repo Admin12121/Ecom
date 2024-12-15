@@ -83,7 +83,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
           {data &&
             data?.images &&
             data.images.map((data: InterfaceImage, index: number) => {
-              const isPng = data.image.endsWith("-not.png");
+              const isPng = data.image.endsWith("not.png");
               const imageClassName = isPng ? "w-full h-full object-cover" : "";
               return (
                 <SwiperSlide key={index}>

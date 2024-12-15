@@ -12,7 +12,7 @@ import {
   useDeleteproductImageMutation,
 } from "@/lib/store/Service/api";
 import { toast } from "sonner";
-import { delay } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import { Settings } from "lucide-react";
 import Image from "next/image";
 import { useState, useRef } from "react";
@@ -107,7 +107,16 @@ const Uploader = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Settings className={className} />
+        <span>
+          <Settings className={className} />
+          <Image
+            className={cn("object-contain h-20 w-20 max-lg:h-full max-lg:w-full", product)}
+            src={images.src}
+            alt={`Uploaded`}
+            width={800}
+            height={800}
+          />
+        </span>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] p-4">
         <div className="space-y-2">
@@ -139,7 +148,10 @@ const Uploader = ({
                   accept="image/*"
                   onChange={handleImageUpload}
                 />
-                <Button className="h-44 w-1/2" onClick={() => fileInputRef.current?.click()}>
+                <Button
+                  className="h-44 w-1/2"
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   Upload New Image
                 </Button>
               </>
