@@ -97,7 +97,8 @@ const CollectionPage = () => {
                 variant="outline"
                 className={cn(
                   "!m-0 gap-2 min-w-[8rem] px-2",
-                  filters && "ring-offset-2 ring-2 ring-purple-600/40"
+                  filters &&
+                    "ring-offset-2 ring-2 dark:ring-offset-background ring-purple-600/40 transition"
                 )}
                 onClick={() => setFilters(!filters)}
               >
@@ -114,7 +115,10 @@ const CollectionPage = () => {
               className={cn(filters && "lg:w-[calc(100%-350px)]")}
             >
               <div
-                className={cn("grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none", filters && "lg:grid-cols-2 xl:grid-cols-3")}
+                className={cn(
+                  "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
+                  filters && "lg:grid-cols-2 xl:grid-cols-3"
+                )}
               >
                 <ProductSkeleton loading={isLoading}>
                   {products && products.length > 0 ? (
@@ -140,13 +144,17 @@ const CollectionPage = () => {
                 </ProductSkeleton>
               </div>
             </InfiniteScroll>
-            {filters && (
-              <div className="hidden lg:flex w-[330px] max-md:w-full max-md:top-[120px] max-md:z-50">
-                <span className="flex w-full rounded-md sticky top-[70px] h-[82dvh] max-md:bg-neutral-950 ">
-                  <Sidebar/>
-                </span>
-              </div>
-            )}
+            <div
+              className={cn(
+                "hidden w-[330px] max-md:w-full max-md:top-[120px] max-md:z-50 left-96 relative transition-all transform duration-500 ease-in-out",
+                filters && "lg:flex left-0 opacity-100 translate-x-0",
+                !filters && "translate-x-full"
+              )}
+            >
+              <span className="flex w-full rounded-md sticky top-[70px] h-[82dvh] max-md:bg-neutral-950 ">
+                <Sidebar />
+              </span>
+            </div>
           </div>
         </div>
       </section>

@@ -27,6 +27,7 @@ interface AuthContextType {
   handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   selectedcurrencyiso: string;
   convertPrice: (price: number) => { convertedPrice: number; symbol: string };
+  selectedcurrency: { sell: number; symbol: string } | null;
   convertPriceToCurrency: (
     price: number,
     iso3: string
@@ -207,6 +208,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         handleSelectionChange,
         selectedcurrencyiso,
         convertPrice,
+        selectedcurrency,
         convertPriceToCurrency,
         getRates,
         loading,

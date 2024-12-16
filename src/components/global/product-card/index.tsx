@@ -174,7 +174,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <span
           className={cn(
             "relative w-full h-[90px] flex flex-col rounded-lg p-3 py-2 justify-between dark:bg-transparent",
-            base && "bg-img-[src(bg.svg)] dark:bg-img-inherit"
+            base && "bg-[url('/bg.svg')] bg-cover dark:bg-img-inherit"
           )}
         >
           <div className="flex gap-3 items-center">

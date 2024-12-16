@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useReducer } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -17,146 +16,178 @@ interface Item {
   disabled?: boolean;
 }
 
-const item: Item[] = [
-  { id: "radio-13-r1", value: "r1", label: "Gold" },
-  { id: "radio-13-r2", value: "r2", label: "Silver" },
-  { id: "radio-13-r3", value: "r3", label: "Brass" },
-  { id: "radio-13-r6", value: "r6", label: "Copper" },
+const metal: Item[] = [
+  { id: "radio-13-r1", value: "gold", label: "Gold" },
+  { id: "radio-13-r2", value: "silver", label: "Silver" },
+  { id: "radio-13-r3", value: "brass", label: "Brass" },
+  { id: "radio-13-r6", value: "copper", label: "Copper" },
 ];
 
 const color: Item[] = [
-  { id: "radio-13-r1", value: "r1", label: "Gold" },
-  { id: "radio-13-r3", value: "r3", label: "Blue" },
-  { id: "radio-13-r6", value: "r6", label: "White" },
+  { id: "radio-13-r1", value: "gold", label: "Gold" },
+  { id: "radio-13-r3", value: "blue", label: "Blue" },
+  { id: "radio-13-r6", value: "white", label: "White" },
 ];
 
 const size: Item[] = [
-  { id: "radio-13-r1", value: "r1", label: "Mini" },
-  { id: "radio-13-r3", value: "r3", label: "Small" },
-  { id: "radio-13-r6", value: "r6", label: "Medium" },
-  { id: "radio-13-r7", value: "r7", label: "Large" },
+  { id: "radio-13-r1", value: "mini", label: "Mini" },
+  { id: "radio-13-r3", value: "small", label: "Small" },
+  { id: "radio-13-r6", value: "medium", label: "Medium" },
+  { id: "radio-13-r7", value: "large", label: "Large" },
 ];
 
 const availability: Item[] = [
-  { id: "radio-13-r1", value: "r1", label: "In stock" },
-  { id: "radio-13-r3", value: "r3", label: "Out of Stock" },
+  { id: "radio-13-r1", value: "instock", label: "In stock" },
+  { id: "radio-13-r3", value: "outofstock", label: "Out of Stock" },
 ];
 
-const category: Item[] = [
-  { id: "radio-13-r1", value: "r1", label: "In stock" },
-  { id: "radio-13-r3", value: "r3", label: "Out of Stock" },
-];
 
-const items = [
-  {
-    id: "1",
-    title: "Metal",
-    content: (
-      <fieldset className="space-y-4">
-        <div className="grid grid-cols-3 p-1 gap-3">
-          {item.map((item) => (
-            <label
-              key={item.id}
-              className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
-            >
-              <Checkbox
-                id={item.id}
-                value={item.value}
-                className="sr-only after:absolute after:inset-0"
-                defaultChecked={item?.defaultChecked}
-                disabled={item?.disabled}
-              />
-              <p className="text-sm font-medium leading-none ">{item.label}</p>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-    ),
-  },
-  {
-    id: "2",
-    title: "Colors",
-    content: (
-      <fieldset className="space-y-4">
-        <div className="grid grid-cols-3 p-1 gap-3">
-          {color.map((item) => (
-            <label
-              key={item.id}
-              className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
-            >
-              <Checkbox
-                id={item.id}
-                value={item.value}
-                className="sr-only after:absolute after:inset-0"
-                defaultChecked={item?.defaultChecked}
-                disabled={item?.disabled}
-              />
-              <p className="text-sm font-medium leading-none ">{item.label}</p>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-    ),
-  },
-  {
-    id: "3",
-    title: "Size",
-    content: (
-      <fieldset className="space-y-4">
-        <div className="grid grid-cols-3 p-1 gap-3">
-          {size.map((item) => (
-            <label
-              key={item.id}
-              className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
-            >
-              <Checkbox
-                id={item.id}
-                value={item.value}
-                className="sr-only after:absolute after:inset-0"
-                defaultChecked={item?.defaultChecked}
-                disabled={item?.disabled}
-              />
-              <p className="text-sm font-medium leading-none ">{item.label}</p>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-    ),
-  },
-  {
-    id: "4",
-    title: "Availability",
-    content: (
-      <fieldset className="space-y-4">
-        <div className="grid grid-cols-3 p-1 gap-3">
-          {availability.map((item) => (
-            <label
-              key={item.id}
-              className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
-            >
-              <Checkbox
-                id={item.id}
-                value={item.value}
-                className="sr-only after:absolute after:inset-0"
-                defaultChecked={item?.defaultChecked}
-              />
-              <p className="text-sm font-medium leading-none text-nowrap ">
-                {item.label}
-              </p>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-    ),
-  },
-  {
-    id: "6",
-    title: "Product type",
-    content:
-      "All components follow WAI-ARIA standards, featuring proper ARIA attributes, keyboard navigation, and screen reader support. Regular testing ensures compatibility with NVDA, VoiceOver, and JAWS.",
-  },
-];
+interface State {
+  [key: string]: string[];
+}
+
+const initialState: State = {
+  metal: [],
+  color: [],
+  size: [],
+  availability: [],
+};
+
+function reducer(state: State, action: { type: string; value: string }) {
+  const { type, value } = action;
+  return {
+    ...state,
+    [type]: state[type].includes(value)
+    ? state[type].filter((item) => item !== value)
+    : [...state[type], value],
+  };
+}
+
 const Sidebar = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  
+  const items = [
+    {
+      id: "1",
+      title: "Metal",
+      content: (
+        <fieldset className="space-y-4">
+          <div className="grid grid-cols-3 p-1 gap-3">
+            {metal.map((item) => (
+              <label
+                key={item.id}
+                className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
+              >
+                <Checkbox
+                  id={item.id}
+                  value={item.value}
+                  className="sr-only after:absolute after:inset-0"
+                  disabled={item?.disabled}
+                  checked={state.metal.includes(item.value)}
+                  onClick={() =>
+                    dispatch({ type: "metal", value: item.value })
+                  }
+                />
+                <p className="text-sm font-medium leading-none ">{item.label}</p>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ),
+    },
+    {
+      id: "2",
+      title: "Colors",
+      content: (
+        <fieldset className="space-y-4">
+          <div className="grid grid-cols-3 p-1 gap-3">
+            {color.map((item) => (
+              <label
+                key={item.id}
+                className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
+              >
+                <Checkbox
+                  id={item.id}
+                  value={item.value}
+                  className="sr-only after:absolute after:inset-0"
+                  checked={state.color.includes(item.value)}
+                  onClick={() =>
+                    dispatch({ type: "color", value: item.value })
+                  }
+                  disabled={item?.disabled}
+                />
+                <p className="text-sm font-medium leading-none ">{item.label}</p>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ),
+    },
+    {
+      id: "3",
+      title: "Size",
+      content: (
+        <fieldset className="space-y-4">
+          <div className="grid grid-cols-3 p-1 gap-3">
+            {size.map((item) => (
+              <label
+                key={item.id}
+                className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
+              >
+                <Checkbox
+                  id={item.id}
+                  value={item.value}
+                  className="sr-only after:absolute after:inset-0"
+                  checked={state.size.includes(item.value)}
+                  onClick={() =>
+                    dispatch({ type: "size", value: item.value })
+                  }
+                  disabled={item?.disabled}
+                />
+                <p className="text-sm font-medium leading-none ">{item.label}</p>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ),
+    },
+    {
+      id: "4",
+      title: "Availability",
+      content: (
+        <fieldset className="space-y-4">
+          <div className="grid grid-cols-3 p-1 gap-3">
+            {availability.map((item) => (
+              <label
+                key={item.id}
+                className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
+              >
+                <Checkbox
+                  id={item.id}
+                  value={item.value}
+                  className="sr-only after:absolute after:inset-0"
+                  checked={state.availability.includes(item.value)}
+                  onClick={() =>
+                    dispatch({ type: "availability", value: item.value })
+                  }
+                />
+                <p className="text-sm font-medium leading-none text-nowrap ">
+                  {item.label}
+                </p>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ),
+    },
+    {
+      id: "6",
+      title: "Product type",
+      content:
+        "All components follow WAI-ARIA standards, featuring proper ARIA attributes, keyboard navigation, and screen reader support. Regular testing ensures compatibility with NVDA, VoiceOver, and JAWS.",
+    },
+  ];
+
   return (
     <div className="w-full px-3 py-1">
       <Price />
