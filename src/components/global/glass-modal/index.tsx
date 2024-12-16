@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { JSX } from "react"
 
 type GlassModalProps = {
   trigger: JSX.Element
