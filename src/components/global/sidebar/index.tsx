@@ -1007,7 +1007,7 @@ const Navigationbar = () => {
         <AnimatePresence>
           {activeLinkIndex !== null && (
             <motion.div
-              className="relative rounded-[inherit] backdrop-blur-md flex overflow-hidden dark:bg-neutral-900/70 w-full border-[1px]"
+              {...{className:"relative rounded-[inherit] backdrop-blur-md flex overflow-hidden dark:bg-neutral-900/70 w-full border-[1px]"}}
               initial={{ height: 0 }}
               animate={{ height: "auto" }}
               exit={{ height: 0 }}
@@ -1016,7 +1016,7 @@ const Navigationbar = () => {
             >
               <div className="p-1 w-full">
                 {links && links[activeLinkIndex].subLinks && (
-                  <motion.div className="flex flex-col w-full">
+                  <motion.div {...{className:"flex flex-col w-full"}}>
                     {links[activeLinkIndex].subLinks.map(
                       (subLink, subIndex) => (
                         <Button
