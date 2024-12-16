@@ -14,7 +14,7 @@ interface Images {
 
 const DemoSlider = ({
   images,
-  discount,
+  // discount,
 }: {
   images: Images[];
   discount?: string;

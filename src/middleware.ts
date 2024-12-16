@@ -16,11 +16,8 @@ export default auth((req, ctx) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  const isRouteMatch = (routes: string[]) =>
-    routes.some((route) => {
-      const regex = new RegExp(`^${route.replace(/\(.*\)/, ".*")}$`);
-      return regex.test(nextUrl.pathname);
-    });
+  const isRouteMatch = (routes: string[]): boolean =>
+    routes.some(route => nextUrl.pathname.startsWith(route));
 
   const routeType = {
     isPublicRoute: isRouteMatch(publicRoutes),

@@ -45,16 +45,6 @@ interface Variant {
   product: number;
 }
 
-interface Product {
-  id: number;
-  categoryname: string;
-  description: string;
-  images: { image: string };
-  product_name: string;
-  productslug: string;
-  variants: Variant[];
-}
-
 interface CartProduct {
   user?: number;
   product: number;

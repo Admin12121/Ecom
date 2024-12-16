@@ -33,7 +33,7 @@ export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
   const router = useRouter();
   const { accessToken, signOut } = useAuthUser();
   const [user, setUser] = useState<UserData>();
-  const { data, isLoading, refetch } = useGetLoggedUserQuery(
+  const { data } = useGetLoggedUserQuery(
     { token: accessToken },
     { skip: !accessToken }
   );

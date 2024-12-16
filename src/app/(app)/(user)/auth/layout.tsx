@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import BackdropGradient from "@/components/global/backdrop-gradient";
 import GlassCard from "@/components/global/glass-card";
 

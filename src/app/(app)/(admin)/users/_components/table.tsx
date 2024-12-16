@@ -554,7 +554,7 @@ export default function UserTable({
 }
 
 const DeleteModal = ({
-  DeleteModalId,
+  // DeleteModalId,
   setDeleteModalId,
 }: {
   DeleteModalId: number;

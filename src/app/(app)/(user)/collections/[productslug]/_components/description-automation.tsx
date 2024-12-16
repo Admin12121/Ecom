@@ -51,7 +51,7 @@ const DesItems: React.FC<AccordionItemProps> = ({ value, title, content }) => (
           ))}
         </span>
         <span className="flex flex-col items-end gap-1">
-          {Object.values(content).map((value, index) => (
+          {Object.values(content).map((value) => (
             <p key={Math.random()}>{value}</p>
           ))}
         </span>

@@ -224,7 +224,7 @@ const NotifyForm = ({
   const { accessToken } = useAuthUser();
   const [notifyuser,{isLoading}] = useNotifyuserMutation();
   const [notifyadded, setNotifyAdded] = useState<boolean>(false);
-  const { data: Notify, isLoading:loading } = useGetnotifyuserQuery(
+  const { data: Notify } = useGetnotifyuserQuery(
     { product: product, variant: selectedVariant, token: accessToken },
     { skip: !product || !selectedVariant || stock !== 0 || !display }
   );

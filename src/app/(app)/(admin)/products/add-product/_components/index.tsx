@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, DragEvent, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { useForm, useFieldArray, Form } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 
 import {
   useCategoryViewQuery,
@@ -139,7 +139,7 @@ const AddProduct = () => {
   const getcategory = useMemo(() => (data as GetCategory[]) || [], [data]);
 
   const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
-  const [addProduct, { isLoading }] = useProductsRegistrationMutation();
+  const [addProduct] = useProductsRegistrationMutation();
 
   const { accessToken } = useAuthUser();
 
@@ -366,6 +366,7 @@ const AddProduct = () => {
         id: toastId,
         position: "top-center",
       });
+      console.log(error)
     }
   };
 
@@ -682,7 +683,7 @@ const AddProduct = () => {
                     </SelectContent>
                   </Select>
                 </span>
-                {accessToken && <AddCategory token={accessToken} />}
+                {accessToken && <AddCategory refetch={refetch} token={accessToken} />}
               </span>
               {errors.category && (
                 <p className="text-red-500">{errors.category.message}</p>
@@ -722,6 +723,7 @@ const AddProduct = () => {
                 </span>
                 {accessToken && (
                   <AddSubCategory
+                    refetch={refetch}
                     getcategory={getcategory}
                     token={accessToken}
                   />

@@ -101,8 +101,6 @@ const Sidebar = ({ products }: { products: Product }) => {
   const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
 
-  const handleDrawer = () => {};
-
   const sortedVariants = Array.isArray(variantsData)
     ? [...variantsData].sort((a, b) => Number(a.size) - Number(b.size))
     : [];
@@ -391,7 +389,7 @@ interface NotifyFormProps {
 
 const NotifyForm = ({ product, selectedVariant, stock }: NotifyFormProps) => {
   const { accessToken } = useAuthUser();
-  const [notifyuser, { isLoading }] = useNotifyuserMutation();
+  const [notifyuser] = useNotifyuserMutation();
   const [notifyadded, setNotifyAdded] = useState<boolean>(false);
   const { data: Notify, isLoading: loading } = useGetnotifyuserQuery(
     { product: product, variant: selectedVariant, token: accessToken },

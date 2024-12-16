@@ -36,7 +36,7 @@ const Reviews = () => {
   const { accessToken } = useAuthUser();
   const [filter, setFilter] = useState("relevant");
   const { data, isLoading } = useGetUserReviewQuery(
-    { token: accessToken },
+    { token: accessToken, filter },
     { skip: !accessToken }
   );
 

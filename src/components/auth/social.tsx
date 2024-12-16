@@ -4,7 +4,6 @@ import { signIn } from "next-auth/react";
 import { Button } from "../ui/button";
 import { Default_Login_Redirect } from "@/routes";
 import { Google } from "@/icons/google";
-import Github from "@/icons/github";
 import { InstagramLogoIcon } from "@radix-ui/react-icons";
 
 const Social = () => {

@@ -23,14 +23,14 @@ interface Category {
   imagePreview: string | null;
 }
 
-const AddCategory = ({token}:{token:string}) => {
+const AddCategory = ({token, refetch}:{token:string, refetch?:any}) => {
   const [addcategory] = useAddCategoryMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const {
     formData: categoryData,
     setFormData: setCategoryData,
-    errors: categoryErrors,
+    // errors: categoryErrors,
     handleInputChange: handleCategoryChange,
   } = DynamicForm<Category>({
     category: "",
@@ -92,6 +92,7 @@ const AddCategory = ({token}:{token:string}) => {
       const res = await addcategory({ formData, token });
       if (res.data) {
         toast.success("Category Added");
+        refetch();
       } else {
         if (res.error) {
           const errorData = res.error as FetchBaseQueryError;

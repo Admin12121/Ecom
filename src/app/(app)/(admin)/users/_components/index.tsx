@@ -12,7 +12,7 @@ const Accounts = () => {
   const [page, setPage] = useState<number>(1);
   const [exclude_by, SetExcludeBy] = useState<string>("");
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
-  const { data, isLoading, refetch, error } = useAllUsersQuery(
+  const { data, isLoading, refetch } = useAllUsersQuery(
     { search, rowsperpage, page, exclude_by, token: accessToken },
     { skip: !accessToken }
   );

@@ -1,12 +1,3 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Ecom",
-  description: "",
-};
-
 import { SiteHeader } from "@/components/navbar/nav";
 
 export default function RootLayout({

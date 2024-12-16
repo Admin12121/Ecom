@@ -25,9 +25,9 @@ export function absoluteUrl(path: string) {
 }
 
 export function constructMetadata({
-  title = "Nepal Heritage Handicraft",
-  description = "Authentic Nepalese art, sculptures, and handicrafts for cultural enthusiasts.",
-  image = absoluteUrl("/og"),
+  title = siteConfig.title,
+  description = siteConfig.description,
+  image = siteConfig.ogImage,
   keywords = [],
   ...props
 }: {
@@ -47,6 +47,8 @@ export function constructMetadata({
     "Tailwind CSS",
     "E-commerce platform",
   ];
+
+  const baseUrl = process.env.NEXTAUTH_URL || siteConfig.url;
   return {
     title,
     description,
@@ -75,7 +77,7 @@ export function constructMetadata({
       icon: "/favicon.ico",
       apple: "/apple-touch-icon.png",
     },
-    metadataBase: new URL("https://ecom.biki.com.np"),
+    metadataBase: new URL(baseUrl),
     authors: [
       {
         name: "vikcy",
@@ -84,7 +86,6 @@ export function constructMetadata({
     ],
     creator: "vicky",
     robots: "index, follow",
-    viewport: "width=device-width, initial-scale=1.0",
     ...props,
   };
 }

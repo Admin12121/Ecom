@@ -70,6 +70,7 @@ const Activate = () => {
         setIcon(<IoAlertOutline/>)
         setColor('text-destructive')
         setStatus('An error occurred.');
+        console.log(error);
       }
     };
 

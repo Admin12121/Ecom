@@ -71,7 +71,7 @@ type FormData = z.infer<typeof FormSchema>;
 
 const Stocks = () => {
   const { accessToken } = useAuthUser();
-  const { data, isLoading, refetch } = useGetStocksQuery(
+  const { data, refetch } = useGetStocksQuery(
     { token: accessToken },
     { skip: !accessToken }
   );
@@ -150,7 +150,7 @@ const Stocks = () => {
     <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
       <h1 className="text-2xl">Stocks</h1>
       <Accordion type="single" collapsible className="space-y-1 w-full">
-        {data?.results.map((product: Product, index: number) => (
+        {data?.results.map((product: Product) => (
           <AccordionItem
             key={product.id}
             value={`product-${product.id}`}

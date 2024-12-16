@@ -46,16 +46,18 @@ interface GetSubCategory {
 const AddSubCategory = ({
   getcategory,
   token,
+  refetch,
 }: {
   getcategory: GetCategory[];
   token: string;
+  refetch: any;
 }) => {
   const [addsubcategory] = useAddSubCategoryMutation();
 
   const {
     formData: subCategoryData,
-    setFormData: setSubCategoryData,
-    errors: subCategoryErrors,
+    // setFormData: setSubCategoryData,
+    // errors: subCategoryErrors,
     handleInputChange: handleSubCategoryChange,
   } = DynamicForm<subCategory>({
     category: 0,
@@ -72,6 +74,7 @@ const AddSubCategory = ({
       const res = await addsubcategory({ formData, token });
       if (res.data) {
         toast.success("Subcategory Added");
+        refetch();
       } else {
         if (res.error) {
           const errorData = res.error as FetchBaseQueryError;

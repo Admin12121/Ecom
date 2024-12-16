@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, DragEvent, useEffect, useMemo } from "react";
-import Image from "next/image";
 import { useForm, useFieldArray } from "react-hook-form";
 
 import {
@@ -143,7 +142,6 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
   const { data } = useCategoryViewQuery({});
   const {
     data: productData,
-    isLoading: ProductDataLoading,
     refetch,
   } = useProductsViewQuery(
     { productslug, token: accessToken },
@@ -186,14 +184,14 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
     }
   }, [isMultiVariant, setValue]);
 
-  const toggleVariantType = (isMulti: boolean) => {
-    setIsMultiVariant(isMulti);
-    if (isMulti && fields.length === 0) {
-      append({ size: "", price: 0, stock: 0, discount: 1 });
-    } else {
-      remove(Array.from({ length: fields.length }, (_, i) => i));
-    }
-  };
+  // const toggleVariantType = (isMulti: boolean) => {
+  //   setIsMultiVariant(isMulti);
+  //   if (isMulti && fields.length === 0) {
+  //     append({ size: "", price: 0, stock: 0, discount: 1 });
+  //   } else {
+  //     remove(Array.from({ length: fields.length }, (_, i) => i));
+  //   }
+  // };
 
   const handleBlur = (name: any) => {
     trigger(name);
@@ -355,6 +353,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
         id: toastId,
         position: "top-center",
       });
+      console.log(error)
     }
   };
 
@@ -384,6 +383,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
       toast.error("Failed to delete variant", {
         position: "top-center",
       });
+      console.log(error)
     }
   };
 

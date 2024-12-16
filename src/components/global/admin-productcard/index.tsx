@@ -8,8 +8,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/context";
 import {
   Product,
   VariantObject,
@@ -24,9 +22,6 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
-  const router = useRouter();
-  const { convertPrice } = useAuth();
-  const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const updateQueryParams = useUpdateQueryParams();
   const [variantsData, setVariantsData] = useState<
     VariantObject[] | VariantObject | null
@@ -52,10 +47,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ data, width }) => {
     }
     return null;
   };
-  const { convertedPrice, symbol } = convertPrice(
-    getVariantData(variantsData, "price")
-  );
-  const variantId = getVariantData(variantsData, "id");
 
   const handleRoute = () => {
     updateQueryParams({ category: data?.categoryname }, "/collections");

@@ -12,7 +12,7 @@ import { CartProvider } from "@/lib/cart-context";
 import { ReactQueryProvider } from "@/lib/store/react-query-provider";
 
 export const Provider = ({ children, ...props }: ThemeProviderProps) => {
-  const storeRef = useRef<AppStore>();
+  const storeRef = useRef<AppStore | null>(null);
   if (!storeRef.current) {
     storeRef.current = store();
   }

@@ -1,32 +1,16 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { LeftIcon, RightIcon } from "./icons";
 import {
   Accordion,
-  AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useProductsByIdsQuery } from "@/lib/store/Service/api";
 import { MapPin, ShoppingCart, Truck } from "lucide-react";
-import Voucher, {
-  VoucherSkleton,
-} from "../../../checkout/[transitionuid]/_components/voucher";
-import { Separator } from "@/components/ui/separator";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Order as OrderData } from ".";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-
-interface Product {
-  id: string;
-  variants: Array<{ id: string }>;
-  categoryname: string;
-  description: string;
-  images: string[];
-  product_name: string;
-  productslug: string;
-}
 
 const renderBadge = (status: string) => {
   const statusMap: {

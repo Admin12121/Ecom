@@ -76,6 +76,7 @@ const Uploader = ({
       toast.error("Error updating image", {
         position: "top-center",
       });
+      console.log(error)
     }
   };
 
@@ -101,6 +102,7 @@ const Uploader = ({
       toast.error("Error deleting image", {
         position: "top-center",
       });
+      console.log(error)
     }
   };
 

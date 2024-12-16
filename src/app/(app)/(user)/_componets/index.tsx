@@ -6,7 +6,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 const data = [

@@ -34,11 +34,10 @@ interface ReviewSheetProps {
 
 export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [star, setStar] = useState("0");
   const [filter, setFilter] = useState("relevant");
   const { data, isLoading } = useGetReviewQuery(
-    { product_slug: slug, page: page, page_size: pageSize, star, filter },
+    { product_slug: slug, page: page, star, filter },
     { skip: !slug }
   );
   const [reviewData, setReviewData] = useState<Reviews[] | null>(null);

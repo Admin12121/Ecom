@@ -40,7 +40,6 @@ const Reviews = () => {
   const { accessToken } = useAuthUser();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [star, setStar] = useState("0");
   const [filter, setFilter] = useState("relevant");
   const deferredSearch = useDeferredValue(search);
@@ -48,7 +47,6 @@ const Reviews = () => {
     {
       token: accessToken,
       page: page,
-      page_size: pageSize,
       star,
       filter,
       search: deferredSearch,

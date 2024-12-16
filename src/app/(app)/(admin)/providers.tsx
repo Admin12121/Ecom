@@ -5,7 +5,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  CommandMenu,
 } from "@/components/global/sidebar";
 import { Links } from "./links";
 import { cn } from "@/lib/utils";

@@ -20,7 +20,7 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
     },
     []
   );
-  const { convertedPrice: productprice, symbol:pricesym } = convertPrice(data.variantDetails.price);
+  // const { convertedPrice: productprice, symbol:pricesym } = convertPrice(data.variantDetails.price);
   return (
     <Card className="p-1 w-full rounded-lg shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
       <CardBody className="flex justify-between flex-row items-center h-full">

@@ -95,7 +95,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const data = await response.json();
+    // const data = await response.json();
 
     return NextResponse.json(
       {

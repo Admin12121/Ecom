@@ -2,7 +2,6 @@
 
 import { useStripeElements } from "@/hooks/payment";
 import { Elements } from "@stripe/react-stripe-js";
-import { StripeElementsOptions } from "@stripe/stripe-js";
 
 type StripeElementsProps = {
   children: React.ReactNode;

@@ -757,7 +757,7 @@ interface HeaderProps {
   children?: React.ReactNode;
 }
 
-const SidebarHeader = ({ logo, label, children, menuItems }: HeaderProps) => {
+const SidebarHeader = ({ logo, children, menuItems }: HeaderProps) => {
   const router = useRouter();
   const context = React.useContext(SidebarContext);
 

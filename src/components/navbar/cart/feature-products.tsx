@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
 import {
-  useProductsViewQuery,
   useTrendingProductsViewQuery,
 } from "@/lib/store/Service/api";
 import { Product } from "@/types/product";
 
 const FeatureProduct = ({
   title,
-  className,
   skip,
 }: {
   title: string;
