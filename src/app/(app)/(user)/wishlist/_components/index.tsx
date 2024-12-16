@@ -23,7 +23,7 @@ const WishList = () => {
   }, [data]);
 
   return (
-    <main className="pt-3 px-1 lg:px-14 flex gap-3 flex-col pb-10">
+    <main className="pt-3 px-1 lg:px-14 flex gap-3 flex-col pb-10 max-w-[95rem]">
       {!status && (
         <span className="flex items-end justify-end gap-3 flex-col md:flex-row">
           <Code className="flex gap-2 h-9 text-sm items-center bg-neutral-200 dark:bg-neutral-900 rounded-md">

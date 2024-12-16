@@ -27,7 +27,7 @@ import Cartbutton from "./cart-button";
 interface ProductCardProps {
   data: Product;
   width?: string | null;
-  base?: string;
+  base?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -173,14 +173,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </Swiper>
         <span
           className={cn(
-            "w-full h-[90px] flex flex-col rounded-lg p-3 py-2 justify-between  dark:bg-transparent",
-            base
+            "relative w-full h-[90px] flex flex-col rounded-lg p-3 py-2 justify-between  dark:bg-transparent",
           )}
         >
+          {base && <img src={"bg.svg"} className="absolute z-[-1] max-w-[402px] top-0 left-0"/>}
           <div className="flex gap-3 items-center">
             <div className="flex flex-col cursor-pointer">
               <p className="text-sm">{data.product_name}</p>
-              <p className="text-xs font-normal text-zinc-100/80" onClick={handleRoute}>
+              <p className="text-xs font-normal text-neutral-500 dark:text-zinc-100/80" onClick={handleRoute}>
                 {data.categoryname}
               </p>
             </div>

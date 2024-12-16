@@ -20,12 +20,13 @@ const SelectValue = SelectPrimitive.Value
 
 interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
   icon?: boolean;
+  customIcon?: React.ReactNode;
 }
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, icon = true, children, ...props }, ref) => (
+>(({ className, icon = true,customIcon, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -36,7 +37,7 @@ const SelectTrigger = React.forwardRef<
     {...props}
   >
     {children}
-    {icon && <SelectPrimitive.Icon asChild>
+    {icon && customIcon ? customIcon : <SelectPrimitive.Icon asChild>
       <CaretSortIcon className="h-4 w-4 opacity-50" />
     </SelectPrimitive.Icon>}
   </SelectPrimitive.Trigger>

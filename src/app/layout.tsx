@@ -68,7 +68,7 @@ export default async function RootLayout({
       <html lang="en" suppressHydrationWarning>
       <head />
         <body
-          className={`${geistSansLight.variable} ${geistSansRegular.variable} ${geistSansMedium.variable} ${geistSansSemibold.variable} ${geistSansBold.variable} antialiased`}
+          className={`${geistSansLight.variable} ${geistSansRegular.variable} ${geistSansMedium.variable} ${geistSansSemibold.variable} ${geistSansBold.variable} antialiased flex flex-col items-center`}
         >
           <Provider>{children}</Provider>
         </body>

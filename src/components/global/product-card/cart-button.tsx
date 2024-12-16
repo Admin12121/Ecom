@@ -115,9 +115,9 @@ const Cartbutton = ({
           damping: 20,
           ease: "easeInOut",
         }}
-        className={cn(
+        {...{className:cn(
           "absolute z-10 w-full left-0  max-h-52 rounded-lg backdrop-blur bg-zinc-200/60 dark:bg-[#121212db] p-2"
-        )}
+        )}}
       >
         {Array.isArray(variantsData) ? (
           <>

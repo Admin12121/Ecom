@@ -9,6 +9,17 @@ import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
 import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
 import InfiniteScroll from "@/components/global/infinite-scroll";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Settings2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Sidebar from "./sidebar";
 
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
@@ -26,9 +37,9 @@ const CollectionPage = () => {
   const { data, isLoading } = useProductsViewQuery({
     category,
     search,
-    page
+    page,
   });
-  
+
   useEffect(() => {
     if (page === 1) {
       SetProducts(data?.results);
@@ -58,52 +69,86 @@ const CollectionPage = () => {
             </h1>
           </span>
         )}
-        <div className="flex flex-col gap-1">
-          <span>
+        <div className="flex flex-col gap-2">
+          <span className="flex justify-between items-center w-full">
             <p className="text-sm text-neutral-600 dark:text-themeTextGray">
               {data?.count} products
             </p>
-          </span>
-          <InfiniteScroll
-            loading={isLoading}
-            hasMore={hasMore}
-            loadMore={loadMoreProducts}
-          >
             <div
-              className={`grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none`}
+              className="space-y-2 flex gap-3 items-center"
+              style={{ "--ring": "270 66.67% 47.06%" } as React.CSSProperties}
             >
-              <ProductSkeleton loading={isLoading}>
-                {products && products.length > 0 ? (
-                  products.map((product, index) => (
-                    <div
-                      key={index}
-                      className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
-                    >
-                      <ProductCard
-                        data={product}
-                        base={index % 2 === 0 ? undefined : "bg-gradiant"}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <div className="flex w-screen h-full ">
-                    <p className="text-themeTextGray">
-                      No results found. Please try searching with a different
-                      term.
-                    </p>
-                  </div>
+              <Select defaultValue="s1">
+                <SelectTrigger
+                  customIcon={<Settings2 className="w-4 h-4" />}
+                  id="select-19"
+                  className="min-w-44"
+                >
+                  <SelectValue placeholder="Select framework" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="s1">Best Selling</SelectItem>
+                  <SelectItem value="s2">New In</SelectItem>
+                  <SelectItem value="s3">Price: high to low</SelectItem>
+                  <SelectItem value="s4">Price: low to high</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                className={cn(
+                  "!m-0 gap-2 min-w-[8rem] px-2",
+                  filters && "ring-offset-2 ring-2 ring-purple-600/40"
                 )}
-              </ProductSkeleton>
+                onClick={() => setFilters(!filters)}
+              >
+                {filters ? "Hide" : "Show"} Filters{" "}
+                <Settings2 className="w-4 h-4" />
+              </Button>
             </div>
-          </InfiniteScroll>
-        </div>
-        {filters && (
-          <div className="w-[500px] p-[10px] max-md:w-full max-md:top-[120px] max-md:z-50">
-            <span className="flex w-full rounded-md sticky top-[130px] h-[82dvh] max-md:bg-neutral-950 ">
-              {/* <Sidebar/> */}
-            </span>
+          </span>
+          <div className="flex gap-5 w-full">
+            <InfiniteScroll
+              loading={isLoading}
+              hasMore={hasMore}
+              loadMore={loadMoreProducts}
+              className={cn(filters && "lg:w-[calc(100%-350px)]")}
+            >
+              <div
+                className={cn("grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none", filters && "lg:grid-cols-2 xl:grid-cols-3")}
+              >
+                <ProductSkeleton loading={isLoading}>
+                  {products && products.length > 0 ? (
+                    products.map((product, index) => (
+                      <div
+                        key={index}
+                        className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
+                      >
+                        <ProductCard
+                          data={product}
+                          base={Math.random() >= 0.5}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex w-screen h-full ">
+                      <p className="text-themeTextGray">
+                        No results found. Please try searching with a different
+                        term.
+                      </p>
+                    </div>
+                  )}
+                </ProductSkeleton>
+              </div>
+            </InfiniteScroll>
+            {filters && (
+              <div className="hidden lg:flex w-[330px] max-md:w-full max-md:top-[120px] max-md:z-50">
+                <span className="flex w-full rounded-md sticky top-[70px] h-[82dvh] max-md:bg-neutral-950 ">
+                  <Sidebar/>
+                </span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </section>
       <RecommendedProducts className="pb-14" />
     </>

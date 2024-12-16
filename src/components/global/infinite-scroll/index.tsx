@@ -5,6 +5,7 @@ interface InfiniteScrollProps {
   hasMore: boolean;
   loadMore: () => void;
   children: React.ReactNode;
+  className?:string;
 }
 
 const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
@@ -12,6 +13,7 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   hasMore,
   loadMore,
   children,
+  className,
 }) => {
   const observer = useRef<IntersectionObserver | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -44,7 +46,7 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   }, [handleObserver]);
 
   return (
-    <div>
+    <div className={className}>
       {children}
       <div ref={bottomRef} />
     </div>
