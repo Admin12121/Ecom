@@ -7,7 +7,11 @@ import {
 } from "@/lib/store/Service/api";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
-import { ProductCard, ProductSkeleton } from "@/components/global/product-card";
+import {
+  ProductCard,
+  ProductSkeleton,
+  Skeleton,
+} from "@/components/global/product-card";
 import InfiniteScroll from "@/components/global/infinite-scroll";
 import {
   Select,
@@ -57,16 +61,17 @@ const CollectionPage = () => {
   const [products, SetProducts] = useState<Product[] | null>([]);
   const [filter, setFilter] = useState("bestselling");
   const [filters, setFilters] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { data, isLoading } = useProductsViewQuery({
     category: category,
     search,
     filter,
-    metal:state.metal,
-    type:state.type,
-    size:state.size,
-    stock:state.availability,
-    color:state.color,
+    metal: state.metal,
+    type: state.type,
+    size: state.size,
+    stock: state.availability,
+    color: state.color,
     page,
   });
 
@@ -77,12 +82,16 @@ const CollectionPage = () => {
     } else {
       SetProducts((prev) => [...(prev || []), ...(data?.results || [])]);
     }
+    setLoading(false);
   }, [data]);
-
+  
   const loadMoreProducts = () => {
     if (data?.next) {
+      setLoading(true);
       setPage(page + 1);
       setHasMore(data?.next ? true : false);
+    }else{
+      setLoading(false);
     }
   };
 
@@ -108,10 +117,11 @@ const CollectionPage = () => {
               className="space-y-2 flex gap-3 md:items-center flex-col md:flex-row"
               style={{ "--ring": "270 66.67% 47.06%" } as React.CSSProperties}
             >
-              <Select defaultValue="bestselling"
+              <Select
+                defaultValue="bestselling"
                 value={filter}
                 onValueChange={(value: string) => setFilter(value)}
-                >
+              >
                 <SelectTrigger
                   customIcon={<Settings2 className="w-4 h-4" />}
                   id="select-19"
@@ -145,17 +155,17 @@ const CollectionPage = () => {
               loading={isLoading}
               hasMore={hasMore}
               loadMore={loadMoreProducts}
-              className={cn(filters && "lg:w-[calc(100%-350px)]")}
+              className={cn(filters && "lg:w-[calc(100%-350px)]", " w-full")}
             >
-              <div
-                className={cn(
-                  "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
-                  filters && "lg:grid-cols-2 xl:grid-cols-3"
-                )}
-              >
-                <ProductSkeleton loading={isLoading}>
-                  {products && products.length > 0 ? (
-                    products.map((product, index) => (
+              <ProductSkeleton loading={isLoading}>
+                {products && products.length > 0 ? (
+                  <div
+                    className={cn(
+                      "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
+                      filters && "lg:grid-cols-2 xl:grid-cols-3"
+                    )}
+                  >
+                    {products.map((product, index) => (
                       <div
                         key={index}
                         className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
@@ -165,17 +175,20 @@ const CollectionPage = () => {
                           base={Math.random() >= 0.5}
                         />
                       </div>
-                    ))
-                  ) : (
-                    <div className="flex w-screen h-full ">
-                      <p className="text-themeTextGray">
-                        No results found. Please try searching with a different
-                        term.
-                      </p>
-                    </div>
-                  )}
-                </ProductSkeleton>
-              </div>
+                    ))}
+                    {loading && Array.from({ length: 4 }, (_, index) => (
+                      <Skeleton key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex w-screen h-full ">
+                    <p className="text-themeTextGray">
+                      No results found. Please try searching with a different
+                      term.
+                    </p>
+                  </div>
+                )}
+              </ProductSkeleton>
             </InfiniteScroll>
             <div
               className={cn(
@@ -185,7 +198,7 @@ const CollectionPage = () => {
               )}
             >
               <span className="flex w-full rounded-md sticky top-[70px] h-[82dvh] max-md:bg-neutral-950 ">
-                <Sidebar state={state} dispatch={dispatch}/>
+                <Sidebar state={state} dispatch={dispatch} />
               </span>
             </div>
           </div>

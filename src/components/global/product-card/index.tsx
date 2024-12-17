@@ -95,7 +95,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const stocks = getVariantData(variantsData, "stock", selectedSize?.id);
 
   const finalPrice = useMemo(() => {
-    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
+    return Number(
+      (convertedPrice - convertedPrice * (discount / 100)).toFixed(2)
+    );
   }, [convertedPrice, discount]);
 
   const productslug = data.productslug;
@@ -126,7 +128,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <>
               {data?.rating > 0 && (
                 <span className="w-[50px] -top-1 left-1 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
-                  {data?.rating ? data?.rating : 0.0} <FaStar className="stroke-5 w-3 h-3" />
+                  {data?.rating ? data?.rating : 0.0}{" "}
+                  <FaStar className="stroke-5 w-3 h-3" />
                 </span>
               )}
               {discount > 0 && (
@@ -153,23 +156,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             data?.images &&
             data.images.map((data: InterfaceImage, index: number) => {
               const isPng = data.image.endsWith("not.png");
-              const imageClassName = isPng ?  "w-full h-full object-cover" : "";
-              return(
-              <SwiperSlide key={index}>
-                <div className="h-full w-full left-0 overflow-hidden top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
-                  <Link href={`/collections/${productslug}`} className={cn(imageClassName )}>
-                    <Image
-                      src={data.image}
-                      width={600}
-                      height={600}
-                      priority
-                      className={cn(" w-full cursor-pointer h-[350px]  object-contain", imageClassName)}
-                      alt={productslug}
-                    />
-                  </Link>
-                </div>
-              </SwiperSlide>
-            )})}
+              const imageClassName = isPng ? "w-full h-full object-cover" : "";
+              return (
+                <SwiperSlide key={index}>
+                  <div className="h-full w-full left-0 overflow-hidden top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
+                    <Link
+                      href={`/collections/${productslug}`}
+                      className={cn(imageClassName)}
+                    >
+                      <Image
+                        src={data.image}
+                        width={600}
+                        height={600}
+                        priority
+                        className={cn(
+                          " w-full cursor-pointer h-[350px]  object-contain",
+                          imageClassName
+                        )}
+                        alt={productslug}
+                      />
+                    </Link>
+                  </div>
+                </SwiperSlide>
+              );
+            })}
         </Swiper>
         <span
           className={cn(
@@ -180,7 +190,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex gap-3 items-center">
             <div className="flex flex-col cursor-pointer">
               <p className="text-sm">{data.product_name}</p>
-              <p className="text-xs font-normal text-neutral-500 dark:text-zinc-100/80" onClick={handleRoute}>
+              <p
+                className="text-xs font-normal text-neutral-500 dark:text-zinc-100/80"
+                onClick={handleRoute}
+              >
                 {data.categoryname}
               </p>
             </div>
@@ -220,7 +233,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
 export const Skeleton = () => {
   return (
-    <section className="w-full min-w-[350px] p-1 h-full flex flex-col gap-1 rounded-lg">
+    <section className="w-full relative  p-1 h-full flex flex-col gap-1 rounded-lg">
       <div className="w-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[390px] rounded-lg"></div>
       <div className="w-full flex flex-col p-2 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[100px] rounded-lg ">
         <span className="w-full h-[40px] flex">
@@ -238,18 +251,26 @@ export const Skeleton = () => {
 export const ProductSkeleton = ({
   loading,
   children,
+  filters,
 }: {
   loading: boolean;
   children: React.ReactNode;
+  filters?: boolean;
 }) => {
   const load = useDeferredValue(loading);
   if (load) {
+    const randomLength = Math.floor(Math.random() * 5) + 4;
     return (
-      <>
-        {Array.from({ length: 4 }, (_, index) => (
+      <div
+        className={cn(
+          "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
+          filters && "lg:grid-cols-2 xl:grid-cols-3"
+        )}
+      >
+        {Array.from({ length: randomLength }, (_, index) => (
           <Skeleton key={index} />
         ))}
-      </>
+      </div>
     );
   }
   return <>{children}</>;
