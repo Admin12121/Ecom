@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Ecom",
-  description: "",
-};
 
 import Header from "./_components/header";
 

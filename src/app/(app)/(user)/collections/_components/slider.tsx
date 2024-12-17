@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useSliderWithInput } from "@/hooks/use-slider-with-input";
-import { useAuth } from "@/lib/context";
+
 
 interface PriceProps {
   id: number;
@@ -31,10 +31,11 @@ while (basePrice <= maxPrice) {
   basePrice += increment;
 }
 
-
-
-export default function Price() {
-  const { selectedcurrency } = useAuth();
+export default function Price({
+  selectedcurrency,
+}: {
+  selectedcurrency: { sell: number; symbol: string };
+}) {
   const tick_count = 40;
 
   const currencyRanges: { [key: string]: CurrencyRange } = {
@@ -45,14 +46,19 @@ export default function Price() {
     A$: { min: 100, max: 5000, minsel: 500, maxsel: 2500 },
   };
 
-  const { min, max , minsel, maxsel } = selectedcurrency?.symbol
-    ? currencyRanges[selectedcurrency.symbol] || { min: 100, max: 5000, minsel: 500, maxsel: 2500 }
+  const { min, max, minsel, maxsel } = selectedcurrency?.symbol
+    ? currencyRanges[selectedcurrency.symbol] || {
+        min: 100,
+        max: 5000,
+        minsel: 500,
+        maxsel: 2500,
+      }
     : { min: 100, max: 5000, minsel: 500, maxsel: 2500 };
 
   const minValue = min;
   const maxValue = max;
 
-  const initialValues:number[] = [minsel, maxsel];
+  const initialValues: number[] = [minsel, maxsel];
 
   const {
     sliderValue,
@@ -61,6 +67,7 @@ export default function Price() {
     handleInputChange,
     handleSliderChange,
   } = useSliderWithInput({ minValue, maxValue, initialValue: initialValues });
+
   const priceStep = (maxValue - minValue) / tick_count;
 
   const baseItemCounts = Array(tick_count)

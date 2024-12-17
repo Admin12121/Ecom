@@ -160,7 +160,7 @@ export const userAuthapi = createApi({
       },
     }),
     productsView: builder.query({
-      query: ({ productslug, id, search, page, ids, category, token }) => {
+      query: ({ productslug, id, search, page, ids, category, subcategory, min_price, max_price, color, size, metal, stock, filter, token }) => {
         const queryParams = buildQueryParams({
           page,
           productslug,
@@ -168,6 +168,14 @@ export const userAuthapi = createApi({
           search,
           ids,
           category,
+          subcategory,
+          min_price,
+          max_price,
+          color,
+          size,
+          metal,
+          stock,
+          filter,
         });
         return {
           url: `api/products/products/${queryParams}`,

@@ -2,10 +2,6 @@ import type { Metadata } from "next";
 import BackdropGradient from "@/components/global/backdrop-gradient";
 import GlassCard from "@/components/global/glass-card";
 
-export const metadata: Metadata = {
-  title: "Ecom",
-  description: "",
-};
 
 export default function RootLayout({
   children,

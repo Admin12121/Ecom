@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import {
   useProductsViewQuery,
   useTrendingProductsViewQuery,
@@ -26,6 +26,28 @@ const FeatureProduct = dynamic(
   { ssr: false }
 );
 
+interface State {
+  [key: string]: string[];
+}
+
+const initialState: State = {
+  metal: [],
+  type: [],
+  color: [],
+  size: [],
+  availability: [],
+};
+
+function reducer(state: State, action: { type: string; value: string }) {
+  const { type, value } = action;
+  return {
+    ...state,
+    [type]: state[type].includes(value)
+      ? state[type].filter((item) => item !== value)
+      : [...state[type], value],
+  };
+}
+
 const CollectionPage = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
@@ -33,10 +55,18 @@ const CollectionPage = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [products, SetProducts] = useState<Product[] | null>([]);
+  const [filter, setFilter] = useState("bestselling");
   const [filters, setFilters] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { data, isLoading } = useProductsViewQuery({
-    category,
+    category: category,
     search,
+    filter,
+    metal:state.metal,
+    type:state.type,
+    size:state.size,
+    stock:state.availability,
+    color:state.color,
     page,
   });
 
@@ -70,35 +100,38 @@ const CollectionPage = () => {
           </span>
         )}
         <div className="flex flex-col gap-2">
-          <span className="flex justify-between items-center w-full">
+          <span className="flex gap-3 flex-col md:flex-row justify-between md:items-center w-full">
             <p className="text-sm text-neutral-600 dark:text-themeTextGray">
               {data?.count} products
             </p>
             <div
-              className="space-y-2 flex gap-3 items-center"
+              className="space-y-2 flex gap-3 md:items-center flex-col md:flex-row"
               style={{ "--ring": "270 66.67% 47.06%" } as React.CSSProperties}
             >
-              <Select defaultValue="s1">
+              <Select defaultValue="bestselling"
+                value={filter}
+                onValueChange={(value: string) => setFilter(value)}
+                >
                 <SelectTrigger
                   customIcon={<Settings2 className="w-4 h-4" />}
                   id="select-19"
-                  className="min-w-44"
+                  className="md:min-w-44"
                 >
                   <SelectValue placeholder="Select framework" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="s1">Best Selling</SelectItem>
-                  <SelectItem value="s2">New In</SelectItem>
-                  <SelectItem value="s3">Price: high to low</SelectItem>
-                  <SelectItem value="s4">Price: low to high</SelectItem>
+                  <SelectItem value="bestselling">Best Selling</SelectItem>
+                  <SelectItem value="newin">New In</SelectItem>
+                  <SelectItem value="hightolow">Price: high to low</SelectItem>
+                  <SelectItem value="lowtohigh">Price: low to high</SelectItem>
                 </SelectContent>
               </Select>
               <Button
                 variant="outline"
                 className={cn(
-                  "!m-0 gap-2 min-w-[8rem] px-2",
+                  "!m-0 gap-2 min-w-[8rem] px-3 flex !justify-between w-full",
                   filters &&
-                    "ring-offset-2 ring-2 dark:ring-offset-background ring-purple-600/40 transition"
+                    "ring-offset-2 ring-2 dark:ring-offset-background ring-purple-600/40 transition "
                 )}
                 onClick={() => setFilters(!filters)}
               >
@@ -152,7 +185,7 @@ const CollectionPage = () => {
               )}
             >
               <span className="flex w-full rounded-md sticky top-[70px] h-[82dvh] max-md:bg-neutral-950 ">
-                <Sidebar />
+                <Sidebar state={state} dispatch={dispatch}/>
               </span>
             </div>
           </div>

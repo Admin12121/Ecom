@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React from "react";
 import {
   Accordion,
   AccordionContent,
@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import Price from "./slider";
+import { useAuth } from "@/lib/context";
+import { Label } from "@/components/ui/label";
 
 interface Item {
   id: string;
@@ -37,35 +39,13 @@ const size: Item[] = [
 ];
 
 const availability: Item[] = [
-  { id: "radio-13-r1", value: "instock", label: "In stock" },
-  { id: "radio-13-r3", value: "outofstock", label: "Out of Stock" },
+  { id: "radio-13-r1", value: "in", label: "In stock" },
+  { id: "radio-13-r3", value: "out", label: "Out of Stock" },
 ];
 
+const Sidebar = ({ state, dispatch }: { state: any; dispatch: any }) => {
+  const { selectedcurrency } = useAuth();
 
-interface State {
-  [key: string]: string[];
-}
-
-const initialState: State = {
-  metal: [],
-  color: [],
-  size: [],
-  availability: [],
-};
-
-function reducer(state: State, action: { type: string; value: string }) {
-  const { type, value } = action;
-  return {
-    ...state,
-    [type]: state[type].includes(value)
-    ? state[type].filter((item) => item !== value)
-    : [...state[type], value],
-  };
-}
-
-const Sidebar = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  
   const items = [
     {
       id: "1",
@@ -84,11 +64,11 @@ const Sidebar = () => {
                   className="sr-only after:absolute after:inset-0"
                   disabled={item?.disabled}
                   checked={state.metal.includes(item.value)}
-                  onClick={() =>
-                    dispatch({ type: "metal", value: item.value })
-                  }
+                  onClick={() => dispatch({ type: "metal", value: item.value })}
                 />
-                <p className="text-sm font-medium leading-none ">{item.label}</p>
+                <p className="text-sm font-medium leading-none ">
+                  {item.label}
+                </p>
               </label>
             ))}
           </div>
@@ -111,12 +91,12 @@ const Sidebar = () => {
                   value={item.value}
                   className="sr-only after:absolute after:inset-0"
                   checked={state.color.includes(item.value)}
-                  onClick={() =>
-                    dispatch({ type: "color", value: item.value })
-                  }
+                  onClick={() => dispatch({ type: "color", value: item.value })}
                   disabled={item?.disabled}
                 />
-                <p className="text-sm font-medium leading-none ">{item.label}</p>
+                <p className="text-sm font-medium leading-none ">
+                  {item.label}
+                </p>
               </label>
             ))}
           </div>
@@ -139,12 +119,12 @@ const Sidebar = () => {
                   value={item.value}
                   className="sr-only after:absolute after:inset-0"
                   checked={state.size.includes(item.value)}
-                  onClick={() =>
-                    dispatch({ type: "size", value: item.value })
-                  }
+                  onClick={() => dispatch({ type: "size", value: item.value })}
                   disabled={item?.disabled}
                 />
-                <p className="text-sm font-medium leading-none ">{item.label}</p>
+                <p className="text-sm font-medium leading-none ">
+                  {item.label}
+                </p>
               </label>
             ))}
           </div>
@@ -190,7 +170,13 @@ const Sidebar = () => {
 
   return (
     <div className="w-full px-3 py-1">
-      <Price />
+      {selectedcurrency ? (
+        <Price selectedcurrency={selectedcurrency} />
+      ) : (
+        <div className="space-y-4 pb-2 border-b-1 ">
+          <Label className="text-[15px]">Price</Label>
+        </div>
+      )}
       <Accordion type="multiple" className="w-full" defaultValue={["1"]}>
         {items.map((item) => (
           <AccordionItem value={item.id} key={item.id} className="py-1">
