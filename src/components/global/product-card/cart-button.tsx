@@ -186,7 +186,7 @@ const Cartbutton = ({
                 </CardBody>
               </Card>
             )}
-            {selectedSize?.id && <AddToCart
+            {selectedSize?.id && stocks !== 0  && <AddToCart
               className="w-full mt-2"
               product={data}
               variant={selectedSize?.id}
