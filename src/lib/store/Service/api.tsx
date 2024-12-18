@@ -420,11 +420,11 @@ export const userAuthapi = createApi({
       },
     }),
     updateReview: builder.mutation({
-      query: ({ NewFormData, id }) => ({
-        url: `api/products/reviews/post/${id}/`,
+      query: ({ FormData, id, token }) => ({
+        url: `api/products/reviews-update/${id}/`,
         method: "PATCH",
-        body: NewFormData,
-        headers: createHeaders(),
+        body: FormData,
+        headers: createHeaders(token),
       }),
     }),
     getReview: builder.query({

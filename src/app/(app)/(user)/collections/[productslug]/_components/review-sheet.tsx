@@ -14,7 +14,7 @@ import {
 import { useGetReviewQuery } from "@/lib/store/Service/api";
 import { Reviews } from "@/types/product";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { CircleCheck, Star } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
 import WriteReview from "./write-review";
 import {
@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 interface ReviewSheetProps {
   slug: string;
@@ -112,9 +113,9 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                  <SelectItem value="relevent">Most relevent</SelectItem>
-                  <SelectItem value="recent">Most recent</SelectItem>
-                  <SelectItem value="rating">By Rating</SelectItem>
+                    <SelectItem value="relevent">Most relevent</SelectItem>
+                    <SelectItem value="recent">Most recent</SelectItem>
+                    <SelectItem value="rating">By Rating</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -154,8 +155,38 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
                       </span>
                     )}
                     <span className="flex flex-col p-2">
-                    <h1 className="text-sm font-normal">{review.title}</h1>
-                    <p className="text-xs font-light">{review.content}</p>
+                      <h1 className="text-sm font-normal">{review.title}</h1>
+                      <p className="text-sm font-light">{review.content}</p>
+                      <span className="flex flex-col gap-1 mt-1 text-zinc-400">
+                        <Separator />
+                        {review.recommended ? (
+                          <span className="flex flex-row justify-between">
+                            <p className="text-sm font-normal">Recommended</p>
+                            <p className="text-sm font-normal">
+                              I'll recommend to everyone!
+                            </p>
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                        {review.delivery ? (
+                          <span className="flex flex-row justify-between">
+                            <p className="text-sm font-normal">Delivery</p>
+                            <p className="text-sm font-normal">Yes</p>
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                        <Separator />
+                        {review.user ? (
+                          <span className="flex flex-row justify-between">
+                            <p className="text-sm font-normal">{review.user}.</p>
+                            <p className="text-sm font-normal flex gap-1 items-center"><CircleCheck className="w-4 h-4"/> Verified Buyer</p>
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </span>
                     </span>
                   </Card>
                 ))}

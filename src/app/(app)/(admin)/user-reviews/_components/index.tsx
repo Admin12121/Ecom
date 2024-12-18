@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useDeferredValue, useEffect } from "react";
-import { useGetUserReviewQuery } from "@/lib/store/Service/api";
+import { useGetUserReviewQuery, useUpdateReviewMutation } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ReviewsImage } from "@/types/product";
@@ -19,6 +19,9 @@ import { Search } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Kbd from "@/components/ui/kbd";
+import { Crown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export interface Review {
   id: number;
@@ -28,6 +31,7 @@ export interface Review {
   content: string;
   recommended: boolean;
   delivery: boolean;
+  favoutare: boolean;
   review_images: ReviewsImage[];
   created_at: string;
   product_image: string;
@@ -43,7 +47,8 @@ const Reviews = () => {
   const [star, setStar] = useState("0");
   const [filter, setFilter] = useState("relevant");
   const deferredSearch = useDeferredValue(search);
-  const { data, isLoading } = useGetUserReviewQuery(
+  const [ updateReview ] = useUpdateReviewMutation();
+  const { data, isLoading , refetch } = useGetUserReviewQuery(
     {
       token: accessToken,
       page: page,
@@ -67,6 +72,16 @@ const Reviews = () => {
   const handleShowMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
+
+  const HandleUpdateReview = async ({id, data}:{id: number, data:any}) => {
+    const response = await updateReview({ token: accessToken, id:id, FormData: data });
+    if (response.data) {
+      toast.success("Review updated successfully");
+      refetch();
+    } else {
+      toast.error("Failed to update review");
+    }
+  }
 
   return (
     <div className="h-screen space-y-3 px-3">
@@ -163,13 +178,21 @@ const Reviews = () => {
                         <span key={index}>★</span>
                       ))}{" "}
                     </span>{" "}
-                    <p className="text-xs">
-                      {new Date(review.created_at).toLocaleDateString("en-US", {
-                        month: "short",
-                        year: "numeric",
-                        day: "numeric",
-                      })}
-                    </p>
+                    <span className="flex gap-2">
+                      <p className="text-xs">
+                        {new Date(review.created_at).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            year: "numeric",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                      <span className="cursor-pointer" onClick={() => HandleUpdateReview({id: review.id, data: {favoutare: true}})}>
+                        <Crown className={cn("w-3 h-3 ", review.favoutare && "stroke-orange-500 fill-orange-500")} />
+                      </span>
+                    </span>
                   </CardHeader>
                   {review?.review_images[0]?.image && (
                     <span className="flex px-1">
@@ -200,9 +223,11 @@ const Reviews = () => {
           </span>
         )}
       </ReviewsCard>
-      {data?.next && <div className="flex justify-center">
-        <Button onClick={handleShowMore}>Show More</Button>
-      </div>}
+      {data?.next && (
+        <div className="flex justify-center">
+          <Button onClick={handleShowMore}>Show More</Button>
+        </div>
+      )}
     </div>
   );
 };

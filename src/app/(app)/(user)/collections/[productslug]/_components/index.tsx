@@ -8,7 +8,7 @@ import {
 import ImageContainer from "./image";
 import Spinner from "@/components/ui/spinner";
 import { useAuthUser } from "@/hooks/use-auth-user";
-// import Reviewcards from "./components/reviewcards";
+import Reviewcards, {Review} from "./review-card";
 
 const Sidebar = dynamic(() => import("./sidebar"), { ssr: false });
 const ProductNotFound = dynamic(() => import("./not-found"), { ssr: false });
@@ -35,7 +35,7 @@ interface Product {
   id: number;
   categoryname: string;
   subcategoryname: string;
-  reviews: any[];
+  reviews: Review[];
   comments: any[];
   rating: number;
   total_ratings: number;
@@ -64,7 +64,7 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
   return (
     <main>
       <ProductSection product={product} />
-      {product.reviews && <ReviewsSection product_name={product.product_name}/>}
+      {product.reviews  &&  product.reviews.length > 0 &&<ReviewsSection product_name={product.product_name} reviews={product.reviews}/>}
       <RecommendedProducts product_id={product!.id} className="mb-14"/>
     </main>
   );
@@ -93,17 +93,24 @@ const ProductSection = ({ product }: { product: Product }) => (
   </section>
 );
 
-const ReviewsSection = ({product_name}:{product_name:string}) => (
-  <section className="w-full h-full py-10 flex overflow-hidden flex-col items-center justify-center">
-    <h1 className="text-5xl font-bold text-center w-[350px] md:w-[450px]">
-      What people say about {product_name}
-    </h1>
-    <p>Don&apos;t just take our word for it.</p>
-    <div className="flex flex-wrap gap-4 pt-10 items-center justify-center">
-      {/* <Reviewcards /> */}
-    </div>
-  </section>
-);
+const ReviewsSection = ({ product_name, reviews }: { product_name: string, reviews:Review[] }) => {
+  const randomHeader = Math.random() > 0.5 
+    ? "What people are saying" 
+    : `What people say about ${product_name}`;
+
+  return (
+    <section className="w-full h-full py-10 flex overflow-hidden flex-col items-center justify-center">
+      <h1 className="text-5xl font-bold text-center w-[350px] md:w-[450px]">
+        {randomHeader}
+      </h1>
+      <p className="text-lg">Don&apos;t just take our word for it.</p>
+      <div className="flex flex-wrap gap-4 pt-10 items-center justify-center">
+        <Reviewcards reviewData={reviews}/>
+      </div>
+    </section>
+  );
+};
+
 
 export const RecommendedProducts = ({ product_id, className }: { product_id: number, className:string }) => {
   const { accessToken } = useAuthUser();
