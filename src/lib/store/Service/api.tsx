@@ -12,13 +12,13 @@ const createHeaders = (
 };
 
 const buildQueryParams = (
-  params: Record<string, string | number | undefined>
+  params: Record<string, string | number | string[] | undefined>
 ) => {
   const queryParams = Object.entries(params)
     .filter(
-      ([_, value]) => value !== undefined && value !== null && value !== ""
+      ([_, value]) => value !== undefined && value !== null && value !== "" && value !== 0 && !(Array.isArray(value) && value.length === 0)
     )
-    .map(([key, value]) => `${key}=${value}`)
+    .map(([key, value]) => `${key}=${(value)}`)
     .join("&");
   return queryParams ? `?${queryParams}` : "";
 };

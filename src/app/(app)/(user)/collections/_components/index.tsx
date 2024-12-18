@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useCallback } from "react";
 import {
   useProductsViewQuery,
   useTrendingProductsViewQuery,
@@ -31,7 +31,15 @@ const FeatureProduct = dynamic(
 );
 
 interface State {
-  [key: string]: string[];
+  [key: string]: string[] | number;
+  metal: string[];
+  type: string[];
+  color: string[];
+  size: string[];
+  availability: string[];
+  page: number;
+  max_price: number;
+  min_price: number;
 }
 
 const initialState: State = {
@@ -40,25 +48,46 @@ const initialState: State = {
   color: [],
   size: [],
   availability: [],
+  page: 1,
+  max_price: 0,
+  min_price: 0,
 };
 
-function reducer(state: State, action: { type: string; value: string }) {
+type Action = 
+  | { type: string; value: string | number }
+  | { type: string; value: Array<{ type: string; value: string | number }> };
+
+function reducer(state: State, action: Action): State {
+  if (Array.isArray(action.value)) {
+    return action.value.reduce((accState, { type, value }) => {
+      return reducer(accState, { type, value });
+    }, state);
+  }
+
   const { type, value } = action;
-  return {
-    ...state,
-    [type]: state[type].includes(value)
-      ? state[type].filter((item) => item !== value)
-      : [...state[type], value],
-  };
+  if ((type === "page" || type === "min_price" || type === "max_price") && typeof value === "number") {
+    return {
+      ...state,
+      [type]: value,
+    };
+  }
+  if (type in state && Array.isArray(state[type])) {
+    return {
+      ...state,
+      [type]: (state[type] as string[]).includes(value as string)
+        ? (state[type] as string[]).filter((item) => item !== value)
+        : [...(state[type] as string[]), value as string],
+    };
+  }
+  return state;
 }
 
 const CollectionPage = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const search = searchParams.get("search");
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [products, SetProducts] = useState<Product[] | null>([]);
+  const [products, setProducts] = useState<Product[] | null>([]);
   const [filter, setFilter] = useState("bestselling");
   const [filters, setFilters] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -72,28 +101,32 @@ const CollectionPage = () => {
     size: state.size,
     stock: state.availability,
     color: state.color,
-    page,
+    page: state.page,
+    max_price: state.max_price,
+    min_price: state.min_price,
   });
 
   useEffect(() => {
-    if (page === 1) {
-      SetProducts(data?.results);
-      setHasMore(data?.next ? true : false);
-    } else {
-      SetProducts((prev) => [...(prev || []), ...(data?.results || [])]);
-    }
-    setLoading(false);
-  }, [data]);
-  
-  const loadMoreProducts = () => {
-    if (data?.next) {
-      setLoading(true);
-      setPage(page + 1);
-      setHasMore(data?.next ? true : false);
-    }else{
+    if (data) {
+      setProducts((prev) => (state.page === 1 ? data.results : [...prev || [], ...data.results]));
+      setHasMore(Boolean(data.next));
       setLoading(false);
     }
-  };
+  }, [data]);
+
+  const loadMoreProducts = useCallback(() => {
+    if (hasMore && !loading) {
+      setLoading(true);
+      dispatch({ type: "page", value: state.page + 1 });
+    }
+  }, [hasMore, loading, state.page]);
+
+  const handleFilterChange = useCallback((value: string) => {
+    setFilter(value);
+    dispatch({ type: "page", value: 1 });
+  }, []);
+
+  console.log(state.min_price, state.max_price);
 
   return (
     <>
@@ -120,7 +153,7 @@ const CollectionPage = () => {
               <Select
                 defaultValue="bestselling"
                 value={filter}
-                onValueChange={(value: string) => setFilter(value)}
+                onValueChange={handleFilterChange}
               >
                 <SelectTrigger
                   customIcon={<Settings2 className="w-4 h-4" />}
@@ -152,7 +185,7 @@ const CollectionPage = () => {
           </span>
           <div className="flex gap-5 w-full">
             <InfiniteScroll
-              loading={isLoading}
+              loading={loading}
               hasMore={hasMore}
               loadMore={loadMoreProducts}
               className={cn(filters && "lg:w-[calc(100%-350px)]", " w-full")}
@@ -162,7 +195,8 @@ const CollectionPage = () => {
                   <div
                     className={cn(
                       "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
-                      filters && "lg:grid-cols-2 xl:grid-cols-3"
+                      filters && "lg:grid-cols-2 xl:grid-cols-3",
+                      loading || isLoading && "pointer-events-none opacity-50 blur-sm"
                     )}
                   >
                     {products.map((product, index) => (

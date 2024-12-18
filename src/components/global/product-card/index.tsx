@@ -252,19 +252,21 @@ export const ProductSkeleton = ({
   loading,
   children,
   filters,
+  className
 }: {
   loading: boolean;
   children: React.ReactNode;
   filters?: boolean;
+  className?:string;
 }) => {
   const load = useDeferredValue(loading);
   if (load) {
-    const randomLength = Math.floor(Math.random() * 5) + 4;
+    const randomLength = 5;
     return (
       <div
         className={cn(
           "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
-          filters && "lg:grid-cols-2 xl:grid-cols-3"
+          filters && "lg:grid-cols-2 xl:grid-cols-3", className
         )}
       >
         {Array.from({ length: randomLength }, (_, index) => (

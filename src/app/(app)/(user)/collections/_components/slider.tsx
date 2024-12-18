@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useSliderWithInput } from "@/hooks/use-slider-with-input";
-
+import { Button } from "@/components/ui/button";
 
 interface PriceProps {
   id: number;
@@ -33,14 +33,16 @@ while (basePrice <= maxPrice) {
 
 export default function Price({
   selectedcurrency,
+  dispatch
 }: {
   selectedcurrency: { sell: number; symbol: string };
+  dispatch: any;
 }) {
   const tick_count = 40;
 
   const currencyRanges: { [key: string]: CurrencyRange } = {
-    "₹": { min: 500, max: 1000000, minsel: 5000, maxsel: 700000 },
-    रु: { min: 500, max: 1000000, minsel: 5000, maxsel: 700000 },
+    "₹": { min: 500, max: 500000, minsel: 5000, maxsel: 200000 },
+    रु: { min: 500, max: 500000, minsel: 5000, maxsel: 200000 },
     $: { min: 100, max: 5000, minsel: 500, maxsel: 2500 },
     "¥": { min: 100, max: 5000, minsel: 500, maxsel: 2500 },
     A$: { min: 100, max: 5000, minsel: 500, maxsel: 2500 },
@@ -111,6 +113,12 @@ export default function Price({
       rangeMax >= sliderValue[0]
     );
   };
+
+  const handlePriceRange = () => { 
+    dispatch({ type:"min_price", value: Number(inputValues[0])});
+    dispatch({ type:"max_price", value: Number(inputValues[1])});
+    dispatch({ type: "page", value: 1 });
+  }
 
   return (
     <div className="space-y-4 pb-2 border-b-1 ">
@@ -193,6 +201,9 @@ export default function Price({
           </div>
         </div>
       </div>
+      <Button className="w-full" variant="secondary" onClick={handlePriceRange}>
+        Apply
+      </Button>
     </div>
   );
 }
