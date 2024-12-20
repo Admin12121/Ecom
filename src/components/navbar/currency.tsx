@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/context";
 import { cn } from "@/lib/utils";
 
@@ -27,29 +26,32 @@ export const CurrencySelector = ({ className }: { className?: string }) => {
           defaultValue={selectedcurrencyiso}
         >
           <SelectTrigger
-            icon={false}
+            customIcon={<></>}
             className={cn(
-              "w-8 p-0 md:px-3 md:py-2 md:w-[180px] border-0 border-none bg-transparent",
+              "w-12 p-0 md:px-3 md:py-2 md:w-[180px] border-0 border-none bg-transparent",
               className
             )}
           >
             <SelectValue placeholder="Country / Region">
               <div className="flex gap-2 items-center">
-                <Avatar className="rounded-md md:rounded-full w-8 h-9 md:h-8">
-                  <AvatarFallback className="rounded-md md:rounded-full">
+                <div className="flex flex-col dark:text-white">
+                  <span className="flex text-base items-center justify-center gap-1 md:gap-2">
+                    {
+                      liveratedata.find(
+                        (item) => item.iso3 === selectedcurrencyiso
+                      )?.flag
+                    }{" "}
+                    <span className="hidden md:flex">
+                      {
+                        liveratedata.find(
+                          (item) => item.iso3 === selectedcurrencyiso
+                        )?.iso3
+                      }{" "}
+                    </span>
                     {
                       liveratedata.find(
                         (item) => item.iso3 === selectedcurrencyiso
                       )?.symbol
-                    }
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden md:flex flex-col dark:text-white">
-                  <span className="hidden md:flex text-base">
-                    {
-                      liveratedata.find(
-                        (item) => item.iso3 === selectedcurrencyiso
-                      )?.name
                     }
                   </span>
                 </div>
@@ -66,17 +68,9 @@ export const CurrencySelector = ({ className }: { className?: string }) => {
                     value={item?.iso3}
                   >
                     <div className="flex gap-2 items-center">
-                      <Avatar className="rounded-md md:rounded-full w-8 h-8">
-                        <AvatarFallback className="rounded-md md:rounded-full">
-                          {item?.symbol}
-                        </AvatarFallback>
-                      </Avatar>
                       <div className="flex flex-col dark:text-white">
-                        <span className="md:hidden flex text-base">
-                          {item?.iso3}
-                        </span>
-                        <span className="hidden md:flex text-base">
-                          {item?.name}
+                        <span className="flex text-base">
+                          {item?.iso3} {item?.symbol}
                         </span>
                       </div>
                     </div>

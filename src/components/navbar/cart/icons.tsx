@@ -1,7 +1,7 @@
 import { cn } from "@/components/costum/craft";
 import React from "react";
 
-const Icons = ({className}:{className:string}) => {
+const Icons = ({className}:{className?:string}) => {
   return (
     <div className={cn("w-full justify-end flex items-center gap-2", className)}>
       <span data-payment-method="esewa" aria-hidden="true">

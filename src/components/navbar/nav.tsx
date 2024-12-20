@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { MainNav } from "@/components/navbar/main-nav";
 import { ModeSwitcher } from "@/components/navbar/mood-switcher";
+import Icons from "./cart/icons";
 
 export function SiteHeader({ children }: { children: React.ReactNode }) {
   const { status } = useAuthUser();
@@ -20,7 +21,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
           <MainNav />
           <div className="hidden md:flex flex-1 items-center justify-end gap-2 md:justify-end">
             <div className="flex items-center gap-1 w-full justify-end">
-              <CurrencySelector className="hidden md:flex" />
+              {/* <CurrencySelector className="hidden md:flex" /> */}
               <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
                 <Link href="/wishlist" rel="noreferrer">
                   <Heart className="h-4 w-4" />
@@ -41,15 +42,31 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
         </nav>
       </header>
       {children}
+      <footer className="flex h-10 bottom-0 z-50 w-full border-t-1 justify-center items-center">
+        <div className="max-w-[95rem] w-full h-full flex justify-between items-center px-5">
+          <span className="flex gap-2">
+            <CurrencySelector className="flex !border-0 !ring-0 !ring-offset-0 !shadow-none" />
+            <Icons />
+          </span>
+          <span className="text-xs font-light flex gap-2">
+            <Link href="/terms-of-service">Terms of service</Link>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+          </span>
+        </div>
+      </footer>
       <footer className="max-w-[95rem] flex md:hidden h-16 bottom-0 fixed z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none border-0">
         <div className="flex w-full h-full items-center px-4 gap-2 justify-between">
           <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-            <Link href="/collections" rel="noreferrer" className="w-full h-full flex items-center justify-center">
+            <Link
+              href="/collections"
+              rel="noreferrer"
+              className="w-full h-full flex items-center justify-center"
+            >
               <ArchiveRestore className="h-4 w-4" />
               <span className="sr-only">collections</span>
             </Link>
           </Button>
-          <CurrencySelector className="flex" />
+          <CurrencySelector  className="flex !border-0 !ring-0 !ring-offset-0 !shadow-none" />
           {status ? (
             <UserNav align="center" />
           ) : (

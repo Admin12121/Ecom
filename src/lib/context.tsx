@@ -7,6 +7,11 @@ import React, {
   ReactNode,
 } from "react";
 import axios from "axios";
+import Inflag from "@/icons/in";
+import Us from "@/icons/us";
+import Cn from "@/icons/cn";
+import Np from "@/icons/np";
+import Au from "@/icons/au";
 
 interface CurrencyData {
   buy: string;
@@ -18,6 +23,7 @@ interface CurrencyData {
   sell: string;
   unit: number;
   symbol: string;
+  flag: React.ReactNode;
 }
 
 type CurrencyDataArray = CurrencyData[];
@@ -98,6 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             buy: (parseFloat(currency.buy) / (currency.unit || 1)).toFixed(2),
             sell: (parseFloat(currency.sell) / (currency.unit || 1)).toFixed(2),
             symbol: getSymbol(currency.iso3),
+            flag: currency.iso3 === "INR" ? <Inflag className="w-5 h-5"/> : currency.iso3 === "USD" ? <Us className={"w-5 h-5"}/> : currency.iso3 === "CNY" ? <Cn className={"w-5 h-5"}/> : currency.iso3 === "AUD" ? <Au className={"w-5 h-5"}/> : <Np className={"w-5 h-5"}/>,
           }));
 
           const nepaliRupee = {
@@ -110,6 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             published_on: new Date().toISOString(),
             modified_on: new Date().toISOString(),
             symbol: "रु",
+            flag: <Np className={"w-5 h-5"}/>,
           };
 
           setLiveRateData([...finalData, nepaliRupee]);
@@ -127,6 +135,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     fetchLiveRates();
   }, [reloaddata]);
+
+  console.log(liveratedata)
 
   const convertPrice = (
     price: number
