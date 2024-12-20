@@ -19,8 +19,8 @@ const data = [
 
 const LandingPage1 = () => {
   return (
-    <div className="w-full h-[70dvh] md:h-full flex flex-col md:flex-row items-center justify-center p-5 gap-3">
-      <div className="w-full md:w-[75%] h-full  rounded-3xl relative">
+    <div className="w-full h-[35dvh] md:h-full flex flex-col md:flex-row items-center justify-center p-3 md:p-5 gap-3">
+      <div className="w-full md:w-[75%] h-full rounded-3xl relative">
         <Swiper
           navigation
           pagination={{ type: "bullets", clickable: true }}
@@ -29,7 +29,7 @@ const LandingPage1 = () => {
           effect="fade"
           modules={[Autoplay, Navigation, Pagination, EffectFade]}
           style={{ margin: "0px" }}
-          className="w-full h-[50dvh] md:h-full rounded-md"
+          className="w-full h-[20dvh] md:h-full rounded-md"
         >
           {data &&
             data.map((data: any, index: number) => (

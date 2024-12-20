@@ -5,7 +5,7 @@ interface InfiniteScrollProps {
   hasMore: boolean;
   loadMore: () => void;
   children: React.ReactNode;
-  className?:string;
+  className?: string;
 }
 
 const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
@@ -22,7 +22,6 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
     (entries: IntersectionObserverEntry[]) => {
       const target = entries[0];
       if (target.isIntersecting && !loading && hasMore) {
-        console.log(target.isIntersecting , !loading, hasMore, loading && hasMore);
         loadMore();
       }
     },

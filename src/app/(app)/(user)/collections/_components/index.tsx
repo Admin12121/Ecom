@@ -126,7 +126,9 @@ const CollectionPage = () => {
     dispatch({ type: "page", value: 1 });
   }, []);
 
-  console.log(state.min_price, state.max_price);
+  const handleClose = () => {
+    setFilters(!filters);
+  }
 
   return (
     <>
@@ -176,7 +178,7 @@ const CollectionPage = () => {
                   filters &&
                     "ring-offset-2 ring-2 dark:ring-offset-background ring-purple-600/40 transition "
                 )}
-                onClick={() => setFilters(!filters)}
+                onClick={handleClose}
               >
                 {filters ? "Hide" : "Show"} Filters{" "}
                 <Settings2 className="w-4 h-4" />
@@ -226,13 +228,15 @@ const CollectionPage = () => {
             </InfiniteScroll>
             <div
               className={cn(
-                "hidden w-[330px] max-md:w-full max-md:top-[120px] max-md:z-50 left-96 relative transition-all transform duration-500 ease-in-out",
-                filters && "lg:flex left-0 opacity-100 translate-x-0",
+                "hidden lg:w-[330px] max-md:w-full left-96 relative transition-all transform duration-500 ease-in-out",
+                filters && "flex absolute lg:relative top-0 left-0 opacity-100 z-50 lg:z-0 w-full lg:translate-x-0",
                 !filters && "translate-x-full"
               )}
             >
-              <span className="flex w-full rounded-md sticky top-[70px] h-[82dvh] max-md:bg-neutral-950 ">
-                <Sidebar state={state} dispatch={dispatch} />
+              <span className={cn("flex w-full rounded-lg sticky top-[70px] lg:h-[82dvh] ",
+                "max-w-[95rem] h-[100dvh] p-2 lg:p-0"
+              )}>
+                <Sidebar state={state} dispatch={dispatch} handleClose={handleClose}/>
               </span>
             </div>
           </div>

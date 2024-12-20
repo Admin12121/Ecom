@@ -33,7 +33,7 @@ const WishList = ({ productId, className, custom = true }: WishlistProps) => {
       <Heart
         size={18}
         className={cn(
-          "dark:stroke-white stroke-neutral-800",
+          "dark:stroke-white stroke-neutral-800 fill-neutral-100/20",
           isInWishlist && "fill-black dark:fill-white"
         )}
       />

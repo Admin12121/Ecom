@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Price from "./slider";
 import { useAuth } from "@/lib/context";
 import { Label } from "@/components/ui/label";
+import { X } from "lucide-react";
 
 interface Item {
   id: string;
@@ -43,7 +44,15 @@ const availability: Item[] = [
   { id: "radio-13-r3", value: "out", label: "Out of Stock" },
 ];
 
-const Sidebar = ({ state, dispatch  }: { state: any; dispatch: any }) => {
+const Sidebar = ({
+  state,
+  dispatch,
+  handleClose,
+}: {
+  state: any;
+  dispatch: any;
+  handleClose: any;
+}) => {
   const { selectedcurrency } = useAuth();
   const items = [
     {
@@ -63,7 +72,15 @@ const Sidebar = ({ state, dispatch  }: { state: any; dispatch: any }) => {
                   className="sr-only after:absolute after:inset-0"
                   disabled={item?.disabled}
                   checked={state.metal.includes(item.value)}
-                  onClick={() => dispatch({ type: "multiple", value:[{type:"metal", value: item.value }, {type:"page", value: 1}] })}
+                  onClick={() =>
+                    dispatch({
+                      type: "multiple",
+                      value: [
+                        { type: "metal", value: item.value },
+                        { type: "page", value: 1 },
+                      ],
+                    })
+                  }
                 />
                 <p className="text-sm font-medium leading-none ">
                   {item.label}
@@ -118,7 +135,15 @@ const Sidebar = ({ state, dispatch  }: { state: any; dispatch: any }) => {
                   value={item.value}
                   className="sr-only after:absolute after:inset-0"
                   checked={state.size.includes(item.value)}
-                  onClick={() => dispatch({type:"multiple", value:[{ type: "size", value: item.value }, {type:"page", value: 1}]} )}
+                  onClick={() =>
+                    dispatch({
+                      type: "multiple",
+                      value: [
+                        { type: "size", value: item.value },
+                        { type: "page", value: 1 },
+                      ],
+                    })
+                  }
                   disabled={item?.disabled}
                 />
                 <p className="text-sm font-medium leading-none ">
@@ -147,7 +172,13 @@ const Sidebar = ({ state, dispatch  }: { state: any; dispatch: any }) => {
                   className="sr-only after:absolute after:inset-0"
                   checked={state.availability.includes(item.value)}
                   onClick={() =>
-                    dispatch({type:"multiple", value:[{ type: "availability", value: item.value }, {type:"page", value: 1}]} )
+                    dispatch({
+                      type: "multiple",
+                      value: [
+                        { type: "availability", value: item.value },
+                        { type: "page", value: 1 },
+                      ],
+                    })
                   }
                 />
                 <p className="text-sm font-medium leading-none text-nowrap ">
@@ -168,9 +199,14 @@ const Sidebar = ({ state, dispatch  }: { state: any; dispatch: any }) => {
   ];
 
   return (
-    <div className="w-full px-3 py-1">
+    <div className="w-full px-3 py-1 bg-neutral-100/90 dark:bg-neutral-950/90 lg:bg-transparent rounded-md backdrop-blur-md h-full">
+      <span className="h-5 w-full lg:hidden flex items-center justify-end">
+        <span className="absolute right-2 top-2 w-5 h-5 cursor-pointer" onClick={handleClose}>
+          <X className="w-4 h-4" />
+        </span>
+      </span>
       {selectedcurrency ? (
-        <Price selectedcurrency={selectedcurrency} dispatch={dispatch}/>
+        <Price selectedcurrency={selectedcurrency} dispatch={dispatch} />
       ) : (
         <div className="space-y-4 pb-2 border-b-1 ">
           <Label className="text-[15px]">Price</Label>

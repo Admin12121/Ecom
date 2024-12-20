@@ -262,7 +262,6 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
   };
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data);
     const cleanedData = { ...data };
 
     if (data.isMultiVariant) {

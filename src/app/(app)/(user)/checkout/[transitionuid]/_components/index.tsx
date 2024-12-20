@@ -277,7 +277,7 @@ const Checkout = ({ params }: { params: string }) => {
                 )}
               </span>
             </form>
-            <Card className="min-h-[105px] border !border-zinc-400/50 dark:!border-zinc-800 mb-28">
+            <Card className="min-h-[105px] border !border-zinc-400/50 dark:!border-zinc-800 lg:mb-28">
               <CardBody className="flex text-sm gap-1 flex-col">
                 <span className="flex w-full justify-between items-center">
                   <p>Subtotal • {totalPieces} items</p>

@@ -1,7 +1,5 @@
 // Public routes accessible without authentication
 export const publicRoutes = [
-    "/",
-    // "/auth/(.*)",
     "/collections",
     "/collections/(.*)",
     "/wishlist",

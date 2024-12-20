@@ -120,7 +120,6 @@ const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
     { skip: !accessToken }
   );
   const {data, loading} = useDecryptedData(encryptedData, isLoading);
-  console.log(data);
   return (
     <PageSkeleton loading={loading}>
       {data && <ProductCard data={data} />}

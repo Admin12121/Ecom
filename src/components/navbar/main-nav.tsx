@@ -12,7 +12,7 @@ export function MainNav() {
   return (
     <div className="md:mr-4 flex w-full">
       <Link href="/" className="flex items-center space-x-2 mr-2 md:mr-3">
-        <span className="w-10 h-10 p-1">
+        <span className="w-14 h-14 lg:w-12 lg:h-12 p-1">
           <Image
             src="/logo.png"
             priority

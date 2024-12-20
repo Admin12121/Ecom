@@ -210,9 +210,6 @@ const Stocks = () => {
                   <Form key={variant.id} {...form}>
                     <form
                       onSubmit={form.handleSubmit((formData) => {
-                        console.log(
-                          fields.findIndex((f) => f.id === variant.id)
-                        );
                         const updatedStock = formData.variants.find(
                           (v) => v.id === variant.id
                         )?.stock;
