@@ -163,7 +163,7 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
                           <span className="flex flex-row justify-between">
                             <p className="text-sm font-normal">Recommended</p>
                             <p className="text-sm font-normal">
-                              I'll recommend to everyone!
+                              I&apos;ll recommend to everyone!
                             </p>
                           </span>
                         ) : (

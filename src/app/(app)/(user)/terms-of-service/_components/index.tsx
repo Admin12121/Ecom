@@ -55,8 +55,8 @@ const items = [
             By visiting our Site, completing a purchase or engaging in any other
             available activity, you agree to comply with these Terms &
             Conditions, which constitute an agreement between the person
-            accepting these Terms & Conditions (hereinafter “Customer", “you” or
-            “your”) and Nepal Heritage Handicraft. The acceptance of these Terms
+            accepting these Terms & Conditions (hereinafter &ldquo;Customer&rdquo;, &ldquo;you&rdquo; or
+            &ldquo;your&rdquo;) and Nepal Heritage Handicraft. The acceptance of these Terms
             and Conditions entails that the purchase of any products on our Site
             is not directly related to any professional activity and is limited
             to strictly personal use. The Customer, before placing an order,
@@ -477,7 +477,7 @@ const items = [
         </p>
         <p>
           Nepal Heritage Handicraft rejects any responsibility for any direct,
-          indirect and/or accidental damages resulting from the Customer's use
+          indirect and/or accidental damages resulting from the Customer&apos;s use
           or inability to use the content and services contained on our Site.
         </p>
       </div>
