@@ -132,7 +132,7 @@ const CollectionPage = () => {
 
   return (
     <>
-      <section className="flex flex-col gap-5 pt-5 w-full">
+      <section className="flex flex-col gap-5 w-full">
         {search && (
           <span className="">
             <p className="text-neutral-600 dark:text-themeTextGray ">

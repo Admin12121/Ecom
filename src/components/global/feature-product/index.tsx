@@ -30,7 +30,7 @@ const FeatureProduct = ({
         </div>
         <Carousel className="w-full">
           <CarouselContent className="-ml-1">
-            <ProductSkeleton loading={loading}>
+            <ProductSkeleton number={3} className="w-full" loading={loading}>
               {products &&
                 products.map((product: any, index: any) => (
                   <div

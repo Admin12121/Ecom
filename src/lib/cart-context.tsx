@@ -1,3 +1,4 @@
+"use client";
 import React, {
   createContext,
   useRef,
@@ -48,7 +49,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { status, accessToken } = useAuthUser();
 
-  const [cartdata, setCartItems] = useState(getDecryptedProductList());
+  const [cartdata, setCartItems] = useState<CartProduct[]>([]);
 
   const [postCartItem, { isLoading: postLoading }] = useCartPostMutation();
   const [deleteCart, { isLoading: deleteLoading }] = useCartDeleteMutation();
@@ -57,6 +58,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     { token: accessToken },
     { skip: !status }
   );
+
+  useEffect(() => {
+    setCartItems(getDecryptedProductList());
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const hasSyncedRef = useRef(false);
@@ -163,7 +168,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     newProduct: CartProduct,
     increment: boolean = true
   ): void => {
-    const productList: CartProduct[] = getDecryptedProductList()
+    const productList: CartProduct[] = getDecryptedProductList();
 
     const existingProductIndex = productList.findIndex(
       (product) =>

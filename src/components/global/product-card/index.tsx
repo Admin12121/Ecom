@@ -252,16 +252,18 @@ export const ProductSkeleton = ({
   loading,
   children,
   filters,
-  className
+  className,
+  number
 }: {
   loading: boolean;
   children: React.ReactNode;
   filters?: boolean;
   className?:string;
+  number?: number;
 }) => {
   const load = useDeferredValue(loading);
   if (load) {
-    const randomLength = 5;
+    const randomLength = number || 5;
     return (
       <div
         className={cn(

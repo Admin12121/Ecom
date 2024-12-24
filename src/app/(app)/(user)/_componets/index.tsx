@@ -19,30 +19,35 @@ const data = [
 
 const LandingPage1 = () => {
   return (
-    <div className="w-full h-[35dvh] md:h-full flex flex-col md:flex-row items-center justify-center p-3 md:p-5 gap-3">
-      <div className="w-full md:w-[75%] h-full rounded-3xl relative">
-        <Swiper
-          navigation
-          pagination={{ type: "bullets", clickable: true }}
-          autoplay={{ delay: 10000 }}
-          loop={true}
-          effect="fade"
-          modules={[Autoplay, Navigation, Pagination, EffectFade]}
-          style={{ margin: "0px" }}
-          className="w-full h-[20dvh] md:h-full rounded-md"
-        >
-          {data &&
-            data.map((data: any, index: number) => (
-              <SwiperSlide key={index}>
-                <Data1 image={data.image} />
-              </SwiperSlide>
-            ))}
-        </Swiper>
+    <div className="w-full h-screen flex flex-col items-center p-3 md:p-5 gap-3">
+      <div className="w-full h-[35dvh] md:h-full  flex flex-col md:flex-row items-center justify-center gap-3">
+        <div className="w-full md:w-[75%] h-full rounded-3xl relative">
+          <Swiper
+            navigation
+            pagination={{ type: "bullets", clickable: true }}
+            autoplay={{ delay: 10000 }}
+            loop={true}
+            effect="fade"
+            modules={[Autoplay, Navigation, Pagination, EffectFade]}
+            style={{ margin: "0px" }}
+            className="w-full h-[20dvh] md:h-full rounded-md"
+          >
+            {data &&
+              data.map((data: any, index: number) => (
+                <SwiperSlide key={index}>
+                  <Data1 image={data.image} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        </div>
+        <div className="w-full md:w-[25%] h-full gap-3 flex flex-row md:flex-col">
+          <span className="w-full md:h-1/2 bg-orange-500 rounded-md"></span>
+          <span className="w-full md:h-1/2 bg-orange-500 rounded-md"></span>
+        </div>
       </div>
-      <div className="w-full md:w-[25%] h-full gap-3 flex flex-row md:flex-col">
-        <span className="w-full md:h-1/2 bg-orange-500 rounded-md"></span>
-        <span className="w-full md:h-1/2 bg-orange-500 rounded-md"></span>
-      </div>
+      <section className="w-full h-[65dvh] md:h-full flex flex-col items-center justify-center gap-3">
+
+      </section>
     </div>
   );
 };

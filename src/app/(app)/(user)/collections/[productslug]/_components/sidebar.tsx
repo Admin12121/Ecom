@@ -179,7 +179,9 @@ const Sidebar = ({ products }: { products: Product }) => {
   const discount = getVariantData(variantsData, "discount", selectedSize?.id);
   const stock = getVariantData(variantsData, "stock", selectedSize?.id);
   const finalPrice = useMemo(() => {
-    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
+    return Number(
+      (convertedPrice - convertedPrice * (discount / 100)).toFixed(2)
+    );
   }, [convertedPrice, discount]);
 
   const handleRoute = () => {
@@ -225,16 +227,13 @@ const Sidebar = ({ products }: { products: Product }) => {
   return (
     <>
       <aside className="sidebar  w-full sticky top-[65px] space-y-8 ">
-        {outOfStock && !selectedVariantOutOfStock && (
+        {stock > 0 && stock < 5 ? (
+          <StockWarningMessage message="Few items left in stock!" />
+        ) : !selectedVariantOutOfStock ? (
           <StockWarningMessage message="Some items are out of stock" />
-        )}
-        {selectedVariantOutOfStock && (
+        ) : (
           <StockWarningMessage message="This item is out of stock" />
         )}
-        {stock > 0 && stock < 5 && (
-          <StockWarningMessage message="Few items left in stock!" />
-        )}
-
         <Card className=" w-full !bg-transparent border-none border-0 shadow-none p-0 pt-3">
           <CardHeader className="flex flex-row gap-3 justify-between items-center px-4">
             <div className="flex gap-3 items-center">
@@ -354,7 +353,7 @@ const Sidebar = ({ products }: { products: Product }) => {
                 <CardHeader className="flex gap-3 p-3">
                   <div className="w-full flex justify-between items-center px-1">
                     <p className="text-md">Reviews({products.total_ratings})</p>
-                    <WriteReview link={true} product={products}/>
+                    <WriteReview link={true} product={products} />
                   </div>
                 </CardHeader>
                 <CardBody className="gap-3 p-3 flex flex-col">
