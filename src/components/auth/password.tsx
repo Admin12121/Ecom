@@ -18,7 +18,8 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import useApi from "@/lib/useApi";
 
 const PasswordForm = () => {

@@ -1,7 +1,7 @@
 
 "use client";
 import { Empty } from "@/components/ui/empty";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import { Button } from "@/components/ui/button";
 
 export const NotFound = () => {

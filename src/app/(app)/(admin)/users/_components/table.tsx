@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 
 import {
   DropdownMenu as DropdownMenuNext,

@@ -11,7 +11,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import { useGetLoggedUserQuery } from "@/lib/store/Service/api";
 import { UserRound } from "lucide-react";
 import { useAuthUser } from "@/hooks/use-auth-user";

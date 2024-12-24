@@ -21,7 +21,7 @@ import { FormSuccess } from "../form-message/form-success";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import useApi from "@/lib/useApi";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 
 const Login = () => {
   const router = useRouter();

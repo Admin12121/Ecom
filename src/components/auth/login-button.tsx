@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 interface LoginButtonProps {
   children: React.ReactNode;
   mode?: "redirect" | "modal";

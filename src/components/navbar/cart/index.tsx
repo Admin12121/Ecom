@@ -32,7 +32,7 @@ import { useCart } from "@/lib/cart-context";
 import FeatureProduct from "./feature-products";
 import Spinner from "@/components/ui/spinner";
 import { encryptData } from "@/lib/transition";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 

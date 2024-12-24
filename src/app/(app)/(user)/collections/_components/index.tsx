@@ -250,9 +250,11 @@ const CollectionPage = () => {
 export const RecommendedProducts = ({
   className,
   base,
+  title,
 }: {
   className?: string;
   base?: string;
+  title?: string;
 }) => {
   const { data, isLoading } = useTrendingProductsViewQuery({});
   const [products, setProducts] = useState<Product[]>([]);
@@ -263,7 +265,7 @@ export const RecommendedProducts = ({
   }, [data]);
   return (
     <FeatureProduct
-      title="You may also like"
+      title={title || "You may also like"}
       className={className}
       base={base}
       products={products}

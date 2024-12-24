@@ -3,7 +3,7 @@
 import Payment from "@/components/global/payment";
 import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 import { decryptData } from "@/lib/transition";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import {
   useProductsByIdsQuery,
   useVerifyRedeemCodeMutation,

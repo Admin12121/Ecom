@@ -10,7 +10,8 @@ import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
 import React, { useState, useEffect } from "react";
 import useApi from "@/lib/useApi";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import {
   InputOTP,
   InputOTPGroup,

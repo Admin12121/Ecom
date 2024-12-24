@@ -10,7 +10,7 @@ import { MapPin, ShoppingCart, Truck } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Order as OrderData } from ".";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 
 const renderBadge = (status: string) => {
   const statusMap: {

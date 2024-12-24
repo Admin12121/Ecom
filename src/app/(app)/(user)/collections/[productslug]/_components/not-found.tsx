@@ -1,7 +1,7 @@
 import React from "react";
 import { Empty } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 
 const ProductNotFound = () => {
   const router = useRouter();

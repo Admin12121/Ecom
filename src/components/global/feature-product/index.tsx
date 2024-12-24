@@ -26,11 +26,11 @@ const FeatureProduct = ({
     <Section className={cn("w-screen", base)}>
       <Container className={className}>
         <div className="w-full flex items-center mt-2">
-          <h2 className="text-2xl">{title}</h2>
+          <h2 className="text-2xl">{title || ''}</h2>
         </div>
         <Carousel className="w-full">
           <CarouselContent className="-ml-1">
-            <ProductSkeleton number={3} className="w-full" loading={loading}>
+            <ProductSkeleton number={4} className="w-full" loading={loading}>
               {products &&
                 products.map((product: any, index: any) => (
                   <div

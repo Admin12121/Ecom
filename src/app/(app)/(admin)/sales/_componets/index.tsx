@@ -21,7 +21,7 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { Input } from "@/components/ui/input";
 import Kbd from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 
 interface CartItem {
   id: number;

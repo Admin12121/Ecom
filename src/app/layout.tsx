@@ -4,7 +4,7 @@ import { absoluteUrl, constructMetadata } from "@/config/site";
 import localFont from "next/font/local";
 import { Provider } from "@/components/provider";
 import { SessionProvider } from "next-auth/react";
-
+import NextTopLoader from "nextjs-toploader";
 import { auth } from "@/auth";
 
 import "@/styles/globals.css";
@@ -39,14 +39,12 @@ const geistSansBold = localFont({
   weight: "700",
 });
 
-
 export const metadata: Metadata = constructMetadata({
   title: "Nepal Heritage Handicraft",
   description:
     "Authentic Nepalese art, sculptures, and handicrafts for cultural enthusiasts.",
   image: absoluteUrl("/og"),
 });
-
 
 export const viewport: Viewport = {
   colorScheme: "dark",
@@ -65,10 +63,20 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
-      <head />
+        <head />
         <body
           className={`${geistSansLight.variable} ${geistSansRegular.variable} ${geistSansMedium.variable} ${geistSansSemibold.variable} ${geistSansBold.variable} antialiased flex flex-col items-center`}
         >
+          <NextTopLoader
+            color="#9353d3"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={2}
+            crawl={true}
+            shadow="hadow-lg shadow-main/40"
+            showSpinner={false}
+            easing="ease"
+            speed={200} />
           <Provider>{children}</Provider>
         </body>
       </html>

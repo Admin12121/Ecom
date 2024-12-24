@@ -21,7 +21,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
           <MainNav />
           <div className="hidden md:flex flex-1 items-center justify-end gap-2 md:justify-end">
             <div className="flex items-center gap-1 w-full justify-end">
-              {/* <CurrencySelector className="hidden md:flex" /> */}
+              <CurrencySelector className="hidden lg:flex !border-0 !ring-0 !ring-offset-0 !shadow-none"  />
               <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
                 <Link href="/wishlist" rel="noreferrer">
                   <Heart className="h-4 w-4" />
@@ -49,8 +49,9 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
               <CurrencySelector className="flex !border-0 !ring-0 !ring-offset-0 !shadow-none" />
               <Icons />
             </span>
-            <span className="text-xs font-light flex gap-2">
-              <Link href="/terms-of-service">Terms of service</Link>
+            <span className="text-xs font- flex gap-2">
+              <Link href="/terms-of-service">Terms of Service</Link>
+              <p>.</p>
               <Link href="/privacy-policy">Privacy Policy</Link>
             </span>
           </div>
