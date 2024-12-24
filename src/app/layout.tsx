@@ -68,15 +68,15 @@ export default async function RootLayout({
           className={`${geistSansLight.variable} ${geistSansRegular.variable} ${geistSansMedium.variable} ${geistSansSemibold.variable} ${geistSansBold.variable} antialiased flex flex-col items-center`}
         >
           <NextTopLoader
-            color="#9353d3"
+            color="linear-gradient(to right, #9353d3, #F38CB8, #FDCC92)"
             initialPosition={0.08}
-            crawlSpeed={200}
-            height={2}
+            crawlSpeed={100}
+            height={3}
             crawl={true}
-            shadow="hadow-lg shadow-main/40"
             showSpinner={false}
             easing="ease"
-            speed={200} />
+            speed={100}
+          />
           <Provider>{children}</Provider>
         </body>
       </html>

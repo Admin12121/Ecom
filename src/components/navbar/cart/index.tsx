@@ -166,7 +166,7 @@ export default function Cart() {
       }));
       encryptData(availableCartItems, router);
     } else {
-      router.push(`/login`);
+      router.push(`/auth/login`);
     }
   };
 

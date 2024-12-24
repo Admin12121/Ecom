@@ -22,7 +22,7 @@ const data = [
 const LandingPage1 = () => {
   return (
     <div className="w-full h-full flex flex-col items-center p-3 md:p-5 gap-3">
-      <div className="w-full h-[35dvh] md:h-[60dvh]  flex flex-col md:flex-row items-center justify-center gap-3">
+      <div className="w-full h-[45dvh] md:h-[60dvh]  flex flex-col md:flex-row items-center justify-center gap-3">
         <div className="w-full md:w-[75%] h-full rounded-3xl relative">
           <Swiper
             navigation
@@ -32,7 +32,7 @@ const LandingPage1 = () => {
             effect="fade"
             modules={[Autoplay, Navigation, Pagination, EffectFade]}
             style={{ margin: "0px" }}
-            className="w-full h-[20dvh] md:h-full rounded-md"
+            className="w-full h-[30dvh] md:h-full rounded-md"
           >
             {data &&
               data.map((data: any, index: number) => (
@@ -54,11 +54,11 @@ const LandingPage1 = () => {
         </span>
         <RecommendedProducts
           title=" "
-          className="!px-0 mx-0 !py-0 "
+          className="!px-0 mx-0 !py-0 mt-5 lg:mt-0"
           base="w-full !py-0"
         />
       </section>
-      <section className="w-full h-full flex flex-col items-center py-5 gap-3 min-h-[630px]">
+      <section className="w-full h-full flex flex-col items-center py-5 gap-3 pb-14 lg:pb-5 lg:min-h-[630px]">
         <span className="text-center">
           <h1 className="text-4xl">Patan-Lalitpur</h1>
           <p>Visit us in Patan-Lalitpur, Nepal</p>
@@ -72,7 +72,7 @@ const LandingPage1 = () => {
               width={700}
               height={400}
               sizes="100vw"
-              className="w-dvw object-cover !h-[600px] mt-5 rounded-xl"
+              className="w-dvw object-cover lg:!h-[600px] rounded-xl"
             />
             <Button className="absolute left-2 bottom-2 backdrop-blur-sm dark:bg-white/50 bg-neutral-900/50">
               Visit us

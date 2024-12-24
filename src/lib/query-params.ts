@@ -1,4 +1,6 @@
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+"use client"
+import { useSearchParams, usePathname } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 
 type QueryParams = Record<string, string>;
 
