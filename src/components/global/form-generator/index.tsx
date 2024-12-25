@@ -40,7 +40,7 @@ export const FormGenerator = ({
             id={`input-${label}`}
             type={type}
             placeholder={placeholder}
-            className={`dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray `}
+            className={`bg-white dark:bg-themeBlack dark:border-themeGray dark:text-themeTextGray `}
             {...register(name)}
             disabled={disabled}
           />

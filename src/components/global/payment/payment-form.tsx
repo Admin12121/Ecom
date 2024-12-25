@@ -32,7 +32,7 @@ const PaymentForm = ({ data}: Props) => {
 
   return (
     <Loader loading={creatingIntent}>
-        <form className="pt-5 relative z-50 w-full" onSubmit={handlePaymentSubmission}>
+        <form className="relative z-50 w-full" onSubmit={handlePaymentSubmission}>
           <div className=" mb-2">
             <ErrorMessage
               errors={errors}
@@ -68,7 +68,7 @@ const PaymentForm = ({ data}: Props) => {
                   },
                 },
               }}
-              className="dark:bg-themeBlack border-[1px] dark:border-themeGray outline-none rounded-lg p-3 "
+              className="dark:bg-themeBlack bg-white border-[1px] dark:border-themeGray outline-none rounded-lg p-3 "
             />
           </div>
           <div className=" flex flex-col gap-3">

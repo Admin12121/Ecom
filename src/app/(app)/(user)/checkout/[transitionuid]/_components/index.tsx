@@ -1,9 +1,15 @@
 "use client";
 
 import Payment from "@/components/global/payment";
-import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 import { decryptData } from "@/lib/transition";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
 import {
   useProductsByIdsQuery,
   useVerifyRedeemCodeMutation,
@@ -27,6 +33,13 @@ import GlassCard from "@/components/global/glass-card";
 import Address from "./address";
 import { delay } from "@/lib/utils";
 import { handleClick } from "./animation";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface Product {
   product: number;
@@ -92,7 +105,10 @@ const Checkout = ({ params }: { params: string }) => {
   const router = useRouter();
   const { accessToken, user } = useAuthUser();
   const { getRates, loading } = useAuth();
-  const [ redeemCode, { isLoading }] = useVerifyRedeemCodeMutation();
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(
+    "item-0"
+  );
+  const [redeemCode, { isLoading }] = useVerifyRedeemCodeMutation();
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     productData: decryptData(params, router) || [],
@@ -142,7 +158,9 @@ const Checkout = ({ params }: { params: string }) => {
         const price = parseFloat(item.variantDetails.price);
         const discount = item.variantDetails.discount;
         const pcs = item.pcs ?? 0;
-        const finalPrice = Number((price - price * (discount / 100)).toFixed(2));
+        const finalPrice = Number(
+          (price - price * (discount / 100)).toFixed(2)
+        );
         acc.totalPrice += finalPrice * pcs;
         return acc;
       },
@@ -226,6 +244,94 @@ const Checkout = ({ params }: { params: string }) => {
       setError("code", { message: "Minimum purchase amount not met" });
     }
   };
+
+  const items = [
+    {
+      title: "Esewa",
+      content: (
+        <div className="flex items-center gap-4 p-2 justify-center flex-col">
+          <div className="p-5 flex items-center gap-4 justify-center flex-col">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-270.8 371 102 52"
+              className="w-[200px]"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeMiterlimit="10"
+                strokeWidth="2"
+                d="M-182 404v16.8c0 .7-.4 1.2-1 1.2h-75.7c-.7 0-1.2-.6-1.2-1.2v-47.6c0-.7.6-1.2 1.2-1.2h75.7c.7 0 1 .6 1 1.2V395m-78-14h78m-17 18h27m-3.9-4.6 4.5 4.6-4.5 4.6"
+              ></path>
+              <circle
+                cx="-255.5"
+                cy="376.5"
+                r="1.5"
+                fill="currentColor"
+              ></circle>
+              <circle
+                cx="-250.5"
+                cy="376.5"
+                r="1.5"
+                fill="currentColor"
+              ></circle>
+              <circle
+                cx="-245.5"
+                cy="376.5"
+                r="1.5"
+                fill="currentColor"
+              ></circle>
+            </svg>
+            <div>
+              <p className="text-center">
+                After clicking "Pay with Esewa", you will be redirected to Esewa
+                to complete your purchase securely.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="custom"
+            type="submit"
+            className="dark:bg-themeBlack border-none w-full"
+          >
+            Pay with Esewa
+          </Button>
+        </div>
+      ),
+    },
+    {
+      title: "Credit / Debit Card",
+      content: (
+        <div className="p-2">
+          {user?.email && (
+            <Payment
+              user={user.email}
+              total_amt={
+                state.totalPriceAfterDiscount.price
+                  ? state.totalPriceAfterDiscount.price
+                  : state.totalPrice.price
+              }
+              discount={state.discount}
+              products={state.productData}
+              redeemData={state.redeemData}
+              shipping={state.shipping}
+            />
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  const handleAccordionChange = (value: string) => {
+    setSelectedValue(
+      value === selectedValue
+        ? selectedValue
+        : value !== ""
+        ? value
+        : selectedValue
+    );
+  };
+
   return (
     <>
       <div className="flex h-full lg:h-[90vh]">
@@ -330,21 +436,41 @@ const Checkout = ({ params }: { params: string }) => {
                 </p>
               </span>
             </div>
-            <div className="w-full flex items-center justify-center">
-              {user?.email && (
-                <Payment
-                  user={user.email}
-                  total_amt={
-                    state.totalPriceAfterDiscount.price
-                      ? state.totalPriceAfterDiscount.price
-                      : state.totalPrice.price
-                  }
-                  discount={state.discount}
-                  products={state.productData}
-                  redeemData={state.redeemData}
-                  shipping={state.shipping}
-                />
-              )}
+            <div className="w-full flex items-center justify-center flex-col pt-5 min-h-44">
+              <RadioGroup
+                className="w-full"
+                value={selectedValue}
+                onValueChange={handleAccordionChange}
+              >
+                <Accordion
+                  type="single"
+                  collapsible
+                  value={selectedValue}
+                  onValueChange={handleAccordionChange}
+                  className="w-full space-y-2"
+                >
+                  {items.map((item, index) => {
+                    const value = `item-${index}`;
+                    return (
+                      <AccordionItem
+                        key={index}
+                        value={value}
+                        className="w-full overflow-hidden border bg-background rounded-lg"
+                      >
+                        <div className="flex items-center px-4 text-[15px] leading-6 hover:no-underline gap-3">
+                          <RadioGroupItem value={value} />
+                          <AccordionTrigger icon={<></>}>
+                            {item.title}
+                          </AccordionTrigger>
+                        </div>
+                        <AccordionContent className="p-0 bg-neutral-100 dark:bg-primary/10">
+                          {item.content}
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </RadioGroup>
             </div>
           </GlassCard>
         </div>
