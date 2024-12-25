@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { FooterItem } from "@/types/type";
 
 export const siteConfig = {
   title: "Nepal Heritage Handicraft",
@@ -11,6 +12,68 @@ export const siteConfig = {
   links: {
     instagram: "https://www.instagram.com/nepalheritagehandicraft/",
   },
+  footerNav: [
+    {
+      title: "Product",
+      items: [
+        {
+          title: "Status",
+          href: "https://onestopshop.jackblatch.com",
+          external: true,
+        },
+        {
+          title: "Stupas",
+          href: "https://acme-corp.jumr.dev",
+          external: true,
+        },
+        {
+          title: "Paintings",
+          href: "https://craft.mxkaske.dev",
+          external: true,
+        },
+      ],
+    },
+    {
+      title: "Support",
+      items: [
+        {
+          title: "About",
+          href: "/about",
+          external: false,
+        },
+        {
+          title: "Contacts",
+          href: "/contacts",
+          external: false,
+        },
+        {
+          title: "FAQ",
+          href: "/faq",
+          external: false,
+        },
+      ],
+    },
+    {
+      title: "Social",
+      items: [
+        {
+          title: "Instagram",
+          href: "/",
+          external: true,
+        },
+        {
+          title: "Facebook",
+          href: "/",
+          external: true,
+        },
+        {
+          title: "X",
+          href: "/",
+          external: true,
+        },
+      ],
+    },
+  ] satisfies FooterItem[],
 };
 
 export type SiteConfig = typeof siteConfig;

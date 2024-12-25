@@ -58,7 +58,7 @@ const LandingPage1 = () => {
           base="w-full !py-0"
         />
       </section>
-      <section className="w-full h-full flex flex-col items-center py-5 gap-3 pb-14 lg:pb-5 lg:min-h-[630px]">
+      <section className="w-full h-full flex flex-col items-center lg:py-5 gap-3 lg:pb-5 lg:min-h-[630px]">
         <span className="text-center">
           <h1 className="text-4xl">Patan-Lalitpur</h1>
           <p>Visit us in Patan-Lalitpur, Nepal</p>
@@ -72,7 +72,7 @@ const LandingPage1 = () => {
               width={700}
               height={400}
               sizes="100vw"
-              className="w-dvw object-cover lg:!h-[600px] rounded-xl"
+              className="w-dvw object-cover lg:!h-[600px] rounded-xl opacity-90"
             />
             <Button className="absolute left-2 bottom-2 backdrop-blur-sm dark:bg-white/50 bg-neutral-900/50">
               Visit us

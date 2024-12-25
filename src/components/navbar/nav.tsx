@@ -10,6 +10,7 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { MainNav } from "@/components/navbar/main-nav";
 import { ModeSwitcher } from "@/components/navbar/mood-switcher";
 import Icons from "./cart/icons";
+import Footer from "./footer";
 
 export function SiteHeader({ children }: { children: React.ReactNode }) {
   const { status } = useAuthUser();
@@ -21,7 +22,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
           <MainNav />
           <div className="hidden md:flex flex-1 items-center justify-end gap-2 md:justify-end">
             <div className="flex items-center gap-1 w-full justify-end">
-              <CurrencySelector className="hidden lg:flex !border-0 !ring-0 !ring-offset-0 !shadow-none"  />
+              <CurrencySelector className="hidden lg:flex !border-0 !ring-0 !ring-offset-0 !shadow-none" />
               <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
                 <Link href="/wishlist" rel="noreferrer">
                   <Heart className="h-4 w-4" />
@@ -43,11 +44,12 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
       </header>
       {children}
       <footer className="w-full">
+        <Footer />
         <div className="hidden lg:flex h-10 bottom-0 z-50 w-full border-t-1  dark:!border-neutral-900 justify-center items-center">
           <div className="max-w-[95rem] w-full h-full flex justify-between items-center px-5">
             <span className="flex gap-2">
               <CurrencySelector className="flex !border-0 !ring-0 !ring-offset-0 !shadow-none" />
-              <Icons className="justify-start"/>
+              <Icons className="justify-start" />
             </span>
             <span className="text-xs font- flex gap-2">
               <Link href="/terms-of-service">Terms of Service</Link>
