@@ -6,13 +6,24 @@ import { Card, CardContent as CardBody } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useCallback, useDeferredValue, useMemo } from "react";
 
-const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
-  const { convertPrice } = useAuth();
-  const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
+const Voucher = ({
+  data,
+  price = true,
+  selectedValue,
+}: {
+  data: any;
+  price?: boolean;
+  selectedValue?: string;
+}) => {
+  const { getRates } = useAuth();
+  const cur = selectedValue === "esewa" ? "NPR" : "USD";
+  const { convertedPrice, symbol } = getRates(data.variantDetails.price, cur)
   const discount = data.variantDetails.discount;
 
   const finalPrice = useMemo(() => {
-    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
+    return Number(
+      (convertedPrice - convertedPrice * (discount / 100)).toFixed(2)
+    );
   }, [convertedPrice, discount]);
   const truncateText = useCallback(
     (text: string, maxLength: number): string => {
@@ -20,7 +31,6 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
     },
     []
   );
-  // const { convertedPrice: productprice, symbol:pricesym } = convertPrice(data.variantDetails.price);
   return (
     <Card className="p-1 w-full rounded-lg shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
       <CardBody className="flex justify-between flex-row items-center h-full">
@@ -51,24 +61,26 @@ const Voucher = ({ data, price = true }: { data: any, price?: boolean }) => {
             </span>
           </span>
         </span>
-        {price && <span className="flex items-end gap-8 justify-between flex-col h-full ">
-          <p className="text-sm bg-secondary-500 rounded-md text-center px-2 text-white ">
-            {discount ? `-${discount}%` : "for you"}
-          </p>
-          <span className={cn("flex", discount > 0 && " gap-2")}>
-            <p className="text-sm">
-              {discount > 0 && `${symbol} ${finalPrice * data.pcs}`}
+        {price && (
+          <span className="flex items-end gap-8 justify-between flex-col h-full ">
+            <p className="text-sm bg-secondary-500 rounded-md text-center px-2 text-white ">
+              {discount ? `-${discount}%` : "for you"}
             </p>
-            <p
-              className={cn(
-                "text-sm",
-                discount > 0 && "text-neutral-500 line-through"
-              )}
-            >
-              {symbol} {convertedPrice * data.pcs}
-            </p>
+            <span className={cn("flex", discount > 0 && " gap-2")}>
+              <p className="text-sm">
+                {discount > 0 && `${symbol} ${finalPrice * data.pcs}`}
+              </p>
+              <p
+                className={cn(
+                  "text-sm",
+                  discount > 0 && "text-neutral-500 line-through"
+                )}
+              >
+                {symbol} {convertedPrice * data.pcs}
+              </p>
+            </span>
           </span>
-        </span>}
+        )}
       </CardBody>
     </Card>
   );
@@ -99,7 +111,7 @@ export const VoucherSkleton = ({
   loading: boolean;
   children: React.ReactNode;
 }) => {
-  const load = useDeferredValue(loading)
+  const load = useDeferredValue(loading);
   if (load) {
     return (
       <>

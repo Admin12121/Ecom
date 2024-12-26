@@ -135,6 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     fetchLiveRates();
   }, [reloaddata]);
+  
   const convertPrice = (
     price: number
   ): { convertedPrice: number; symbol: string } => {

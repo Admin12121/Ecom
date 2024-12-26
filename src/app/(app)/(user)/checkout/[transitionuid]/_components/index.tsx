@@ -40,6 +40,8 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import Icons from "@/components/navbar/cart/icons";
+import Esewa from "./esewa";
 
 interface Product {
   product: number;
@@ -106,7 +108,7 @@ const Checkout = ({ params }: { params: string }) => {
   const { accessToken, user } = useAuthUser();
   const { getRates, loading } = useAuth();
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
-    "item-0"
+    "esewa"
   );
   const [redeemCode, { isLoading }] = useVerifyRedeemCodeMutation();
   const [state, dispatch] = useReducer(reducer, {
@@ -187,9 +189,10 @@ const Checkout = ({ params }: { params: string }) => {
 
   useEffect(() => {
     if (!loading) {
+      const cur = selectedValue === "esewa" ? "NPR" : "USD";
       const itemsWithDetails = getCartItemsWithDetails();
       const { totalPrice } = getTotalPrice(itemsWithDetails);
-      const { convertedPrice, symbol } = getRates(totalPrice, "USD");
+      const { convertedPrice, symbol } = getRates(totalPrice, cur);
       dispatch({
         type: "SET_CART_ITEMS_WITH_DETAILS",
         payload: itemsWithDetails,
@@ -199,7 +202,7 @@ const Checkout = ({ params }: { params: string }) => {
         payload: { price: convertedPrice, symbol: symbol },
       });
     }
-  }, [products, loading]);
+  }, [products, loading, selectedValue]);
 
   const {
     register,
@@ -248,59 +251,55 @@ const Checkout = ({ params }: { params: string }) => {
   const items = [
     {
       title: "Esewa",
+      name: "esewa",
+      icons: ["esewa"],
       content: (
         <div className="flex items-center gap-4 p-2 justify-center flex-col">
           <div className="p-5 flex items-center gap-4 justify-center flex-col">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-270.8 371 102 52"
-              className="w-[200px]"
+              className="w-[200px] dark:stroke-neutral-600 dark:fill-neutral-600"
             >
               <path
+                className="dark:stroke-neutral-600"
                 fill="none"
                 stroke="currentColor"
                 strokeMiterlimit="10"
                 strokeWidth="2"
                 d="M-182 404v16.8c0 .7-.4 1.2-1 1.2h-75.7c-.7 0-1.2-.6-1.2-1.2v-47.6c0-.7.6-1.2 1.2-1.2h75.7c.7 0 1 .6 1 1.2V395m-78-14h78m-17 18h27m-3.9-4.6 4.5 4.6-4.5 4.6"
               ></path>
-              <circle
-                cx="-255.5"
-                cy="376.5"
-                r="1.5"
-                fill="currentColor"
-              ></circle>
-              <circle
-                cx="-250.5"
-                cy="376.5"
-                r="1.5"
-                fill="currentColor"
-              ></circle>
-              <circle
-                cx="-245.5"
-                cy="376.5"
-                r="1.5"
-                fill="currentColor"
-              ></circle>
+              <circle cx="-255.5" cy="376.5" r="1.5"></circle>
+              <circle cx="-250.5" cy="376.5" r="1.5"></circle>
+              <circle cx="-245.5" cy="376.5" r="1.5"></circle>
             </svg>
             <div>
-              <p className="text-center">
+              <p className="text-center dark:text-neutral-400">
                 After clicking "Pay with Esewa", you will be redirected to Esewa
                 to complete your purchase securely.
               </p>
             </div>
           </div>
-          <Button
-            variant="custom"
-            type="submit"
-            className="dark:bg-themeBlack border-none w-full"
-          >
-            Pay with Esewa
-          </Button>
+          <Esewa
+            token={accessToken || ""}
+            user={user?.email || ""}
+            total_amt={
+              state.totalPriceAfterDiscount.price
+                ? state.totalPriceAfterDiscount.price
+                : state.totalPrice.price
+            }
+            discount={state.discount}
+            products={state.productData}
+            redeemData={state.redeemData}
+            shipping={state.shipping}
+          />
         </div>
       ),
     },
     {
       title: "Credit / Debit Card",
+      name: "card",
+      icons: ["visa", "mastercard", "amex"],
       content: (
         <div className="p-2">
           {user?.email && (
@@ -335,10 +334,7 @@ const Checkout = ({ params }: { params: string }) => {
   return (
     <>
       <div className="flex h-full lg:h-[90vh]">
-        <BackdropGradient
-          className="w-8/12 h-2/6 opacity-50 flex"
-          container="gap-10"
-        >
+        <div className="relative w-full flex flex-col gap-10">
           <span className="flex gap-5 flex-col">
             <GradientText element="H2" className="text-4xl font-semibold py-1">
               Proceed to Payment
@@ -351,7 +347,13 @@ const Checkout = ({ params }: { params: string }) => {
             <VoucherSkleton loading={loading}>
               {state.cartItemsWithDetails &&
                 state.cartItemsWithDetails.map((product: any) => {
-                  return <Voucher key={Math.random()} data={product} />;
+                  return (
+                    <Voucher
+                      key={Math.random()}
+                      data={product}
+                      selectedValue={selectedValue}
+                    />
+                  );
                 })}
             </VoucherSkleton>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -383,7 +385,7 @@ const Checkout = ({ params }: { params: string }) => {
                 )}
               </span>
             </form>
-            <Card className="min-h-[105px] border !border-zinc-400/50 dark:!border-zinc-800 lg:mb-28">
+            <Card className="min-h-[105px] bg-white dark:bg-neutral-900 lg:mb-28">
               <CardBody className="flex text-sm gap-1 flex-col">
                 <span className="flex w-full justify-between items-center">
                   <p>Subtotal • {totalPieces} items</p>
@@ -421,59 +423,59 @@ const Checkout = ({ params }: { params: string }) => {
               </CardBody>
             </Card>
           </span>
-        </BackdropGradient>
+        </div>
       </div>
-      <div className="pb-5">
-        <div className="lg:items-center relative w-full flex flex-col pb-14 lg:pb-0 ">
-          <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-4 p-2 !rounded-lg">
-            <div className="px-2 flex flex-col gap-3">
-              <span>
-                <h5 className="font-bold text-base dark:text-themeTextWhite">
-                  Payment Method
-                </h5>
-                <p className="text-themeTextGray leading-tight">
-                  Easy to pay with One Click. No hidden fees.
-                </p>
-              </span>
-            </div>
-            <div className="w-full flex items-center justify-center flex-col pt-5 min-h-44">
-              <RadioGroup
-                className="w-full"
+      <div className="lg:items-center relative w-full flex flex-col ">
+        <GlassCard className="xs:w-full lg:w-10/12 xl:w-8/12 mt-16 py-4 p-2 !rounded-lg">
+          <div className="px-2 flex flex-col gap-3">
+            <span>
+              <h5 className="font-bold text-base dark:text-themeTextWhite">
+                Payment Method
+              </h5>
+              <p className="text-themeTextGray leading-tight">
+                Easy to pay with One Click. No hidden fees.
+              </p>
+            </span>
+          </div>
+          <div className="w-full flex items-center justify-center flex-col pt-5 min-h-44">
+            <RadioGroup
+              className="w-full"
+              value={selectedValue}
+              onValueChange={handleAccordionChange}
+            >
+              <Accordion
+                type="single"
+                collapsible
                 value={selectedValue}
                 onValueChange={handleAccordionChange}
+                className="w-full space-y-2"
               >
-                <Accordion
-                  type="single"
-                  collapsible
-                  value={selectedValue}
-                  onValueChange={handleAccordionChange}
-                  className="w-full space-y-2"
-                >
-                  {items.map((item, index) => {
-                    const value = `item-${index}`;
-                    return (
-                      <AccordionItem
-                        key={index}
-                        value={value}
-                        className="w-full overflow-hidden border bg-background rounded-lg"
-                      >
-                        <div className="flex items-center px-4 text-[15px] leading-6 hover:no-underline gap-3">
-                          <RadioGroupItem value={value} />
-                          <AccordionTrigger icon={<></>}>
+                {items.map((item, index) => {
+                  return (
+                    <AccordionItem
+                      key={index}
+                      value={item.name}
+                      className="w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 rounded-lg"
+                    >
+                      <div className="flex items-center px-4 text-[15px] justify-between leading-6 hover:no-underline gap-3">
+                        <span className="flex items-center gap-2">
+                          <RadioGroupItem value={item.name} />
+                          <AccordionTrigger icon={<> </>}>
                             {item.title}
                           </AccordionTrigger>
-                        </div>
-                        <AccordionContent className="p-0 bg-neutral-100 dark:bg-primary/10">
-                          {item.content}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })}
-                </Accordion>
-              </RadioGroup>
-            </div>
-          </GlassCard>
-        </div>
+                        </span>
+                        <Icons icons={item.icons} className="w-auto" />
+                      </div>
+                      <AccordionContent className="p-0 bg-neutral-50 dark:bg-zinc-800/50">
+                        {item.content}
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </RadioGroup>
+          </div>
+        </GlassCard>
       </div>
     </>
   );

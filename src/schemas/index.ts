@@ -35,3 +35,12 @@ export const SignUpSchema = z.object({
     confirmPassword: z.string().min(6,{message:"Password must be at least 6 characters long"}),
 });
 
+export const PaymentSchema = z.object({
+  amount: z.string(),
+  tax_amount: z.string(),
+  total_amount: z.string(),
+  transaction_uuid: z.string(),
+  product_code: z.string(),
+  success_url: z.string(),
+  failure_url: z.string(),
+});

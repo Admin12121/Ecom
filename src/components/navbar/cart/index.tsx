@@ -254,7 +254,7 @@ export default function Cart() {
               <FeatureProduct title="You may also like" skip={isSheetOpen} />
             </div>
             <SheetFooter className="flex !flex-col gap-1 items-center absolute w-full bottom-0 py-2  z-50">
-              <Icons className="bg-neutral-200 dark:bg-neutral-950 pt-1" />
+              <Icons icons={["esewa","visa", "mastercard","amex","paypal"]} className="bg-neutral-200 dark:bg-neutral-950 pt-1" />
               <Separator
                 className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"

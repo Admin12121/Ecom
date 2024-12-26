@@ -49,7 +49,7 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
           <div className="max-w-[95rem] w-full h-full flex justify-between items-center px-5">
             <span className="flex gap-2">
               <CurrencySelector className="flex !border-0 !ring-0 !ring-offset-0 !shadow-none" />
-              <Icons className="justify-start" />
+              <Icons className="justify-start" icons={["esewa","visa", "mastercard","amex","paypal"]}/>
             </span>
             <span className="text-xs font- flex gap-2">
               <Link href="/terms-of-service">Terms of Service</Link>

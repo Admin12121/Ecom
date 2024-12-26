@@ -18,6 +18,20 @@ function xorEncryptDecrypt(data: string, key: string) {
     .join("");
 }
 
+export function encryptData(data: Record<string, any>, key: string): string {
+  const token = key.slice(0, 32);
+  const jsonData = JSON.stringify(data);
+  const encrypted = xorEncryptDecrypt(jsonData, token);
+  return btoa(encrypted);
+}
+
+export function decriptData(encryptedData:  { data: string }, key: string): Record<string, any> {
+  const token = key.slice(0, 32);  
+  const decodedData = atob(encryptedData.data);
+  const decrypted = xorEncryptDecrypt(decodedData, token);
+  return JSON.parse(decrypted);
+}
+
 export function useDecryptedData(
   encryptedData: { data: string } | null,
   isLoading: boolean
