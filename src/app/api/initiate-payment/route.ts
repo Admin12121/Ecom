@@ -81,8 +81,6 @@ export async function POST(request: NextRequest) {
     const data = encryptData(formData, key);
     return NextResponse.json({ data }, { status: 201 });
   } catch (error: any) {
-    console.error("Signup error:", error);
-
     return NextResponse.json(
       { error: error.message || "Internal Server Error" },
       { status: 500 }

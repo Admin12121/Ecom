@@ -79,6 +79,7 @@ export const usePayments = (
       if (!stripe || !elements || !Intent) {
         return null;
       }
+      
       const toastId = toast.loading("Processing Payment...", {
         position: "top-center",
       });

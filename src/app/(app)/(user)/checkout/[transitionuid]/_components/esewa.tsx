@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { encryptData, decriptData } from "@/hooks/dec-data";
 
 type Props = {
+  params: string;
   token: string;
   user: string;
   total_amt: number | null;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const Esewa = ({
+  params,
   token,
   user,
   total_amt,
@@ -29,8 +31,8 @@ const Esewa = ({
     total_amount: total_amt ? total_amt.toString() : "",
     transaction_uuid: uuidv4(),
     product_code: 'EPAYTEST',
-    success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/success`,
-    failure_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/failure `,
+    success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${params}/success`,
+    failure_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${params}/failure `,
   }
 
   const handlePayment = async () => {

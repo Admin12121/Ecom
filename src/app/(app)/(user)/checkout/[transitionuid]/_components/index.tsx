@@ -15,7 +15,6 @@ import {
   useVerifyRedeemCodeMutation,
 } from "@/lib/store/Service/api";
 import Voucher, { VoucherSkleton } from "./voucher";
-import BackdropGradient from "@/components/global/backdrop-gradient";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import GradientText from "@/components/global/gradient-text";
 import { useAuth } from "@/lib/context";
@@ -281,6 +280,7 @@ const Checkout = ({ params }: { params: string }) => {
             </div>
           </div>
           <Esewa
+            params={params}
             token={accessToken || ""}
             user={user?.email || ""}
             total_amt={
