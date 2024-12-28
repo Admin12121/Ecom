@@ -530,6 +530,16 @@ export const userAuthapi = createApi({
         headers: createHeaders(token),
       }),
     }),
+    esewahook: builder.mutation({
+      query: ({ actualData, token }) => {
+        console.log(actualData, token)
+        return({
+        url: `api/sales/esewa-webhook/`,
+        method: "POST",
+        body: actualData,        
+        headers: createHeaders(token),
+      })},
+    }),
   }),
 });
 
@@ -590,4 +600,5 @@ export const {
   useGetStocksQuery,
   useUpdateSaleMutation,
   useSalesRetrieveQuery,
+  useEsewahookMutation,
 } = userAuthapi;

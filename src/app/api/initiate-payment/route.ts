@@ -42,44 +42,63 @@ export async function POST(request: NextRequest) {
     const token = authorizationHeader.replace("Bearer ", "");
     const key = token.slice(0, 32);
     const decryptedData = decryptData(encryptedData, key);
+    const {sales, paymentDetails} = decryptedData;
 
-    const validated = PaymentSchema.safeParse(decryptedData);
-    if (!validated.success) {
-      const errors = validated.error.errors.map((err) => err.message);
+    const response = await fetch(`${process.env.BACKEND_URL}/api/sales/sales/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: authorizationHeader,
+      },
+      body: JSON.stringify({
+        ...sales
+      }),
+    });
+
+    console.log(response)
+
+    if(response.ok){
+      const validated = PaymentSchema.safeParse(paymentDetails);
+      if (!validated.success) {
+        const errors = validated.error.errors.map((err) => err.message);
+        return NextResponse.json(
+          { error: "Validation failed", details: errors },
+          { status: 400 }
+        );
+      }
+      const {
+        amount,
+        tax_amount,
+        total_amount,
+        transaction_uuid,
+        product_code,
+        success_url,
+        failure_url,
+      } = validated.data;
+      const secretKey = "8gBm/:&EnhH.1/q";
+      const dataString = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
+      const hash = CryptoJS.HmacSHA256(dataString, secretKey);
+      const signature = CryptoJS.enc.Base64.stringify(hash);
+      const formData = {
+        amount,
+        tax_amount,
+        total_amount,
+        transaction_uuid,
+        product_code,
+        product_service_charge: "0",
+        product_delivery_charge: "0",
+        success_url,
+        failure_url,
+        signed_field_names: "total_amount,transaction_uuid,product_code",
+        signature,
+      };
+      const data = encryptData(formData, key);
+      return NextResponse.json({ data }, { status: 201 });
+    }else{
       return NextResponse.json(
-        { error: "Validation failed", details: errors },
-        { status: 400 }
-      );
+        { error: "Product Verification Failed" },
+        { status: response.status});
     }
-    const {
-      amount,
-      tax_amount,
-      total_amount,
-      transaction_uuid,
-      product_code,
-      success_url,
-      failure_url,
-    } = validated.data;
-
-    const secretKey = "8gBm/:&EnhH.1/q";
-    const dataString = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
-    const hash = CryptoJS.HmacSHA256(dataString, secretKey);
-    const signature = CryptoJS.enc.Base64.stringify(hash);
-    const formData = {
-      amount,
-      tax_amount,
-      total_amount,
-      transaction_uuid,
-      product_code,
-      product_service_charge: "0",
-      product_delivery_charge: "0",
-      success_url,
-      failure_url,
-      signed_field_names: "total_amount,transaction_uuid,product_code",
-      signature,
-    };
-    const data = encryptData(formData, key);
-    return NextResponse.json({ data }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Internal Server Error" },

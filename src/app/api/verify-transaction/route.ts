@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 interface RequestBody {
-  data: {
-    transaction_uuid: string;
-    total_amount: string;
-  };
+  data: string;
 }
 
 interface EsewaResponse {
@@ -18,15 +15,17 @@ interface EsewaResponse {
 export async function POST(request: NextRequest) {
   try {
     const body: RequestBody = await request.json();
-    const { transaction_uuid, total_amount } = body.data;
+    const data = body.data;
+    const decodedData = atob(data);
+    const parsedData = JSON.parse(decodedData);
     const verificationUrl =
       "https://uat.esewa.com.np/api/epay/transaction/status/";
     //https://epay.esewa.com.np/api/epay/transaction/status/ for production
-
+    const sanitizedAmount = Number(parsedData.total_amount.replace(/,/g, ''));
     const params = new URLSearchParams();
     params.append("product_code", "EPAYTEST");
-    params.append("total_amount", total_amount);
-    params.append("transaction_uuid", transaction_uuid);
+    params.append("total_amount", sanitizedAmount.toString());
+    params.append("transaction_uuid", parsedData.transaction_uuid);
 
     try {
       const response = await fetch(`${verificationUrl}?${params.toString()}`, {
@@ -36,20 +35,16 @@ export async function POST(request: NextRequest) {
       if (result.status === "COMPLETE" || result.status === "PENDING") {
         return NextResponse.json(
           {
-            status: "success",
             message: "Transaction verified successfully.",
             transaction_status: result.status,
-            ref_id: result.ref_id,
           },
           { status: 200 }
         );
       } else {
         return NextResponse.json(
           {
-            status: "failure",
             message: "Transaction verification failed.",
             transaction_status: result.status,
-            ref_id: result.ref_id,
           },
           { status: 400 }
         );

@@ -10,7 +10,9 @@ export const onGetStripeClientSecret = async ({
   amount,
   products,
   user,
+  transactionuid,
 }: {
+  transactionuid: string;
   amount: number;
   products: any;
   user: string;
@@ -26,6 +28,7 @@ export const onGetStripeClientSecret = async ({
         enabled: true,
       },
       metadata: {
+        transactionuid: transactionuid,
         user: user,
         products: JSON.stringify(products),
       },

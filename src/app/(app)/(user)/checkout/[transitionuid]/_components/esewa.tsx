@@ -2,6 +2,8 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import { encryptData, decriptData } from "@/hooks/dec-data";
+import { toast } from "sonner";
+import { delay } from "@/lib/utils";
 
 type Props = {
   params: string;
@@ -24,31 +26,57 @@ const Esewa = ({
   redeemData,
   shipping,
 }: Props) => {
-  const [isLoading, setLoading] = React.useState(false);
+  const transaction_uid = uuidv4();
+
+  const sales = {
+    user,
+    sub_total: discount && total_amt ? total_amt - discount : total_amt,
+    total_amt,
+    discount,
+    products,
+    redeemData,
+    transactionuid: transaction_uid,
+    shipping,
+    payment_method: "Esewa",
+  };
+
   const paymentDetails = {
     amount: total_amt ? total_amt.toString() : "",
     tax_amount: "0",
     total_amount: total_amt ? total_amt.toString() : "",
-    transaction_uuid: uuidv4(),
-    product_code: 'EPAYTEST',
-    success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${params}/success`,
-    failure_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${params}/failure `,
-  }
+    transaction_uuid: transaction_uid,
+    product_code: "EPAYTEST",
+    success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${transaction_uid}/success`,
+    failure_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${transaction_uid}/failure `,
+  };
 
   const handlePayment = async () => {
-    setLoading(true);
-    const data = encryptData(paymentDetails, token);
+    const toastId = toast.loading("Veryfing Products...", {
+      position: "top-center",
+    });
+    await delay(500);
+    const payload = { sales, paymentDetails };
+    const data = encryptData(payload, token);
     try {
       const response = await fetch("/api/initiate-payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({data}),
+        body: JSON.stringify({ data }),
       });
 
       if (response.ok) {
+        toast.success("Products Veryfied", {
+          id: toastId,
+          position: "top-center",
+        });
+        await delay(500);
+        toast.success("Processing Payment", {
+          id: toastId,
+          position: "top-center",
+        });
         const formData = await response.json();
         const data = decriptData(formData, token);
         const form = document.createElement("form");

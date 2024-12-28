@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
 import { usePostSaleMutation } from "@/lib/store/Service/api";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
@@ -41,6 +41,7 @@ export const usePayments = (
     formState: { errors },
     register,
     setValue,
+    getValues,
   } = useForm<z.infer<typeof CreateSalesSchema>>({
     resolver: zodResolver(CreateSalesSchema),
     defaultValues: {
@@ -64,6 +65,7 @@ export const usePayments = (
     queryFn: () => {
       if (total_amt && products && user) {
         return onGetStripeClientSecret({
+          transactionuid: getValues("transactionuid"),
           amount: total_amt,
           products,
           user: user,
@@ -79,11 +81,36 @@ export const usePayments = (
       if (!stripe || !elements || !Intent) {
         return null;
       }
-      
-      const toastId = toast.loading("Processing Payment...", {
+      const toastId = toast.loading("Veryfing Products...", {
         position: "top-center",
       });
+      const actualData = {
+        ...data,
+        payment_method: "Stripe",
+        total_amt,
+        products,
+        redeemData,
+        shipping,
+      };
+      const res = await postSale({ actualData, token: accessToken });
       await delay(500);
+      if (res.data) {
+        toast.success("Products Veryfied", {
+          id: toastId,
+          position: "top-center",
+        });
+      } else {
+        toast.error("Something went wrong!", {
+          id: toastId,
+          position: "top-center",
+        });
+      }
+      await delay(500);
+      toast.success("Processing Payment", {
+        id: toastId,
+        position: "top-center",
+      });
+
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         Intent.secret!,
         {
@@ -105,33 +132,17 @@ export const usePayments = (
           id: toastId,
           position: "top-center",
         });
-        const actualData = {
-          ...data,
-          total_amt,
-          products,
-          redeemData,
-          paymentIntentId: paymentIntent.id,
-          shipping,
-        };
         await delay(500);
         toast.loading("Placing Order...", {
           id: toastId,
           position: "top-center",
         });
-        const res = await postSale({ actualData, token: accessToken });
         await delay(500);
-        if (res.data) {
-          toast.success("Order Placed Successfully", {
-            id: toastId,
-            position: "top-center",
-          });
-          router.push(`/orders/${data.transactionuid}`);
-        } else {
-          toast.error("Something went wrong!", {
-            id: toastId,
-            position: "top-center",
-          });
-        }
+        toast.success("Order Placed Successfully", {
+          id: toastId,
+          position: "top-center",
+        });
+        router.push(`/orders/${data.transactionuid}`);
       }
     },
   });
