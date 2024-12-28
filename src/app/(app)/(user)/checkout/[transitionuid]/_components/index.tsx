@@ -274,7 +274,7 @@ const Checkout = ({ params }: { params: string }) => {
             </svg>
             <div>
               <p className="text-center dark:text-neutral-400">
-                After clicking "Pay with Esewa", you will be redirected to Esewa
+                After clicking &ldquo;Pay with Esewa&rdquo;, you will be redirected to Esewa
                 to complete your purchase securely.
               </p>
             </div>
