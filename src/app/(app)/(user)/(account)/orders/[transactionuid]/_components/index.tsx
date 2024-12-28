@@ -132,7 +132,6 @@ const ProductCard = ({
 }: {
   data: Order;
 }) => {
-
   const productIds = useMemo(() => {
     return data?.products.map((item: CartItem) => item.product);
   }, [data]);
@@ -229,7 +228,7 @@ const ProductCard = ({
         </VoucherSkleton>
         <Separator className="mt-1" />
         <div className="w-full p-1 py-2 gap-2 flex items-center">
-          <p>Total :</p> {data.discount > 0 && <p>$ {data?.total_amt}</p>} <p className={cn(data?.discount > 0 && "line-through text-neutral-950/50")}> $ {data?.sub_total}</p>
+          <p>Total :</p> {data.discount > 0 && <p>{data.payment_method == "Esewa" ? "रु": "$"} {data?.total_amt}</p>} <p className={cn(data?.discount > 0 && "line-through text-neutral-950/50")}>{data.payment_method == "Esewa" ? "रु": "$"} {data?.sub_total}</p>
         </div>
       </div>
     </div>

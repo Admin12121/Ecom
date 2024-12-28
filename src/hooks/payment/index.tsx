@@ -84,6 +84,13 @@ export const usePayments = (
       const toastId = toast.loading("Veryfing Products...", {
         position: "top-center",
       });
+      if (!shipping) {
+        toast.error("Please select shipping address", {
+          id: toastId,
+          position: "top-center",
+        });
+        return;
+      }
       const actualData = {
         ...data,
         payment_method: "Stripe",
@@ -106,7 +113,7 @@ export const usePayments = (
         });
       }
       await delay(500);
-      toast.success("Processing Payment", {
+      toast.loading("Processing Payment", {
         id: toastId,
         position: "top-center",
       });
@@ -128,6 +135,7 @@ export const usePayments = (
       }
 
       if (paymentIntent?.status === "succeeded") {
+        await delay(500);
         toast.success("Payment SuccessFull", {
           id: toastId,
           position: "top-center",

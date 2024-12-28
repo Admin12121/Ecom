@@ -28,7 +28,7 @@ export const CurrencySelector = ({ className }: { className?: string }) => {
           <SelectTrigger
             customIcon={<></>}
             className={cn(
-              "w-12 p-0 md:px-3 md:py-2 md:w-[180px] border-0 border-none bg-transparent",
+              "w-12 p-0 md:px-3 md:py-2 md:w-[100px] border-0 border-none bg-transparent",
               className
             )}
           >

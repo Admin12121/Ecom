@@ -11,11 +11,12 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
 import { useGetLoggedUserQuery } from "@/lib/store/Service/api";
 import { UserRound } from "lucide-react";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { toast } from "sonner";
+import { useDecryptedData } from "@/hooks/dec-data";
 
 interface UserData {
   email: string;
@@ -33,11 +34,11 @@ export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
   const router = useRouter();
   const { accessToken, signOut } = useAuthUser();
   const [user, setUser] = useState<UserData>();
-  const { data } = useGetLoggedUserQuery(
+  const { data: encryptedData, isLoading } = useGetLoggedUserQuery(
     { token: accessToken },
     { skip: !accessToken }
   );
-
+  const { data, loading } = useDecryptedData(encryptedData, isLoading);
   useEffect(() => {
     if (data) {
       setUser(data);

@@ -28,6 +28,7 @@ export const userAuthapi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}`,
   }),
+  tagTypes: ["LoggedUser"],
   endpoints: (builder) => ({
     userDevice: builder.mutation({
       query: (user) => ({
@@ -59,6 +60,8 @@ export const userAuthapi = createApi({
         method: "GET",
         headers: createHeaders(token),
       }),
+      providesTags: [{ type: "LoggedUser", id: "ME" }],
+      keepUnusedDataFor: Infinity,
     }),
     getUserProfile: builder.query({
       query: ({ username }) => ({
@@ -191,6 +194,15 @@ export const userAuthapi = createApi({
         }`,
         method: "GET",
         headers: createHeaders(),
+      }),
+    }),
+    checkout_products: builder.query({
+      query: ({ ids, all, token }) => ({
+        url: `api/products/products/checkout_products/?ids=${ids}${
+          all ? "&all=true" : ""
+        }`,
+        method: "GET",
+        headers: createHeaders(token),
       }),
     }),
     recommendedProductsView: builder.query({
@@ -532,7 +544,6 @@ export const userAuthapi = createApi({
     }),
     esewahook: builder.mutation({
       query: ({ actualData, token }) => {
-        console.log(actualData, token)
         return({
         url: `api/sales/esewa-webhook/`,
         method: "POST",
@@ -559,6 +570,7 @@ export const {
   useVariantDeleteMutation,
   useProductsViewQuery,
   useProductsByIdsQuery,
+  useCheckout_productsQuery,
   useRecommendedProductsViewQuery,
   useTrendingProductsViewQuery,
   useDeleteProductsMutation,

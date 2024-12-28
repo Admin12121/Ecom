@@ -55,6 +55,14 @@ const Esewa = ({
       position: "top-center",
     });
     await delay(500);
+    if (!shipping) {
+      toast.error("Please select shipping address", {
+        id: toastId,
+        position: "top-center",
+      });
+      return;
+    }
+    await delay(500);
     const payload = { sales, paymentDetails };
     const data = encryptData(payload, token);
     try {
@@ -73,7 +81,7 @@ const Esewa = ({
           position: "top-center",
         });
         await delay(500);
-        toast.success("Processing Payment", {
+        toast.loading("Processing Payment", {
           id: toastId,
           position: "top-center",
         });

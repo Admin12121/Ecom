@@ -88,7 +88,6 @@ const Response = () => {
       try {
         const decodedData = atob(data);
         const parsedData = JSON.parse(decodedData);
-        console.log(parsedData)
         if (transitionuid === parsedData.transaction_uuid) {
           setResponseData(parsedData);
         } else {

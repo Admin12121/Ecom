@@ -165,7 +165,7 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
           </span>
         </div>
         <div className="w-full p-2 flex justify-between items-center">
-          <p>Total: $ {order.total_amt}</p>
+          <p>Total:{" "}{order.payment_method == "Esewa" ? "रु": "$"} {order.total_amt}</p>
           <span
             className={cn(buttonVariants({ variant: "default" }))}
             onClick={() => router.push(`/orders/${order.transactionuid}`)}

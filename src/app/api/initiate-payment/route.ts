@@ -38,12 +38,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
     const token = authorizationHeader.replace("Bearer ", "");
     const key = token.slice(0, 32);
     const decryptedData = decryptData(encryptedData, key);
     const {sales, paymentDetails} = decryptedData;
-
     const response = await fetch(`${process.env.BACKEND_URL}/api/sales/sales/`, {
       method: 'POST',
       headers: {
@@ -54,9 +52,6 @@ export async function POST(request: NextRequest) {
         ...sales
       }),
     });
-
-    console.log(response)
-
     if(response.ok){
       const validated = PaymentSchema.safeParse(paymentDetails);
       if (!validated.success) {

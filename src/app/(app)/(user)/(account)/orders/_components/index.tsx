@@ -116,7 +116,7 @@ const MyOrders = ({ data }: { data: any }) => {
             </p>
           </TabsTrigger>
           <TabsTrigger className="w-full" value="shipping">
-            On Shipping{" "}
+            Payment Verification{" "}
             <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
               {categorizedOrders.onShipping.length}
             </p>

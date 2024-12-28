@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { delay } from "@/lib/utils";
+import { useDecryptedData } from "@/hooks/dec-data";
 
 interface User {
   id: number;
@@ -44,7 +45,7 @@ interface User {
 }
 
 const profileFormSchema = z.object({
-    username: z
+  username: z
     .string()
     .min(2, {
       message: "Username must be at least 2 characters.",
@@ -82,10 +83,12 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function ProfileForm() {
   const { accessToken } = useAuthUser();
-  const { data, isLoading, refetch } = useGetLoggedUserQuery(
-    { token: accessToken },
-    { skip: !accessToken }
-  );
+  const {
+    data: encryptedData,
+    isLoading,
+    refetch,
+  } = useGetLoggedUserQuery({ token: accessToken }, { skip: !accessToken });
+  const { data, loading } = useDecryptedData(encryptedData, isLoading);
   const [user, setUser] = useState<User | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [updateProfile, { isLoading: isLoadingProfile }] =
@@ -119,54 +122,60 @@ export default function ProfileForm() {
     }
   }, [data, form, user]);
 
-  const onSubmit = useCallback( async (data: ProfileFormValues) => {
-    if (user) {
-      const NewFormData = new FormData();
-      NewFormData.append("name", data.username);
-      NewFormData.append("first_name", data.first_name);
-      NewFormData.append("last_name", data.last_name);
-      NewFormData.append("phone", data.phone);
-      NewFormData.append("gender", data.gender);
-      if (profileImage) {
-        NewFormData.append("profile", profileImage);
-      }
-      const toastId = toast.loading("Updating Profile...", {
-        position: "top-center",
-      });
-      await delay(500);
-      const res = await updateProfile({ NewFormData, token: accessToken});
-      if (res.data) {
-        setProfileImage(null);
-        refetch();
-        toast.success(res.data, {
-          id: toastId,
-          action: {
-            label: "X",
-            onClick: () => toast.dismiss(),
-          },
-        });
-      } else {
-        toast.error("Something went wrong!", {
-          id: toastId,
+  const onSubmit = useCallback(
+    async (data: ProfileFormValues) => {
+      if (user) {
+        const NewFormData = new FormData();
+        NewFormData.append("name", data.username);
+        NewFormData.append("first_name", data.first_name);
+        NewFormData.append("last_name", data.last_name);
+        NewFormData.append("phone", data.phone);
+        NewFormData.append("gender", data.gender);
+        if (profileImage) {
+          NewFormData.append("profile", profileImage);
+        }
+        const toastId = toast.loading("Updating Profile...", {
           position: "top-center",
         });
+        await delay(500);
+        const res = await updateProfile({ NewFormData, token: accessToken });
+        if (res.data) {
+          setProfileImage(null);
+          refetch();
+          toast.success(res.data, {
+            id: toastId,
+            action: {
+              label: "X",
+              onClick: () => toast.dismiss(),
+            },
+          });
+        } else {
+          toast.error("Something went wrong!", {
+            id: toastId,
+            position: "top-center",
+          });
+        }
       }
-    }
-  }, [user, accessToken]);
+    },
+    [user, accessToken]
+  );
 
-  const handleProfileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUser((prevUser) =>
-          prevUser ? { ...prevUser, profile: reader.result as string } : null
-        );
-      };
-      reader.readAsDataURL(file);
-    }
-  }, []);
+  const handleProfileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files && event.target.files[0]) {
+        const file = event.target.files[0];
+        setProfileImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setUser((prevUser) =>
+            prevUser ? { ...prevUser, profile: reader.result as string } : null
+          );
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    []
+  );
 
   return (
     <Form {...form}>
@@ -217,7 +226,11 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input className="bg-white" placeholder="user Name" {...field} />
+                <Input
+                  className="bg-white"
+                  placeholder="user Name"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -230,7 +243,11 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>First Name</FormLabel>
               <FormControl>
-                <Input className="bg-white" placeholder="First Name" {...field} />
+                <Input
+                  className="bg-white"
+                  placeholder="First Name"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -243,7 +260,11 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Last Name</FormLabel>
               <FormControl>
-                <Input className="bg-white" placeholder="Last Name" {...field} />
+                <Input
+                  className="bg-white"
+                  placeholder="Last Name"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -256,10 +277,11 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input className="bg-white"
+                <Input
+                  className="bg-white"
                   placeholder="Email"
                   {...field}
-                  value={user?.email || ''}
+                  value={user?.email || ""}
                   disabled
                 />
               </FormControl>
@@ -286,7 +308,7 @@ export default function ProfileForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Gender</FormLabel>
-              <Select onValueChange={field.onChange} value={user?.gender || ''}>
+              <Select onValueChange={field.onChange} value={user?.gender || ""}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Gender" />
@@ -302,7 +324,11 @@ export default function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button variant="secondary" type="submit" loading={isLoadingProfile || isLoading}>
+        <Button
+          variant="secondary"
+          type="submit"
+          loading={isLoadingProfile || isLoading}
+        >
           Update profile
         </Button>
       </form>

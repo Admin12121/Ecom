@@ -12,6 +12,7 @@ import { decryptData } from "@/lib/transition";
 import { useRouter } from "nextjs-toploader/app";
 import {
   useProductsByIdsQuery,
+  useCheckout_productsQuery,
   useVerifyRedeemCodeMutation,
 } from "@/lib/store/Service/api";
 import Voucher, { VoucherSkleton } from "./voucher";
@@ -41,6 +42,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Icons from "@/components/navbar/cart/icons";
 import Esewa from "./esewa";
+import { useDecryptedData } from "@/hooks/dec-data";
 
 interface Product {
   product: number;
@@ -119,10 +121,13 @@ const Checkout = ({ params }: { params: string }) => {
     () => Array.from(new Set(state.productData.map((item) => item.product))),
     [state.productData]
   );
-  const { data: products } = useProductsByIdsQuery(
-    { ids: productIds },
+
+  const { data: checkout_products , isLoading:productLoading} = useCheckout_productsQuery(
+    { ids: productIds, token: accessToken },
     { skip: productIds.length === 0 }
   );
+  const { data:products } = useDecryptedData(checkout_products, productLoading);
+
   const totalPieces = useMemo(() => {
     return state.productData.reduce((acc, item) => acc + (item.pcs ?? 0), 0);
   }, [state.productData]);
