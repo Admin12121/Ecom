@@ -163,6 +163,7 @@ export default function Cart() {
         product: item.product,
         variant: item.variantDetails.id,
         pcs: item.pcs,
+        source: "cart",
       }));
       encryptData(availableCartItems, router);
     } else {
@@ -340,7 +341,7 @@ const CartItem = ({
               <Button
                 variant="outline"
                 aria-label="Like"
-                className="cursor-pointer bg-transparent max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0"
+                className="cursor-pointer bg-transparent max-h-[25px] max-w-[25px] min-w-[25px] rounded-lg p-0 z-50"
                 disabled={loading}
                 onClick={() =>
                   HandledecreaseItems({

@@ -315,7 +315,9 @@ export const userAuthapi = createApi({
           url: "api/products/categories/",
           method: "POST",
           body: formData,
-          headers: createHeaders(token),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         };
       },
     }),

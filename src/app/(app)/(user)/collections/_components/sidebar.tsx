@@ -199,7 +199,7 @@ const Sidebar = ({
   ];
 
   return (
-    <div className="w-full px-3 py-1 bg-neutral-100/90 dark:bg-neutral-950/90 lg:bg-transparent rounded-md backdrop-blur-md h-full">
+    <div className="w-full px-3 py-1 bg-neutral-100/90 dark:bg-transparent lg:bg-transparent rounded-md backdrop-blur-md h-full">
       <span className="h-5 w-full lg:hidden flex items-center justify-end">
         <span className="absolute right-2 top-2 w-5 h-5 cursor-pointer" onClick={handleClose}>
           <X className="w-4 h-4" />

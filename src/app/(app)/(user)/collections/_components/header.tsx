@@ -16,7 +16,7 @@ const Header: React.FC = () => {
   const pathSegments = path.split("/").filter((segment) => segment);
   
   return (
-    <menu className="w-full max-w-full">
+    <menu className="w-full max-w-full hidden md:flex ">
       <div className="flex w-full">
         <Breadcrumb>
           <BreadcrumbList>

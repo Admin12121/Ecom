@@ -29,6 +29,7 @@ const FeatureProduct = ({
       <ProductSkeleton
         loading={isLoading}
         className="flex flex-wrap gap-2 items-center justify-center w-full pb-5"
+        skleton={"h-[500px]"}
       >
         {products &&
           products.map((product: any, index: any) => (

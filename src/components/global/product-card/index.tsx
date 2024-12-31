@@ -231,9 +231,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-export const Skeleton = () => {
+export const Skeleton = ({className}:{className?:string}) => {
   return (
-    <section className="w-full relative  p-1 h-full flex flex-col gap-1 rounded-lg">
+    <section className={cn("w-full relative p-1 h-full flex flex-col gap-1 rounded-lg", className)}>
       <div className="w-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[390px] rounded-lg"></div>
       <div className="w-full flex flex-col p-2 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[100px] rounded-lg ">
         <span className="w-full h-[40px] flex">
@@ -253,13 +253,15 @@ export const ProductSkeleton = ({
   children,
   filters,
   className,
-  number
+  number,
+  skleton
 }: {
   loading: boolean;
   children: React.ReactNode;
   filters?: boolean;
   className?:string;
   number?: number;
+  skleton?: string;
 }) => {
   const load = useDeferredValue(loading);
   if (load) {
@@ -272,7 +274,7 @@ export const ProductSkeleton = ({
         )}
       >
         {Array.from({ length: randomLength }, (_, index) => (
-          <Skeleton key={index} />
+          <Skeleton key={index} className={skleton}/>
         ))}
       </div>
     );

@@ -24,6 +24,7 @@ import { Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Sidebar from "./sidebar";
+import { CategorySlider } from "@/components/global/infinite-scroll-loop";
 
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
@@ -53,7 +54,7 @@ const initialState: State = {
   min_price: 0,
 };
 
-type Action = 
+type Action =
   | { type: string; value: string | number }
   | { type: string; value: Array<{ type: string; value: string | number }> };
 
@@ -65,7 +66,10 @@ function reducer(state: State, action: Action): State {
   }
 
   const { type, value } = action;
-  if ((type === "page" || type === "min_price" || type === "max_price") && typeof value === "number") {
+  if (
+    (type === "page" || type === "min_price" || type === "max_price") &&
+    typeof value === "number"
+  ) {
     return {
       ...state,
       [type]: value,
@@ -108,7 +112,9 @@ const CollectionPage = () => {
 
   useEffect(() => {
     if (data) {
-      setProducts((prev) => (state.page === 1 ? data.results : [...prev || [], ...data.results]));
+      setProducts((prev) =>
+        state.page === 1 ? data.results : [...(prev || []), ...data.results]
+      );
       setHasMore(Boolean(data.next));
       setLoading(false);
     }
@@ -128,7 +134,7 @@ const CollectionPage = () => {
 
   const handleClose = () => {
     setFilters(!filters);
-  }
+  };
 
   return (
     <>
@@ -145,7 +151,7 @@ const CollectionPage = () => {
         )}
         <div className="flex flex-col gap-2">
           <span className="flex gap-3 flex-col md:flex-row justify-between md:items-center w-full">
-            <p className="text-sm text-neutral-600 dark:text-themeTextGray">
+            <p className="text-sm text-neutral-600 dark:text-themeTextGray hidden md:flex">
               {data?.count} products
             </p>
             <div
@@ -185,6 +191,7 @@ const CollectionPage = () => {
               </Button>
             </div>
           </span>
+          <CategorySlider route/>
           <div className="flex gap-5 w-full">
             <InfiniteScroll
               loading={loading}
@@ -198,7 +205,8 @@ const CollectionPage = () => {
                     className={cn(
                       "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
                       filters && "lg:grid-cols-2 xl:grid-cols-3",
-                      loading || isLoading && "pointer-events-none opacity-50 blur-sm"
+                      loading ||
+                        (isLoading && "pointer-events-none opacity-50 blur-sm")
                     )}
                   >
                     {products.map((product, index) => (
@@ -212,9 +220,10 @@ const CollectionPage = () => {
                         />
                       </div>
                     ))}
-                    {loading && Array.from({ length: 4 }, (_, index) => (
-                      <Skeleton key={index} />
-                    ))}
+                    {loading &&
+                      Array.from({ length: 4 }, (_, index) => (
+                        <Skeleton key={index} />
+                      ))}
                   </div>
                 ) : (
                   <div className="flex w-screen h-full ">
@@ -229,14 +238,22 @@ const CollectionPage = () => {
             <div
               className={cn(
                 "hidden lg:w-[330px] max-md:w-full left-96 relative transition-all transform duration-500 ease-in-out",
-                filters && "flex absolute lg:relative top-0 left-0 opacity-100 z-50 lg:z-0 w-full lg:translate-x-0",
+                filters &&
+                  "flex absolute lg:relative top-0 left-0 opacity-100 z-50 lg:z-0 w-full lg:translate-x-0",
                 !filters && "translate-x-full"
               )}
             >
-              <span className={cn("flex w-full rounded-lg sticky top-[70px] lg:h-[82dvh] ",
-                "max-w-[95rem] h-[100dvh] p-2 lg:p-0"
-              )}>
-                <Sidebar state={state} dispatch={dispatch} handleClose={handleClose}/>
+              <span
+                className={cn(
+                  "flex w-full rounded-lg sticky top-[70px] lg:h-[82dvh] ",
+                  "max-w-[95rem] h-[100dvh] p-2 lg:p-0"
+                )}
+              >
+                <Sidebar
+                  state={state}
+                  dispatch={dispatch}
+                  handleClose={handleClose}
+                />
               </span>
             </div>
           </div>
