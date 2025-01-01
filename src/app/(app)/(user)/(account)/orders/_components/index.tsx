@@ -1,15 +1,14 @@
 "use client";
 import dynamic from "next/dynamic";
-import React, { useReducer, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useGetOrdersQuery } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { OrderComponent } from "./order-component";
+
 const OrderComponent = dynamic(
   () => import("./order-component").then((mod) => mod.OrderComponent),
   { ssr: false }
 );
-import { initialState, reducer } from "@/app/(app)/(admin)/sales/_componets";
 
 interface CartItem {
   id: number;
@@ -46,126 +45,80 @@ export interface Order {
   updated_at: string;
 }
 
-interface CategorizedOrders {
-  onShipping: Order[];
-  arrived: Order[];
-  canceled: Order[];
-  delivered: Order[];
-}
-
 const Orders = () => {
   const { accessToken } = useAuthUser();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [status, setStatus] = useState("all")
-
-  const { data, isLoading, isFetching } = useGetOrdersQuery(
-    { token: accessToken, page: state.onShippingPage,  },
+  const [status, setStatus] = useState("all");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [sales, setSales] = useState<Order[]>([]);
+  const { data, isLoading:loading } = useGetOrdersQuery(
+    { token: accessToken, status: status, page: page },
     { skip: !accessToken }
   );
 
-  if (isLoading || isFetching) {
-    return (
-      <section className="w-full h-[calc(100dvh_-_145px)] flex items-center justify-center">
-        <p>Loading your orders...</p>
-      </section>
-    );
+  useEffect(() => {
+    if (data) {
+      setSales((prev) =>
+        page === 1 ? data.results : [...(prev || []), ...data.results]
+      );
+      setHasMore(Boolean(data.next));
+    }
+  }, [data]);
+
+  const loadMore = useCallback(() => {
+    if (hasMore && !loading) {
+      setPage(page + 1);
+    }
+  }, [hasMore, loading, page]);
+
+  const switchTab = (value:string) => {
+    setStatus(value);
+    setSales([]);
+    setPage(1);
   }
 
   return (
     <section className="w-full min-h-[calc(100dvh_-_145px)] flex flex-col">
-      {data && <MyOrders data={data} />}
-    </section>
-  );
-};
-
-const MyOrders = ({ data }: { data: any }) => {
-  function categorizeOrders(orders: Order[]): CategorizedOrders {
-    const categorized: CategorizedOrders = {
-      onShipping: [],
-      arrived: [],
-      canceled: [],
-      delivered: [],
-    };
-
-    orders.forEach((order) => {
-      switch (order.status) {
-        case "pending":
-        case "verified":
-          categorized.onShipping.push(order);
-          break;
-        case "proceed":
-        case "packed":
-          categorized.arrived.push(order);
-          break;
-        case "cancled":
-          categorized.canceled.push(order);
-          break;
-        case "delivered":
-        case "successful":
-          categorized.delivered.push(order);
-          break;
-        default:
-          break;
-      }
-    });
-
-    return categorized;
-  }
-
-  const categorizedOrders = categorizeOrders(data.results);
-
-  return (
-    <>
-      <Tabs defaultValue="all" className="w-full min-h-[60dvh] mb-10">
+      <Tabs
+        defaultValue="all"
+        value={status}
+        onValueChange={(value) => switchTab(value)}
+        className="w-full min-h-[60dvh] mb-10"
+      >
         <TabsList className="w-full overflow-hidden overflow-x-auto justify-start md:justify-center">
           <TabsTrigger className="w-full" value="all">
-            All
-            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
-              {data.count < 10 ? data.count : "+9"}
-            </p>
+            All Orders
           </TabsTrigger>
-          <TabsTrigger className="w-full" value="shipping">
-            Payment Verification{" "}
-            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
-              {categorizedOrders.onShipping.length}
-            </p>
+          <TabsTrigger className="w-full" value="onshipping">
+            Payment Verification
           </TabsTrigger>
           <TabsTrigger className="w-full" value="arrived">
             Arrived
-            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
-              {categorizedOrders.arrived.length}
-            </p>
           </TabsTrigger>
           <TabsTrigger className="w-full" value="delivered">
             Delivered
-            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
-              {categorizedOrders.delivered.length}
-            </p>
           </TabsTrigger>
           <TabsTrigger className="w-full" value="cancled">
             Cancled
-            <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
-              {categorizedOrders.canceled.length}
-            </p>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="w-full h-full">
-          <OrderComponent data={data?.results} />
+          <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
-        <TabsContent value="shipping" className="w-full h-full">
-          <OrderComponent data={categorizedOrders.onShipping} />
+        <TabsContent value="onshipping" className="w-full h-full">
+          <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
         <TabsContent value="arrived" className="w-full h-full">
-          <OrderComponent data={categorizedOrders.arrived} />
+          <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
         <TabsContent value="delivered" className="w-full h-full">
-          <OrderComponent data={categorizedOrders.delivered} />
+          <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
         <TabsContent value="cancled" className="w-full h-full">
-          <OrderComponent data={categorizedOrders.canceled} />
+          <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
       </Tabs>
-    </>
+    </section>
   );
 };
 

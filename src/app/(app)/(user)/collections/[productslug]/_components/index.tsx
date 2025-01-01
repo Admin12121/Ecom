@@ -10,7 +10,7 @@ import Spinner from "@/components/ui/spinner";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import Reviewcards, {Review} from "./review-card";
 
-const Sidebar = dynamic(() => import("./sidebar"), { ssr: false });
+const Sidebar = dynamic(() => import("./sidebar"), { ssr: false, loading:()=> <div className="flex items-center justify-center h-full min-h-96"><Spinner size="sm"/></div>});
 const ProductNotFound = dynamic(() => import("./not-found"), { ssr: false });
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
@@ -64,7 +64,7 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
   return (
     <main>
       <ProductSection product={product} />
-      {product.reviews  &&  product.reviews.length > 0 &&<ReviewsSection product_name={product.product_name} reviews={product.reviews}/>}
+      {product.reviews  &&  product.reviews.length > 0 && <ReviewsSection product_name={product.product_name} reviews={product.reviews}/>}
       <RecommendedProducts product_id={product!.id} className="mb-14"/>
     </main>
   );

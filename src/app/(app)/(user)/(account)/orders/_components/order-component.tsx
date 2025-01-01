@@ -10,7 +10,9 @@ import { MapPin, ShoppingCart, Truck } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Order as OrderData } from ".";
 import { cn } from "@/lib/utils";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
+import Spinner from "@/components/ui/spinner";
+import InfiniteScroll from "@/components/global/infinite-scroll";
 
 const renderBadge = (status: string) => {
   const statusMap: {
@@ -67,13 +69,26 @@ const renderBadge = (status: string) => {
   );
 };
 
-export const OrderComponent = ({ data }: { data: OrderData[] }) => {
+export const OrderComponent = ({ data, loadMore, hasMore, loading }: { data: OrderData[], loadMore:any, hasMore:boolean, loading:boolean }) => {
+  
+  if(loading){
+    return (
+      <div className="w-full h-[80vh] flex items-center justify-center">
+        <Spinner size="sm"/>
+      </div>
+    )
+  }
   return (
     <div className="w-full h-full flex gap-2">
       {data.length > 0 ? (
         <Accordion type="single" collapsible className="space-y-1 w-full">
-          {data ? (
-            data.map((order: OrderData) => (
+          <InfiniteScroll
+            loading={loading}
+            hasMore={hasMore}
+            loadMore={loadMore}
+            className="space-y-1 w-full"
+          >
+            {data.map((order: OrderData) => (
               <AccordionItem
                 key={order.transactionuid}
                 value={order.transactionuid}
@@ -81,14 +96,8 @@ export const OrderComponent = ({ data }: { data: OrderData[] }) => {
               >
                 <OrderDetails order={order} />
               </AccordionItem>
-            ))
-          ) : (
-            <span className="space-y-2">
-              <h1 className="text-xl">Orders</h1>
-              <p>Your account has no orders. Yet.</p>
-              <Button>Shop Now</Button>
-            </span>
-          )}
+            ))}
+          </InfiniteScroll>
         </Accordion>
       ) : (
         <div className="flex flex-col w-full h-[50dvh] gap-2 items-center justify-center">
@@ -165,7 +174,10 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
           </span>
         </div>
         <div className="w-full p-2 flex justify-between items-center">
-          <p>Total:{" "}{order.payment_method == "Esewa" ? "रु": "$"} {order.total_amt}</p>
+          <p>
+            Total: {order.payment_method == "Esewa" ? "रु" : "$"}{" "}
+            {order.total_amt}
+          </p>
           <span
             className={cn(buttonVariants({ variant: "default" }))}
             onClick={() => router.push(`/orders/${order.transactionuid}`)}
