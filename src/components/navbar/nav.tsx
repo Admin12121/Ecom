@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Cart from "./cart";
 import Link from "next/link";
 import { UserNav } from "./usernav";
 import { ArchiveRestore, Heart } from "lucide-react";
@@ -10,8 +9,12 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { MainNav } from "@/components/navbar/main-nav";
 import { ModeSwitcher } from "@/components/navbar/mood-switcher";
 import Icons from "./cart/icons";
-import Footer from "./footer";
-import { SiteBanner } from "../site-banner";
+import dynamic from 'next/dynamic'
+
+import Cart from "./cart";
+
+const Footer = dynamic(() => import('./footer'), { ssr: false })
+const SiteBanner = dynamic(() => import('../site-banner'), { ssr: false })
 
 export function SiteHeader({ children }: { children: React.ReactNode }) {
   const { status } = useAuthUser();

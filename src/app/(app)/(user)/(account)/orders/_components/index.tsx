@@ -1,9 +1,15 @@
 "use client";
-import React from "react";
+import dynamic from "next/dynamic";
+import React, { useReducer, useState } from "react";
 import { useGetOrdersQuery } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { OrderComponent } from "./order-component";
+// import { OrderComponent } from "./order-component";
+const OrderComponent = dynamic(
+  () => import("./order-component").then((mod) => mod.OrderComponent),
+  { ssr: false }
+);
+import { initialState, reducer } from "@/app/(app)/(admin)/sales/_componets";
 
 interface CartItem {
   id: number;
@@ -49,8 +55,11 @@ interface CategorizedOrders {
 
 const Orders = () => {
   const { accessToken } = useAuthUser();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [status, setStatus] = useState("all")
+
   const { data, isLoading, isFetching } = useGetOrdersQuery(
-    { token: accessToken },
+    { token: accessToken, page: state.onShippingPage,  },
     { skip: !accessToken }
   );
 
@@ -112,7 +121,7 @@ const MyOrders = ({ data }: { data: any }) => {
           <TabsTrigger className="w-full" value="all">
             All
             <p className="ml-2 text-xs text-center bg-black text-white dark:bg-white w-4 h-4 rounded-full dark:text-black">
-              {data.results.length}
+              {data.count < 10 ? data.count : "+9"}
             </p>
           </TabsTrigger>
           <TabsTrigger className="w-full" value="shipping">

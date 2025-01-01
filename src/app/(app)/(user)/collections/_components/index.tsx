@@ -5,13 +5,12 @@ import {
   useProductsViewQuery,
   useTrendingProductsViewQuery,
 } from "@/lib/store/Service/api";
+import { Settings2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
-import {
-  ProductCard,
-  ProductSkeleton,
-  Skeleton,
-} from "@/components/global/product-card";
+import { CategorySlider } from "@/components/global/infinite-scroll-loop";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import InfiniteScroll from "@/components/global/infinite-scroll";
 import {
   Select,
@@ -20,12 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Settings2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import Sidebar from "./sidebar";
-import { CategorySlider } from "@/components/global/infinite-scroll-loop";
 
+import {
+  ProductCard,
+  ProductSkeleton,
+  Skeleton,
+} from "@/components/global/product-card";
+
+
+const Sidebar = dynamic(() => import("./sidebar"), {ssr: false});
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
   { ssr: false }

@@ -10,17 +10,19 @@ import {
   SheetClose,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { ShoppingBag as PiHandbag, Tag } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useProductsByIdsQuery } from "@/lib/store/Service/api";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/context";
+import Icons from "./icons";
+import { Button } from "@/components/ui/button";
+import { ShoppingBag, Tag } from "lucide-react";
+import { useProductsByIdsQuery } from "@/lib/store/Service/api";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import { Plus, Minus, Trash } from "lucide-react";
 import { Badge as Chip } from "@/components/ui/badge";
-import { useAuth } from "@/lib/context";
-import Icons from "./icons";
 import { Separator } from "@/components/ui/separator";
+import Spinner from "@/components/ui/spinner";
 import {
   Accordion,
   AccordionContent,
@@ -29,12 +31,12 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/cart-context";
-import FeatureProduct from "./feature-products";
-import Spinner from "@/components/ui/spinner";
 import { encryptData } from "@/lib/transition";
 import { useRouter } from 'nextjs-toploader/app';
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
+
+const FeatureProduct = dynamic(() => import("./feature-products"), {ssr: false});
 
 interface Variant {
   id: number;
@@ -175,7 +177,7 @@ export default function Cart() {
     <Sheet onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
-          <PiHandbag className="w-4 h-4" />
+          <ShoppingBag className="w-4 h-4" />
           {totalPieces > 0 && (
             <span className="absolute bg-secondary-400 text-white w-[18px] h-[18px] text-[9px] top-0 flex items-center justify-center rounded-full right-0 border-[3px] !border-white dark:!border-transparent">
               {totalPieces}

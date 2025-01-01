@@ -17,10 +17,18 @@ function useOnlineStatus() {
   return useSyncExternalStore(subscribe, getSnapshot);
 }
 
-export function SiteBanner() {
+export default function SiteBanner() {
   const isOnline = useOnlineStatus();
+
   return (
     <>
+      <div className="page_ambientContainer__xFtyW utils_inert__sliHw">
+        <div className="page_ambientLight___Dvmo utils_inert__sliHw">
+          <div className="page_lightA__3_ZLn"></div>
+          <div className="page_lightB__k6xoL"></div>
+          <div className="page_lightC__9Yvpx"></div>
+        </div>
+      </div>
       {!isOnline && (
         <div
           className="group relative top-0 bg-purple-600 py-2 text-white transition-all duration-300 md:py-0 w-full"

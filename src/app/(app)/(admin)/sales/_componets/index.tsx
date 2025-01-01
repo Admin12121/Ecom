@@ -80,7 +80,7 @@ type Action =
   | { type: 'INCREMENT_DELIVERED_PAGE' }
   | { type: 'INCREMENT_CANCELED_PAGE' };
 
-const initialState: State = {
+export const initialState: State = {
   onShippingOrders: [],
   arrivedOrders: [],
   deliveredOrders: [],
@@ -91,7 +91,7 @@ const initialState: State = {
   canceledPage: 1,
 };
 
-const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'SET_ONSHIPPING_ORDERS':
       return { ...state, onShippingOrders: [...state.onShippingOrders, ...action.payload] };
