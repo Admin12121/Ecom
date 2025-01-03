@@ -34,7 +34,7 @@ const WishList = () => {
         </span>
       )}
       <h1 className="text-3xl">Wishlist</h1>
-      <div className="mt-14 flex flex-col gap-1 max-w-[95dvw]">
+      <div className="mt-14 flex flex-col gap-1 max-w-[95dvw] min-h-[50dvh]">
         {products && products.length > 0 && (
           <p className="text-sm text-neutral-600 dark:text-themeTextGray">
             {products?.length} products
