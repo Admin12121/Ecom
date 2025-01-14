@@ -9,12 +9,12 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { MainNav } from "@/components/navbar/main-nav";
 import { ModeSwitcher } from "@/components/navbar/mood-switcher";
 import Icons from "./cart/icons";
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
 import Cart from "./cart";
 
-const Footer = dynamic(() => import('./footer'), { ssr: false })
-const SiteBanner = dynamic(() => import('../site-banner'), { ssr: false })
+const Footer = dynamic(() => import("./footer"), { ssr: false });
+const SiteBanner = dynamic(() => import("../site-banner"), { ssr: false });
 
 export function SiteHeader({ children }: { children: React.ReactNode }) {
   const { status } = useAuthUser();
@@ -59,10 +59,30 @@ export function SiteHeader({ children }: { children: React.ReactNode }) {
                 icons={["esewa", "visa", "mastercard", "amex", "paypal"]}
               />
             </span>
-            <span className="text-xs font- flex gap-2">
-              <Link href="/terms-of-service">Terms of Service</Link>
+            <p className="dark:text-neutral-400 text-sm text-neutral-600">
+              Design and development by{" "}
+              <a
+                href="https://vickytajpuriya.com"
+                target="_blank"
+                className="text-neutral-700 hover:text-neutral-800  dark:text-neutral-300 hover:dark:text-white transition duration-500"
+              >
+                Vicky Tajpuriya
+              </a>
+            </p>
+            <span className="dark:text-neutral-300 text-xs font- flex gap-2 ">
+              <Link
+                className="hover:dark:text-white transition duration-500"
+                href="/terms-of-service"
+              >
+                Terms of Service
+              </Link>
               <p>.</p>
-              <Link href="/privacy-policy">Privacy Policy</Link>
+              <Link
+                className="hover:dark:text-white transition duration-500"
+                href="/privacy-policy"
+              >
+                Privacy Policy
+              </Link>
             </span>
           </div>
         </div>

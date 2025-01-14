@@ -10,14 +10,6 @@ import {
 } from "@/lib/store/Service/api";
 
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { toast } from "sonner";
 import { Trash as DeleteIcon } from "lucide-react";
@@ -345,7 +337,7 @@ const AddProduct = () => {
         id: toastId,
         position: "top-center",
       });
-      const res = await addProduct({formData, token:accessToken});
+      const res = await addProduct({ formData, token: accessToken });
 
       if (res.data) {
         reset();
@@ -366,7 +358,7 @@ const AddProduct = () => {
         id: toastId,
         position: "top-center",
       });
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -653,86 +645,28 @@ const AddProduct = () => {
         </Card>
         <Card className="bg-default-100 w-[30%] min-w-[380px] max-lg:w-full flex flex-col gap-3">
           <CardContent className="flex flex-col gap-3">
-            <span className="flex w-full gap-3 justify-center flex-col">
-              <span className="flex w-full gap-3 items-end justify-center">
-                <span className="flex-col w-full space-y-2">
-                  <Label>Category</Label>
-                  <Select
-                    onValueChange={(value: any) => {
-                      setValue("category", Number(value));
-                    }}
-                  >
-                    <SelectTrigger className="dark:bg-[#171717]">
-                      <SelectValue placeholder="Select a Category">
-                        {!selectedCategory
-                          ? "Select a Category"
-                          : getcategory.find(
-                              (cat) =>
-                                cat.id.toString() == selectedCategory.toString()
-                            )?.name}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {getcategory.map(({ id, name }) => (
-                          <SelectItem key={id} value={id}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </span>
-                {accessToken && <AddCategory refetch={refetch} token={accessToken} />}
-              </span>
-              {errors.category && (
-                <p className="text-red-500">{errors.category.message}</p>
-              )}
-            </span>
-            <span className="flex w-full gap-3 justify-center flex-col">
-              <span className="flex w-full gap-3 items-end justify-center">
-                <span className="flex-col w-full space-y-2">
-                  <Label>Sub Category</Label>
-                  <Select
-                    onValueChange={(value: any) => {
-                      setValue("subCategory", Number(value));
-                    }}
-                    disabled={!selectedCategory}
-                  >
-                    <SelectTrigger className="dark:bg-[#171717]">
-                      <SelectValue placeholder="Select a Sub Category">
-                        {!selectedSubCategory
-                          ? "Select a Sub Category"
-                          : getsubcategory.find(
-                              (cat) =>
-                                cat.id.toString() ==
-                                selectedSubCategory.toString()
-                            )?.name}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {getsubcategory.map(({ id, name }) => (
-                          <SelectItem key={id} value={id}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </span>
-                {accessToken && (
-                  <AddSubCategory
-                    refetch={refetch}
-                    getcategory={getcategory}
-                    token={accessToken}
-                  />
-                )}
-              </span>
-              {errors.subCategory && (
-                <p className="text-red-500">{errors.subCategory.message}</p>
-              )}
-            </span>
+            {accessToken && (
+              <AddCategory
+                refetch={refetch}
+                token={accessToken}
+                setValue={setValue}
+                selectedCategory={selectedCategory}
+                getcategory={getcategory}
+                errors={errors}
+              />
+            )}
+            {accessToken && (
+              <AddSubCategory
+                refetch={refetch}
+                getcategory={getcategory}
+                token={accessToken}
+                setValue={setValue}
+                selectedCategory={selectedCategory}
+                selectedSubCategory={selectedSubCategory}
+                getsubcategory={getsubcategory}
+                errors={errors}
+              />
+            )}
           </CardContent>
         </Card>
       </span>

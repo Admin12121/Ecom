@@ -12,7 +12,7 @@ interface AddToCartProps {
 
 const AddToCart: React.FC<AddToCartProps> = ({ product, variant, className }) => {
   const { updateProductList } = useCart();
-  const handleAddToCart = () => updateProductList({ product, variant });
+  const handleAddToCart = () => updateProductList({ product, variant }, true, "Added to cart");
   return (
     <Button
       variant="active"

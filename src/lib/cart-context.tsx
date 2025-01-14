@@ -31,12 +31,13 @@ interface CartProduct {
 interface HandleProps {
   product: number;
   variant: number;
+  message?: string;
 }
 
 interface CartContextType {
   totalPieces: number;
   cartdata: CartProduct[];
-  updateProductList: (newProduct: CartProduct, increment?: boolean) => void;
+  updateProductList: (newProduct: CartProduct, increment?: boolean, message?:string) => void;
   HandleIncreaseItems: ({ product, variant }: HandleProps) => void;
   HandledecreaseItems: ({ product, variant }: HandleProps) => void;
   loading: boolean;
@@ -48,7 +49,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { status, accessToken } = useAuthUser();
-
   const [cartdata, setCartItems] = useState<CartProduct[]>([]);
 
   const [postCartItem, { isLoading: postLoading }] = useCartPostMutation();
@@ -81,16 +81,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         setTimeout(async () => {
           setCartItems(getDecryptedProductList());
         }, 500);
-        toast.success(successMessage, { position: "top-center" });
+        if (successMessage) {
+          toast.success(successMessage, { position: "top-center" });
+        }
       } else {
-        toast.error(errorMessage, { position: "top-center" });
+        toast.error(errorMessage || "Something went wrong", { position: "top-center" });
       }
     } else {
       setLoading(true);
       setTimeout(async () => {
         await action();
         setLoading(false);
-        toast.success(successMessage, { position: "top-center" });
+        if (successMessage) {
+          toast.success(successMessage, { position: "top-center" });
+        }
       }, 500);
     }
   };
@@ -150,8 +154,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         };
         HandleAction({
           action: () => postCartItem({ actualData: items, token: accessToken }),
-          successMessage: "Added to Cart",
-          errorMessage: "Error adding to cart.",
         });
       }
       hasSyncedRef.current = true;
@@ -166,7 +168,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateProductList = (
     newProduct: CartProduct,
-    increment: boolean = true
+    increment: boolean = true,
+    message?: string
   ): void => {
     const productList: CartProduct[] = getDecryptedProductList();
 
@@ -189,14 +192,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
           };
           HandleAction({
             action: () => updateCart({ actualData: item, token: accessToken }),
-            successMessage: "Updated Cart",
+            successMessage: message,
           });
         } else {
           HandleAction({
             action: async () => {
               setCartItems(getDecryptedProductList());
             },
-            successMessage: "Updated Cart",
+            successMessage: message,
           });
         }
       } else {
@@ -209,14 +212,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
           };
           HandleAction({
             action: () => updateCart({ actualData: item, token: accessToken }),
-            successMessage: "Updated Cart",
+            successMessage: message,
           });
         } else {
           HandleAction({
             action: async () => {
               setCartItems(getDecryptedProductList());
             },
-            successMessage: "Updated Cart",
+            successMessage: message,
           });
         }
         if (existingProduct.pcs <= 0) {
@@ -229,14 +232,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
                   variantId: existingProduct.variant,
                   token: accessToken,
                 }),
-              successMessage: "Removed from Cart",
+              successMessage: message,
             });
           } else {
             HandleAction({
               action: async () => {
                 setCartItems(getDecryptedProductList());
               },
-              successMessage: "Removed from Cart",
+              successMessage: message,
             });
           }
         }
@@ -251,14 +254,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         };
         HandleAction({
           action: () => postCartItem({ actualData: items, token: accessToken }),
-          successMessage: "Added to Cart",
+          successMessage: message,
         });
       } else {
         HandleAction({
           action: async () => {
             setCartItems(getDecryptedProductList());
           },
-          successMessage: "Added to Cart",
+          successMessage: message,
         });
       }
     }
@@ -269,14 +272,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("productList", encryptedData);
   };
 
-  const HandleIncreaseItems = ({ product, variant }: HandleProps) => {
+  const HandleIncreaseItems = ({ product, variant, message }: HandleProps) => {
     const productdata = { product, variant };
-    updateProductList(productdata);
+    updateProductList(productdata, true, message);
   };
 
-  const HandledecreaseItems = ({ product, variant }: HandleProps) => {
+  const HandledecreaseItems = ({ product, variant, message }: HandleProps) => {
     const productdata = { product, variant };
-    updateProductList(productdata, false);
+    updateProductList(productdata, false, message);
   };
 
   return (

@@ -9,16 +9,8 @@ import {
   useProductsUpdateMutation,
   useVariantDeleteMutation,
 } from "@/lib/store/Service/api";
-import { delay } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import {
   AlertDialog,
@@ -33,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { toast } from "sonner";
-import { Trash as DeleteIcon, Settings } from "lucide-react";
+import { ChevronDown, Trash as DeleteIcon, Settings } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -45,6 +37,20 @@ import GlobalInput from "@/components/global/input";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import DeleteProduct from "./delete-product";
 import Uploader from "./image-uploader";
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface GetCategory {
   id: string;
@@ -140,10 +146,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data } = useCategoryViewQuery({});
-  const {
-    data: productData,
-    refetch,
-  } = useProductsViewQuery(
+  const { data: productData, refetch } = useProductsViewQuery(
     { productslug, token: accessToken },
     { skip: !productslug }
   );
@@ -352,7 +355,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
         id: toastId,
         position: "top-center",
       });
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -382,7 +385,7 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
       toast.error("Failed to delete variant", {
         position: "top-center",
       });
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -432,6 +435,8 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
     }
   }, [productData]);
 
+  const [open, setOpen] = useState<boolean>(false);
+  const [cat, setCat] = useState<boolean>(false);
   return (
     <form
       className="flex flex-col gap-5 px-2 md:px-5 pb-5 w-full h-[90dvh]"
@@ -523,11 +528,11 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
                   <Spinner color="secondary" />
                 ) : images[0] ? (
                   <Uploader
-                  images={images[0]}
-                  token={accessToken}
-                  product="h-80 w-full max-lg:h-full max-lg:w-full object-contain"
-                  className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500"
-                />
+                    images={images[0]}
+                    token={accessToken}
+                    product="h-80 w-full max-lg:h-full max-lg:w-full object-contain"
+                    className=" w-4 h-4 absolute right-1 top-1  hidden group-hover:flex transition duration-500"
+                  />
                 ) : (
                   "Click or Drop here"
                 )}
@@ -719,32 +724,59 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
               <span className="flex w-full gap-3 items-end justify-center">
                 <span className="flex-col w-full space-y-2">
                   <Label>Category</Label>
-                  <Select
-                    value={(selectedCategory || "").toString()}
-                    onValueChange={(value: any) => {
-                      setValue("category", Number(value));
-                    }}
-                  >
-                    <SelectTrigger className="dark:bg-[#171717]">
-                      <SelectValue placeholder="Select a Category">
+                  <Popover open={cat} onOpenChange={setCat}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        role="combobox"
+                        aria-expanded={open}
+                        className={cn(
+                          "rounded-lg w-full justify-between dark:bg-neutral-900 px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
+                          cat &&
+                            "ring-2 ring-offset-2 ring-offset-default-100 dark:ring-offset-black ring-neutral-700"
+                        )}
+                      >
                         {!selectedCategory
                           ? "Select a Category"
                           : getcategory.find(
                               (cat) =>
                                 cat.id.toString() == selectedCategory.toString()
                             )?.name}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {getcategory.map(({ id, name }) => (
-                          <SelectItem key={id} value={id}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                        <ChevronDown
+                          size={16}
+                          strokeWidth={2}
+                          className="shrink-0 text-muted-foreground/80"
+                          aria-hidden="true"
+                        />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-full min-w-[var(--radix-popper-anchor-width)] border-input p-0 rounded-xl mt-1 border-none overflow-hidden"
+                      align="start"
+                    >
+                      <Command className="dark:bg-neutral-900">
+                        <CommandInput placeholder="Search category..." />
+                        <CommandList>
+                          <CommandEmpty>No category found.</CommandEmpty>
+                          <CommandGroup>
+                            {getcategory.map(({ id, name }) => (
+                              <CommandItem
+                                key={id}
+                                value={id}
+                                className="rounded-lg"
+                                onSelect={(value: any) => {
+                                  setValue("category", Number(id));
+                                  setCat(false);
+                                }}
+                              >
+                                {name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </span>
               </span>
               {errors.category && (
@@ -755,34 +787,56 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
               <span className="flex w-full gap-3 items-end justify-center">
                 <span className="flex-col w-full space-y-2">
                   <Label>Sub Category</Label>
-                  <Select
-                    value={(selectedSubCategory || "").toString()}
-                    onValueChange={(value: any) => {
-                      setValue("subCategory", Number(value));
-                    }}
-                    disabled={!selectedCategory}
-                  >
-                    <SelectTrigger className="dark:bg-[#171717]">
-                      <SelectValue placeholder="Select a Sub Category">
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        role="combobox"
+                        aria-expanded={open}
+                        className={cn(
+                          "rounded-lg w-full justify-between dark:bg-neutral-900 px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
+                          open &&
+                            "ring-2 ring-offset-2 ring-offset-default-100 dark:ring-offset-black ring-neutral-700",
+                          !selectedCategory && "cursor-not-allowed"
+                        )}
+                        disabled={!selectedCategory}
+                      >
                         {!selectedSubCategory
                           ? "Select a Sub Category"
                           : getsubcategory.find(
                               (cat) =>
                                 cat.id.toString() ==
                                 selectedSubCategory.toString()
-                            )?.name}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {getsubcategory.map(({ id, name }) => (
-                          <SelectItem key={id} value={id}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                            )?.name || "Select a Sub Category"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-full min-w-[var(--radix-popper-anchor-width)] border-input p-0 rounded-xl mt-1 border-none overflow-hidden"
+                      align="start"
+                    >
+                      <Command className="dark:bg-neutral-900">
+                        <CommandInput placeholder="Search category..." />
+                        <CommandList>
+                          <CommandEmpty>No category found.</CommandEmpty>
+                          <CommandGroup>
+                            {getsubcategory.map(({ id, name }) => (
+                              <CommandItem
+                                key={id}
+                                value={id}
+                                onSelect={(value: any) => {
+                                  setValue("subCategory", Number(id));
+                                  setOpen(false);
+                                }}
+                                className="rounded-lg"
+                              >
+                                {name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </span>
               </span>
               {errors.subCategory && (

@@ -349,6 +349,7 @@ const CartItem = ({
                   HandledecreaseItems({
                     product: data.product,
                     variant: data.variantDetails.id,
+                    message: data.pcs > 1 ? "Cart Updated" : "Deleted from cart",
                   })
                 }
               >
@@ -362,7 +363,7 @@ const CartItem = ({
                   />
                 )}
               </Button>
-              {data.variantDetails.stock === 0 ? (
+              {data.variantDetails.stock === 0 || data.variantDetails.stock < data.pcs ? (
                 <Chip variant="danger">out of stock</Chip>
               ) : (
                 <>
@@ -376,6 +377,7 @@ const CartItem = ({
                       HandleIncreaseItems({
                         product: data.product,
                         variant: data.variantDetails.id,
+                        message: "Cart Updated",
                       })
                     }
                   >

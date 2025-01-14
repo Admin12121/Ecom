@@ -10,6 +10,7 @@ import { store, AppStore } from "@/lib/store/store";
 import { AuthProvider } from "@/lib/context";
 import { CartProvider } from "@/lib/cart-context";
 import { ReactQueryProvider } from "@/lib/store/react-query-provider";
+import Cookies from "./cookies";
 
 export const Provider = ({ children, ...props }: ThemeProviderProps) => {
   const storeRef = useRef<AppStore | null>(null);
@@ -34,7 +35,10 @@ export const Provider = ({ children, ...props }: ThemeProviderProps) => {
       <ReduxProvider store={storeRef.current}>
         <ReactQueryProvider>
           <AuthProvider>
-            <CartProvider>{children}</CartProvider>
+            <CartProvider>
+              {children}
+              <Cookies />
+            </CartProvider>
           </AuthProvider>
         </ReactQueryProvider>
       </ReduxProvider>

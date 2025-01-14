@@ -15,7 +15,6 @@ const { auth } = NextAuth(authConfig);
 export default auth((req, ctx) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-
   const isRouteMatch = (routes: string[]): boolean =>
     routes.some(route => nextUrl.pathname.startsWith(route));
 
