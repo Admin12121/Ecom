@@ -13,11 +13,13 @@ import { siteConfig } from "@/config/site";
 
 interface ProvidersProps {
   children: React.ReactNode;
+  collapsed?: string;
+  layout?: string;
 }
 
-const Providers = ({ children }: ProvidersProps) => {
+const Providers = ({ children, collapsed, layout }: ProvidersProps) => {
   return (
-    <Sidebar>
+    <Sidebar layout={layout} collapsed={collapsed}>
       <SidebarContent container="!bg-transparent" links={Links}>
         <SidebarHeader logo="/logo.png" label={siteConfig.name} />
       </SidebarContent>

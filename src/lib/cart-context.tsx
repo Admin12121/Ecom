@@ -37,7 +37,11 @@ interface HandleProps {
 interface CartContextType {
   totalPieces: number;
   cartdata: CartProduct[];
-  updateProductList: (newProduct: CartProduct, increment?: boolean, message?:string) => void;
+  updateProductList: (
+    newProduct: CartProduct,
+    increment?: boolean,
+    message?: string
+  ) => void;
   HandleIncreaseItems: ({ product, variant }: HandleProps) => void;
   HandledecreaseItems: ({ product, variant }: HandleProps) => void;
   loading: boolean;
@@ -85,7 +89,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
           toast.success(successMessage, { position: "top-center" });
         }
       } else {
-        toast.error(errorMessage || "Something went wrong", { position: "top-center" });
+        if (res.error.data.detail == "No Product matches the given query.") {
+          const encryptedData = CryptoJS.AES.encrypt(
+            JSON.stringify("[]"),
+            NEXTAUTH_SECRET
+          ).toString();
+          localStorage.setItem("productList", encryptedData);
+        } else {
+          toast.error(errorMessage || "Something went wrong", {
+            position: "top-center",
+          });
+        }
       }
     } else {
       setLoading(true);

@@ -76,6 +76,14 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        fadeIn: {
+          "0%": { transform: "translateY(100px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        fadeOut: {
+          "0%": { transform: "translateY(0)", opacity: "1" },
+          "100%": { transform: "translateY(100px)", opacity: "0" },
+        },
         ripple: {
           "0%": {
             width: "0",
@@ -109,6 +117,7 @@ const config: Config = {
         ripple: "ripple 1.4s linear infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fadeIn": "fadeIn 0.5s ease-in-out",
       },
       transitionTimingFunction: {
         gooey: "var(--spring-easing)",

@@ -11,7 +11,6 @@ import React, {
 import { decryptData } from "@/lib/transition";
 import { useRouter } from "nextjs-toploader/app";
 import {
-  useProductsByIdsQuery,
   useCheckout_productsQuery,
   useVerifyRedeemCodeMutation,
 } from "@/lib/store/Service/api";

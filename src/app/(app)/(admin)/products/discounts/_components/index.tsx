@@ -50,6 +50,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { RedeemCodeForm } from "./form";
 
 const RedeemCodeSchema = z.object({
   id: z.number().optional(),
@@ -221,166 +222,160 @@ const ReedemCode = () => {
             <span>Add Redeem Code</span>
           </AccordionTrigger>
           <AccordionContent>
-            <AccordionContent>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 w-full px-3"
-                >
-                  <Separator className="my-4" />
-                  <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="dark:bg-neutral-900 bg-white"
-                              placeholder="Enter Name"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="code"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Code</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="dark:bg-neutral-900 bg-white"
-                              placeholder="Enter Code"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </span>
-                  <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name="type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Type</FormLabel>
-                          <FormControl>
-                            <Select
-                              {...field}
-                              onValueChange={(value) => field.onChange(value)}
-                            >
-                              <SelectTrigger className="dark:bg-neutral-900 bg-white">
-                                <SelectValue placeholder="Select Type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="percentage">
-                                  Percentage
-                                </SelectItem>
-                                <SelectItem value="amount">
-                                  Fixed Amount
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="discount"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Discount</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="dark:bg-neutral-900 bg-white"
-                              placeholder="Enter Discount"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </span>
-                  <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name="minimum"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Minimum</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="dark:bg-neutral-900 bg-white"
-                              placeholder="Enter Minimum"
-                              value={field.value}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value))
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="limit"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Limit</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="dark:bg-neutral-900 bg-white"
-                              placeholder="Enter Limit"
-                              value={field.value}
-                              onChange={(e) =>
-                                field.onChange(Number(e.target.value))
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </span>
-                  <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name="valid_until"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Valid Until</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="dark:bg-neutral-900 bg-white"
-                              placeholder="Enter Valid Until"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </span>
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    loading={isLoading}
-                  >
-                    Add
-                  </Button>
-                </form>
-              </Form>
-            </AccordionContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4 w-full px-3"
+              >
+                <Separator className="my-4" />
+                <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white"
+                            placeholder="Enter Name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Code</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white"
+                            placeholder="Enter Code"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </span>
+                <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Type</FormLabel>
+                        <FormControl>
+                          <Select
+                            {...field}
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger className="dark:bg-neutral-900 bg-white">
+                              <SelectValue placeholder="Select Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="percentage">
+                                Percentage
+                              </SelectItem>
+                              <SelectItem value="amount">
+                                Fixed Amount
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="discount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Discount</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white"
+                            placeholder="Enter Discount"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </span>
+                <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="minimum"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Minimum</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white"
+                            placeholder="Enter Minimum"
+                            value={field.value}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="limit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Limit</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white"
+                            placeholder="Enter Limit"
+                            value={field.value}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </span>
+                <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="valid_until"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Valid Until</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white"
+                            placeholder="Enter Valid Until"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </span>
+                <Button type="submit" disabled={isLoading} loading={isLoading}>
+                  Add
+                </Button>
+              </form>
+            </Form>
           </AccordionContent>
         </AccordionItem>
         {data &&
@@ -447,7 +442,7 @@ const ReedemCode = () => {
                 </span>
               </AccordionTrigger>
               <AccordionContent>
-                <Form {...updateform}>
+                {/* <Form {...updateform}>
                   <form
                     onSubmit={updateform.handleSubmit(onSubmit)}
                     className="space-y-4 w-full px-3"
@@ -649,7 +644,8 @@ const ReedemCode = () => {
                       </AlertDialog>
                     </span>
                   </form>
-                </Form>
+                </Form> */}
+                <RedeemCodeForm data={redeemCode} Updataing={Updataing} />
               </AccordionContent>
             </AccordionItem>
           ))}

@@ -51,6 +51,8 @@ import {
 interface SidebarProps {
   navCollapsedSize?: number;
   children: React.ReactNode;
+  layout?: string;
+  collapsed?: string;
 }
 
 interface SidebarContextType {
@@ -64,9 +66,7 @@ const SidebarContext = React.createContext<SidebarContextType | undefined>(
   undefined
 );
 
-const Sidebar = ({ navCollapsedSize = 4, children }: SidebarProps) => {
-  const layout = getCookie("react-resizable-panels:layout:mail");
-  const collapsed = getCookie("react-resizable-panels:collapsed");
+const Sidebar = ({ layout, collapsed, navCollapsedSize = 4, children }: SidebarProps) => {
   const defaultLayout = layout ? JSON.parse(layout) : [20, 80];
   const defaultCollapsed = collapsed ? JSON.parse(collapsed) : false;
 
@@ -122,7 +122,7 @@ const Sidebar = ({ navCollapsedSize = 4, children }: SidebarProps) => {
         >
           {sidebarNav.nav && (
             <ResizablePanel
-              defaultSize={defaultLayout[0]}
+              defaultSize={defaultLayout[0] || 20}
               collapsedSize={navCollapsedSize}
               collapsible={true}
               minSize={15}
@@ -151,7 +151,7 @@ const Sidebar = ({ navCollapsedSize = 4, children }: SidebarProps) => {
           {sidebarNav.nav && (
             <ResizableHandle className="bg-transparent w-2 max-md:hidden" />
           )}
-          <ResizablePanel>
+          <ResizablePanel defaultSize={defaultLayout[1] || 80}>
             {sidebarNav.content}
             <Navigationbar />
           </ResizablePanel>

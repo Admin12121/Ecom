@@ -322,18 +322,18 @@ export const userAuthapi = createApi({
       },
     }),
     upgradeCategory: builder.mutation({
-      query: ({ NewFormData, id }) => ({
+      query: ({ NewFormData, id, token }) => ({
         url: `products/category/?id=${id}`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     deleteCategory: builder.mutation({
-      query: (id) => ({
+      query: ({id, token}) => ({
         url: `products/category/?id=${id}`,
         method: "DELETE",
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     subCategoryView: builder.query({
@@ -352,18 +352,18 @@ export const userAuthapi = createApi({
       }),
     }),
     deleteSubCategory: builder.mutation({
-      query: (id) => ({
+      query: ({id, token}) => ({
         url: `products/subcategory/?id=${id}`,
         method: "DELETE",
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     upgradeSubCategory: builder.mutation({
-      query: ({ NewFormData, id }) => ({
+      query: ({ NewFormData, id, token }) => ({
         url: `products/subcategory/?id=${id}`,
         method: "PATCH",
         body: NewFormData,
-        headers: createHeaders(),
+        headers: createHeaders(token),
       }),
     }),
     redeemCodeView: builder.query({

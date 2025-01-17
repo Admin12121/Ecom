@@ -17,7 +17,10 @@ import { useAuth } from "@/lib/context";
 import Icons from "./icons";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Tag } from "lucide-react";
-import { useProductsByIdsQuery } from "@/lib/store/Service/api";
+import {
+  useProductsByIdsQuery,
+  useVerifyRedeemCodeMutation,
+} from "@/lib/store/Service/api";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import { Plus, Minus, Trash } from "lucide-react";
 import { Badge as Chip } from "@/components/ui/badge";
@@ -32,11 +35,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/cart-context";
 import { encryptData } from "@/lib/transition";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { delay } from "@/lib/utils";
 
-const FeatureProduct = dynamic(() => import("./feature-products"), {ssr: false});
+const schema = z.object({
+  code: z.string().min(1, { message: "Code is required" }),
+});
+
+const FeatureProduct = dynamic(() => import("./feature-products"), {
+  ssr: false,
+});
 
 interface Variant {
   id: number;
@@ -74,7 +87,7 @@ export default function Cart() {
     { ids: productIds },
     { skip: productIds.length === 0 || !isSheetOpen }
   );
-
+  const [redeemCode] = useVerifyRedeemCodeMutation();
   useEffect(() => {
     if (data && isSheetOpen && cartdata.length > 0) {
       refetch();
@@ -131,7 +144,9 @@ export default function Cart() {
         const price = parseFloat(item.variantDetails.price);
         const discount = item.variantDetails.discount;
         const pcs = item.pcs ?? 0;
-        const finalPrice = Number((price - price * (discount / 100)).toFixed(2));
+        const finalPrice = Number(
+          (price - price * (discount / 100)).toFixed(2)
+        );
         acc.totalPrice += finalPrice * pcs;
         return acc;
       },
@@ -173,6 +188,38 @@ export default function Cart() {
     }
   };
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = async (data: z.infer<typeof schema>) => {
+    const code = { code: data.code };
+    const res = await redeemCode({ code: code, token: "accessToken" });
+    if (res.data) {
+    } else {
+      setError("code", { message: (res.error as any).data?.error });
+      return;
+    }
+
+    // dispatch({ type: "SET_REDEEM_DATA", payload: res.data });
+    // if (state.totalPrice.price > res.data.minimum) {
+    //   const discountAmount = calculateDiscount(
+    //     state.totalPrice.price,
+    //     res.data
+    //   );
+    //   dispatch({ type: "SET_DISCOUNT", payload: discountAmount });
+    //   applyDiscount(discountAmount);
+    //   handleClick();
+    // } else {
+    //   setError("code", { message: "Minimum purchase amount not met" });
+    // }
+  };
+
   return (
     <Sheet onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
@@ -193,8 +240,7 @@ export default function Cart() {
           <div className="relative h-[93.5dvh]">
             <div className="py-2 flex flex-col gap-3 h-[85dvh] overflow-y-auto">
               <div className="text-neutral-800 dark:text-zinc-400 text-sm bg-white dark:bg-neutral-900 p-3 rounded-md ">
-                Make changes to your profile here. Click save when you&apos;re
-                done.
+                Get Free Shipping on your first purchase
               </div>
               <h1 className="text-2xl">
                 Your cart total is {symbol} {convertedPrice}
@@ -218,8 +264,17 @@ export default function Cart() {
                     </p>
                   </AccordionTrigger>
                   <AccordionContent className="flex gap-2 text-base py-4 px-1">
-                    <Input className="w-full" placeholder="Enter your code" />
-                    <Button variant="custom">Apply</Button>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <Input
+                        className={cn(
+                          "w-full bg-white dark:bg-neutral-950 rounded-md",
+                          errors.code && "!ring-red-500 !bg-red-500/10"
+                        )}
+                        placeholder="Enter your code"
+                        {...register("code")}
+                      />
+                      <Button type="submit" variant="custom">Apply</Button>
+                    </form>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
@@ -257,7 +312,10 @@ export default function Cart() {
               <FeatureProduct title="You may also like" skip={isSheetOpen} />
             </div>
             <SheetFooter className="flex !flex-col gap-1 items-center absolute w-full bottom-0 py-2  z-50">
-              <Icons icons={["esewa","visa", "mastercard","amex","paypal"]} className="bg-neutral-200 dark:bg-neutral-950 pt-1" />
+              <Icons
+                icons={["esewa", "visa", "mastercard", "amex", "paypal"]}
+                className="bg-neutral-200 dark:bg-neutral-950 pt-1"
+              />
               <Separator
                 className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"
@@ -301,7 +359,9 @@ const CartItem = ({
   const { convertedPrice, symbol } = convertPrice(data.variantDetails.price);
   const discount = data.variantDetails.discount;
   const finalPrice = useMemo(() => {
-    return Number((convertedPrice - convertedPrice * (discount / 100)).toFixed(2));
+    return Number(
+      (convertedPrice - convertedPrice * (discount / 100)).toFixed(2)
+    );
   }, [convertedPrice, discount]);
 
   const truncateText = useCallback(
@@ -349,7 +409,8 @@ const CartItem = ({
                   HandledecreaseItems({
                     product: data.product,
                     variant: data.variantDetails.id,
-                    message: data.pcs > 1 ? "Cart Updated" : "Deleted from cart",
+                    message:
+                      data.pcs > 1 ? "Cart Updated" : "Deleted from cart",
                   })
                 }
               >
@@ -363,7 +424,8 @@ const CartItem = ({
                   />
                 )}
               </Button>
-              {data.variantDetails.stock === 0 || data.variantDetails.stock < data.pcs ? (
+              {data.variantDetails.stock === 0 ||
+              data.variantDetails.stock < data.pcs ? (
                 <Chip variant="danger">out of stock</Chip>
               ) : (
                 <>

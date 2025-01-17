@@ -6,8 +6,13 @@ import { Provider } from "@/components/provider";
 import { SessionProvider } from "next-auth/react";
 import NextTopLoader from "nextjs-toploader";
 import { auth } from "@/auth";
+import { cookies } from "next/headers";
 
 import "@/styles/globals.css";
+import dynamic from "next/dynamic";
+import { type } from "os";
+
+const Cookies = dynamic(() => import("./cookies"));
 
 const geistSansLight = localFont({
   src: "./fonts/AtAero-Light.woff2",
@@ -60,6 +65,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const cookieStore = await cookies();
+  const hasAccepted = cookieStore.get("accept")?.value;
+
   return (
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
@@ -77,7 +85,10 @@ export default async function RootLayout({
             easing="ease"
             speed={100}
           />
-          <Provider>{children}</Provider>
+          <Provider>
+            {children}
+            {!hasAccepted && <Cookies/>}
+          </Provider>
         </body>
       </html>
     </SessionProvider>
