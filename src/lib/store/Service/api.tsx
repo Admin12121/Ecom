@@ -353,16 +353,16 @@ export const userAuthapi = createApi({
     }),
     deleteSubCategory: builder.mutation({
       query: ({id, token}) => ({
-        url: `products/subcategory/?id=${id}`,
+        url: `api/products/subcategories/${id}/`,
         method: "DELETE",
         headers: createHeaders(token),
       }),
     }),
     upgradeSubCategory: builder.mutation({
-      query: ({ NewFormData, id, token }) => ({
-        url: `products/subcategory/?id=${id}`,
+      query: ({ formData, id, token }) => ({
+        url: `api/products/subcategories/${id}/`,
         method: "PATCH",
-        body: NewFormData,
+        body: formData,
         headers: createHeaders(token),
       }),
     }),
