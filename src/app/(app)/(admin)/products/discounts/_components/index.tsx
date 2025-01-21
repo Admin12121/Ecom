@@ -39,17 +39,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { RedeemCodeForm } from "./form";
 
 const RedeemCodeSchema = z.object({
@@ -111,6 +100,7 @@ const ReedemCode = () => {
     defaultValues: defaultFormValues,
   });
 
+  const { reset } = form;
   const updateform = useForm<RedeemCodeFormValues>({
     resolver: zodResolver(RedeemCodeSchema),
     mode: "onChange",
@@ -151,6 +141,7 @@ const ReedemCode = () => {
       const res = await addRedeemCode({ actualData: data, token: accessToken });
       if ("data" in res) {
         refetch();
+        reset();
         toast.success("Added successfully", {
           id: toastId,
           position: "top-center",
@@ -379,276 +370,86 @@ const ReedemCode = () => {
           </AccordionContent>
         </AccordionItem>
         {data &&
-          data.results.map((redeemCode: RedeemCode) => (
-            <AccordionItem
-              key={redeemCode.id}
-              value={`redeem-${redeemCode.id}`}
-              className="rounded-lg shadow-none bg-neutral-100 dark:bg-neutral-950 px-2 transition-all "
-            >
-              <AccordionTrigger
-                icon={<ChevronDown className="w-4 h-4" />}
-                className="relative text-left hover:no-underline pl-2 py-3 w-full md:min-w-[450px]"
+          data.results.map((redeemCode: RedeemCode) => {
+            const processedCode = {
+              ...redeemCode,
+              discount: String(redeemCode.discount),
+            };
+            return (
+              <AccordionItem
+                key={processedCode.id}
+                value={`redeem-${processedCode.id}`}
+                className="rounded-lg shadow-none bg-neutral-100 dark:bg-neutral-950 px-2 transition-all "
               >
-                <span className="flex w-full justify-between items-center">
-                  <span className="flex justify-between flex-col ">
-                    <h1>{redeemCode.name}</h1>
-                    <span className="flex items-center gap-1">
-                      <p className="text-sm dark:text-neutral-300 font-normal">
-                        {redeemCode.used} / {redeemCode.limit} used
-                      </p>
+                <AccordionTrigger
+                  icon={<ChevronDown className="w-4 h-4" />}
+                  className="relative text-left hover:no-underline pl-2 py-3 w-full md:min-w-[450px]"
+                >
+                  <span className="flex w-full justify-between items-center">
+                    <span className="flex justify-between flex-col ">
+                      <h1>{processedCode.name}</h1>
+                      <span className="flex items-center gap-1">
+                        <p className="text-sm dark:text-neutral-300 font-normal">
+                          {processedCode.used} / {processedCode.limit} used
+                        </p>
+                      </span>
                     </span>
-                  </span>
-                  <span className="flex gap-1 flex-col">
-                    <Badge
-                      variant={redeemCode.is_active ? "success" : "danger"}
-                      className="border-none gap-1"
-                    >
-                      <span
-                        className={cn(
-                          "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
-                          redeemCode.is_active
-                            ? "bg-green-500"
-                            : "bg-orange-500"
-                        )}
-                      ></span>
-                      <span
-                        className={cn(
-                          "inline-flex h-2 w-2 right-0 top-0 rounded-full ",
-                          redeemCode.is_active
-                            ? "bg-green-500"
-                            : "bg-orange-500"
-                        )}
-                      ></span>
-                      {redeemCode.is_active ? "Active" : "InActive"}
-                    </Badge>
-                    {new Date(redeemCode.valid_until) < new Date() && (
-                      <Badge variant="danger" className="border-none  gap-1">
+                    <span className="flex gap-1 flex-col">
+                      <Badge
+                        variant={processedCode.is_active ? "success" : "danger"}
+                        className="border-none gap-1"
+                      >
                         <span
                           className={cn(
                             "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
-                            "bg-orange-500"
+                            processedCode.is_active
+                              ? "bg-green-500"
+                              : "bg-orange-500"
                           )}
                         ></span>
                         <span
                           className={cn(
                             "inline-flex h-2 w-2 right-0 top-0 rounded-full ",
-                            "bg-orange-500"
+                            processedCode.is_active
+                              ? "bg-green-500"
+                              : "bg-orange-500"
                           )}
                         ></span>
-                        Expired
+                        {processedCode.is_active ? "Active" : "InActive"}
                       </Badge>
-                    )}
+                      {new Date(processedCode.valid_until) < new Date() && (
+                        <Badge variant="danger" className="border-none  gap-1">
+                          <span
+                            className={cn(
+                              "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
+                              "bg-orange-500"
+                            )}
+                          ></span>
+                          <span
+                            className={cn(
+                              "inline-flex h-2 w-2 right-0 top-0 rounded-full ",
+                              "bg-orange-500"
+                            )}
+                          ></span>
+                          Expired
+                        </Badge>
+                      )}
+                    </span>
                   </span>
-                </span>
-              </AccordionTrigger>
-              <AccordionContent>
-                {/* <Form {...updateform}>
-                  <form
-                    onSubmit={updateform.handleSubmit(onSubmit)}
-                    className="space-y-4 w-full px-3"
-                  >
-                    <Separator className="my-4" />
-                    <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <FormField
-                        control={updateform.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="dark:bg-neutral-900 bg-white"
-                                placeholder="Enter Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={updateform.control}
-                        name="code"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Code</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="dark:bg-neutral-900 bg-white"
-                                placeholder="Enter Code"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </span>
-                    <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <FormField
-                        control={updateform.control}
-                        name="type"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Type</FormLabel>
-                            <FormControl>
-                              <Select
-                                {...field}
-                                onValueChange={(value) => field.onChange(value)}
-                              >
-                                <SelectTrigger className="dark:bg-neutral-900 bg-white">
-                                  <SelectValue placeholder="Select Type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="percentage">
-                                    Percentage
-                                  </SelectItem>
-                                  <SelectItem value="amount">
-                                    Fixed Amount
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={updateform.control}
-                        name="discount"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Discount</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="dark:bg-neutral-900 bg-white"
-                                placeholder="Enter Discount"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </span>
-                    <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <FormField
-                        control={updateform.control}
-                        name="minimum"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Minimum</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="dark:bg-neutral-900 bg-white"
-                                placeholder="Enter Minimum"
-                                value={field.value}
-                                onChange={(e) =>
-                                  field.onChange(Number(e.target.value))
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={updateform.control}
-                        name="limit"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Limit</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="dark:bg-neutral-900 bg-white"
-                                placeholder="Enter Limit"
-                                value={field.value}
-                                onChange={(e) =>
-                                  field.onChange(Number(e.target.value))
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </span>
-                    <span className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <FormField
-                        control={updateform.control}
-                        name="valid_until"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Valid Until</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="dark:bg-neutral-900 bg-white"
-                                placeholder="Enter Valid Until"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </span>
-                    <span className="flex gap-2">
-                      <Button
-                        type="submit"
-                        disabled={Updataing}
-                        loading={Updataing}
-                      >
-                        Update
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() =>
-                          handleActive(redeemCode.id, !redeemCode.is_active)
-                        }
-                        disabled={Updataing}
-                        loading={Updataing}
-                      >
-                        {redeemCode.is_active ? "Deactivate" : "Activate"}
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            disabled={Deleting}
-                            loading={Deleting}
-                          >
-                            Delete
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete variant data and remove it from
-                              our servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => onDelete(redeemCode.id)}
-                            >
-                              Continue
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </span>
-                  </form>
-                </Form> */}
-                <RedeemCodeForm data={redeemCode} Updataing={Updataing} />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <RedeemCodeForm
+                    data={processedCode}
+                    Updataing={Updataing}
+                    Deleting={Deleting}
+                    handleActive={handleActive}
+                    onDelete={onDelete}
+                    onSubmit={onSubmit}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
       </Accordion>
     </main>
   );

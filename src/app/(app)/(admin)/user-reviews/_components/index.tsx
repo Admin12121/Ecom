@@ -218,8 +218,7 @@ const Reviews = () => {
         ) : (
           <span className="space-y-2 flex flex-col items-center justify-center w-full h-full">
             <h1 className="text-xl">Reviews</h1>
-            <p>Your account has no reviews. Yet.</p>
-            <Button>Shop Now</Button>
+            <p>No any Reviews Found 😔!</p>
           </span>
         )}
       </ReviewsCard>

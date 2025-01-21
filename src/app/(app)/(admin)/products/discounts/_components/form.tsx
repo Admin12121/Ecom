@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import DeleteModel from "@/components/global/delete-model";
 
 const RedeemCodeSchema = z.object({
   id: z.number().optional(),
@@ -72,61 +73,37 @@ const defaultFormValues: RedeemCodeFormValues = {
   is_active: false,
 };
 
+interface Props {
+  onSubmit: (data: RedeemCodeFormValues) => void;
+  handleActive: (id: number, active: boolean) => void;
+  onDelete: (id: number) => void;
+  Updataing: boolean;
+  Deleting: boolean;
+  data: RedeemCode;
+}
+
 export const RedeemCodeForm = ({
   data,
+  onSubmit,
   Updataing,
-}: {
-  data: any;
-  Updataing: any;
-}) => {
+  handleActive,
+  onDelete,
+  Deleting,
+}: Props) => {
   const updateform = useForm<RedeemCodeFormValues>({
     resolver: zodResolver(RedeemCodeSchema),
     mode: "onChange",
     defaultValues: defaultFormValues,
   });
+
   useEffect(() => {
     if (data) {
+      // console.log(typeof data.discount)
       updateform.reset(data);
+      // console.log(typeof updateform.getValues().discount)
     }
   }, [data]);
-  const onSubmit = useCallback(async (data: RedeemCodeFormValues) => {
-    // if ("id" in data && data.id) {
-    //   const toastId = toast.loading("Updating...", { position: "top-center" });
-    //   await delay(500);
-    //   const res = await updateRedeemCode({
-    //     actualData: data,
-    //     token: accessToken,
-    //   });
-    //   if ("data" in res) {
-    //     refetch();
-    //     toast.success("Updated successfully", {
-    //       id: toastId,
-    //       position: "top-center",
-    //     });
-    //   } else {
-    //     toast.error("Something went wrong", {
-    //       id: toastId,
-    //       position: "top-center",
-    //     });
-    //   }
-    // } else {
-    //   const toastId = toast.loading("Adding...", { position: "top-center" });
-    //   await delay(500);
-    //   const res = await addRedeemCode({ actualData: data, token: accessToken });
-    //   if ("data" in res) {
-    //     refetch();
-    //     toast.success("Added successfully", {
-    //       id: toastId,
-    //       position: "top-center",
-    //     });
-    //   } else {
-    //     toast.error("Something went wrong", {
-    //       id: toastId,
-    //       position: "top-center",
-    //     });
-    //   }
-    // }
-  }, []);
+
   return (
     <Form {...updateform}>
       <form
@@ -181,7 +158,11 @@ export const RedeemCodeForm = ({
                   <Select
                     {...field}
                     value={field.value}
-                    onValueChange={(value) => field.onChange(value)}
+                    onValueChange={(value) => {
+                      if (value !== field.value) {
+                        field.onChange(value);
+                      }
+                    }}
                   >
                     <SelectTrigger className="dark:bg-neutral-900 bg-white">
                       <SelectValue placeholder="Select Type" />
@@ -274,42 +255,16 @@ export const RedeemCodeForm = ({
           <Button type="submit" disabled={Updataing} loading={Updataing}>
             Update
           </Button>
-          {/* <Button
+          <Button
             type="button"
             variant="outline"
-            onClick={() => handleActive(redeemCode.id, !redeemCode.is_active)}
+            onClick={() => handleActive(data.id, !data.is_active)}
             disabled={Updataing}
             loading={Updataing}
           >
-            {redeemCode.is_active ? "Deactivate" : "Activate"}
+            {data.is_active ? "Deactivate" : "Activate"}
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                type="button"
-                variant="destructive"
-                disabled={Deleting}
-                loading={Deleting}
-              >
-                Delete
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  variant data and remove it from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => onDelete(redeemCode.id)}>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog> */}
+          <DeleteModel PROJECT_NAME={data.name} handleDelete={() => onDelete(data.id)} title="Redeem Code"/>
         </span>
       </form>
     </Form>

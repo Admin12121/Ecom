@@ -150,6 +150,11 @@ const Stocks = () => {
     <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
       <h1 className="text-2xl">Stocks</h1>
       <Accordion type="single" collapsible className="space-y-1 w-full">
+        {data?.results.length === 0 && (
+          <span className="space-y-2 flex flex-col items-center justify-center w-full h-full min-h-[70vh]">
+            <p>Every things upto date</p>
+          </span>
+        )}
         {data?.results.map((product: Product) => (
           <AccordionItem
             key={product.id}
@@ -203,7 +208,7 @@ const Stocks = () => {
                 </span>
               </span>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="pl-3">
               <Separator className="my-2" />
               <div className="flex flex-col px-2">
                 {product.low_stock_variants.map((variant) => (
