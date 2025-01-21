@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useRef, DragEvent, useEffect, useMemo } from "react";
+import React, { useState, useRef, DragEvent, useEffect } from "react";
 import Image from "next/image";
 import { useForm, useFieldArray } from "react-hook-form";
 
 import {
-  useCategoryViewQuery,
   useProductsRegistrationMutation,
 } from "@/lib/store/Service/api";
 
@@ -25,19 +24,6 @@ import GlobalInput from "@/components/global/input";
 import AddCategory from "./addCategory";
 import AddSubCategory from "./addSubCategory";
 import { useAuthUser } from "@/hooks/use-auth-user";
-
-interface GetCategory {
-  id: string;
-  name: string;
-  categoryslug: string;
-  subcategories: GetSubCategory[];
-}
-
-interface GetSubCategory {
-  id: string;
-  name: string;
-  category: number;
-}
 
 const schema = z
   .object({
@@ -126,11 +112,7 @@ const AddProduct = () => {
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { data, refetch } = useCategoryViewQuery({});
 
-  const getcategory = useMemo(() => (data as GetCategory[]) || [], [data]);
-
-  const [getsubcategory, setGetSubCategory] = useState<GetSubCategory[]>([]);
   const [addProduct] = useProductsRegistrationMutation();
 
   const { accessToken } = useAuthUser();
@@ -364,17 +346,6 @@ const AddProduct = () => {
 
   const selectedCategory = watch("category");
   const selectedSubCategory = watch("subCategory");
-
-  useEffect(() => {
-    if (selectedCategory) {
-      const selectedCat = getcategory.find(
-        (cat) => String(cat.id) === String(selectedCategory)
-      );
-      setGetSubCategory(selectedCat ? selectedCat.subcategories : []);
-    } else {
-      setGetSubCategory([]);
-    }
-  }, [selectedCategory, getcategory]);
 
   return (
     <form
@@ -647,23 +618,18 @@ const AddProduct = () => {
           <CardContent className="flex flex-col gap-3">
             {accessToken && (
               <AddCategory
-                refetch={refetch}
                 token={accessToken}
                 setValue={setValue}
                 selectedCategory={selectedCategory}
-                getcategory={getcategory}
                 errors={errors}
               />
             )}
             {accessToken && (
               <AddSubCategory
-                refetch={refetch}
-                getcategory={getcategory}
                 token={accessToken}
                 setValue={setValue}
                 selectedCategory={selectedCategory}
                 selectedSubCategory={selectedSubCategory}
-                getsubcategory={getsubcategory}
                 errors={errors}
               />
             )}

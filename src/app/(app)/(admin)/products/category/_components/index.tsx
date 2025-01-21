@@ -14,6 +14,8 @@ import { ChevronDown } from "lucide-react";
 import {
   useCategoryViewQuery,
   useAddCategoryMutation,
+  useUpgradeCategoryMutation,
+  useDeleteCategoryMutation,
   useAddSubCategoryMutation,
   useUpgradeSubCategoryMutation,
   useDeleteSubCategoryMutation,
@@ -33,16 +35,16 @@ import { Separator } from "@/components/ui/separator";
 import EditableText from "./editabletext";
 import { toast } from "sonner";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import DeleteModel from "@/components/global/delete-model";
 
 const CategorySchema = z.object({
   name: z.string().min(2, { message: "Category name is required" }),
@@ -83,6 +85,8 @@ const Category = () => {
   const { accessToken } = useAuthUser();
   const { data, refetch } = useCategoryViewQuery({});
   const [addcategory] = useAddCategoryMutation();
+  const [updateCategory] = useUpgradeCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
   const [addsubcategory] = useAddSubCategoryMutation();
   const [updateSubCategory] = useUpgradeSubCategoryMutation();
   const [deleteSubCategory] = useDeleteSubCategoryMutation();
@@ -135,10 +139,42 @@ const Category = () => {
 
   const handleCatetgoryUpgrade = useCallback(
     async (data: UpdateSchemaFormValues) => {
-      console.log(data);
+      const { error, data: res } = await updateCategory({
+        formData: data,
+        id: data.id,
+        token: accessToken,
+      });
+      if (error && "data" in error) {
+        const errorData = error?.data || {};
+        const errorMessages = Object.values(errorData).flat().join(", ");
+        const formattedMessage = errorMessages || "An unknown error occurred";
+        toast.error(`${formattedMessage}`);
+        return;
+      }
+      if (res) {
+        toast.success("Updated");
+        refetch();
+      }
     },
     []
   );
+
+  const handleCategoryDelete = useCallback(async (id: string) => {
+    const { error, data: res } = await deleteCategory({
+      id: id,
+      token: accessToken,
+    });
+    if (error && "data" in error) {
+      const errorData = error?.data || {};
+      const errorMessages = Object.values(errorData).flat().join(", ");
+      const formattedMessage = errorMessages || "An unknown error occurred";
+      toast.error(`${formattedMessage}`);
+      return;
+    }
+
+    toast.success("Deleted");
+    refetch();
+  }, []);
 
   const onSubmitSubCategory = useCallback(
     async (data: SubCategorySchemaFormValues) => {
@@ -304,11 +340,10 @@ const Category = () => {
                       <Button>Add Sub Category</Button>{" "}
                     </form>
                   </Form>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
+                  <Dialog>
+                    <DialogTrigger asChild>
                       <Button
-                        type="button"
-                        variant={"secondary"}
+                        variant="secondary"
                         onClick={() => {
                           updateform.setValue("name", category.name);
                           updateform.setValue("id", category.id.toString());
@@ -316,46 +351,50 @@ const Category = () => {
                       >
                         Edit
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <Form {...updateform}>
-                            <form
-                              onSubmit={updateform.handleSubmit(
-                                handleCatetgoryUpgrade
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Category</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4">
+                        <Form {...updateform}>
+                          <form
+                            onSubmit={updateform.handleSubmit(
+                              handleCatetgoryUpgrade
+                            )}
+                            className="flex flex-col gap-4"
+                          >
+                            <FormField
+                              control={updateform.control}
+                              name="name"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Label>Category</Label>
+                                  <FormControl>
+                                    <Input
+                                      className="w-auto bg-white dark:bg-neutral-900"
+                                      placeholder="Enter Sub Category Name"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
                               )}
-                              className="flex gap-2"
-                            >
-                              <FormField
-                                control={updateform.control}
-                                name="name"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <Input
-                                        className="w-auto bg-white dark:bg-neutral-900"
-                                        placeholder="Enter Sub Category Name"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </form>
-                          </Form>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                            />
+                            <DialogFooter className="gap-2 md:gap-0">
+                              <Button type="submit">Save changes</Button>
+                              <DialogClose asChild>
+                                <Button type="button" variant="secondary">
+                                  Cancel
+                                </Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </form>
+                        </Form>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  <DeleteModel PROJECT_NAME={category.name} handleDelete={()=>{handleCategoryDelete(category.id.toString())}} title="Category"/>
                 </span>
               </AccordionContent>
             </AccordionItem>

@@ -29,7 +29,12 @@ import { toast } from "sonner";
 import DynamicForm from "@/constants/formhandler";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
-import { useAddSubCategoryMutation } from "@/lib/store/Service/api";
+import {
+  useAddSubCategoryMutation,
+  useGetSubCategoryQuery,
+  useGetCategoryQuery,
+} from "@/lib/store/Service/api";
+import Spinner from "@/components/ui/spinner";
 
 interface subCategory {
   category: number;
@@ -40,7 +45,6 @@ interface GetCategory {
   id: string;
   name: string;
   categoryslug: string;
-  subcategories: GetSubCategory[];
 }
 
 interface GetSubCategory {
@@ -51,31 +55,33 @@ interface GetSubCategory {
 
 interface Props {
   token: string;
-  refetch?: any;
   setValue: any;
   selectedCategory?: any;
   selectedSubCategory: any;
-  getcategory: GetCategory[];
-  getsubcategory: GetSubCategory[];
   errors: any;
 }
 
 const AddSubCategory = ({
-  getcategory,
   token,
-  refetch,
   setValue,
   selectedCategory,
   selectedSubCategory,
-  getsubcategory,
   errors,
 }: Props) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [cat, setCat] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [categoryname, setCategoryName] = useState<string>("");
   const [addsubcategory] = useAddSubCategoryMutation();
+  const { data, isLoading, refetch } = useGetSubCategoryQuery(
+    { category: selectedCategory, name: name },
+    { skip: !open }
+  );
+  const { data:categoryData, isLoading:categoryLoading } = useGetCategoryQuery({name:categoryname},{skip:!cat});
+  
 
   const {
     formData: subCategoryData,
-    // setFormData: setSubCategoryData,
-    // errors: subCategoryErrors,
     handleInputChange: handleSubCategoryChange,
   } = DynamicForm<subCategory>({
     category: 0,
@@ -105,8 +111,6 @@ const AddSubCategory = ({
       console.log(error);
     }
   };
-  const [open, setOpen] = useState<boolean>(false);
-  const [cat, setCat] = useState<boolean>(false);
   return (
     <span className="flex w-full gap-3 justify-center flex-col">
       <span className="flex w-full gap-3 items-end justify-center">
@@ -128,8 +132,8 @@ const AddSubCategory = ({
               >
                 {!selectedSubCategory
                   ? "Select a Sub Category"
-                  : getsubcategory.find(
-                      (cat) =>
+                  : data?.results.find(
+                      (cat:GetSubCategory) =>
                         cat.id.toString() == selectedSubCategory.toString()
                     )?.name}
                 <ChevronDown
@@ -145,11 +149,12 @@ const AddSubCategory = ({
               align="start"
             >
               <Command className="dark:bg-neutral-900">
-                <CommandInput placeholder="Search subcategory..." />
+                <CommandInput placeholder="Search subcategory..." onValueChange={(value)=>setName(value)} value={name}/>
                 <CommandList>
                   <CommandEmpty>No subcategory found.</CommandEmpty>
                   <CommandGroup>
-                    {getsubcategory.map(({ id, name }) => (
+                    {isLoading && <Spinner/>}
+                    {data?.results.map(({ id, name }:GetSubCategory) => (
                       <CommandItem
                         key={id}
                         value={id}
@@ -174,7 +179,7 @@ const AddSubCategory = ({
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader className="flex flex-col gap-1">
-              <DialogTitle>Add Category</DialogTitle>
+              <DialogTitle>Add SubCategory</DialogTitle>
             </DialogHeader>
             <div className="space-y-2 py-2">
               <Popover open={cat} onOpenChange={setCat}>
@@ -191,8 +196,8 @@ const AddSubCategory = ({
                   >
                     {subCategoryData.category === 0
                       ? "Select a Category"
-                      : getcategory.find(
-                          (cat) => cat.id == subCategoryData.category.toString()
+                      : categoryData?.results.find(
+                          (cat:GetCategory) => cat.id == subCategoryData.category.toString()
                         )?.name}
                     <ChevronDown
                       size={16}
@@ -207,11 +212,12 @@ const AddSubCategory = ({
                   align="start"
                 >
                   <Command className="dark:bg-neutral-900">
-                    <CommandInput placeholder="Search category..." />
+                    <CommandInput placeholder="Search category..." onValueChange={(value)=>setCategoryName(value)} value={categoryname}/>
                     <CommandList>
                       <CommandEmpty>No category found.</CommandEmpty>
                       <CommandGroup>
-                        {getcategory.map(({ id, name }) => (
+                        {categoryLoading && <Spinner/>}
+                        {categoryData?.results.map(({ id, name }:GetCategory) => (
                           <CommandItem
                             key={id}
                             value={id}

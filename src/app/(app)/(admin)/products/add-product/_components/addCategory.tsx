@@ -20,22 +20,33 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import GlobalInput from "@/components/global/input";
-import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
-import DynamicForm from "@/constants/formhandler";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
-import { useAddCategoryMutation } from "@/lib/store/Service/api";
+import {
+  useAddCategoryMutation,
+  useGetCategoryQuery,
+} from "@/lib/store/Service/api";
 import { Label } from "@/components/ui/label";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import Spinner from "@/components/ui/spinner";
 
-interface Category {
-  category: string;
-  image: File | null;
-  imagePreview: string | null;
+interface GetCategory {
+  id: string;
+  name: string;
+  categoryslug: string;
 }
 
 interface GetSubCategory {
@@ -53,107 +64,57 @@ interface GetCategory {
 
 interface Props {
   token: string;
-  refetch?: any;
   setValue: any;
   selectedCategory: any;
-  getcategory: GetCategory[];
   errors: any;
 }
 
+const CategorySchema = z.object({
+  name: z.string().min(2, { message: "Category name is required" }),
+});
+
+type CategorySchemaFormValues = z.infer<typeof CategorySchema>;
+const defaultFormValues: CategorySchemaFormValues = {
+  name: "",
+};
+
 const AddCategory = ({
   token,
-  refetch,
   setValue,
   selectedCategory,
-  getcategory,
   errors,
 }: Props) => {
-  const [addcategory] = useAddCategoryMutation();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const {
-    formData: categoryData,
-    setFormData: setCategoryData,
-    handleInputChange: handleCategoryChange,
-  } = DynamicForm<Category>({
-    category: "",
-    image: null,
-    imagePreview: null,
-  });
-
-  const validateFile = (file: File): boolean => {
-    const isValidSize = file.size <= 50 * 1024 * 1024;
-    const isValidType = file.type === "image/png";
-    return isValidSize && isValidType;
-  };
-
-  const handleCategoryImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (validateFile(file)) {
-        setCategoryData((prevData) => ({
-          ...prevData,
-          image: file,
-        }));
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setCategoryData((prevData) => ({
-            ...prevData,
-            imagePreview: e.target?.result as string,
-          }));
-        };
-        reader.readAsDataURL(file);
-      } else {
-        toast.error(
-          "Invalid File Format. Please upload a PNG image with a maximum size of 10MB."
-        );
-      }
-    }
-  };
-
-  const SubmitCategory = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!categoryData.category) {
-      toast.error("Category name is required");
-      return;
-    }
-
-    if (!categoryData.image) {
-      toast.error("Category image are required");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", categoryData.category);
-    if (categoryData.image) {
-      formData.append("image", categoryData.image);
-    }
-    try {
-      const res = await addcategory({ formData, token });
-      if (res.data) {
-        toast.success("Category Added");
-        refetch();
-      } else {
-        if (res.error) {
-          const errorData = res.error as FetchBaseQueryError;
-          if (
-            errorData.data &&
-            typeof errorData.data === "object" &&
-            "name" in errorData.data
-          ) {
-            const message = (errorData.data as any).name[0];
-            toast.error(message || "Something went wrong");
-          }
-        }
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
   const [open, setOpen] = useState<boolean>(false);
+  const [addcategory] = useAddCategoryMutation();
+  const [ name, setName ] = useState<string>("");
+  const { data, isLoading, refetch } = useGetCategoryQuery({name},{skip: !open});
+
+  const form = useForm<CategorySchemaFormValues>({
+    resolver: zodResolver(CategorySchema),
+    mode: "onChange",
+    defaultValues: defaultFormValues,
+  });
+  const { reset } = form;
+
+  const onSubmit = useCallback(async (data: CategorySchemaFormValues) => {
+    const { error, data: res } = await addcategory({
+      formData: data,
+      token: token,
+    });
+    if (error && "data" in error) {
+      const errorData = error?.data || {};
+      const errorMessages = Object.values(errorData).flat().join(", ");
+      const formattedMessage = errorMessages || "An unknown error occurred";
+      toast.error(`${formattedMessage}`);
+      return;
+    }
+    if (res) {
+      toast.success("Category Added");
+      refetch();
+      reset();
+    }
+  }, []);
+
   return (
     <span className="flex w-full gap-3 justify-center flex-col">
       <span className="flex w-full gap-3 items-end justify-center">
@@ -165,12 +126,16 @@ const AddCategory = ({
                 variant="secondary"
                 role="combobox"
                 aria-expanded={open}
-                className={cn("rounded-lg w-full justify-between dark:bg-neutral-900 px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20", open && "ring-2 ring-offset-2 ring-offset-default-100 dark:ring-offset-black ring-neutral-700")}
+                className={cn(
+                  "rounded-lg w-full justify-between dark:bg-neutral-900 px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
+                  open &&
+                    "ring-2 ring-offset-2 ring-offset-default-100 dark:ring-offset-black ring-neutral-700"
+                )}
               >
                 {!selectedCategory
                   ? "Select a Category"
-                  : getcategory.find(
-                      (cat) => cat.id.toString() == selectedCategory.toString()
+                  : data?.results.find(
+                      (cat:GetCategory) => cat.id.toString() == selectedCategory.toString()
                     )?.name}
                 <ChevronDown
                   size={16}
@@ -185,23 +150,26 @@ const AddCategory = ({
               align="start"
             >
               <Command className="dark:bg-neutral-900">
-                <CommandInput placeholder="Search category..." />
+                <CommandInput placeholder="Search category..." onValueChange={(value)=>setName(value)} value={name}/>
                 <CommandList>
                   <CommandEmpty>No category found.</CommandEmpty>
                   <CommandGroup>
-                    {getcategory.map(({ id, name }) => (
-                      <CommandItem
-                        key={id}
-                        value={id}
-                        onSelect={(value: any) => {
-                          setValue("category", Number(id));
-                          setOpen(false);
-                        }}
-                        className="rounded-lg"
-                      >
-                        {name}
-                      </CommandItem>
-                    ))}
+                    {isLoading && <Spinner/>}
+                    {data?.results.map(
+                      ({ id, name }:GetCategory) => (
+                        <CommandItem
+                          key={id}
+                          value={id}
+                          onSelect={(value: any) => {
+                            setValue("category", Number(id));
+                            setOpen(false);
+                          }}
+                          className="rounded-lg"
+                        >
+                          {name}
+                        </CommandItem>
+                      )
+                    )}
                   </CommandGroup>
                 </CommandList>
               </Command>
@@ -217,48 +185,31 @@ const AddCategory = ({
               <DialogHeader className="flex flex-col gap-1">
                 <DialogTitle>Add Category</DialogTitle>
               </DialogHeader>
-              <div className="space-y-2">
-                <GlobalInput
-                  value={categoryData.category}
-                  onChange={(e: any) =>
-                    handleCategoryChange(e.target.value, "category")
-                  }
-                  className="dark:bg-neutral-900"
-                  label="Category"
-                  placeholder="Category"
-                />
-                <div className="flex flex-col gap-3">
-                  <input
-                    type="file"
-                    style={{ display: "none" }}
-                    accept="image/png"
-                    onChange={handleCategoryImageChange}
-                    ref={fileInputRef}
-                  />
-                  <Button
-                    type="button"
-                    className="w-full min-h-40 h-auto flex justify-center items-center dark:bg-neutral-900 p-0"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    {categoryData.imagePreview ? (
-                      <Image
-                        src={categoryData.imagePreview!}
-                        width={800}
-                        height={800}
-                        className="w-full object-contain"
-                        alt="Uploaded"
-                      />
-                    ) : (
-                      "Click or Drop here"
+              <Form {...form}>
+                <form className="w-full">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="dark:bg-neutral-900 bg-white mt-5"
+                            placeholder="Enter Category"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </Button>
-                </div>
-              </div>
+                  />
+                </form>
+              </Form>
               <DialogFooter>
                 <Button
                   color="secondary"
                   type="button"
-                  onClick={(e: any) => SubmitCategory(e)}
+                  onClick={() => onSubmit(form.getValues())}
                 >
                   Add Category
                 </Button>

@@ -303,10 +303,10 @@ export const userAuthapi = createApi({
       }),
     }),
     getCategory: builder.query({
-      query: ({token}) => ({
-        url: "api/products/get_category/",
+      query: ({name}) => ({
+        url: `api/products/get_category/${buildQueryParams({name})}`,
         method: "GET",
-        headers: createHeaders(token),
+        headers: createHeaders(),
       }),
     }),
     addCategory: builder.mutation({
@@ -322,18 +322,25 @@ export const userAuthapi = createApi({
       },
     }),
     upgradeCategory: builder.mutation({
-      query: ({ NewFormData, id, token }) => ({
-        url: `products/category/?id=${id}`,
+      query: ({ formData, id, token }) => ({
+        url: `api/products/categories/${id}/`,
         method: "PATCH",
-        body: NewFormData,
+        body: formData,
         headers: createHeaders(token),
       }),
     }),
     deleteCategory: builder.mutation({
       query: ({id, token}) => ({
-        url: `products/category/?id=${id}`,
+        url: `api/products/categories/${id}/`,
         method: "DELETE",
         headers: createHeaders(token),
+      }),
+    }),
+    getSubCategory: builder.query({
+      query: ({name, category}) => ({
+        url: `api/products/get_subcategory/${buildQueryParams({name, category})}`,
+        method: "GET",
+        headers: createHeaders(),
       }),
     }),
     subCategoryView: builder.query({
@@ -589,6 +596,7 @@ export const {
   useAddCategoryMutation,
   useUpgradeCategoryMutation,
   useDeleteCategoryMutation,
+  useGetSubCategoryQuery,
   useSubCategoryViewQuery,
   useAddSubCategoryMutation,
   useDeleteSubCategoryMutation,

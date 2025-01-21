@@ -5,23 +5,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import DeleteModel from "@/components/global/delete-model";
 
 interface EditableTextProps {
   initialText: string;
@@ -71,32 +60,7 @@ export default function EditableText({
               )}
             />
             <Button>Update</Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button type="button" variant={"destructive"}>
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    this SubCategory &apos;{initialText}&apos; and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() =>
-                      handleSubCategoryDelete({ id: initialId.toString() })
-                    }
-                  >
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <DeleteModel PROJECT_NAME={initialText} handleDelete={()=>handleSubCategoryDelete({ id: initialId.toString() })} title="Sub Category"/>
             <Button
               onClick={() => {
                 setIsEditing(false);
