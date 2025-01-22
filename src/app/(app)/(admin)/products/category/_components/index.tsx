@@ -240,7 +240,7 @@ const Category = () => {
   return (
     <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2 ">
       <span className="flex justify-between items-center">
-        <h1 className="text-2xl">Category</h1>
+        {/* <h1 className="text-2xl">Category</h1> */}
       </span>
       <Accordion type="single" collapsible className="space-y-1 w-full">
         <AccordionItem

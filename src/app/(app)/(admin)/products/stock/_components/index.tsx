@@ -25,12 +25,20 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, TrendingUp, Minus, Plus } from "lucide-react";
+import {
+  ChevronDown,
+  TrendingUp,
+  Minus,
+  Plus,
+  Search,
+  LoaderCircle,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { cn, delay } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import Kbd from "@/components/ui/kbd";
 
 interface NotifyUser {
   email: string;
@@ -71,10 +79,34 @@ type FormData = z.infer<typeof FormSchema>;
 
 const Stocks = () => {
   const { accessToken } = useAuthUser();
+  const [searchValue, setsearchValue] = React.useState("");
+  const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
+  const [page, setPage] = React.useState<number>(1);
   const { data, refetch } = useGetStocksQuery(
-    { token: accessToken },
+    { search: searchValue, page, token: accessToken },
     { skip: !accessToken }
   );
+
+  useEffect(() => {
+    if (searchValue) {
+      setSearchLoading(true);
+      const timer = setTimeout(() => {
+        setSearchLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchLoading(false);
+    }
+  }, [searchValue]);
+
+  const onSearchChange = (value?: string) => {
+    if (value) {
+      setsearchValue(value);
+      setPage(1);
+    } else {
+      setsearchValue("");
+    }
+  };
 
   const [updateProduct] = useVariantUpdateMutation();
 
@@ -148,7 +180,35 @@ const Stocks = () => {
 
   return (
     <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
-      <h1 className="text-2xl">Stocks</h1>
+      <span className="flex flex-col md:flex-row justify-end">
+        <div className="relative">
+          <Input
+            placeholder="Search..."
+            value={searchValue}
+            onChange={(event) => {
+              onSearchChange(event.target.value);
+            }}
+            className="h-9 w-full lg:w-[350px] peer pe-9 ps-9  "
+          />
+          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+            {searchLoading ? (
+              <LoaderCircle
+                className="animate-spin"
+                size={16}
+                strokeWidth={2}
+                aria-hidden="true"
+                role="presentation"
+              />
+            ) : (
+              <Search size={16} strokeWidth={2} aria-hidden="true" />
+            )}
+          </div>
+          <Kbd
+            keys={["command"]}
+            className="rounded-md absolute right-1 top-[4px] shadow-lg bg-neutral-900 text-white"
+          ></Kbd>
+        </div>
+      </span>
       <Accordion type="single" collapsible className="space-y-1 w-full">
         {data?.results.length === 0 && (
           <span className="space-y-2 flex flex-col items-center justify-center w-full h-full min-h-[70vh]">

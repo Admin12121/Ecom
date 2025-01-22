@@ -10,13 +10,16 @@ import {
 } from "@/components/global/admin-productcard";
 import InfiniteScroll from "@/components/global/infinite-scroll";
 import { useAuthUser } from "@/hooks/use-auth-user";
-
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Search } from "lucide-react";
+import Kbd from "@/components/ui/kbd";
 
 const ProductPage = () => {
   const { accessToken } = useAuthUser();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
-  const search = searchParams.get("search");
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const { data, isLoading } = useProductsViewQuery(
@@ -49,21 +52,31 @@ const ProductPage = () => {
   return (
     <>
       <section className="flex flex-col gap-5 pb-5">
-        {search && (
-          <span className="">
-            <p className="text-neutral-600 dark:text-themeTextGray ">
-              Search results for
-            </p>
-            <h1 className="text-3xl font-bold text-neutral-700 dark:text-themeTextWhite">
-              {search}
-            </h1>
-          </span>
-        )}
         <div className="flex flex-col gap-1">
-          <span>
+          <span className="flex flex-col md:flex-row md:justify-between gap-1">
             <p className="text-sm text-neutral-600 dark:text-themeTextGray">
               {data?.count} products
             </p>
+            <div
+              className={`relative dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white rounded-lg`}
+            >
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Label htmlFor="search" className="sr-only">
+                Search
+              </Label>
+              <Input
+                id="search"
+                name="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
+                className=" dark:bg-neutral-800 pl-8 border-0 focus:outline-none focus-visible:ring-0"
+              />
+              <Kbd
+                keys={["command"]}
+                className="rounded-md absolute right-1 top-[4px] shadow-lg bg-neutral-900 text-white"
+              ></Kbd>
+            </div>
           </span>
           <InfiniteScroll
             loading={isLoading}

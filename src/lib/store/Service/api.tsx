@@ -530,8 +530,8 @@ export const userAuthapi = createApi({
       }),
     }),
     getStocks: builder.query({
-      query: ({ token }) => ({
-        url: `api/products/stocks/`,
+      query: ({ token, search, page, }) => ({
+        url: `api/products/stocks/${buildQueryParams({search, page})}`,
         method: "GET",
         headers: createHeaders(token),
       }),
