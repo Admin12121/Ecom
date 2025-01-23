@@ -9,8 +9,10 @@ import { Code } from "@/components/ui/code";
 import { OctagonAlert } from "lucide-react";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { RecommendedProducts } from "../../collections/_components";
+import { useRouter } from 'nextjs-toploader/app';
 
 const WishList = () => {
+  const router = useRouter();
   const { status } = useAuthUser();
   const wishlist = getWishlist();
   const [products, SetProducts] = useState<Product[] | null>([]);
@@ -30,7 +32,7 @@ const WishList = () => {
             <OctagonAlert className="w-4 h-4" />
             <p>Login and save your wishlist forever</p>
           </Code>
-          <Button>login</Button>
+          <Button onClick={() => router.push("/auth/login")}>login</Button>
         </span>
       )}
       <h1 className="text-3xl">Wishlist</h1>
@@ -57,14 +59,14 @@ const WishList = () => {
           ) : (
             <div className="flex w-screen h-full flex-col gap-3 justify-center items-start">
               <span>
-                <p className="text-themeTextWhite text-lg">
+                <p className="dark:text-themeTextWhite text-lg">
                   An empty wishlist? Bold move.
                 </p>
                 <p className="text-themeTextGray text-sm">
                   Great deals are calling your name.
                 </p>
               </span>
-              <Button>Shop Now</Button>
+              <Button onClick={() => router.push("/collections")}>Shop Now</Button>
             </div>
           )}
         </ProductSkeleton>

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { get } from "http";
 
 const createHeaders = (
   token?: string,
@@ -16,9 +17,14 @@ const buildQueryParams = (
 ) => {
   const queryParams = Object.entries(params)
     .filter(
-      ([_, value]) => value !== undefined && value !== null && value !== "" && value !== 0 && !(Array.isArray(value) && value.length === 0)
+      ([_, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        value !== 0 &&
+        !(Array.isArray(value) && value.length === 0)
     )
-    .map(([key, value]) => `${key}=${(value)}`)
+    .map(([key, value]) => `${key}=${value}`)
     .join("&");
   return queryParams ? `?${queryParams}` : "";
 };
@@ -163,7 +169,23 @@ export const userAuthapi = createApi({
       },
     }),
     productsView: builder.query({
-      query: ({ productslug, id, search, page, ids, category, subcategory, min_price, max_price, color, size, metal, stock, filter, token }) => {
+      query: ({
+        productslug,
+        id,
+        search,
+        page,
+        ids,
+        category,
+        subcategory,
+        min_price,
+        max_price,
+        color,
+        size,
+        metal,
+        stock,
+        filter,
+        token,
+      }) => {
         const queryParams = buildQueryParams({
           page,
           productslug,
@@ -222,7 +244,7 @@ export const userAuthapi = createApi({
       }),
     }),
     deleteProducts: builder.mutation({
-      query: ({token, id}) => ({
+      query: ({ token, id }) => ({
         url: `api/products/products/${id}/`,
         method: "DELETE",
         headers: createHeaders(token),
@@ -303,8 +325,8 @@ export const userAuthapi = createApi({
       }),
     }),
     getCategory: builder.query({
-      query: ({name}) => ({
-        url: `api/products/get_category/${buildQueryParams({name})}`,
+      query: ({ name }) => ({
+        url: `api/products/get_category/${buildQueryParams({ name })}`,
         method: "GET",
         headers: createHeaders(),
       }),
@@ -330,15 +352,18 @@ export const userAuthapi = createApi({
       }),
     }),
     deleteCategory: builder.mutation({
-      query: ({id, token}) => ({
+      query: ({ id, token }) => ({
         url: `api/products/categories/${id}/`,
         method: "DELETE",
         headers: createHeaders(token),
       }),
     }),
     getSubCategory: builder.query({
-      query: ({name, category}) => ({
-        url: `api/products/get_subcategory/${buildQueryParams({name, category})}`,
+      query: ({ name, category }) => ({
+        url: `api/products/get_subcategory/${buildQueryParams({
+          name,
+          category,
+        })}`,
         method: "GET",
         headers: createHeaders(),
       }),
@@ -359,7 +384,7 @@ export const userAuthapi = createApi({
       }),
     }),
     deleteSubCategory: builder.mutation({
-      query: ({id, token}) => ({
+      query: ({ id, token }) => ({
         url: `api/products/subcategories/${id}/`,
         method: "DELETE",
         headers: createHeaders(token),
@@ -461,13 +486,13 @@ export const userAuthapi = createApi({
       }),
     }),
     getUserReview: builder.query({
-      query: ({token, search, page, page_size, star, filter}) => ({
+      query: ({ token, search, page, page_size, star, filter }) => ({
         url: `api/products/reviews/user/${buildQueryParams({
           page,
           page_size,
           star,
           filter,
-          search
+          search,
         })}`,
         method: "GET",
         headers: createHeaders(token),
@@ -520,7 +545,9 @@ export const userAuthapi = createApi({
     }),
     getOrders: builder.query({
       query: ({ token, status, search, rowsperpage, page }) => ({
-        url: `api/sales/sales/${status ? `status/${status}/` : ""}${buildQueryParams({
+        url: `api/sales/sales/${
+          status ? `status/${status}/` : ""
+        }${buildQueryParams({
           search,
           page_size: rowsperpage,
           page,
@@ -530,8 +557,8 @@ export const userAuthapi = createApi({
       }),
     }),
     getStocks: builder.query({
-      query: ({ token, search, page, }) => ({
-        url: `api/products/stocks/${buildQueryParams({search, page})}`,
+      query: ({ token, search, page }) => ({
+        url: `api/products/stocks/${buildQueryParams({ search, page })}`,
         method: "GET",
         headers: createHeaders(token),
       }),
@@ -553,12 +580,30 @@ export const userAuthapi = createApi({
     }),
     esewahook: builder.mutation({
       query: ({ actualData, token }) => {
-        return({
-        url: `api/sales/esewa-webhook/`,
-        method: "POST",
-        body: actualData,        
+        return {
+          url: `api/sales/esewa-webhook/`,
+          method: "POST",
+          body: actualData,
+          headers: createHeaders(token),
+        };
+      },
+    }),
+    postnewsletter: builder.mutation({
+      query: ({ actualData }) => {
+        return {
+          url: `api/accounts/newsletter/`,
+          method: "POST",
+          body: actualData,
+          headers: createHeaders(),
+        };
+      },
+    }),
+    getnewsletter: builder.query({
+      query: ({token, search, page}) => ({
+        url: `api/accounts/newsletter/${buildQueryParams({search, page})}`,
+        method: "GET",
         headers: createHeaders(token),
-      })},
+      }),
     }),
   }),
 });
@@ -623,4 +668,6 @@ export const {
   useUpdateSaleMutation,
   useSalesRetrieveQuery,
   useEsewahookMutation,
+  usePostnewsletterMutation,
+  useGetnewsletterQuery,
 } = userAuthapi;

@@ -3,7 +3,7 @@ import TermsofConditionsAccordion from "./_components";
 
 const Termsofservice = () => {
   return (
-    <main className="pt-3 w-full px-5 lg:px-14 flex gap-3 flex-col pb-10 max-w-[95rem] items-center h-[calc(100dvh_-_11dvh)] overflow-y-auto">
+    <main className="pt-3 w-full px-5 lg:px-14 flex gap-3 flex-col pb-10 max-w-[95rem] items-center h-full min-h-[calc(100dvh_-_11dvh)]">
       <h1 className="text-3xl">Terms of service</h1>
       <span className="text-start">
         <p className="text-lg max-w-[50rem] text-neutral-950 dark:text-neutral-300">

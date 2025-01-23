@@ -16,10 +16,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { usePostnewsletterMutation } from "@/lib/store/Service/api";
+import { delay } from "@/lib/utils";
+
+interface ErrorResponse {
+  data?: {
+    errors?: Record<string, string[]>;
+  };
+}
 
 export function JoinNewsletterForm() {
   const unknownError = "An unknown error occurred. Please try again later.";
   const [loading, setLoading] = React.useState(false);
+  const [postnewsletter] = usePostnewsletterMutation();
 
   const form = useForm<EmailSchema>({
     resolver: zodResolver(emailSchema),
@@ -29,40 +38,25 @@ export function JoinNewsletterForm() {
   });
 
   async function onSubmit(data: EmailSchema) {
-    setLoading(true);
     try {
-      const response = await fetch("/api/email/newsletter", {
-        method: "POST",
-        body: JSON.stringify({
-          email: data.email,
-          token: crypto.randomUUID(),
-          subject: "Welcome to Skateshop13",
-        }),
-      });
-
-      if (!response.ok) {
-        switch (response.status) {
-          case 409:
-            toast.error("You are already subscribed to our newsletter.");
-            break;
-          case 422:
-            toast.error("Invalid input.");
-            break;
-          case 429:
-            toast.error("The daily email limit has been reached.");
-            break;
-          default:
-            toast.error(unknownError);
-        }
+      setLoading(true);
+      await delay(500);
+      const res = await postnewsletter({ actualData: data });
+      if (res.error && "data" in res.error) {
+        const errorData: Record<string, string[]> =
+          (res.error as ErrorResponse).data?.errors || {};
+        const errorMessages = Object.values(errorData).flat().join(", ");
+        const formattedMessage = errorMessages || "An unknown error occurred";
+        toast.error(formattedMessage);
         return;
       }
-
-      toast.success("You have been subscribed to our newsletter.");
-      form.reset();
+      if (res.data) {
+        toast.success("You have been subscribed to our newsletter.");
+        form.reset();
+      }
     } catch (err) {
-      console.log(err);
       toast.error(unknownError);
-    } finally {
+    } finally{
       setLoading(false);
     }
   }

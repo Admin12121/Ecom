@@ -24,11 +24,12 @@ type KbdKey =
 
 interface Kbd {
     keys: KbdKey[]; 
-    className: string;
+    className?: string;
+    container?: string;
     children?: ReactNode
 }
 
-const Kbd = ({keys, className, children}: Kbd) => {
+const Kbd = ({keys, className, container, children}: Kbd) => {
   const keyAbbr = keys.map(key => {
     switch (key) {
       case "command": return "⌘";
@@ -58,7 +59,7 @@ const Kbd = ({keys, className, children}: Kbd) => {
     <div>
       <kbd className={cn(`px-1.5 py-0.5 inline-flex space-x-0.5 rtl:space-x-reverse items-center font-sans font-normal text-center text-small shadow-small bg-default-100 text-foreground-600 rounded-small cursor-pointer`,  className)}>
         {keyAbbr.map((abbr, index) => (
-          <abbr key={index} className="no-underline" title={keys[index]}>
+          <abbr key={index} className={cn("no-underline", container)} title={keys[index]}>
             {abbr}
           </abbr>
         ))}

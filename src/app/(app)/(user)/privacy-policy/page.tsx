@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const PrivacyPolicy = () => {
   return (
-    <main className="pt-3 w-full px-5 lg:px-14 flex gap-3 flex-col pb-10 max-w-[95rem] items-center  h-[calc(100dvh_-_11dvh)] overflow-y-auto">
+    <main className="pt-3 w-full px-5 lg:px-14 flex gap-3 flex-col pb-10 max-w-[95rem] items-center h-full min-h-[calc(100dvh_-_11dvh)]">
       <h1 className="text-3xl">Privacy Policy</h1>
       <p className="text-lg max-w-[50rem] text-neutral-700 dark:text-neutral-300">
         <span className="text-neutral-950 dark:text-white">Nepal Heritage Handicraft</span>{" "}

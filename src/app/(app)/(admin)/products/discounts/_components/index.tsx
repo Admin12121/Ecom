@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, LoaderCircle, Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuthUser } from "@/hooks/use-auth-user";
@@ -40,7 +40,6 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { RedeemCodeForm } from "./form";
-import Kbd from "@/components/ui/kbd";
 
 const RedeemCodeSchema = z.object({
   id: z.number().optional(),
@@ -85,11 +84,8 @@ const defaultFormValues: RedeemCodeFormValues = {
 
 const ReedemCode = () => {
   const { accessToken } = useAuthUser();
-  const [searchValue, setsearchValue] = useState("");
-  const [searchLoading, setSearchLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
   const { data, refetch } = useRedeemCodeViewQuery(
-    { token: accessToken, page, search: searchValue },
+    { token: accessToken },
     { skip: !accessToken }
   );
   const [addRedeemCode, { isLoading }] = useAddRedeemCodeMutation();
@@ -97,27 +93,6 @@ const ReedemCode = () => {
     useUpdateRedeemCodeMutation();
   const [deleteRedeemCode, { isLoading: Deleting }] =
     useDeleteRedeemCodeMutation();
-
-  useEffect(() => {
-    if (searchValue) {
-      setSearchLoading(true);
-      const timer = setTimeout(() => {
-        setSearchLoading(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else {
-      setSearchLoading(false);
-    }
-  }, [searchValue]);
-
-  const onSearchChange = (value?: string) => {
-    if (value) {
-      setsearchValue(value);
-      setPage(1);
-    } else {
-      setsearchValue("");
-    }
-  };
 
   const form = useForm<RedeemCodeFormValues>({
     resolver: zodResolver(RedeemCodeSchema),
@@ -225,35 +200,7 @@ const ReedemCode = () => {
 
   return (
     <main className="w-full h-full pb-10 min-h-[calc(100dvh_-_145px)] flex px-2 flex-col gap-2">
-      <span className="flex flex-col md:flex-row justify-end">
-        <div className="relative">
-          <Input
-            placeholder="Search..."
-            value={searchValue}
-            onChange={(event) => {
-              onSearchChange(event.target.value);
-            }}
-            className="h-9 w-full lg:w-[350px] peer pe-9 ps-9  "
-          />
-          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
-            {searchLoading ? (
-              <LoaderCircle
-                className="animate-spin"
-                size={16}
-                strokeWidth={2}
-                aria-hidden="true"
-                role="presentation"
-              />
-            ) : (
-              <Search size={16} strokeWidth={2} aria-hidden="true" />
-            )}
-          </div>
-          <Kbd
-            keys={["command"]}
-            className="rounded-md absolute right-1 top-[4px] shadow-lg bg-neutral-900 text-white"
-          ></Kbd>
-        </div>
-      </span>
+      <h1 className="text-2xl">Discounts</h1>
       <Accordion type="single" collapsible className="space-y-1 w-full">
         <AccordionItem
           value="add-redeem-code"

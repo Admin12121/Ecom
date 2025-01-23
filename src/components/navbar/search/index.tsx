@@ -6,6 +6,9 @@ import { useUpdateQueryParams } from "@/lib/query-params";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSearchPostMutation } from "@/lib/store/Service/api";
+import Kbd from "@/components/ui/kbd";
+import { Search } from "lucide-react";
+import Component from "./command";
 
 export function PlaceholdersAndVanishInput() {
   const placeholders = React.useMemo(
@@ -181,7 +184,7 @@ export function PlaceholdersAndVanishInput() {
     vanishAndSubmit();
     const actualData = { keyword: value };
     updateQueryParams({ search: value }, "/collections");
-    SearchPost({actualData});
+    SearchPost({ actualData });
   };
 
   return (
@@ -196,14 +199,25 @@ export function PlaceholdersAndVanishInput() {
       >
         <canvas
           className={cn(
-            "absolute pointer-events-none  text-base transform scale-50 top-[10%] left-2  origin-top-left filter invert dark:invert-0 pr-10",
+            "absolute pointer-events-none  text-base transform scale-50 top-[15%] left-2  origin-top-left filter invert dark:invert-0 pr-10 md:left-7",
             !animating ? "opacity-0" : "opacity-100"
           )}
           ref={canvasRef}
         />
-        <label className="sr-only">
-          Search
-        </label>
+        <label className="sr-only">Search</label>
+        <div className="pointer-events-none absolute inset-y-0 start-0 items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50 hidden md:flex -left-1">
+          {/* {searchLoading ? (
+            <LoaderCircle
+              className="animate-spin"
+              size={16}
+              strokeWidth={2}
+              aria-hidden="true"
+              role="presentation"
+            />
+          ) : (
+            )} */}
+            <Search size={20} strokeWidth={2} aria-hidden="true" />
+        </div>
         <input
           onChange={(e) => {
             if (!animating) {
@@ -215,12 +229,22 @@ export function PlaceholdersAndVanishInput() {
           value={value}
           type="text"
           className={cn(
-            "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 px-4 py-4  ",
+            "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 px-4 py-4 left-0 md:left-5 ",
             animating && "text-transparent dark:text-transparent"
           )}
         />
-        <Button variant="active" className="mr-[2px] flex md:hidden shadow-none">Search</Button>
-        <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
+        <Kbd
+          keys={["command"]}
+          className="!rounded-md w-8 h-8 absolute right-1 top-[4px] shadow-lg bg-neutral-950 text-white text-xl flex items-center justify-center p-0"
+          container="relative -right-[1px]"
+        />
+        <Button
+          variant="active"
+          className="mr-[2px] flex md:hidden shadow-none"
+        >
+          Search
+        </Button>
+        <div className="absolute inset-0 flex items-center rounded-full pointer-events-none left-0 md:left-5">
           <AnimatePresence mode="wait">
             {!value && (
               <motion.p
@@ -241,7 +265,10 @@ export function PlaceholdersAndVanishInput() {
                   duration: 0.3,
                   ease: "linear",
                 }}
-                {...{className:"dark:text-zinc-500 text-sm sm:text-base font-normal text-neutral-500 text-left w-[calc(100%-2rem)] truncate px-4 py-4 "}}
+                {...{
+                  className:
+                    "dark:text-zinc-500 text-sm sm:text-base font-normal text-neutral-500 text-left w-[calc(100%-2rem)] truncate px-4 py-4 ",
+                }}
               >
                 {placeholders[currentPlaceholder]}
               </motion.p>
@@ -249,6 +276,7 @@ export function PlaceholdersAndVanishInput() {
           </AnimatePresence>
         </div>
       </form>
+      <Component/>
     </span>
   );
 }
