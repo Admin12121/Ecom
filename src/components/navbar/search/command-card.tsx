@@ -108,7 +108,7 @@ export const CommandCard: React.FC<ProductCardProps> = ({
       <span
         className={cn(
           "relative rounded-lg overflow-hidden group grow isolation-auto z-10 svelte-483qmb p-1",
-          "bg-neutral-100 dark:bg-neutral-950",
+          "bg-neutral-100 dark:bg-neutral-900",
           "flex flex-col gap-1"
         )}
       >

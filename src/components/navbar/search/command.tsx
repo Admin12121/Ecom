@@ -5,7 +5,6 @@ import {
   ArrowUp as RiArrowUpLine,
   Space as RiCornerDownLeftLine,
 } from "lucide-react";
-
 import * as React from "react";
 import { useTrendingProductsViewQuery } from "@/lib/store/Service/api";
 import {
@@ -22,11 +21,48 @@ import { Button } from "@/components/ui/button";
 import Tag from "@/components/ui/tag";
 import { CommandCard } from "./command-card";
 import { useRouter } from "nextjs-toploader/app";
+import { allSuggestions } from "./data";
+import Fuse from "fuse.js";
+
+const fuseOptions = {
+  includeScore: true,
+  threshold: 0.1,
+  keys: ["text"],
+};
+
+const fuse = new Fuse(
+  allSuggestions.map((text) => ({ text })),
+  fuseOptions
+);
+
+type Route = { title: string; link?: string; action?: () => void };
+
+const routeMap: Route[] = [
+  { title: "Settings", link: "/settings" },
+  { title: "Cart", link: "/cart" },
+  { title: "Dashboard", link: "/dashboard" },
+  { title: "Profile", link: "/profile" },
+  { title: "Order History", link: "/orders" },
+  { title: "Wishlist", link: "/wishlist" },
+];
+
+const actions = [
+  { title: "Logout", action: () => alert("Logged out!") },
+  { title: "Change Theme", action: () => alert("Theme changed!") },
+];
+
+const allCommands = [...routeMap, ...actions];
 
 export default function Component() {
   const route = useRouter();
   const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const [matchedCommand, setMatchedCommand] = React.useState<Route | null>(
+    null
+  );
+
   const { data, isLoading } = useTrendingProductsViewQuery({ skip: !open });
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -42,13 +78,76 @@ export default function Component() {
     setOpen(false);
     route.push(`/collections/${productslug}`);
   };
+
+  const [suggestion, setSuggestion] = React.useState("");
+
+  const handleInputChange = (value: string) => {
+    setSearch(value);
+
+    if (value.trim()) {
+      const results = fuse.search(value);
+      if (results.length > 0) {
+        const bestMatch = results[0].item.text;
+        setSuggestion(bestMatch);
+      } else {
+        setSuggestion("");
+      }
+    } else {
+      setSuggestion("");
+    }
+
+    const normalizedInput = value
+      .toLowerCase()
+      .replace(/^(open|go to|view|search for)/, "")
+      .trim();
+
+    const match = allCommands.find((command) =>
+      command.title.toLowerCase().includes(normalizedInput)
+    );
+
+    setMatchedCommand(match || null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.key === "Tab" || e.key === "Enter") && suggestion) {
+      e.preventDefault();
+      setSearch(suggestion);
+      setSuggestion("");
+    }
+    if (e.key === "Enter" && matchedCommand) {
+      e.preventDefault();
+      setSearch("");
+      setOpen(false);
+      if ("link" in matchedCommand && matchedCommand.link) {
+        route.push(matchedCommand.link);
+      } else if ("action" in matchedCommand && matchedCommand.action) {
+        matchedCommand.action();
+      }
+    }
+  };
+
+  
+
   return (
     <CommandDialog
       open={open}
       onOpenChange={setOpen}
-      className="h-[600px] max-w-[600px] w-[600px] rounded-2xl !ring-0 border-0 focus:outline-none focus:ring-0"
+      className="max-h-[600px] max-w-[600px] w-[600px] rounded-2xl !ring-0 border-0 focus:outline-none focus:ring-0"
     >
-      <CommandInput placeholder="Type a command or search..." />
+      <CommandInput
+        value={search}
+        onValueChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Type a command or search..."
+      />
+      {suggestion && (
+        <span className="absolute top-[.35rem] left-6 px-4 py-2 text-gray-400/50 select-none pointer-events-none text-sm">
+          {search}
+          <span className="text-gray-400">
+            {suggestion.substring(search.length)}
+          </span>
+        </span>
+      )}
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Searching For">
@@ -61,60 +160,91 @@ export default function Component() {
           </div>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Recently viewed">
-          <div className="flex gap-2">
-            {data?.map((product: any, index: any) => (
-              <CommandCard
+        {search && (
+          <CommandGroup heading="results">
+            <div className="flex gap-2">
+              {data?.map((product: any, index: any) => (
+                <CommandItem key={index} className="!p-0 !m-0 w-auto">
+                  <CommandCard data={product} handleRoute={handleRoute} />
+                </CommandItem>
+              ))}
+            </div>
+          </CommandGroup>
+        )}
+        {!search && (
+          <CommandGroup heading="Recently viewed">
+            <div className="flex gap-2">
+              {data?.map((product: any, index: any) => (
+                <CommandItem key={index} className="!p-0 !m-0 w-auto">
+                  <CommandCard data={product} handleRoute={handleRoute} />
+                </CommandItem>
+              ))}
+            </div>
+          </CommandGroup>
+        )}
+        <CommandSeparator />
+        {!search && (
+          <CommandGroup heading="Smart Prompt Suggestions">
+             {routeMap.slice(3,6).map((router, index) => (
+              <div
                 key={index}
-                data={product}
-                handleRoute={handleRoute}
-              />
+                onClick={() => {
+                  router?.link && route.push(router?.link);
+                }}
+              >
+                <CommandItem>
+                  <Spark />
+                  <span className="ml-2 font-normal">Go to {router.title}</span>
+                </CommandItem>
+              </div>
             ))}
+          </CommandGroup>
+        )}
+        {search && (
+          <CommandGroup heading="Smart Prompt Suggestions">
+            {routeMap.map((router, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  router?.link && route.push(router?.link);
+                }}
+              >
+                <CommandItem>
+                  <Spark />
+                  <span className="ml-2 font-normal">{router.title}</span>
+                </CommandItem>
+              </div>
+            ))}
+          </CommandGroup>
+        )}
+        <footer className="flex justify-between items-center px-4  bottom-0 w-full z-50 backdrop-blur-lg rounded-b-2xl border-t">
+          <div className="flex gap-3 font-normal text-sm">
+            <div className="flex items-center gap-2">
+              <CommandShortcut>
+                <RiArrowUpLine className="size-3" />
+              </CommandShortcut>
+              <CommandShortcut>
+                <RiArrowDownLine className="size-3" />
+              </CommandShortcut>
+              <span className="text-xs ">Navigate</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CommandShortcut className="w-5">
+                <RiCornerDownLeftLine className="size-3" />
+              </CommandShortcut>
+              <span className="text-xs">Select</span>
+            </div>
           </div>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup heading="Smart Prompt Examples">
-          <CommandItem>
-            <Spark />
-            <span className="ml-2 font-normal">Go to dashboard</span>
-          </CommandItem>
-          <CommandItem>
-            <Spark />
-            <span className="ml-2 font-normal">Go to apps</span>
-          </CommandItem>
-          <CommandItem>
-            <Spark />
-            <span className="ml-2 font-normal">Go to connections</span>
-          </CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup>
-          <span className="flex justify-between items-center">
-            <div className="flex gap-3 font-normal text-sm">
-              <div className="flex items-center gap-2">
-                <CommandShortcut>
-                  <RiArrowUpLine className="size-3" />
-                </CommandShortcut>
-                <CommandShortcut>
-                  <RiArrowDownLine className="size-3" />
-                </CommandShortcut>
-                <span className="text-xs ">Navigate</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CommandShortcut className="w-5">
-                  <RiCornerDownLeftLine className="size-3" />
-                </CommandShortcut>
-                <span className="text-xs">Select</span>
-              </div>
-            </div>
-            <div className="text-xs font-normal text-right">
-              Not what you’re looking for? Try the{" "}
-              <Button variant="link" className="text-xs px-0 font-normal">
-                Help Center
-              </Button>
-            </div>
-          </span>
-        </CommandGroup>
+          <div className="text-xs font-normal text-right">
+            Not what you’re looking for? Try the{" "}
+            <Button
+              variant="link"
+              className="text-xs px-0 font-normal text-purple-600 underline"
+            >
+              Help Center
+            </Button>
+          </div>
+        </footer>
       </CommandList>
     </CommandDialog>
   );
