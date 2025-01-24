@@ -42,7 +42,7 @@ const Tag = ({ children, className, handle, varaint, size }: Props) => {
         onClick={() => handleClick()}
         aria-label="Remove"
       >
-        <X size={11} strokeWidth={2} aria-hidden="true" />
+        <X size={12} className="!w-4 !h-4" strokeWidth={2} aria-hidden="true" />
       </button>
     </div>
   );

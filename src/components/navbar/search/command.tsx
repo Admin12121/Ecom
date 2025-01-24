@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import Tag from "@/components/ui/tag";
 import { CommandCard } from "./command-card";
 import { useRouter } from "nextjs-toploader/app";
-import { allSuggestions } from "./data";
+import suggestion from "./suggestions.json";
 import Fuse from "fuse.js";
 
 const fuseOptions = {
@@ -30,10 +30,7 @@ const fuseOptions = {
   keys: ["text"],
 };
 
-const fuse = new Fuse(
-  allSuggestions.map((text) => ({ text })),
-  fuseOptions
-);
+const fuse = new Fuse(suggestion, fuseOptions);
 
 type Route = { title: string; link?: string; action?: () => void };
 
@@ -52,6 +49,12 @@ const actions = [
 ];
 
 const allCommands = [...routeMap, ...actions];
+const getRandomItems = (array: string[], count: number) => {
+  const shuffled = [...array].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
+const titles = routeMap.map((route) => route.title.toLowerCase());
 
 export default function Component() {
   const route = useRouter();
@@ -60,12 +63,12 @@ export default function Component() {
   const [matchedCommand, setMatchedCommand] = React.useState<Route | null>(
     null
   );
-
+  const [tag, setTag] = React.useState<string[]>(getRandomItems(titles, 4));
   const { data, isLoading } = useTrendingProductsViewQuery({ skip: !open });
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "k" || (e.key === "K" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
         setOpen((open) => !open);
       }
@@ -87,6 +90,7 @@ export default function Component() {
     if (value.trim()) {
       const results = fuse.search(value);
       if (results.length > 0) {
+        setTag(results.slice(0, 5).map((result) => result.item.text));
         const bestMatch = results[0].item.text;
         setSuggestion(bestMatch);
       } else {
@@ -126,8 +130,6 @@ export default function Component() {
     }
   };
 
-  
-
   return (
     <CommandDialog
       open={open}
@@ -152,11 +154,13 @@ export default function Component() {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Searching For">
           <div className="flex flex-wrap gap-2 mb-2 px-3">
-            <Tag>Pages</Tag>
-            <Tag>Transactions</Tag>
-            <Tag>Accounts</Tag>
-            <Tag>Cards</Tag>
-            <Tag>Recipients</Tag>
+            {tag.map((text, index) => (
+              <span key={index} onClick={() => setSearch(text)}>
+                <CommandItem className="!p-0 m-0">
+                  <Tag>{text}</Tag>
+                </CommandItem>
+              </span>
+            ))}
           </div>
         </CommandGroup>
         <CommandSeparator />
@@ -185,11 +189,13 @@ export default function Component() {
         <CommandSeparator />
         {!search && (
           <CommandGroup heading="Smart Prompt Suggestions">
-             {routeMap.slice(3,6).map((router, index) => (
+            {routeMap.slice(3, 6).map((router, index) => (
               <div
                 key={index}
                 onClick={() => {
-                  router?.link && route.push(router?.link);
+                  if (router?.link) {
+                    route.push(router.link);
+                  }
                 }}
               >
                 <CommandItem>
@@ -206,7 +212,9 @@ export default function Component() {
               <div
                 key={index}
                 onClick={() => {
-                  router?.link && route.push(router?.link);
+                  if (router?.link) {
+                    route.push(router.link);
+                  }
                 }}
               >
                 <CommandItem>
