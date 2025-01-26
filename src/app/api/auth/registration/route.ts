@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { RegisterSchema } from "@/schemas/index";
+import { RegistrationSchema } from "@/schemas/index";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const validated = RegisterSchema.safeParse(body);
+    const validated = RegistrationSchema.safeParse(body);
     if (!validated.success) {
       const errors = validated.error.errors.map(err => err.message);
       return NextResponse.json(
@@ -12,13 +12,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { username, email, password } = validated.data;
+    const { username, email, password, first_name, last_name } = validated.data;
     const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/users/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, email, password }),
+      body: JSON.stringify({ username, first_name, last_name, email, password }),
     });
 
     if (!response.ok) {

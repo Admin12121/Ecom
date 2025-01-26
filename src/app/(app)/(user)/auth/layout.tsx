@@ -13,7 +13,7 @@ export default function RootLayout({
           className="w-4/12 h-2/6 opacity-40"
           container="flex flex-col items-center"
         >
-          <GlassCard className="w-full xs:w-full md:w-7/12 lg:w-5/12 xl:w-4/12 p-0 items-center flex justify-center mt-16 ">
+          <GlassCard className="w-full max-w-[450px] xs:w-full md:w-7/12 lg:w-5/12 xl:w-4/12 p-0 items-center flex justify-center mt-16 ">
             {children}
           </GlassCard>
         </BackdropGradient>

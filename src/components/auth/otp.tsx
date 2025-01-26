@@ -68,7 +68,7 @@ export function InputOTPWithSeparator() {
     <Cardwrapper
       title="OTP Verification"
       headerLabel="Enter OTP"
-      backButtonLabel="Back to Reset Password"
+      backButton="Back to Reset Password"
       backButtonHref="/auth/reset-password"
     >
       <Form {...form}>

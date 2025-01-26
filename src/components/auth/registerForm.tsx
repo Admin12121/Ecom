@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Cardwrapper from "./cardwrapper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,9 +18,15 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
 import useApi from "@/lib/useApi";
+import { Label } from "../ui/label";
+import { Eye, EyeOff } from "lucide-react";
 
 const RegisterForm = () => {
   const { data, error, isLoading, fetchData } = useApi<any>();
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  const toggleVisibility = () => setIsVisible((prevState) => !prevState);
+
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -31,18 +37,36 @@ const RegisterForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+    const { username, ...rest } = values;
+    const [first_name, ...lastnameParts] = username.trim().split(/\s+/);
+    const last_name = lastnameParts.join(" ");
+    const randomSymbols = "!@#$%^&*";
+    const randomSymbol =
+      randomSymbols[Math.floor(Math.random() * randomSymbols.length)];
+    const uniqueUsername = `${randomSymbol}${username
+      .replace(/\s+/g, "")
+      .toLowerCase()}${Math.floor(Math.random() * 10000)}`;
+
+    const updatedValues = {
+      ...rest,
+      first_name,
+      last_name,
+      username: uniqueUsername,
+    };
+ 
     fetchData({
       url: "/api/auth/registration",
       method: "POST",
-      data: values,
+      data: updatedValues,
     });
   };
 
   return (
     <Cardwrapper
-      title="Signup"
-      headerLabel="Create account"
+      title="Create account"
+      headerLabel="Please enter your details to create an account"
       backButtonLabel="Already have an account?"
+      backButton="Sign in"
       backButtonHref="/auth/login"
       showSocial
     >
@@ -54,13 +78,14 @@ const RegisterForm = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-normal">User Name</Label>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isLoading}
                       type="text"
-                      placeholder="Name"
-                      className=" "
+                      placeholder="Vicky Tajpuriya"
+                      className="dark:bg-muted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -72,13 +97,14 @@ const RegisterForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-normal">Email Address</Label>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isLoading}
                       type="email"
-                      placeholder="Email"
-                      className=" "
+                      placeholder="vikcy@gmail.com"
+                      className="dark:bg-muted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,15 +116,38 @@ const RegisterForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-normal">Password</Label>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isLoading}
-                      type="password"
-                      placeholder="Password"
-                      autoComplete="off"
-                      className=" "
-                    />
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        disabled={isLoading}
+                        type={isVisible ? "text" : "password"}
+                        placeholder="***********"
+                        autoComplete="off"
+                        className="dark:bg-muted"
+                      />
+                      <button
+                        className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg text-muted-foreground/80 outline-offset-2 transition-colors hover:text-foreground focus:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                        type="button"
+                        onClick={toggleVisibility}
+                        aria-label={
+                          isVisible ? "Hide password" : "Show password"
+                        }
+                        aria-pressed={isVisible}
+                        aria-controls="password"
+                      >
+                        {isVisible ? (
+                          <EyeOff
+                            size={16}
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <Eye size={16} strokeWidth={2} aria-hidden="true" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,7 +160,7 @@ const RegisterForm = () => {
             disabled={isLoading}
             loading={isLoading}
             type="submit"
-            className="w-full"
+            className="w-full fancy-button"
           >
             Create Account
           </Button>

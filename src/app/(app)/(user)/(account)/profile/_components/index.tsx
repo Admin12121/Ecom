@@ -37,7 +37,6 @@ interface User {
   username: string;
   first_name: string;
   last_name: string;
-  phone: string;
   profile: string;
   is_enable: boolean;
   gender: string;
@@ -74,7 +73,6 @@ const profileFormSchema = z.object({
       required_error: "Please select an email to display.",
     })
     .email(),
-  phone: z.string().max(160).min(4),
   gender: z.string().min(1, "Gender is required"),
   profile: z.string().optional(),
 });
@@ -102,7 +100,6 @@ export default function ProfileForm() {
       first_name: "",
       last_name: "",
       email: "",
-      phone: "",
       gender: "",
       profile: "",
     },
@@ -116,7 +113,6 @@ export default function ProfileForm() {
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
-        phone: data.phone,
         gender: data.gender || user?.gender,
       });
     }
@@ -129,7 +125,6 @@ export default function ProfileForm() {
         NewFormData.append("name", data.username);
         NewFormData.append("first_name", data.first_name);
         NewFormData.append("last_name", data.last_name);
-        NewFormData.append("phone", data.phone);
         NewFormData.append("gender", data.gender);
         if (profileImage) {
           NewFormData.append("profile", profileImage);
@@ -284,19 +279,6 @@ export default function ProfileForm() {
                   value={user?.email || ""}
                   disabled
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input className="bg-white" placeholder="Phone" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

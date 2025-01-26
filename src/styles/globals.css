@@ -59,8 +59,8 @@ body {
       1.10421 28.713%,
       0.99031 49.585%,
       0.99995
-      );
-    --stroke: "#1212"
+    );
+    --stroke: "#1212";
   }
   .dark {
     --custombg: 0 0% 0%;
@@ -88,7 +88,7 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --stroke: "#1a1a1a"
+    --stroke: "#1a1a1a";
   }
 }
 
@@ -377,8 +377,8 @@ body {
   height: 20px;
 }
 
-.bg-gradiant{
-  stroke: var(--stroke)
+.bg-gradiant {
+  stroke: var(--stroke);
 }
 
 .page_ambientContainer__xFtyW {
@@ -456,4 +456,39 @@ body {
     hsla(0, 0%, 45%, 0.02) 80%,
     transparent 100%
   );
+}
+
+.fancy-button {
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color),0 0 0 1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),0 1px 2px 0 #1b1c1d7a, 0 0 0 1px #242628;
+}
+
+.fancy-button::before {
+  content: "";
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  position: absolute;
+  mask-composite: exclude;
+  mask-clip: content-box, border-box;
+  padding: .5px;
+  background-image: linear-gradient(
+    to bottom,
+    #474747e6,
+    transparent
+  );
+  inset: 0;
+  border-radius: inherit;
+}
+.fancy-button::after {
+  content: "";
+  position: absolute;
+  background-image: linear-gradient(
+    to bottom,
+    rgb(255 255 255/0.9),
+    transparent
+  );
+  inset: 0;
+  opacity: .16;
+  border-radius: inherit;
 }

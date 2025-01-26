@@ -18,41 +18,42 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-message/form-error";
 import { FormSuccess } from "../form-message/form-success";
 import { useState, useEffect } from "react";
-import useApi from '@/lib/useApi';
+import useApi from "@/lib/useApi";
 
 const ResetPasswordForm = () => {
-    const { data, error, isLoading, fetchData } = useApi<any>(); 
-    const [success, setSuccess] = useState<string>("");
-    const form = useForm<z.infer<typeof ResetPasswordSchema>>({
-      resolver: zodResolver(ResetPasswordSchema),
-      defaultValues: {
-        email: "",
-      },
+  const { data, error, isLoading, fetchData } = useApi<any>();
+  const [success, setSuccess] = useState<string>("");
+  const form = useForm<z.infer<typeof ResetPasswordSchema>>({
+    resolver: zodResolver(ResetPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof ResetPasswordSchema>) => {
+    fetchData({
+      url: "/api/auth/reset-password",
+      method: "POST",
+      data: values,
     });
-  
-    const onSubmit = (values: z.infer<typeof ResetPasswordSchema>) => {
-      fetchData({
-        url: '/api/auth/reset-password',
-        method: 'POST',
-        data: values
-      });
-    };
-  
-    useEffect(()=>{
-      if(data){
-        setSuccess("Reset Password Email Sent Successfully");
-        if(data.redirectUrl){
-          window.location.href = data.redirectUrl;
-        }
+  };
+
+  useEffect(() => {
+    if (data) {
+      setSuccess("Reset Password Email Sent Successfully");
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
       }
-    },[data])
-  
+    }
+  }, [data]);
+
   return (
     <Cardwrapper
       title="Password"
       headerLabel="Forgot your Password"
-      backButtonLabel="Back to Login"
+      backButton="Back to Login"
       backButtonHref="/auth/login"
+      classNames={{ backButton: "!text-black dark:!text-white" }}
     >
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
@@ -69,23 +70,28 @@ const ResetPasswordForm = () => {
                       disabled={isLoading}
                       type="email"
                       placeholder="john@gmail.com"
-                      className=" "
+                      className="dark:bg-muted"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-         </div>
+          </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isLoading} loading={isLoading} type="submit" className="w-full !mt-3">
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            type="submit"
+            className="w-full !mt-3"
+          >
             Send reset email
           </Button>
         </form>
       </Form>
     </Cardwrapper>
-  )
-}
+  );
+};
 
 export default ResetPasswordForm;

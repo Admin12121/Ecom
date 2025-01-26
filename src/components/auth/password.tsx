@@ -63,7 +63,7 @@ const PasswordForm = () => {
     <Cardwrapper
       title="Password"
       headerLabel="Forgot your Password"
-      backButtonLabel="Back to Login"
+      backButton="Back to Login"
       backButtonHref="/auth/login"
     >
       <Form {...form}>
@@ -81,7 +81,7 @@ const PasswordForm = () => {
                       disabled={isLoading}
                       type="password"
                       placeholder="new Password"
-                      className=" "
+                      className="dark:bg-muted"
                     />
                   </FormControl>
                   <FormMessage />

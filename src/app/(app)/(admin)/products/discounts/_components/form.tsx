@@ -20,17 +20,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import DeleteModel from "@/components/global/delete-model";
 
 const RedeemCodeSchema = z.object({
@@ -98,9 +87,7 @@ export const RedeemCodeForm = ({
 
   useEffect(() => {
     if (data) {
-      // console.log(typeof data.discount)
       updateform.reset(data);
-      // console.log(typeof updateform.getValues().discount)
     }
   }, [data]);
 

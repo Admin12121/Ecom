@@ -21,7 +21,9 @@ import { FormSuccess } from "../form-message/form-success";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import useApi from "@/lib/useApi";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
+import { cn } from "@/lib/utils";
+import { Label } from "../ui/label";
 
 const Login = () => {
   const router = useRouter();
@@ -60,9 +62,10 @@ const Login = () => {
 
   return (
     <Cardwrapper
-      title="Login"
-      headerLabel="Welcome back!"
-      backButtonLabel="Don't have an account?"
+      title="Welcome back!"
+      headerLabel="Please enter your details to continue"
+      backButtonLabel="Dont have an account?"
+      backButton="Create account"
       backButtonHref="/auth/register"
       showSocial
     >
@@ -74,32 +77,34 @@ const Login = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-normal">Email address</Label>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isLoading}
                       type="email"
-                      placeholder="Email"
+                      placeholder="vicky@gmail.com"
                       className="dark:bg-muted"
-                    />
+                      />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+              />
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-normal">Password</Label>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isLoading}
                       type="password"
-                      placeholder="Password"
+                      placeholder="***********"
                       autoComplete="off"
-                      className="dark:bg-muted "
+                      className="dark:bg-muted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -109,7 +114,7 @@ const Login = () => {
           </div>
           <Link
             href="/auth/reset-password"
-            className="!mx-1 !my-2 text-themeTextGray text-xs hover:text-themeTextWhite transition duration-500"
+            className="!mt-2 dark:text-themeTextGray text-xs underline dark:hover:text-themeTextWhite transition duration-500 flex justify-end w-full font-light"
           >
             Forgot Password?
           </Link>
@@ -119,7 +124,7 @@ const Login = () => {
             disabled={isLoading}
             loading={isLoading}
             type="submit"
-            className="w-full !mt-2"
+            className={cn("w-full !mt-2 fancy-button")}
           >
             Login
           </Button>
