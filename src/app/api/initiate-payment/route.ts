@@ -101,3 +101,42 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const encryptedData = body.data;
+    const authorizationHeader = request.headers.get("authorization");
+    if (!encryptedData || !authorizationHeader) {
+      return NextResponse.json(
+        { error: "Missing encrypted data or authorization header" },
+        { status: 400 }
+      );
+    }
+    const token = authorizationHeader.replace("Bearer ", "");
+    const key = token.slice(0, 32);
+    const decryptedData = decryptData(encryptedData, key);
+    const response = await fetch(`${process.env.BACKEND_URL}/api/sales/sales/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: authorizationHeader,
+      },
+      body: JSON.stringify({
+        ...decryptedData
+      }),
+    });
+    if(response.ok){
+      return NextResponse.json({ success: "Product Verified" }, { status: 201 });
+    }else{
+      return NextResponse.json(
+        { error: "Product Verification Failed" },
+        { status: response.status});
+    }
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

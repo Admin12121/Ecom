@@ -15,12 +15,13 @@ type Props = {
     discount?: number;
     redeemData: any;
     shipping: string;
+    source: boolean;
   };
 };
 
 
 const PaymentForm = ({ data}: Props) => {
-  const { user, total_amt, discount, products, redeemData, shipping } = data;
+  const { user, total_amt, discount, products, redeemData, shipping , source} = data;
   const {
     handlePaymentSubmission,
     isPending,
@@ -28,7 +29,7 @@ const PaymentForm = ({ data}: Props) => {
     register,
     errors,
     creatingIntent,
-  } = usePayments(user, total_amt, discount, products, redeemData, shipping);
+  } = usePayments(user, source, total_amt, discount, products, redeemData, shipping);
 
   return (
     <Loader loading={creatingIntent}>

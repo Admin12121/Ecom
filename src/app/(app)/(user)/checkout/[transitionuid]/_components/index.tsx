@@ -107,6 +107,7 @@ const Checkout = ({ params }: { params: string }) => {
   const router = useRouter();
   const { accessToken, user } = useAuthUser();
   const { getRates, loading } = useAuth();
+  const [source, setSource] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
     "esewa"
   );
@@ -116,16 +117,29 @@ const Checkout = ({ params }: { params: string }) => {
     productData: decryptData(params, router) || [],
   });
 
+  useEffect(() => {
+    const data = decryptData(params, router);
+    if (data?.[0]?.source === "cart") {
+      setSource(true);
+    } else {
+      setSource(false);
+    }
+  }, [accessToken, router]);
+
   const productIds = useMemo(
     () => Array.from(new Set(state.productData.map((item) => item.product))),
     [state.productData]
   );
 
-  const { data: checkout_products , isLoading:productLoading} = useCheckout_productsQuery(
-    { ids: productIds, token: accessToken },
-    { skip: productIds.length === 0 }
+  const { data: checkout_products, isLoading: productLoading } =
+    useCheckout_productsQuery(
+      { ids: productIds, token: accessToken },
+      { skip: productIds.length === 0 }
+    );
+  const { data: products } = useDecryptedData(
+    checkout_products,
+    productLoading
   );
-  const { data:products } = useDecryptedData(checkout_products, productLoading);
 
   const totalPieces = useMemo(() => {
     return state.productData.reduce((acc, item) => acc + (item.pcs ?? 0), 0);
@@ -278,8 +292,8 @@ const Checkout = ({ params }: { params: string }) => {
             </svg>
             <div>
               <p className="text-center dark:text-neutral-400">
-                After clicking &ldquo;Pay with Esewa&rdquo;, you will be redirected to Esewa
-                to complete your purchase securely.
+                After clicking &ldquo;Pay with Esewa&rdquo;, you will be
+                redirected to Esewa to complete your purchase securely.
               </p>
             </div>
           </div>
@@ -296,6 +310,7 @@ const Checkout = ({ params }: { params: string }) => {
             products={state.productData}
             redeemData={state.redeemData}
             shipping={state.shipping}
+            source={source}
           />
         </div>
       ),
@@ -318,6 +333,7 @@ const Checkout = ({ params }: { params: string }) => {
               products={state.productData}
               redeemData={state.redeemData}
               shipping={state.shipping}
+              source={source}
             />
           )}
         </div>

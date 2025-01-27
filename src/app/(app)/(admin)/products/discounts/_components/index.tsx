@@ -40,6 +40,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { RedeemCodeForm } from "./form";
+import DatePicker from "@/components/ui/date-picker";
+import { format } from "date-fns";
 
 const RedeemCodeSchema = z.object({
   id: z.number().optional(),
@@ -351,11 +353,14 @@ const ReedemCode = () => {
                       <FormItem>
                         <FormLabel>Valid Until</FormLabel>
                         <FormControl>
-                          <Input
-                            className="dark:bg-neutral-900 bg-white"
-                            placeholder="Enter Valid Until"
-                            {...field}
-                          />
+                          <div className="relative ">
+                            <Input
+                              className="dark:bg-neutral-900 bg-white"
+                              placeholder="Enter Valid Until"
+                              {...field}
+                            />
+                            <DatePicker selected={field.value} onSelect={(value)=> field.onChange(value ? format(value, "yyyy-MM-dd") : "")} className="absolute top-0 right-3"/>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

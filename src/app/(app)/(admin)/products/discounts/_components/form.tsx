@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import DeleteModel from "@/components/global/delete-model";
+import DatePicker from "@/components/ui/date-picker";
+import { format } from "date-fns";
+
 
 const RedeemCodeSchema = z.object({
   id: z.number().optional(),
@@ -227,11 +230,14 @@ export const RedeemCodeForm = ({
               <FormItem>
                 <FormLabel>Valid Until</FormLabel>
                 <FormControl>
-                  <Input
-                    className="dark:bg-neutral-900 bg-white"
-                    placeholder="Enter Valid Until"
-                    {...field}
-                  />
+                  <div className="relative ">
+                    <Input
+                      className="dark:bg-neutral-900 bg-white"
+                      placeholder="Enter Valid Until"
+                      {...field}
+                    />
+                    <DatePicker selected={field.value} onSelect={(value)=> field.onChange(value ? format(value, "yyyy-MM-dd") : "")} className="absolute top-0 right-3"/>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -251,7 +257,11 @@ export const RedeemCodeForm = ({
           >
             {data.is_active ? "Deactivate" : "Activate"}
           </Button>
-          <DeleteModel PROJECT_NAME={data.name} handleDelete={() => onDelete(data.id)} title="Redeem Code"/>
+          <DeleteModel
+            PROJECT_NAME={data.name}
+            handleDelete={() => onDelete(data.id)}
+            title="Redeem Code"
+          />
         </span>
       </form>
     </Form>

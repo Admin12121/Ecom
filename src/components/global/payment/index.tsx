@@ -8,6 +8,7 @@ type Props = {
   products: any;
   redeemData: any;
   shipping: string;
+  source: boolean;
 };
 
 const Payment = ({
@@ -17,6 +18,7 @@ const Payment = ({
   products,
   redeemData,
   shipping,
+  source,
 }: Props) => {
   const data = {
     user,
@@ -25,13 +27,12 @@ const Payment = ({
     products,
     redeemData,
     shipping,
+    source,
   };
 
   return (
     <StripeElements>
-      <PaymentForm
-        data={data}
-      />
+      <PaymentForm data={data} />
     </StripeElements>
   );
 };

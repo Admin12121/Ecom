@@ -8,7 +8,7 @@ const LoginError = ({errorParam}: LoginErrorProps) => {
     <Cardwrapper
       title="Login Error"
       headerLabel={errorParam}
-      backButtonLabel="Back to Login"
+      backButton="Back to Login"
       backButtonHref="/auth/login"
       showSocial={false}
     >

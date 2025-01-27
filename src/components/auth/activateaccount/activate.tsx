@@ -81,7 +81,7 @@ const Activate = () => {
     <Cardwrapper
       title="Comfirming your verification"
       headerLabel="Comfirming your verification"
-      backButtonLabel="Back to Login"
+      backButton="Back to Login"
       backButtonHref="/auth/login"
       showSocial={false}
       classNames={{

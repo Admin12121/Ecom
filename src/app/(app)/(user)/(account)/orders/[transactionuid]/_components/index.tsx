@@ -13,6 +13,12 @@ import Voucher from "@/app/(app)/(user)/checkout/[transitionuid]/_components/vou
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 import { Separator } from "@/components/ui/separator";
 import { useDecryptedData } from "@/hooks/dec-data";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Product {
   id: string;
@@ -119,7 +125,7 @@ const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
     { transactionuid, token: accessToken },
     { skip: !accessToken }
   );
-  const {data, loading} = useDecryptedData(encryptedData, isLoading);
+  const { data, loading } = useDecryptedData(encryptedData, isLoading);
   return (
     <PageSkeleton loading={loading}>
       {data && <ProductCard data={data} />}
@@ -127,11 +133,7 @@ const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
   );
 };
 
-const ProductCard = ({
-  data,
-}: {
-  data: Order;
-}) => {
+const ProductCard = ({ data }: { data: Order }) => {
   const productIds = useMemo(() => {
     return data?.products.map((item: CartItem) => item.product);
   }, [data]);
@@ -144,7 +146,9 @@ const ProductCard = ({
   const productsWithData = useMemo(() => {
     if (!products) return [];
     return data?.products.map((cartItem: CartItem) => {
-      const product = products.results.find((p: Product) => p.id === cartItem.product);
+      const product = products.results.find(
+        (p: Product) => p.id === cartItem.product
+      );
       const variantDetails = Array.isArray(product.variants)
         ? product.variants.find((v: any) => v.id === cartItem.variant)
         : product.variants;
@@ -191,10 +195,19 @@ const ProductCard = ({
     <div className="text-left hover:no-underline p-0 w-full lg:min-w-[450px] bg-white dark:bg-neutral-900/50 rounded-lg">
       <div className="flex w-full rounded-lg p-1 flex-col">
         <div className="w-full p-2 flex justify-between items-center rounded-lg">
-          <h1 className="flex gap-1">
-            <ShoppingCart className="w-5 h-5" />{" "}
-            {truncateText(data?.transactionuid, 15)}
-          </h1>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <h1 className="flex gap-1">
+                  <ShoppingCart className="w-5 h-5" />{" "}
+                  {truncateText(data.transactionuid, 15)}
+                </h1>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{data.transactionuid}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {renderBadge(data?.status)}
         </div>
         <div className="w-full p-2 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 rounded-lg">
@@ -228,7 +241,19 @@ const ProductCard = ({
         </VoucherSkleton>
         <Separator className="mt-1" />
         <div className="w-full p-1 py-2 gap-2 flex items-center">
-          <p>Total :</p> {data.discount > 0 && <p>{data.payment_method == "Esewa" ? "रु": "$"} {data?.total_amt}</p>} <p className={cn(data?.discount > 0 && "line-through text-neutral-950/50")}>{data.payment_method == "Esewa" ? "रु": "$"} {data?.sub_total}</p>
+          <p>Total :</p>{" "}
+          {data.discount > 0 && (
+            <p>
+              {data.payment_method == "Esewa" ? "रु" : "$"} {data?.total_amt}
+            </p>
+          )}{" "}
+          <p
+            className={cn(
+              data?.discount > 0 && "line-through text-neutral-950/50"
+            )}
+          >
+            {data.payment_method == "Esewa" ? "रु" : "$"} {data?.sub_total}
+          </p>
         </div>
       </div>
     </div>

@@ -7,14 +7,18 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "nextjs-toploader/app";
-import { usePostSaleMutation } from "@/lib/store/Service/api";
+import {
+  useClearCartMutation,
+} from "@/lib/store/Service/api";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useAuthUser } from "../use-auth-user";
 import { delay } from "@/lib/utils";
+import { useCart } from "@/lib/cart-context";
+import { encryptData } from "@/hooks/dec-data";
 
 export const useStripeElements = () => {
   const StripePromise = async () =>
@@ -24,14 +28,17 @@ export const useStripeElements = () => {
 
 export const usePayments = (
   user: string,
+  source: boolean,
   total_amt?: number | null,
   discount?: number,
   products?: any,
   redeemData?: any,
   shipping?: string
 ) => {
-  const [postSale, { isLoading }] = usePostSaleMutation();
+  const [clearCart] = useClearCartMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const { accessToken } = useAuthUser();
+  const { setCartItems } = useCart();
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -81,14 +88,24 @@ export const usePayments = (
       if (!stripe || !elements || !Intent) {
         return null;
       }
+      setIsLoading(true);
       const toastId = toast.loading("Veryfing Products...", {
         position: "top-center",
       });
+      if (!accessToken) {
+        toast.error("unAuthorized", {
+          id: toastId,
+          position: "top-center",
+        });
+        setIsLoading(false);
+        return;
+      }
       if (!shipping) {
         toast.error("Please select shipping address", {
           id: toastId,
           position: "top-center",
         });
+        setIsLoading(false);
         return;
       }
       const actualData = {
@@ -99,9 +116,18 @@ export const usePayments = (
         redeemData,
         shipping,
       };
-      const res = await postSale({ actualData, token: accessToken });
+
       await delay(500);
-      if (res.data) {
+      const encdata = encryptData(actualData, accessToken);
+      const response = await fetch("/api/initiate-payment", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ data: encdata }),
+      });
+      if (response.ok) {
         toast.success("Products Veryfied", {
           id: toastId,
           position: "top-center",
@@ -111,6 +137,8 @@ export const usePayments = (
           id: toastId,
           position: "top-center",
         });
+        setIsLoading(false);
+        return;
       }
       await delay(500);
       toast.loading("Processing Payment", {
@@ -132,6 +160,7 @@ export const usePayments = (
           id: toastId,
           position: "top-center",
         });
+        setIsLoading(false);
       }
 
       if (paymentIntent?.status === "succeeded") {
@@ -140,6 +169,13 @@ export const usePayments = (
           id: toastId,
           position: "top-center",
         });
+        if (source) {
+          const res = await clearCart({ token: accessToken });
+          if (res.data) {
+            localStorage.removeItem("productList");
+            setCartItems([]);
+          }
+        }
         await delay(500);
         toast.loading("Placing Order...", {
           id: toastId,
@@ -150,6 +186,7 @@ export const usePayments = (
           id: toastId,
           position: "top-center",
         });
+        setIsLoading(false);
         router.push(`/orders/${data.transactionuid}`);
       }
     },

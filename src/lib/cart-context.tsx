@@ -45,6 +45,7 @@ interface CartContextType {
   HandleIncreaseItems: ({ product, variant }: HandleProps) => void;
   HandledecreaseItems: ({ product, variant }: HandleProps) => void;
   loading: boolean;
+  setCartItems: React.Dispatch<React.SetStateAction<CartProduct[]>>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -305,6 +306,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         HandledecreaseItems,
         totalPieces,
         loading: postLoading || deleteLoading || updateLoading || loading,
+        setCartItems
       }}
     >
       {children}

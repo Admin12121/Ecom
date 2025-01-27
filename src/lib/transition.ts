@@ -14,6 +14,7 @@ interface Product {
   product: number;
   variant: number;
   pcs: number;
+  source?: string;
 }
 
 export const decryptData = (

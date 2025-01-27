@@ -307,6 +307,13 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    clearCart: builder.mutation({
+      query: ({ token }) => ({
+        url: "api/products/clearcart/",
+        method: "DELETE",
+        headers: createHeaders(token),
+      }),
+    }),
     searchPost: builder.mutation({
       query: ({ actualData }) => {
         return {
@@ -635,6 +642,7 @@ export const {
   useCartPostMutation,
   useCartUpdateMutation,
   useCartDeleteMutation,
+  useClearCartMutation,
   useSearchPostMutation,
   useCategoryViewQuery,
   useGetCategoryQuery,

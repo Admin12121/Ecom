@@ -13,6 +13,12 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "nextjs-toploader/app";
 import Spinner from "@/components/ui/spinner";
 import InfiniteScroll from "@/components/global/infinite-scroll";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const renderBadge = (status: string) => {
   const statusMap: {
@@ -69,14 +75,23 @@ const renderBadge = (status: string) => {
   );
 };
 
-export const OrderComponent = ({ data, loadMore, hasMore, loading }: { data: OrderData[], loadMore:any, hasMore:boolean, loading:boolean }) => {
-  
-  if(loading){
+export const OrderComponent = ({
+  data,
+  loadMore,
+  hasMore,
+  loading,
+}: {
+  data: OrderData[];
+  loadMore: any;
+  hasMore: boolean;
+  loading: boolean;
+}) => {
+  if (loading) {
     return (
       <div className="w-full h-[80vh] flex items-center justify-center">
-        <Spinner size="sm"/>
+        <Spinner size="sm" />
       </div>
-    )
+    );
   }
   return (
     <div className="w-full h-full flex gap-2">
@@ -145,10 +160,19 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
     >
       <div className="flex w-full rounded-lg p-1 flex-col">
         <div className="w-full p-2 flex justify-between items-center rounded-lg">
-          <h1 className="flex gap-1">
-            <ShoppingCart className="w-5 h-5" />{" "}
-            {truncateText(order.transactionuid, 15)}
-          </h1>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <h1 className="flex gap-1">
+                  <ShoppingCart className="w-5 h-5" />{" "}
+                  {truncateText(order.transactionuid, 15)}
+                </h1>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{order.transactionuid}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {renderBadge(order.status)}
         </div>
         <div className="w-full p-2 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 rounded-lg">

@@ -2,8 +2,10 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import { encryptData, decriptData } from "@/hooks/dec-data";
+import { useClearCartMutation } from "@/lib/store/Service/api";
 import { toast } from "sonner";
 import { delay } from "@/lib/utils";
+import { useCart } from "@/lib/cart-context";
 
 type Props = {
   params: string;
@@ -14,6 +16,7 @@ type Props = {
   products: any;
   redeemData: any;
   shipping: string;
+  source: boolean;
 };
 
 const Esewa = ({
@@ -25,8 +28,11 @@ const Esewa = ({
   products,
   redeemData,
   shipping,
+  source,
 }: Props) => {
   const transaction_uid = uuidv4();
+  const [clearCart] = useClearCartMutation();
+  const { setCartItems } = useCart();
 
   const sales = {
     user,
@@ -85,6 +91,15 @@ const Esewa = ({
           id: toastId,
           position: "top-center",
         });
+
+        if (source) {
+          const res = await clearCart({ token });
+          if (res.data) {
+            localStorage.removeItem("productList");
+            setCartItems([]);
+          }
+        }
+
         const formData = await response.json();
         const data = decriptData(formData, token);
         const form = document.createElement("form");
