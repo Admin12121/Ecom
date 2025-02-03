@@ -24,9 +24,11 @@ import useApi from "@/lib/useApi";
 import { useRouter } from "nextjs-toploader/app";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 const Login = () => {
   const router = useRouter();
+  const { update } = useAuthUser();
   const { data, error, isLoading, fetchData } = useApi<any>();
   const searchParams = useSearchParams();
   const [success, setSuccess] = useState<string>("");
@@ -52,6 +54,7 @@ const Login = () => {
       setSuccess("Login Successfull");
       if (data.redirectUrl) {
         router.push(data.redirectUrl);
+        update();
       }
     }
   }, [data]);

@@ -26,7 +26,7 @@ const Activate = () => {
     const verifyToken = async () => {
       try {
         setStatus('Decrypting token...');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/accounts/activate/${uid}/${token}/`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/api/accounts/activate/${uid}/${token}/`, {
           method: 'GET', 
           headers: {
             'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const Activate = () => {
       }}
     >
       <Loader />
-      <div className={`text-center text-sm ${color} absolute bottom-10 animate-pulse flex items-center justify-center gap-x-2`}>{icon}{status}</div>
+      <div className={`text-center text-sm ${color} absolute bottom-0 animate-pulse flex items-center justify-center gap-x-2`}>{icon}{status}</div>
     </Cardwrapper>
   )
 }
