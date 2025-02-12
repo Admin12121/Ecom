@@ -16,7 +16,7 @@ const Page = async () => {
   // const siteConfig = await getSiteConfig();
   return (
     <main className="h-full max-w-[95rem] w-full">
-      <LandingPage siteConfig={siteConfig}/>
+      {/* <LandingPage siteConfig={siteConfig}/> */}
     </main>
   );
 };
