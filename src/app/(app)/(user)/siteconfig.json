@@ -1,0 +1,36 @@
+{
+  "slider": [
+    {
+      "image": "https://i.pinimg.com/736x/57/7f/8a/577f8ae0cc1a6c225129c86a5d9b5cdd.jpg",
+      "href": ""
+    },
+    {
+      "image": "https://i.pinimg.com/736x/24/1e/52/241e521caa67fb5ec8a2a269f9030e39.jpg",
+      "href": ""
+    },
+    {
+      "image": "https://i.pinimg.com/736x/3c/33/0f/3c330f9be98c050e9521b30d0a688d4d.jpg",
+      "href": ""
+    },
+    {
+      "image": "https://i.pinimg.com/736x/62/14/9e/62149eedf853b28b6d8802c61602984c.jpg",
+      "href": ""
+    }
+  ],
+  "events": [
+    {
+      "title": "Winter Sale",
+      "description": "30% off on all winter items",
+      "color": ""
+    },
+    {
+      "title": "Free Delivery",
+      "description": "Get free delivery on all orders",
+      "color": ""
+    }
+  ],
+  "messages": {
+    "message": "",
+    "date": ""
+  }
+}

@@ -26,8 +26,7 @@ import {
   Skeleton,
 } from "@/components/global/product-card";
 
-
-const Sidebar = dynamic(() => import("./sidebar"), {ssr: false});
+const Sidebar = dynamic(() => import("./sidebar"), { ssr: false });
 const FeatureProduct = dynamic(
   () => import("@/components/global/feature-product"),
   { ssr: false }
@@ -193,7 +192,7 @@ const CollectionPage = () => {
               </Button>
             </div>
           </span>
-          <CategorySlider route/>
+          <CategorySlider route />
           <div className="flex gap-5 w-full">
             <InfiniteScroll
               loading={loading}
@@ -201,7 +200,7 @@ const CollectionPage = () => {
               loadMore={loadMoreProducts}
               className={cn(filters && "lg:w-[calc(100%-350px)]", " w-full")}
             >
-              <ProductSkeleton loading={isLoading}>
+              <ProductSkeleton loading={loading}>
                 {products && products.length > 0 ? (
                   <div
                     className={cn(
@@ -266,15 +265,17 @@ const CollectionPage = () => {
   );
 };
 
-export const RecommendedProducts = ({
-  className,
-  base,
-  title,
-}: {
+interface RecommendedProductsProps {
   className?: string;
   base?: string;
   title?: string;
-}) => {
+}
+
+const RecommendedProducts = ({
+  className,
+  base,
+  title,
+}: RecommendedProductsProps) => {
   const { data, isLoading } = useTrendingProductsViewQuery({});
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
@@ -293,4 +294,5 @@ export const RecommendedProducts = ({
   );
 };
 
+export { RecommendedProducts };
 export default CollectionPage;

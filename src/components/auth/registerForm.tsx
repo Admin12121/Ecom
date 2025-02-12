@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { delay } from "@/lib/utils";
 
 const RegisterForm = () => {
-  const router = useRouter();``
+  const router = useRouter();
   const { data, error, isLoading, fetchData } = useApi<any>();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 

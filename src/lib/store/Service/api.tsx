@@ -185,9 +185,11 @@ export const userAuthapi = createApi({
         stock,
         filter,
         token,
+        page_size,
       }) => {
         const queryParams = buildQueryParams({
           page,
+          page_size,
           productslug,
           id,
           search,
