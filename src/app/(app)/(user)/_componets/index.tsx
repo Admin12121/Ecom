@@ -37,13 +37,13 @@ interface LandingPageProps {
 const LandingPage = ({ siteConfig }: { siteConfig: LandingPageProps }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const { data, isLoading } = useProductsViewQuery({page_size : 8});
-  useEffect(() => {
-    if (data) {
-      setProducts(data.results);
-      setLoading(false);
-    }
-  }, [data]);
+  // const { data, isLoading } = useProductsViewQuery({page_size : 8});
+  // useEffect(() => {
+  //   if (data) {
+  //     setProducts(data.results);
+  //     setLoading(false);
+  //   }
+  // }, [data]);
 
   return (
     <div className="w-full h-full flex flex-col items-center p-3 md:p-5 gap-3">
@@ -121,7 +121,7 @@ const LandingPage = ({ siteConfig }: { siteConfig: LandingPageProps }) => {
           <h1 className="text-4xl">Crafting Spiritual Journeys Since [1994]</h1>
           <p>Invoke Divinity in Your Space</p>
         </span>
-          <ProductSkeleton className="w-full" loading={loading && products?.length > 0}>
+          {/* <ProductSkeleton className="w-full" loading={loading && products?.length > 0}>
               <div
                 className={cn(
                   "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
@@ -141,7 +141,7 @@ const LandingPage = ({ siteConfig }: { siteConfig: LandingPageProps }) => {
                     <Skeleton key={index} />
                   ))}
               </div>
-          </ProductSkeleton>
+          </ProductSkeleton> */}
       </section>
       <section className="w-full h-full flex flex-col items-center py-5 gap-3 min-h-[630px]">
         <span className="text-center">
