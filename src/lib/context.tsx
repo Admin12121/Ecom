@@ -12,6 +12,7 @@ import Us from "@/icons/us";
 import Cn from "@/icons/cn";
 import Np from "@/icons/np";
 import Au from "@/icons/au";
+import { useDecryptedData, decriptData } from "@/hooks/dec-data";
 
 interface CurrencyData {
   buy: string;
@@ -81,6 +82,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           sell: parseFloat(selectedCurrency.sell),
           symbol: selectedCurrency.symbol,
         });
+        localStorage.setItem(
+          "selectedCurrency",
+          JSON.stringify({
+            iso3: selectedIso3,
+            sell: parseFloat(selectedCurrency.sell),
+            symbol: selectedCurrency.symbol,
+          })
+        );
       }
     }
   };
@@ -89,11 +98,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const fetchLiveRates = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(
-          "https://www.nrb.org.np/api/forex/v1/app-rate"
-        );
-        const currencyData = Array.isArray(data) ? data : JSON.parse(data.replace(/.*\[(.*)\]/s, "[$1]"));
+        const { data } = await axios.get("/api/forex/v1/app-rate");
+        const token = "https://www.nrb.org.np/api/forex/v1/app-rate";
+        const currencyData = decriptData(data, token);
         if (currencyData) {
+          const { data: locationData } = await axios.get("https://ipapi.co/json/");
           const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
           const filteredData = currencyData.filter((currency: CurrencyData) =>
             requiredCurrencies.includes(currency.iso3)
@@ -104,7 +113,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             buy: (parseFloat(currency.buy) / (currency.unit || 1)).toFixed(2),
             sell: (parseFloat(currency.sell) / (currency.unit || 1)).toFixed(2),
             symbol: getSymbol(currency.iso3),
-            flag: currency.iso3 === "INR" ? <Inflag className="w-5 h-5"/> : currency.iso3 === "USD" ? <Us className={"w-5 h-5"}/> : currency.iso3 === "CNY" ? <Cn className={"w-5 h-5"}/> : currency.iso3 === "AUD" ? <Au className={"w-5 h-5"}/> : <Np className={"w-5 h-5"}/>,
+            flag:
+              currency.iso3 === "INR" ? (
+                <Inflag className="w-5 h-5" />
+              ) : currency.iso3 === "USD" ? (
+                <Us className={"w-5 h-5"} />
+              ) : currency.iso3 === "CNY" ? (
+                <Cn className={"w-5 h-5"} />
+              ) : currency.iso3 === "AUD" ? (
+                <Au className={"w-5 h-5"} />
+              ) : (
+                <Np className={"w-5 h-5"} />
+              ),
           }));
 
           const nepaliRupee = {
@@ -117,12 +137,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             published_on: new Date().toISOString(),
             modified_on: new Date().toISOString(),
             symbol: "रु",
-            flag: <Np className={"w-5 h-5"}/>,
+            flag: <Np className={"w-5 h-5"} />,
           };
 
           setLiveRateData([...finalData, nepaliRupee]);
-          setSelectedCurrency({ sell: 1, symbol: nepaliRupee.symbol });
-          setSelectedCurrencyiso(nepaliRupee.iso3);
+          const storedCurrency = localStorage.getItem("selectedCurrency");
+          if (storedCurrency) {
+            const parsedCurrency = JSON.parse(storedCurrency);
+            setSelectedCurrencyiso(parsedCurrency.iso3);
+            setSelectedCurrency({
+              sell: parsedCurrency.sell,
+              symbol: parsedCurrency.symbol,
+            });
+          } else {
+            setSelectedCurrency({ sell: 1, symbol: nepaliRupee.symbol });
+            setSelectedCurrencyiso(nepaliRupee.iso3);
+          }
         } else {
           setreloaddata((prev) => !prev);
         }
@@ -135,7 +165,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     fetchLiveRates();
   }, [reloaddata]);
-  
+
   const convertPrice = (
     price: number
   ): { convertedPrice: number; symbol: string } => {
@@ -167,7 +197,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     return { convertedPrice: price, symbol: "" };
   };
-
 
   const getRates = (
     price: number,

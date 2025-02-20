@@ -1,7 +1,8 @@
 import React from 'react'
+import { CanvasRevealEffectDemo } from './card'
 
 export const Settings = () => {
   return (
-    <div>Settings</div>
+    <CanvasRevealEffectDemo/>
   )
 }

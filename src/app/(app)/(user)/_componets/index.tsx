@@ -20,30 +20,53 @@ import {
 import { useProductsViewQuery } from "@/lib/store/Service/api";
 import { Product } from "@/types/product";
 
-interface Slider {
+interface ComponentSettings {
+  visible: boolean;
+  title: string;
+  subtitle: string;
+}
+
+interface Components {
+  products: ComponentSettings;
+  trendingProducts: ComponentSettings;
+  recentProducts: ComponentSettings;
+  recommendedProducts: ComponentSettings;
+  store: ComponentSettings;
+}
+
+interface SliderItem {
   image: string;
   href: string;
 }
-interface events {
+
+interface EventItem {
   title: string;
   description: string;
   color: string;
 }
-interface LandingPageProps {
-  slider: Slider[];
-  events: events[];
+
+interface Messages {
+  message: string;
+  date: string;
 }
 
-const LandingPage = ({ siteConfig }: { siteConfig: LandingPageProps }) => {
+interface SiteConfig {
+  components: Components;
+  slider: SliderItem[];
+  events: EventItem[];
+  messages: Messages;
+}
+
+const LandingPage = ({ siteConfig }: { siteConfig: SiteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
-  // const { data, isLoading } = useProductsViewQuery({page_size : 8});
-  // useEffect(() => {
-  //   if (data) {
-  //     setProducts(data.results);
-  //     setLoading(false);
-  //   }
-  // }, [data]);
+  const { data, isLoading } = useProductsViewQuery({ page_size: 8 });
+  useEffect(() => {
+    if (data) {
+      setProducts(data.results);
+      setLoading(false);
+    }
+  }, [data]);
 
   return (
     <div className="w-full h-full flex flex-col items-center p-3 md:p-5 gap-3">
@@ -60,7 +83,7 @@ const LandingPage = ({ siteConfig }: { siteConfig: LandingPageProps }) => {
             className="w-full h-[30dvh] md:h-full rounded-md"
           >
             {siteConfig.slider &&
-              siteConfig.slider.map((data: Slider, index: number) => (
+              siteConfig.slider.map((data: SliderItem, index: number) => (
                 <SwiperSlide key={index}>
                   <Data1 image={data.image} href={data.href} />
                 </SwiperSlide>
@@ -116,72 +139,83 @@ const LandingPage = ({ siteConfig }: { siteConfig: LandingPageProps }) => {
           )}
         </div>
       </div>
-      <section className="w-full h-full flex flex-col items-center py-5 gap-8 min-h-[630px]">
-        <span className="text-center">
-          <h1 className="text-4xl">Crafting Spiritual Journeys Since [1994]</h1>
-          <p>Invoke Divinity in Your Space</p>
-        </span>
-          {/* <ProductSkeleton className="w-full" loading={loading && products?.length > 0}>
-              <div
-                className={cn(
-                  "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
-                  loading && "pointer-events-none opacity-50 blur-sm"
-                )}
-              >
-                {products.map((product, index) => (
-                  <div
-                    key={index}
-                    className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
-                  >
-                    <ProductCard data={product} base={Math.random() >= 0.5} />
-                  </div>
+      {siteConfig.components.products.visible && (
+        <section className="w-full h-full flex flex-col items-center py-5 gap-8 min-h-[630px]">
+          <span className="text-center">
+            <h1 className="text-4xl">{siteConfig.components.products.title}</h1>
+            <p>{siteConfig.components.products.subtitle}</p>
+          </span>
+          <ProductSkeleton
+            className="w-full"
+            loading={loading && products?.length > 0}
+          >
+            <div
+              className={cn(
+                "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
+                loading && "pointer-events-none opacity-50 blur-sm"
+              )}
+            >
+              {products.map((product, index) => (
+                <div
+                  key={index}
+                  className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq"
+                >
+                  <ProductCard data={product} base={Math.random() >= 0.5} />
+                </div>
+              ))}
+              {loading &&
+                Array.from({ length: 4 }, (_, index) => (
+                  <Skeleton key={index} />
                 ))}
-                {loading &&
-                  Array.from({ length: 4 }, (_, index) => (
-                    <Skeleton key={index} />
-                  ))}
-              </div>
-          </ProductSkeleton> */}
-      </section>
-      <section className="w-full h-full flex flex-col items-center py-5 gap-3 min-h-[630px]">
-        <span className="text-center">
-          <h1 className="text-4xl">Drop of Best Collections</h1>
-          <p>A flood of compliments</p>
-        </span>
-        <RecommendedProducts
-          title=" "
-          className="!px-0 mx-0 !py-0 mt-5 lg:mt-0"
-          base="w-full !py-0"
-        />
-      </section>
-      <section className="w-full h-full flex flex-col items-center lg:py-5 gap-3 lg:pb-5 lg:min-h-[630px]">
-        <span className="text-center">
-          <h1 className="text-4xl">Patan-Lalitpur</h1>
-          <p>Visit us in Patan-Lalitpur, Nepal</p>
-        </span>
-        <div className="relative">
-          <Image
-            alt="store"
-            src={"/store.jpg"}
-            priority
-            quality={100}
-            width={700}
-            height={400}
-            sizes="100vw"
-            className="w-dvw object-cover lg:!h-[600px] rounded-xl opacity-90"
+            </div>
+          </ProductSkeleton>
+        </section>
+      )}
+      {siteConfig.components.recommendedProducts.visible && (
+        <section className="w-full h-full flex flex-col items-center py-5 gap-3 min-h-[630px]">
+          <span className="text-center">
+            <h1 className="text-4xl">
+              {siteConfig.components.recommendedProducts.title}
+            </h1>
+            <p>{siteConfig.components.recommendedProducts.subtitle}</p>
+          </span>
+          <RecommendedProducts
+            title=" "
+            className="!px-0 mx-0 !py-0 mt-5 lg:mt-0"
+            base="w-full !py-0"
           />
-          <Button className="absolute left-2 bottom-2 backdrop-blur-sm dark:bg-white/50 bg-neutral-900/50">
-            Visit us
-          </Button>
-        </div>
-      </section>
+        </section>
+      )}
+      {siteConfig.components.store.visible && (
+        <section className="w-full h-full flex flex-col items-center lg:py-5 gap-3 lg:pb-5 lg:min-h-[630px]">
+          <span className="text-center">
+            <h1 className="text-4xl">{siteConfig.components.store.title}</h1>
+            <p>{siteConfig.components.store.subtitle}</p>
+          </span>
+          <div className="relative">
+            <Image
+              alt="store"
+              src={"/store.jpg"}
+              priority
+              quality={100}
+              width={700}
+              height={400}
+              sizes="100vw"
+              className="w-dvw object-cover lg:!h-[600px] rounded-xl opacity-90"
+            />
+            <Button className="absolute left-2 bottom-2 backdrop-blur-sm dark:bg-white/50 bg-neutral-900/50">
+              Visit us
+            </Button>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
 
 export default LandingPage;
 
-const Data1 = ({ image, href }: Slider) => {
+const Data1 = ({ image, href }: SliderItem) => {
   return (
     <Link
       href={href || ""}

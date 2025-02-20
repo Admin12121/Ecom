@@ -1,4 +1,31 @@
 {
+"components": {
+    "products": {
+      "visible": true,
+      "title": "Divine Creations Await You",
+      "subtitle": "Bless your home with sacred artistry"
+    },
+    "trendingProducts": {
+      "visible": true,
+      "title": "Sacred Picks of the Moment",
+      "subtitle": "Cherished by devotees worldwide"
+    },
+    "recentProducts": {
+      "visible": false,
+      "title": "Rekindle Your Divine Connection",
+      "subtitle": "Your recently viewed sacred pieces"
+    },
+    "recommendedProducts": {
+      "visible": true,
+      "title": "Handpicked Blessings for You",
+      "subtitle": "Curated with devotion, chosen for you"
+    },
+    "store": {
+      "visible": true,
+      "title": "Temple of Divine Sculptures",
+      "subtitle": "Visit us in Patan-Lalitpur, Nepal, and embrace spirituality"
+    }
+  },
   "slider": [
     {
       "image": "https://i.pinimg.com/736x/57/7f/8a/577f8ae0cc1a6c225129c86a5d9b5cdd.jpg",

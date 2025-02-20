@@ -34,7 +34,8 @@ export function decriptData(encryptedData:  { data: string }, key: string): Reco
 
 export function useDecryptedData(
   encryptedData: { data: string } | null,
-  isLoading: boolean
+  isLoading: boolean,
+  token?: string
 ): DecryptResult {
   const [loading, setLoading] = useState(isLoading);
   const [data, setData] = useState<Record<string, any> | null>(null);
@@ -44,7 +45,7 @@ export function useDecryptedData(
   const decrypt = useCallback(async () => {
     if (encryptedData && accessToken) {
       try {
-        const key = accessToken.slice(0, 32);
+        const key = token ? token : accessToken.slice(0, 32);
         const decodedData = atob(encryptedData.data);
         const decrypted = xorEncryptDecrypt(decodedData, key);
         setData(JSON.parse(decrypted));
