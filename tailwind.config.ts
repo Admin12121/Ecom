@@ -19,6 +19,7 @@ const config: Config = {
     },
     backgroundImage: {
       "radial-gradient": "radial-gradient(circle at 50% 40%, white, black)",
+      'custom-gradient': 'linear-gradient(135deg, #A97CF8, #F38CB8, #FDCC92)',
     },
     extend: {
       colors: {

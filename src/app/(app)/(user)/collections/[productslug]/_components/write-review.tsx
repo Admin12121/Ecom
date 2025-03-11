@@ -59,6 +59,7 @@ const WriteReview = ({ product, link }: any) => {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(reviewSchema),
@@ -92,9 +93,14 @@ const WriteReview = ({ product, link }: any) => {
     }
     const response = await postReview({ actualData, token: accessToken });
     if (response.data) {
-      toast.success("Review Posted Successfully", {
+      toast.success("Review waiting to be verified", {
         id: toastId,
         position: "top-center",
+      });
+      reset();
+      setCategoryData({
+        image: null,
+        imagePreview: null,
       });
     } else {
       toast.error("Something went wrong", {

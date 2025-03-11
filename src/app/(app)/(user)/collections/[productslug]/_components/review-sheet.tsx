@@ -150,7 +150,7 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
                           layout="responsive"
                           objectFit="cover"
                           alt={review.title}
-                          className="w-full h-full object-contain rounded-lg bg-neutral-800"
+                          className="w-full h-full object-contain rounded-[10px] bg-neutral-800"
                         />
                       </span>
                     )}

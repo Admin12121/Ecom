@@ -482,6 +482,18 @@ export const userAuthapi = createApi({
         headers: createHeaders(token),
       }),
     }),
+    deleteReview: builder.mutation({
+      query: ({ actualData, token }) => {
+        return {
+          url: "api/products/reviews/post/",
+          method: "Delete",
+          body: actualData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+      },
+    }),
     getReview: builder.query({
       query: ({ product_slug, page, page_size, star, filter }) => ({
         url: `api/products/reviews/${product_slug}/data/${buildQueryParams({
@@ -665,6 +677,7 @@ export const {
   useCreateorUpdatelayoutMutation,
   usePostReviewMutation,
   useUpdateReviewMutation,
+  useDeleteReviewMutation,
   useGetReviewQuery,
   useGetUserReviewQuery,
   usePostSaleMutation,
