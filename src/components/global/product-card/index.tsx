@@ -11,7 +11,6 @@ import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
 
 import { Star as FaStar } from "lucide-react";
 
-
 import {
   Product,
   VariantObject,
@@ -160,7 +159,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               const imageClassName = isPng ? "w-full h-full object-cover" : "";
               return (
                 <SwiperSlide key={index}>
-                  <div className="h-full w-full left-0 overflow-hidden top-0 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center">
+                  <div className="h-full w-full left-0 overflow-hidden top-0 bg-neutral-100 dark:bg-zinc-950 flex items-center justify-center">
                     <Link
                       href={`/collections/${productslug}`}
                       className={cn(imageClassName)}
@@ -232,9 +231,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-export const Skeleton = ({className}:{className?:string}) => {
+export const Skeleton = ({ className }: { className?: string }) => {
   return (
-    <section className={cn("w-full relative p-1 h-full flex flex-col gap-1 rounded-lg", className)}>
+    <section
+      className={cn(
+        "w-full relative p-1 h-full flex flex-col gap-1 rounded-lg",
+        className
+      )}
+    >
       <div className="w-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[390px] rounded-lg"></div>
       <div className="w-full flex flex-col p-2 animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10 h-[100px] rounded-lg ">
         <span className="w-full h-[40px] flex">
@@ -255,12 +259,12 @@ export const ProductSkeleton = ({
   filters,
   className,
   number,
-  skleton
+  skleton,
 }: {
   loading: boolean;
   children: React.ReactNode;
   filters?: boolean;
-  className?:string;
+  className?: string;
   number?: number;
   skleton?: string;
 }) => {
@@ -271,11 +275,12 @@ export const ProductSkeleton = ({
       <div
         className={cn(
           "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
-          filters && "lg:grid-cols-2 xl:grid-cols-3", className
+          filters && "lg:grid-cols-2 xl:grid-cols-3",
+          className
         )}
       >
         {Array.from({ length: randomLength }, (_, index) => (
-          <Skeleton key={index} className={skleton}/>
+          <Skeleton key={index} className={skleton} />
         ))}
       </div>
     );

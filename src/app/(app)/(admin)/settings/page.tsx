@@ -1,13 +1,8 @@
 import React from "react";
-import { Settings } from "./_components";
+import Settings from "./_components";
 
 const page = () => {
-  return (
-    <div className="flex flex-col items-center justify-center px-3">
-      <h1 className="text-8xl">Nepal Heritage Handicraft</h1>
-      <Settings/>
-    </div>
-  );
+  return <div className="max-h-[95dvh]"><Settings /></div>;
 };
 
 export default page;

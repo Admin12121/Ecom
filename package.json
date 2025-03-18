@@ -64,6 +64,7 @@
     "nextjs-toploader": "^3.7.15",
     "plaiceholder": "^3.0.0",
     "react": "^19.0.0",
+    "react-colorful": "^5.6.1",
     "react-day-picker": "^9.5.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.53.2",

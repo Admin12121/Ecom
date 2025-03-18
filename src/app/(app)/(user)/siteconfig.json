@@ -1,12 +1,12 @@
 {
-"components": {
+  "components": {
     "products": {
       "visible": true,
       "title": "Divine Creations Await You",
       "subtitle": "Bless your home with sacred artistry"
     },
     "trendingProducts": {
-      "visible": true,
+      "visible": false,
       "title": "Sacred Picks of the Moment",
       "subtitle": "Cherished by devotees worldwide"
     },
@@ -29,7 +29,7 @@
   "slider": [
     {
       "image": "https://i.pinimg.com/736x/57/7f/8a/577f8ae0cc1a6c225129c86a5d9b5cdd.jpg",
-      "href": ""
+      "href": "/collections/test-model-10-b9z-9HDZwDXxcf4q"
     },
     {
       "image": "https://i.pinimg.com/736x/24/1e/52/241e521caa67fb5ec8a2a269f9030e39.jpg",
@@ -38,26 +38,84 @@
     {
       "image": "https://i.pinimg.com/736x/3c/33/0f/3c330f9be98c050e9521b30d0a688d4d.jpg",
       "href": ""
-    },
-    {
-      "image": "https://i.pinimg.com/736x/62/14/9e/62149eedf853b28b6d8802c61602984c.jpg",
-      "href": ""
     }
   ],
   "events": [
     {
-      "title": "Winter Sale",
-      "description": "30% off on all winter items",
-      "color": ""
-    },
-    {
       "title": "Free Delivery",
       "description": "Get free delivery on all orders",
-      "color": ""
+      "color": "#ff8300"
     }
   ],
   "messages": {
     "message": "",
     "date": ""
+  },
+  "filters": {
+    "category": [
+      {
+        "name": "statue",
+        "subcategory": [
+          {
+            "name": "buddha"
+          },
+          {
+            "name": "shiva"
+          },
+          {
+            "name": "syambo"
+          }
+        ]
+      },
+      {
+        "name": "jewelry",
+        "subcategory": [
+          {
+            "name": "rings"
+          },
+          {
+            "name": "necklaces"
+          }
+        ]
+      }
+    ],
+    "materials": {
+      "metals": [
+        {
+          "name": "gold"
+        },
+        {
+          "name": "platinium"
+        },
+        {
+          "name": "silver"
+        },
+        {
+          "name": "brash"
+        }
+      ],
+      "color": [
+        {
+          "id": 1,
+          "name": "orange",
+          "color": "orange"
+        },
+        {
+          "id": 2,
+          "name": "red",
+          "color": "red"
+        },
+        {
+          "id": 3,
+          "name": "blue",
+          "color": "blue"
+        },
+        {
+          "id": 4,
+          "name": "white",
+          "color": "white"
+        }
+      ]
+    }
   }
 }

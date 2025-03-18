@@ -483,11 +483,11 @@ export const userAuthapi = createApi({
       }),
     }),
     deleteReview: builder.mutation({
-      query: ({ actualData, token }) => {
+      query: ({ data, token, id }) => {
         return {
-          url: "api/products/reviews/post/",
-          method: "Delete",
-          body: actualData,
+          url: `api/products/reviews/post/${id}/`,
+          method: "DELETE",
+          body: data,
           headers: {
             authorization: `Bearer ${token}`,
           },

@@ -3,7 +3,7 @@ import React, { useState, useDeferredValue, useEffect } from "react";
 import {
   useGetUserReviewQuery,
   useUpdateReviewMutation,
-  useDeleteReviewMutation
+  useDeleteReviewMutation,
 } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -126,15 +126,21 @@ const Reviews = () => {
     }
   };
 
-  const handleDeleteReview = async (id: number, remark: string) => {
+  const handleDeleteReview = async (id: number, data: { remark: string }) => {
     const response = await deleteReview({
       token: accessToken,
       id: id,
-      remark: remark,
+      data: data,
     });
-    toast.success("Review deleted successfully");
-    setOpen(false);
-    setReviewIdToDelete(null);
+    if(response.data){
+      toast.success("Review deleted successfully");
+      setOpen(false);
+      setReviewIdToDelete(null);
+      refetch();
+    }
+    else{
+      toast.error("Failed to delete review");
+    }
   };
 
   return (
@@ -270,7 +276,12 @@ const Reviews = () => {
                         : "Add to Favourate"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>{ setOpen(true); setReviewIdToDelete(review.id);}}>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setOpen(true);
+                        setReviewIdToDelete(review.id);
+                      }}
+                    >
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -391,9 +402,8 @@ const DeleteReview = ({
   open: boolean;
   setOpen: any;
   reviewId: number | null;
-  onDelete: (id: number, remark: string) => void;
+  onDelete: (id: number, data: { remark: string }) => void;
 }) => {
-
   const form = useForm<z.infer<typeof DeleteReviewSchema>>({
     resolver: zodResolver(DeleteReviewSchema),
     defaultValues: {
@@ -402,9 +412,9 @@ const DeleteReview = ({
   });
 
   const onSubmit = (data: z.infer<typeof DeleteReviewSchema>) => {
-    toast.success(
-      `Deleting review with id ${reviewId}, remark: ${data.remark}`
-    );
+    if (reviewId) {
+      onDelete(reviewId, data);
+    }
   };
 
   const handleClose = () => {

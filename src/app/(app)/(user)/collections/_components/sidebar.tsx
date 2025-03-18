@@ -190,12 +190,6 @@ const Sidebar = ({
         </fieldset>
       ),
     },
-    {
-      id: "6",
-      title: "Product type",
-      content:
-        "All components follow WAI-ARIA standards, featuring proper ARIA attributes, keyboard navigation, and screen reader support. Regular testing ensures compatibility with NVDA, VoiceOver, and JAWS.",
-    },
   ];
 
   return (
