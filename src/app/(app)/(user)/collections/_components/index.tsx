@@ -87,7 +87,29 @@ function reducer(state: State, action: Action): State {
   return state;
 }
 
-const CollectionPage = () => {
+export interface Categorty {
+  category: Array<{
+    id: number;
+    name: string;
+    path?: string;
+    subcategory: Array<{
+      id: number;
+      name: string;
+    }>;
+  }>;
+  materials: {
+    metals: Array<{
+      name: string;
+    }>;
+    color: Array<{
+      id: number;
+      name: string;
+      color: string;
+    }>;
+  };
+}
+
+const CollectionPage = ({siteConfig}:{siteConfig:Categorty}) => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const search = searchParams.get("search");
@@ -192,7 +214,7 @@ const CollectionPage = () => {
               </Button>
             </div>
           </span>
-          <CategorySlider route />
+          <CategorySlider route category={siteConfig}/>
           <div className="flex gap-5 w-full">
             <InfiniteScroll
               loading={loading}

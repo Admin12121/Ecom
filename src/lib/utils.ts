@@ -110,3 +110,6 @@ export function slugify(str: string) {
 export function unslugify(str: string) {
   return str.replace(/-/g, " ")
 }
+
+export const toPascalCase = (str: string): string => 
+  str.replace(/(\w)(\w*)/g, (_: string, first: string, rest: string) => first.toUpperCase() + rest.toLowerCase());

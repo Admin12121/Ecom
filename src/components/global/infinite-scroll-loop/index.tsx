@@ -1,28 +1,26 @@
-"use client"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { GROUP_LIST } from "./list"
-import Link from "next/link"
-import { UseFormRegister } from "react-hook-form"
-import "swiper/css/bundle"
-import { SwiperProps, SwiperSlide } from "swiper/react"
-import { Slider } from "./slider"
-import { GroupListItem } from "./list-item"
+"use client";
+import Link from "next/link";
+import "swiper/css/bundle";
+import { SwiperProps, SwiperSlide } from "swiper/react";
+import { Slider } from "./slider";
+import { GroupListItem } from "./list-item";
+import { Categorty } from "@/app/(app)/(user)/collections/_components";
+import { toPascalCase } from "@/lib/utils";
 
 type Props = {
-  overlay?: boolean
-  label?: string
-  register?: UseFormRegister<any>
-  selected?: string
-  route?: boolean
-} & SwiperProps
+  overlay?: boolean;
+  label?: string;
+  selected?: string;
+  route?: boolean;
+  category: Categorty;
+} & SwiperProps;
 
 export const CategorySlider = ({
   overlay,
   label,
-  register,
   selected,
   route,
+  category,
   ...rest
 }: Props) => {
   return (
@@ -35,34 +33,15 @@ export const CategorySlider = ({
       overlay={overlay}
       {...rest}
     >
-      {GROUP_LIST.map((item, i) => (
-        <SwiperSlide key={item.id} className="content-width-slide ">
-          {!register ? (
-            route ? (
-              <Link href={`/collections?category=${item.path}`}>
-                <GroupListItem {...item} selected={selected} />
-              </Link>
-            ) : (
-              <GroupListItem {...item} />
-            )
-          ) : (
-            i > 0 && (
-              <Label htmlFor={`item-${item.id}`}>
-                <span>
-                  <Input
-                    id={`item-${item.id}`}
-                    type="radio"
-                    className="hidden"
-                    value={item.path}
-                    {...register("category")}
-                  />
-                  <GroupListItem {...item} selected={selected} />
-                </span>
-              </Label>
-            )
-          )}
-        </SwiperSlide>
-      ))}
+      {category.category.flatMap((cat) =>
+        cat.subcategory.map((subcat, i) => (
+          <SwiperSlide key={Math.random()} className="content-width-slide ">
+            <Link href={`/collections?category=${toPascalCase(subcat.name)}`}>
+              <GroupListItem {...subcat} selected={selected} />
+            </Link>
+          </SwiperSlide>
+        ))
+      )}
     </Slider>
-  )
-}
+  );
+};
