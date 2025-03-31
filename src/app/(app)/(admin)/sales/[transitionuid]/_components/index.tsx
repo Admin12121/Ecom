@@ -293,7 +293,7 @@ const ProductCard = ({ data, token }: { data: Order; token?: string }) => {
         </VoucherSkleton>
         <Separator className="mt-1" />
         <div className="w-full p-1 py-2 flex justify-between items-center">
-          <p>Total: $ {data?.total_amt}</p>
+          <p>Total: {data.payment_method == "Esewa" ? "रु" : "$"}{" "} {data?.total_amt}</p>
         </div>
       </div>
     </div>

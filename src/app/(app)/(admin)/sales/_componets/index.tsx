@@ -573,6 +573,7 @@ const Card = ({
   id,
   status,
   total_amt,
+  payment_method,
   created,
   title,
   handleDragStart,
@@ -707,7 +708,7 @@ const Card = ({
           Estimated arrival: {calculateEstimatedArrival(created, 7)}
         </p>
         <div className="w-full flex justify-between items-end">
-          <p>Total: $ {total_amt}</p>
+          <p>Total: {payment_method == "Esewa" ? "रु" : "$"}{" "} {total_amt}</p>
           <Button
             size="sm"
             onClick={() => route.push(`sales/${transactionuid}`)}

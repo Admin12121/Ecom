@@ -51,7 +51,8 @@ const renderBadge = (status: string) => {
       color: "bg-green-500",
       label: "Successful",
     },
-    cancled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
+    unpaid: { varaint: "secondary", color: "bg-neutral-500", label: "Unpaid" },
+    cancelled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
   };
 
   const { varaint, color, label } = statusMap[status] || {
