@@ -82,7 +82,7 @@
     "materials": {
       "metals": [
         {
-          "name": "gold"
+          "name": "Gold"
         },
         {
           "name": "platinium"
@@ -97,23 +97,33 @@
       "color": [
         {
           "id": 1,
-          "name": "orange",
+          "name": "Orange",
           "color": "orange"
         },
         {
           "id": 2,
-          "name": "red",
+          "name": "Red",
           "color": "red"
         },
         {
           "id": 3,
-          "name": "blue",
+          "name": "Blue",
           "color": "blue"
         },
         {
           "id": 4,
-          "name": "white",
+          "name": "White",
           "color": "white"
+        },
+        {
+          "id": 5,
+          "name": "Brown",
+          "color": "brown"
+        },
+        {
+          "id": 6,
+          "name": "Gold",
+          "color": "gold"
         }
       ]
     }

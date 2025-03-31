@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const token = "https://www.nrb.org.np/api/forex/v1/app-rate";
         const currencyData = decriptData(data, token);
         if (currencyData) {
-          const { data: locationData } = await axios.get("https://ipapi.co/json/");
+          // const { data: locationData } = await axios.get("https://ipapi.co/json/");
           const requiredCurrencies = ["INR", "USD", "CNY", "AUD"];
           const filteredData = currencyData.filter((currency: CurrencyData) =>
             requiredCurrencies.includes(currency.iso3)

@@ -273,6 +273,7 @@ const CollectionPage = ({siteConfig}:{siteConfig:Categorty}) => {
                 )}
               >
                 <Sidebar
+                  materials={siteConfig.materials}
                   state={state}
                   dispatch={dispatch}
                   handleClose={handleClose}

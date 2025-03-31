@@ -1541,12 +1541,18 @@ export default function SettingsDashboard() {
                 <Input
                   id="name"
                   value={editingFilter.item?.name || ""}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const name = e.target.value
+                    const updatedItem = { ...editingFilter.item, name }
+                    if (editingFilter.type === "color") {
+                      updatedItem.color = name.toLowerCase()
+                    }
+
                     setEditingFilter({
                       ...editingFilter,
-                      item: { ...editingFilter.item, name: e.target.value },
+                      item: updatedItem,
                     })
-                  }
+                  }}
                   className="bg-background"
                 />
               </div>
@@ -1581,51 +1587,17 @@ export default function SettingsDashboard() {
 
               {editingFilter.type === "color" && (
                 <div className="grid gap-2">
-                  <Label htmlFor="color">Color</Label>
+                  <Label htmlFor="color">Color Preview</Label>
                   <div className="flex items-center gap-2">
                     <div
                       className="h-10 w-10 rounded-md border"
                       style={{
-                        backgroundColor:
-                          (editingFilter.item as ColorFilterItem)?.color ||
-                          "#000000",
+                        backgroundColor: (editingFilter.item as ColorFilterItem)?.color || "#000000",
                       }}
                     />
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          Choose Color
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <HexColorPicker
-                          color={(editingFilter.item as ColorFilterItem)?.color || "#000000"}
-                          onChange={(color) =>
-                            setEditingFilter({
-                              ...editingFilter,
-                              item: { ...editingFilter.item, color },
-                            })
-                          }
-                          className="p-2"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <Input
-                      value={
-                        (editingFilter.item as ColorFilterItem)?.color ||
-                        "#000000"
-                      }
-                      onChange={(e) =>
-                        setEditingFilter({
-                          ...editingFilter,
-                          item: {
-                            ...editingFilter.item,
-                            color: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-24 bg-background"
-                    />
+                    <span className="text-sm text-muted-foreground">
+                      Color value is automatically set to match the name
+                    </span>
                   </div>
                 </div>
               )}

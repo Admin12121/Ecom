@@ -21,7 +21,8 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { Input } from "@/components/ui/input";
 import Kbd from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
+import { Badge as Clip } from "@/components/ui/badge";
 
 interface CartItem {
   id: number;
@@ -58,7 +59,6 @@ export interface Order {
   updated_at: string;
 }
 
-
 interface State {
   onShippingOrders: Order[];
   arrivedOrders: Order[];
@@ -71,14 +71,14 @@ interface State {
 }
 
 type Action =
-  | { type: 'SET_ONSHIPPING_ORDERS'; payload: Order[] }
-  | { type: 'SET_ARRIVED_ORDERS'; payload: Order[] }
-  | { type: 'SET_DELIVERED_ORDERS'; payload: Order[] }
-  | { type: 'SET_CANCELED_ORDERS'; payload: Order[] }
-  | { type: 'INCREMENT_ONSHIPPING_PAGE' }
-  | { type: 'INCREMENT_ARRIVED_PAGE' }
-  | { type: 'INCREMENT_DELIVERED_PAGE' }
-  | { type: 'INCREMENT_CANCELED_PAGE' };
+  | { type: "SET_ONSHIPPING_ORDERS"; payload: Order[] }
+  | { type: "SET_ARRIVED_ORDERS"; payload: Order[] }
+  | { type: "SET_DELIVERED_ORDERS"; payload: Order[] }
+  | { type: "SET_CANCELED_ORDERS"; payload: Order[] }
+  | { type: "INCREMENT_ONSHIPPING_PAGE" }
+  | { type: "INCREMENT_ARRIVED_PAGE" }
+  | { type: "INCREMENT_DELIVERED_PAGE" }
+  | { type: "INCREMENT_CANCELED_PAGE" };
 
 export const initialState: State = {
   onShippingOrders: [],
@@ -93,21 +93,33 @@ export const initialState: State = {
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_ONSHIPPING_ORDERS':
-      return { ...state, onShippingOrders: [...state.onShippingOrders, ...action.payload] };
-    case 'SET_ARRIVED_ORDERS':
-      return { ...state, arrivedOrders: [...state.arrivedOrders, ...action.payload] };
-    case 'SET_DELIVERED_ORDERS':
-      return { ...state, deliveredOrders: [...state.deliveredOrders, ...action.payload] };
-    case 'SET_CANCELED_ORDERS':
-      return { ...state, canceledOrders: [...state.canceledOrders, ...action.payload] };
-    case 'INCREMENT_ONSHIPPING_PAGE':
+    case "SET_ONSHIPPING_ORDERS":
+      return {
+        ...state,
+        onShippingOrders: [...state.onShippingOrders, ...action.payload],
+      };
+    case "SET_ARRIVED_ORDERS":
+      return {
+        ...state,
+        arrivedOrders: [...state.arrivedOrders, ...action.payload],
+      };
+    case "SET_DELIVERED_ORDERS":
+      return {
+        ...state,
+        deliveredOrders: [...state.deliveredOrders, ...action.payload],
+      };
+    case "SET_CANCELED_ORDERS":
+      return {
+        ...state,
+        canceledOrders: [...state.canceledOrders, ...action.payload],
+      };
+    case "INCREMENT_ONSHIPPING_PAGE":
       return { ...state, onShippingPage: state.onShippingPage + 1 };
-    case 'INCREMENT_ARRIVED_PAGE':
+    case "INCREMENT_ARRIVED_PAGE":
       return { ...state, arrivedPage: state.arrivedPage + 1 };
-    case 'INCREMENT_DELIVERED_PAGE':
+    case "INCREMENT_DELIVERED_PAGE":
       return { ...state, deliveredPage: state.deliveredPage + 1 };
-    case 'INCREMENT_CANCELED_PAGE':
+    case "INCREMENT_CANCELED_PAGE":
       return { ...state, canceledPage: state.canceledPage + 1 };
     default:
       return state;
@@ -120,26 +132,61 @@ export default function SalesManagementKanban() {
   const deferredSearch = useDeferredValue(search);
   const [state, dispatch] = useReducer(reducer, initialState);
 
-    const { data: onShippingOrders, refetch: refetchOnShipping, isLoading: isLoadingOnShipping } = useGetOrdersQuery(
-    { token: accessToken, status: "onshipping", search: deferredSearch, page: state.onShippingPage },
+  const {
+    data: onShippingOrders,
+    refetch: refetchOnShipping,
+    isLoading: isLoadingOnShipping,
+  } = useGetOrdersQuery(
+    {
+      token: accessToken,
+      status: "onshipping",
+      search: deferredSearch,
+      page: state.onShippingPage,
+    },
     { skip: !accessToken }
   );
 
-  const { data: arrivedOrders, refetch: refetchArrived, isLoading: isLoadingArrived } = useGetOrdersQuery(
-    { token: accessToken, status: "arrived", search: deferredSearch, page: state.arrivedPage },
+  const {
+    data: arrivedOrders,
+    refetch: refetchArrived,
+    isLoading: isLoadingArrived,
+  } = useGetOrdersQuery(
+    {
+      token: accessToken,
+      status: "arrived",
+      search: deferredSearch,
+      page: state.arrivedPage,
+    },
     { skip: !accessToken }
   );
 
-  const { data: deliveredOrders, refetch: refetchDelivered, isLoading: isLoadingDelivered } = useGetOrdersQuery(
-    { token: accessToken, status: "delivered", search: deferredSearch, page: state.deliveredPage },
+  const {
+    data: deliveredOrders,
+    refetch: refetchDelivered,
+    isLoading: isLoadingDelivered,
+  } = useGetOrdersQuery(
+    {
+      token: accessToken,
+      status: "delivered",
+      search: deferredSearch,
+      page: state.deliveredPage,
+    },
     { skip: !accessToken }
   );
 
-  const { data: canceledOrders, refetch: refetchCanceled, isLoading: isLoadingCanceled } = useGetOrdersQuery(
-    { token: accessToken, status: "canceled", search: deferredSearch, page: state.canceledPage },
+  const {
+    data: canceledOrders,
+    refetch: refetchCanceled,
+    isLoading: isLoadingCanceled,
+  } = useGetOrdersQuery(
+    {
+      token: accessToken,
+      status: "canceled",
+      search: deferredSearch,
+      page: state.canceledPage,
+    },
     { skip: !accessToken }
   );
-
 
   const refetchData = (type: string, multiple: boolean) => {
     switch (type) {
@@ -169,16 +216,16 @@ export default function SalesManagementKanban() {
   const loadMore = (type: string) => {
     switch (type) {
       case "onshipping":
-        dispatch({ type: 'INCREMENT_ONSHIPPING_PAGE' });
+        dispatch({ type: "INCREMENT_ONSHIPPING_PAGE" });
         break;
       case "arrived":
-        dispatch({ type: 'INCREMENT_ARRIVED_PAGE' });
+        dispatch({ type: "INCREMENT_ARRIVED_PAGE" });
         break;
       case "delivered":
-        dispatch({ type: 'INCREMENT_DELIVERED_PAGE' });
+        dispatch({ type: "INCREMENT_DELIVERED_PAGE" });
         break;
       case "canceled":
-        dispatch({ type: 'INCREMENT_CANCELED_PAGE' });
+        dispatch({ type: "INCREMENT_CANCELED_PAGE" });
         break;
       default:
         console.warn(`Unknown load more type: ${type}`);
@@ -213,7 +260,7 @@ export default function SalesManagementKanban() {
       <div className="h-[calc(100dvh_-_120px)] w-full overflow-hidden">
         <div className="grid grid-cols-4 h-full w-full gap-1 px-6">
           <Column
-            title="OnShipping"
+            title="Payment Pending"
             column="onshipping"
             headingColor="orange-400"
             data={onShippingOrders}
@@ -222,7 +269,7 @@ export default function SalesManagementKanban() {
             loading={isLoadingOnShipping}
           />
           <Column
-            title="Arrived"
+            title="OnShipping"
             column="arrived"
             headingColor="blue-400"
             data={arrivedOrders}
@@ -613,7 +660,7 @@ const Card = ({
       );
     });
   };
-  
+
   return (
     <>
       <DropIndicator beforeId={id.toString()} column={status} />
@@ -622,10 +669,15 @@ const Card = ({
         layoutId={id.toString()}
         draggable="true"
         onDragStart={handleMotionDragStart}
-        {...{className:cn(
-          "cursor-grab rounded-lg border hover:ring-2 ring-offset-background hover:ring-offset-2 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 p-2 active:cursor-grabbing transition-all duration-500",
-          title === "OnShipping" && "ring-orange-400", title === "Arrived" && "ring-blue-400", title === "Delivered" && "ring-green-400", title === "Canceled" && "ring-red-400"
-        )}}
+        {...{
+          className: cn(
+            "cursor-grab rounded-lg border hover:ring-2 ring-offset-background hover:ring-offset-2 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 p-2 active:cursor-grabbing transition-all duration-500",
+            title === "OnShipping" && "ring-orange-400",
+            title === "Arrived" && "ring-blue-400",
+            title === "Delivered" && "ring-green-400",
+            title === "Canceled" && "ring-red-400"
+          ),
+        }}
       >
         <span className="flex gap-2 items-center justify-between">
           <p className="text-sm dark:text-neutral-100 flex items-center gap-1">
@@ -634,6 +686,21 @@ const Card = ({
           </p>
           <div className="flex gap-1">
             {getAchievedBadges({ currentStatus: status, id: id })}
+            {status == "unpaid" && (
+              <Clip variant="secondary" className={"relative border-0 gap-1"}>
+                <span
+                  className={
+                    "animate-ping absolute inline-flex h-2 w-2  rounded-full bg-neutral-500"
+                  }
+                ></span>
+                <span
+                  className={
+                    "inline-flex h-2 w-2 right-0 top-0 rounded-full bg-neutral-500"
+                  }
+                ></span>
+                Unpaid
+              </Clip>
+            )}
           </div>
         </span>
         <p className="text-sm text-neutral-500 flex items-center gap-1 pt-2">

@@ -10,6 +10,7 @@ import Price from "./slider";
 import { useAuth } from "@/lib/context";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
+import { toPascalCase } from "@/lib/utils";
 
 interface Item {
   id: string;
@@ -17,6 +18,12 @@ interface Item {
   label: string;
   defaultChecked?: boolean;
   disabled?: boolean;
+}
+
+interface Color {
+  id: string;
+  name: string;
+  color: string;
 }
 
 const metal: Item[] = [
@@ -48,10 +55,12 @@ const Sidebar = ({
   state,
   dispatch,
   handleClose,
+  materials,
 }: {
   state: any;
   dispatch: any;
   handleClose: any;
+  materials: any;
 }) => {
   const { selectedcurrency } = useAuth();
   const items = [
@@ -61,29 +70,27 @@ const Sidebar = ({
       content: (
         <fieldset className="space-y-4">
           <div className="grid grid-cols-3 p-1 gap-3">
-            {metal.map((item) => (
+            {materials.metals.map((item:any) => (
               <label
-                key={item.id}
+                key={Math.random()}
                 className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
               >
                 <Checkbox
-                  id={item.id}
-                  value={item.value}
+                  value={item.name.toLowerCase()}
                   className="sr-only after:absolute after:inset-0"
-                  disabled={item?.disabled}
-                  checked={state.metal.includes(item.value)}
+                  checked={state.metal.includes(item.name.toLowerCase())}
                   onClick={() =>
                     dispatch({
                       type: "multiple",
                       value: [
-                        { type: "metal", value: item.value },
+                        { type: "metal", value: item.name.toLowerCase()},
                         { type: "page", value: 1 },
                       ],
                     })
                   }
                 />
                 <p className="text-sm font-medium leading-none ">
-                  {item.label}
+                  {toPascalCase(item.name)}
                 </p>
               </label>
             ))}
@@ -97,24 +104,24 @@ const Sidebar = ({
       content: (
         <fieldset className="space-y-4">
           <div className="grid grid-cols-3 p-1 gap-3">
-            {color.map((item) => (
+            {materials.color.map((item: Color) => (
               <label
                 key={item.id}
                 className="relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-input px-2 py-3 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors text-foreground has-[[data-state=checked]]:text-white has-[[data-disabled]]:cursor-not-allowed bg-white dark:bg-transparent has-[[data-state=checked]]:dark:bg-purple-600 has-[[data-state=checked]]:border-ring ring-transparent has-[[data-state=checked]]:ring-purple-500/50 ring-2 ring-offset-2 ring-offset-transparent has-[[data-state=checked]]:ring-offset-slate-50 has-[[data-state=checked]]:dark:ring-offset-slate-900 has-[[data-state=checked]]:bg-purple-500 has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70"
               >
                 <Checkbox
                   id={item.id}
-                  value={item.value}
+                  value={item.color}
                   className="sr-only after:absolute after:inset-0"
-                  checked={state.color.includes(item.value)}
-                  onClick={() => dispatch({ type: "color", value: item.value })}
-                  disabled={item?.disabled}
+                  checked={state.color.includes(item.color)}
+                  onClick={() => dispatch({ type: "color", value: item.color })}
                 />
                 <p className="text-sm font-medium leading-none ">
-                  {item.label}
+                  {item.name}
                 </p>
               </label>
             ))}
+           
           </div>
         </fieldset>
       ),
@@ -195,7 +202,10 @@ const Sidebar = ({
   return (
     <div className="w-full px-3 py-1 bg-neutral-100/90 dark:bg-neutral-900/90 lg:bg-transparent rounded-md backdrop-blur-md h-full">
       <span className="h-5 w-full lg:hidden flex items-center justify-end">
-        <span className="absolute right-2 top-2 w-5 h-5 cursor-pointer" onClick={handleClose}>
+        <span
+          className="absolute right-2 top-2 w-5 h-5 cursor-pointer"
+          onClick={handleClose}
+        >
           <X className="w-4 h-4" />
         </span>
       </span>

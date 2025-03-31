@@ -3,16 +3,29 @@ import React, { useCallback, useDeferredValue, useMemo } from "react";
 import {
   useSalesRetrieveQuery,
   useProductsByIdsQuery,
+  useUpdateSaleMutation,
 } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { MapPin, ShoppingCart, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { LeftIcon, RightIcon } from "@/app/(app)/(user)/(account)/orders/_components/icons";
+import {
+  LeftIcon,
+  RightIcon,
+} from "@/app/(app)/(user)/(account)/orders/_components/icons";
 import Voucher from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 import { Separator } from "@/components/ui/separator";
 import { useDecryptedData } from "@/hooks/dec-data";
+import { EllipsisIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { cn, delay } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -89,7 +102,8 @@ const renderBadge = (status: string) => {
       color: "bg-green-500",
       label: "Successful",
     },
-    cancled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
+    unpaid: { varaint: "secondary", color: "bg-neutral-500", label: "Unpaid" },
+    cancelled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
   };
 
   const { varaint, color, label } = statusMap[status] || {
@@ -98,7 +112,7 @@ const renderBadge = (status: string) => {
     label: "Unknown",
   };
   return (
-    <Badge variant={varaint} className={`relative border-0 gap-1`}>
+    <Badge variant={varaint} className={"relative border-0 gap-1"}>
       <span
         className={cn(
           "animate-ping absolute inline-flex h-2 w-2  rounded-full ",
@@ -119,20 +133,17 @@ const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
     { transactionuid, token: accessToken },
     { skip: !accessToken }
   );
-  const {data, loading} = useDecryptedData(encryptedData, isLoading);
+  const { data, loading } = useDecryptedData(encryptedData, isLoading);
 
   return (
     <PageSkeleton loading={loading}>
-      {data && <ProductCard data={data} />}
+      {data && <ProductCard data={data} token={accessToken} />}
     </PageSkeleton>
   );
 };
 
-const ProductCard = ({
-  data,
-}: {
-  data: Order;
-}) => {
+const ProductCard = ({ data, token }: { data: Order; token?: string }) => {
+  const [updateSale] = useUpdateSaleMutation();
 
   const productIds = useMemo(() => {
     return data?.products.map((item: CartItem) => item.product);
@@ -146,7 +157,9 @@ const ProductCard = ({
   const productsWithData = useMemo(() => {
     if (!products) return [];
     return data?.products.map((cartItem: CartItem) => {
-      const product = products.results.find((p: Product) => p.id === cartItem.product);
+      const product = products.results.find(
+        (p: Product) => p.id === cartItem.product
+      );
       const variantDetails = Array.isArray(product.variants)
         ? product.variants.find((v: any) => v.id === cartItem.variant)
         : product.variants;
@@ -188,6 +201,35 @@ const ProductCard = ({
     return formatDate(createdDate);
   };
 
+  const handleUpdateSale = async (
+    id: number,
+    status: string,
+  ) => {
+    const toastId = toast.loading(
+      `Updating status for order ${id} to ${status}`,
+      {
+        position: "top-center",
+      }
+    );
+    await delay(500);
+    const actualData = {
+      id: id,
+      status: status,
+    };
+    const res = await updateSale({ actualData, token });
+    if (res.data) {
+      toast.success("Status updated successfully", {
+        id: toastId,
+        position: "top-center",
+      });
+    } else {
+      toast.error("Failed to update status", {
+        id: toastId,
+        position: "top-center",
+      });
+    }
+  };
+
   return (
     <div className="text-left hover:no-underline p-0 w-full lg:min-w-[450px] bg-white dark:bg-neutral-900/50 rounded-lg">
       <div className="flex w-full rounded-lg p-1 flex-col">
@@ -196,7 +238,29 @@ const ProductCard = ({
             <ShoppingCart className="w-5 h-5" />{" "}
             {truncateText(data?.transactionuid, 15)}
           </h1>
-          {renderBadge(data?.status)}
+          <span className="gap-2 flex items-center">
+            {renderBadge(data?.status)}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="shadow-none"
+                  aria-label="Open edit menu"
+                >
+                  <EllipsisIcon size={16} aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              {(data.status == "pending" || data.status == "unpaid" || data.status == "verified") && (
+                <DropdownMenuContent>
+                  {data.status != "pending" && <DropdownMenuItem onClick={()=>handleUpdateSale(data.id, "pending")}>Pending</DropdownMenuItem>}
+                  {data.status != "unpaid" && <DropdownMenuItem onClick={()=>handleUpdateSale(data.id, "unpaid")}>UnPaid</DropdownMenuItem>}
+                  {data.status != "verified" && <DropdownMenuItem onClick={()=>handleUpdateSale(data.id, "verified")}>Verified</DropdownMenuItem>}
+                  <DropdownMenuItem onClick={()=>handleUpdateSale(data.id, "cancelled")}>Cancled</DropdownMenuItem>
+                </DropdownMenuContent>
+              )}
+            </DropdownMenu>
+          </span>
         </div>
         <div className="w-full p-2 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 rounded-lg">
           <span className="p-2 border-1 rounded-xl">
