@@ -10,7 +10,6 @@ import { cookies } from "next/headers";
 
 import "@/styles/globals.css";
 import dynamic from "next/dynamic";
-import { type } from "os";
 
 const Cookies = dynamic(() => import("./cookies"));
 

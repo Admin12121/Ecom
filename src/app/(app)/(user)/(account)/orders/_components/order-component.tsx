@@ -52,7 +52,7 @@ const renderBadge = (status: string) => {
       label: "Successful",
     },
     unpaid: { varaint: "secondary", color: "bg-neutral-500", label: "Unpaid" },
-    cancelled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
+    cancelled: { varaint: "danger", color: "bg-red-500", label: "Cancelled" },
   };
 
   const { varaint, color, label } = statusMap[status] || {
@@ -186,7 +186,17 @@ const OrderDetails = ({ order }: { order: OrderData }) => {
             <LeftIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
             <span className="p-2 border-1 rounded-xl">
               <p className="text-sm text-neutral-500">
-                Estimated arrival: {calculateEstimatedArrival(order.created, 7)}
+                {order.status === "unpaid"
+                  ? "Complete Payment within 24 hrs"
+                  : order.status === "successful" ||
+                    order.status === "delivered"
+                  ? "Delivered Successfully"
+                  : order.status === "cancelled"
+                  ? "Cancelled"
+                  : `Estimated arrival: ${calculateEstimatedArrival(
+                      order?.created,
+                      7
+                    )}`}
               </p>
             </span>
             <RightIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />

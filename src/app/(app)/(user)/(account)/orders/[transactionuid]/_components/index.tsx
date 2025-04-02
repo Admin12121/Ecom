@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Complete_payment from "./complete_payment";
 
 interface Product {
   id: string;
@@ -96,7 +97,7 @@ const renderBadge = (status: string) => {
       label: "Successful",
     },
     unpaid: { varaint: "secondary", color: "bg-neutral-500", label: "Unpaid" },
-    cancelled: { varaint: "danger", color: "bg-red-500", label: "Canceled" },
+    cancelled: { varaint: "danger", color: "bg-red-500", label: "Cancelled" },
   };
 
   const { varaint, color, label } = statusMap[status] || {
@@ -221,7 +222,13 @@ const ProductCard = ({ data }: { data: Order }) => {
             <LeftIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
             <span className="p-2 border-1 rounded-xl">
               <p className="text-sm text-neutral-500">
-                Estimated arrival: {calculateEstimatedArrival(data?.created, 7)}
+              {data.status === "unpaid"
+                ? "Complete Payment within 24 hrs"
+                : data.status === "successful" || data.status === "delivered"
+                ? "Delivered Successfully"
+                : data.status === "cancelled"
+                ? "Cancelled"
+                : `Estimated arrival: ${calculateEstimatedArrival( data?.created, 7 )}`}
               </p>
             </span>
             <RightIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
@@ -234,27 +241,36 @@ const ProductCard = ({ data }: { data: Order }) => {
           </span>
         </div>
       </div>
-      <div className="p-2 pb-0 flex gap-2 flex-col">
+      <div className="p-2 pb-0 flex gap-2 flex-col relative">
         <VoucherSkleton loading={isLoading}>
           {productsWithData.map((product: any) => (
             <Voucher key={product.productslug} data={product} price={false} />
           ))}
         </VoucherSkleton>
-        <Separator className="mt-1" />
-        <div className="w-full p-1 py-2 gap-2 flex items-center">
-          <p>Total :</p>{" "}
-          {data.discount > 0 && (
-            <p>
-              {data.payment_method == "Esewa" ? "रु" : "$"} {data?.total_amt}
+        <Separator className="mt-1 bg-[hsl(var(--custombg))] h-[2px] relative before:absolute before:w-5 before:h-5 before:bg-[hsl(var(--custombg))] before:rounded-full before:-left-5 before:-bottom-2.5 after:absolute after:w-5 after:h-5 after:bg-[hsl(var(--custombg))] after:rounded-full after:-right-5 after:-bottom-2.5" />
+        <div className="w-full flex justify-between items-center">
+          <div className="w-full p-1 pb-2 gap-2 flex items-center">
+            <p>Total :</p>{" "}
+            {data.discount > 0 && (
+              <p>
+                {data.payment_method == "Esewa" ? "रु" : "$"} {data?.total_amt}
+              </p>
+            )}{" "}
+            <p
+              className={cn(
+                data?.discount > 0 && "line-through text-neutral-950/50"
+              )}
+            >
+              {data.payment_method == "Esewa" ? "रु" : "$"} {data?.sub_total}
             </p>
-          )}{" "}
-          <p
-            className={cn(
-              data?.discount > 0 && "line-through text-neutral-950/50"
-            )}
-          >
-            {data.payment_method == "Esewa" ? "रु" : "$"} {data?.sub_total}
-          </p>
+          </div>
+          {data.status === "unpaid" && (
+            <Complete_payment
+              total_amt={data.total_amt}
+              transaction_uid={data.transactionuid}
+              status={data.payment_method}
+            />
+          )}
         </div>
       </div>
     </div>

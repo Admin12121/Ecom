@@ -98,8 +98,8 @@ const Orders = () => {
           <TabsTrigger className="w-full" value="delivered">
             Delivered
           </TabsTrigger>
-          <TabsTrigger className="w-full" value="cancled">
-            Cancled
+          <TabsTrigger className="w-full" value="canceled">
+            Cancelled
           </TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="w-full h-full">
@@ -114,7 +114,7 @@ const Orders = () => {
         <TabsContent value="delivered" className="w-full h-full">
           <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
-        <TabsContent value="cancled" className="w-full h-full">
+        <TabsContent value="canceled" className="w-full h-full">
           <OrderComponent data={sales} loadMore={loadMore} hasMore={hasMore} loading={loading}/>
         </TabsContent>
       </Tabs>
