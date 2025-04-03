@@ -24,7 +24,7 @@ import {
   TableCell,
   SortDescriptor,
   Selection,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import {
   Card,
   CardContent,
@@ -41,7 +41,7 @@ import {
 } from "lucide-react";
 
 import { User } from "./user";
-import { Pagination } from "@nextui-org/pagination";
+import { Pagination } from "@heroui/pagination";
 
 import { labels } from "./data";
 
