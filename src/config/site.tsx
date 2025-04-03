@@ -66,11 +66,6 @@ export const siteConfig = {
           href: "/",
           external: true,
         },
-        {
-          title: "X",
-          href: "/",
-          external: true,
-        },
       ],
     },
   ] satisfies FooterItem[],

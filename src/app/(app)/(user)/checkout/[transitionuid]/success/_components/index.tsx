@@ -88,7 +88,8 @@ const Response = () => {
       try {
         const decodedData = atob(data);
         const parsedData = JSON.parse(decodedData);
-        if (transitionuid === parsedData.transaction_uuid) {
+        const sanitizedTransactionUuid = parsedData.transaction_uuid.split('_')[0];
+        if (transitionuid === sanitizedTransactionUuid) {
           setResponseData(parsedData);
         } else {
           setSteps([{ text: "Error", state: true, verified: "error" }]);

@@ -238,7 +238,7 @@ export default function Cart() {
         </SheetHeader>
         {totalPieces > 0 ? (
           <div className="relative h-[93.5dvh]">
-            <div className="py-2 flex flex-col gap-3 h-[85dvh] overflow-y-auto">
+            <div className="py-2 flex flex-col gap-3 h-[87dvh] overflow-y-auto">
               <div className="text-neutral-800 dark:text-zinc-400 text-sm bg-white dark:bg-neutral-900 p-3 rounded-md ">
                 Get Free Shipping on your first purchase
               </div>
@@ -263,11 +263,11 @@ export default function Cart() {
                       Add Coupon or Gift Card
                     </p>
                   </AccordionTrigger>
-                  <AccordionContent className="flex gap-2 text-base py-4 px-1">
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                  <AccordionContent className="flex gap-2 text-base pt-2 pb-4 px-1">
+                    <form className="flex gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
                       <Input
                         className={cn(
-                          "w-full bg-white dark:bg-neutral-950 rounded-md",
+                          "w-full bg-muted dark:bg-neutral-950 rounded-md",
                           errors.code && "!ring-red-500 !bg-red-500/10"
                         )}
                         placeholder="Enter your code"

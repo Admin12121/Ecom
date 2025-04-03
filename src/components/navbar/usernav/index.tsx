@@ -106,7 +106,7 @@ export function UserNav({ align }: { align?: "center" | "end" | "start" }) {
             Wishlist
             <DropdownMenuShortcut>⌘W</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/help&feedback")}>
+          <DropdownMenuItem onClick={() => router.push("/contacts")}>
             Help & Feedback
           </DropdownMenuItem>
         </DropdownMenuGroup>

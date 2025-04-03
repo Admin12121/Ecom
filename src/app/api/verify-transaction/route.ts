@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const decodedData = atob(data);
     const parsedData = JSON.parse(decodedData);
     const verificationUrl =
-      "https://uat.esewa.com.np/api/epay/transaction/status/";
+      "https://rc.esewa.com.np/api/epay/transaction/status/";
     //https://epay.esewa.com.np/api/epay/transaction/status/ for production
     const sanitizedAmount = Number(parsedData.total_amount.replace(/,/g, ''));
     const params = new URLSearchParams();

@@ -3,11 +3,12 @@ import React, { useCallback, useDeferredValue, useMemo } from "react";
 import {
   useSalesRetrieveQuery,
   useProductsByIdsQuery,
+  useUpdateSaleMutation,
 } from "@/lib/store/Service/api";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { MapPin, ShoppingCart, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import { LeftIcon, RightIcon } from "../../_components/icons";
 import Voucher from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
 import { VoucherSkleton } from "@/app/(app)/(user)/checkout/[transitionuid]/_components/voucher";
@@ -20,6 +21,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Complete_payment from "./complete_payment";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { EllipsisIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -123,19 +133,20 @@ const renderBadge = (status: string) => {
 
 const OrderRetrieve = ({ transactionuid }: { transactionuid: string }) => {
   const { accessToken } = useAuthUser();
-  const { data: encryptedData, isLoading } = useSalesRetrieveQuery(
+  const { data: encryptedData, isLoading, refetch } = useSalesRetrieveQuery(
     { transactionuid, token: accessToken },
     { skip: !accessToken }
   );
   const { data, loading } = useDecryptedData(encryptedData, isLoading);
   return (
     <PageSkeleton loading={loading}>
-      {data && <ProductCard data={data} />}
+      {data && accessToken && <ProductCard data={data} token={accessToken} refetch={refetch}/>}
     </PageSkeleton>
   );
 };
 
-const ProductCard = ({ data }: { data: Order }) => {
+const ProductCard = ({ data, token, refetch }: { data: Order , token:string , refetch:any}) => {
+  const [updateSale] = useUpdateSaleMutation();
   const productIds = useMemo(() => {
     return data?.products.map((item: CartItem) => item.product);
   }, [data]);
@@ -193,6 +204,36 @@ const ProductCard = ({ data }: { data: Order }) => {
     return formatDate(createdDate);
   };
 
+  const handleUpdateSale = async (
+    id: number,
+    status: string,
+  ) => {
+    const toastId = toast.loading(
+      `Updating status for order ${id} to ${status}`,
+      {
+        position: "top-center",
+      }
+    );
+    await delay(500);
+    const actualData = {
+      id: id,
+      status: status,
+    };
+    const res = await updateSale({ actualData, token });
+    if (res.data) {
+      toast.success("Status updated successfully", {
+        id: toastId,
+        position: "top-center",
+      });
+      refetch();
+    } else {
+      toast.error("Failed to update status", {
+        id: toastId,
+        position: "top-center",
+      });
+    }
+  };
+
   return (
     <div className="text-left hover:no-underline p-0 w-full lg:min-w-[450px] bg-white dark:bg-neutral-900/50 rounded-lg">
       <div className="flex w-full rounded-lg p-1 flex-col">
@@ -210,7 +251,35 @@ const ProductCard = ({ data }: { data: Order }) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          {renderBadge(data?.status)}
+          <span className="gap-2 flex items-center">
+            {renderBadge(data?.status)}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="shadow-none"
+                  aria-label="Open edit menu"
+                >
+                  <EllipsisIcon size={16} aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              {data.status == "unpaid" && (
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                  // onClick={() => handleUpdateSale(data.id, "pending")}
+                  >
+                    Report Issue
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                  onClick={() => handleUpdateSale(data.id, "cancelled")}
+                  >
+                    Canclel Order
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              )}
+            </DropdownMenu>
+          </span>
         </div>
         <div className="w-full p-2 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 rounded-lg">
           <span className="p-2 border-1 rounded-xl">
@@ -222,13 +291,16 @@ const ProductCard = ({ data }: { data: Order }) => {
             <LeftIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
             <span className="p-2 border-1 rounded-xl">
               <p className="text-sm text-neutral-500">
-              {data.status === "unpaid"
-                ? "Complete Payment within 24 hrs"
-                : data.status === "successful" || data.status === "delivered"
-                ? "Delivered Successfully"
-                : data.status === "cancelled"
-                ? "Cancelled"
-                : `Estimated arrival: ${calculateEstimatedArrival( data?.created, 7 )}`}
+                {data.status === "unpaid"
+                  ? "Complete Payment within 24 hrs"
+                  : data.status === "successful" || data.status === "delivered"
+                  ? "Delivered Successfully"
+                  : data.status === "cancelled"
+                  ? "Cancelled"
+                  : `Estimated arrival: ${calculateEstimatedArrival(
+                      data?.created,
+                      7
+                    )}`}
               </p>
             </span>
             <RightIcon className="dark:fill-white/70 dark:stroke-white/70 stroke-neutral-700 hidden lg:flex" />
