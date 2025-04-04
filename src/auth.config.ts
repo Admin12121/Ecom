@@ -67,7 +67,6 @@ export default {
         const data = await response.json();
         if (!response.ok) {
           const errorMessage = data.error || "Failed to log in";
-          console.log(errorMessage);
           throw new Error(errorMessage);
         }
         if (data.message === "Acivation link sent to your email") {

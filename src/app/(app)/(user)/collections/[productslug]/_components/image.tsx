@@ -12,13 +12,7 @@ interface Images {
   image: string;
 }
 
-const DemoSlider = ({
-  images,
-  // discount,
-}: {
-  images: Images[];
-  discount?: string;
-}) => {
+const DemoSlider = ({ images }: { images: Images[] }) => {
   return (
     <section className="w-full flex items-center justify-center ">
       <span className="relative w-[95dvw] flex flex-col h-[500px] m-0 dark:bg-neutral-950 rounded-lg">
@@ -63,36 +57,34 @@ export default function ImageContainer({ images }: { images: Images[] }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-
-  return (
-    <>
-      {isMobile ? (
-        <DemoSlider images={images}/>
-      ) : (
-        images.map(({ image }: { image: string }, index) => {
-          const isPng = image.endsWith("not.png");
-          const imageClassName = isPng ?  "w-full h-full object-cover p-0 overflow-hidden" : "";
-          return(
-          <span
-            key={index}
-            className={cn("relative mmd:w-[49%] bg-white dark:bg-neutral-950 flex items-center justify-center rounded-xl p-3", imageClassName)}
-          >
-            {index == 0 && (
-              <span className="absolute bg-neutral-100 dark:bg-secondary-500 text-secondary-foreground top-[10px] left-[10px] h-[20px] w-[60px] flex  rounded-md text-xs items-center justify-center gap-1 font-semibold">
-                50% Off
-              </span>
+  return isMobile ? (
+    <DemoSlider images={images} />
+  ) : (
+    images.map(({ image }: { image: string }, index) => {
+      const isPng = image.endsWith("not.png");
+      const imageClassName = isPng
+        ? "w-full h-full object-cover p-0 overflow-hidden"
+        : "";
+      return (
+        <span
+          key={index}
+          className={cn(
+            "relative mmd:w-[49%] bg-white dark:bg-neutral-950 flex items-center justify-center rounded-xl p-3",
+            imageClassName
+          )}
+        >
+          <Image
+            className={cn(
+              "w-full md:min-h-[470px] h-[500px] object-contain",
+              imageClassName
             )}
-            <Image
-              className={cn("w-full md:min-h-[470px] h-[500px] object-contain", imageClassName)}
-              src={image}
-              alt={`image ${index + 1}`}
-              width={800}
-              height={800}
-            />
-          </span>
-        )})
-      )}
-    </>
+            src={image}
+            alt={`image ${index + 1}`}
+            width={800}
+            height={800}
+          />
+        </span>
+      );
+    })
   );
 }

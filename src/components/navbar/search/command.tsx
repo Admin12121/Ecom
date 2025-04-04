@@ -56,6 +56,14 @@ const getRandomItems = (array: string[], count: number) => {
 
 const titles = routeMap.map((route) => route.title.toLowerCase());
 
+const getRecentViewedProducts = (): number[] => {
+  if (typeof window !== "undefined") {
+    const key = "recentViewedProducts";
+    return JSON.parse(localStorage.getItem(key) || "[]");
+  }
+  return [];
+};
+
 export default function Component() {
   const route = useRouter();
   const [open, setOpen] = React.useState(false);
@@ -63,12 +71,17 @@ export default function Component() {
   const [matchedCommand, setMatchedCommand] = React.useState<Route | null>(
     null
   );
+  const [ recentProducts, setRecentProducts ] = React.useState<number[]>(getRecentViewedProducts() || []);
   const [tag, setTag] = React.useState<string[]>(getRandomItems(titles, 4));
   const { data, isLoading } = useTrendingProductsViewQuery({ skip: !open });
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+        (e.metaKey && e.altKey && e.key === "I")
+      ) {
         e.preventDefault();
         setOpen((open) => !open);
       }
@@ -77,6 +90,7 @@ export default function Component() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
   const handleRoute = ({ productslug }: { productslug: string }) => {
     setOpen(false);
     route.push(`/collections/${productslug}`);
@@ -176,7 +190,8 @@ export default function Component() {
           </CommandGroup>
         )}
         {!search && (
-          <CommandGroup heading="Recently viewed">
+          // <CommandGroup heading="Recently viewed">
+          <CommandGroup heading="Trending Products">
             <div className="flex gap-2">
               {data?.map((product: any, index: any) => (
                 <CommandItem key={index} className="!p-0 !m-0 w-auto">

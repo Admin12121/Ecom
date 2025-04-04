@@ -121,19 +121,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           )}
         >
           {stocks === 0 ? (
-            <span className="absolute left-1 w-[80px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
+            <span className="absolute left-1 px-2 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
               Out of stock
             </span>
           ) : (
             <>
               {data?.rating > 0 && (
-                <span className="w-[50px] -top-1 left-1 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
+                <span className="px-2 -top-1 left-1 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
                   {data?.rating ? data?.rating : 0.0}{" "}
                   <FaStar className="stroke-5 w-3 h-3" />
                 </span>
               )}
               {discount > 0 && (
-                <span className="w-[60px] h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
+                <span className="px-2 h-full flex dark:bg-zinc-300 bg-neutral-900 rounded-md text-xs items-center justify-center text-white dark:text-black gap-1">
                   {discount}% Off
                 </span>
               )}
@@ -155,7 +155,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {data &&
             data?.images &&
             data.images.map((data: InterfaceImage, index: number) => {
-              const isPng = data.image.endsWith("not.png");
+              const isPng = ["not.png", "not.webp"].some((ext) => data.image.endsWith(ext));
               const imageClassName = isPng ? "w-full h-full object-cover" : "";
               return (
                 <SwiperSlide key={index}>

@@ -83,7 +83,7 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
               </p>
             </Card>
           </span>
-          <div className="h-[76dvh] overflow-y-auto px-2">
+          <div className="px-2">
             <span className="flex w-full gap-2 my-3">
               <Select
                 defaultValue="0"
@@ -190,7 +190,7 @@ export function ReviewSheet({ slug, rating, product }: ReviewSheetProps) {
                     </span>
                   </Card>
                 ))}
-              <span className="flex flex-col justify-center items-center h-20">
+              <span className="flex flex-col justify-center items-center py-5">
                 <h1 className="text-sm">
                   showing {reviewData?.length} reviews of {data?.count} reviews
                 </h1>
@@ -230,5 +230,5 @@ const ReviewsCard = ({
         <Spinner />
       </div>
     );
-  return <div className="flex flex-col gap-3">{children}</div>;
+  return <div className="flex flex-col gap-3 h-[79dvh] overflow-y-auto">{children}</div>;
 };

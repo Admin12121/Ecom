@@ -5,25 +5,21 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { delay } from "@/lib/utils";
 import React from "react";
 import { toast } from "sonner";
+import { encryptData as Enc } from "@/lib/transition";
+import { useRouter } from "nextjs-toploader/app";
+import { Order } from ".";
 
-const Complete_payment = ({
-  total_amt,
-  transaction_uid,
-  status,
-}: {
-  total_amt: number;
-  transaction_uid: string;
-  status: string;
-}) => {
+function Complete_payment({ data }: { data: Order }) {
+  const router = useRouter();
   const { accessToken: token } = useAuthUser();
   const paymentDetails = {
-    amount: total_amt ? total_amt.toString() : "",
+    amount: data.total_amt ? data.total_amt.toString() : "",
     tax_amount: "0",
-    total_amount: total_amt ? total_amt.toString() : "",
-    transaction_uuid: `${transaction_uid}_${Date.now()}`,
+    total_amount: data.total_amt ? data.total_amt.toString() : "",
+    transaction_uuid: `${data.transactionuid}_${Date.now()}`,
     product_code: "EPAYTEST",
-    success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${transaction_uid}/success`,
-    failure_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${transaction_uid}/failure `,
+    success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${data.transactionuid}/success`,
+    failure_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/checkout/${data.transactionuid}/failure `,
   };
 
   const handlePayment = async () => {
@@ -82,16 +78,34 @@ const Complete_payment = ({
     }
   };
 
+  function extractData(raw: any) {
+    return raw.products.map((item: any) => ({
+      product: item.product,
+      variant: item.variant,
+      pcs: item.qty,
+      address: raw.shipping.id,
+      transactionuid: raw.transactionuid,
+    }));
+  }  
+
+  const handleenc = () => {
+    const newdata = extractData(data);
+    Enc(newdata, router);
+  };
+
   return (
-    <Button className="relative bottom-1" onClick={handlePayment}>
+    <Button
+      className="relative bottom-1"
+      onClick={data.status == "Esewa" ? handlePayment : handleenc}
+    >
       Pay now
-      {status == "Esewa" ? (
+      {data.status == "Esewa" ? (
         <Icons icons={["esewa"]} className="ml-1" />
       ) : (
         <Icons icons={["visa"]} className="ml-1" />
       )}
     </Button>
   );
-};
+}
 
 export default Complete_payment;

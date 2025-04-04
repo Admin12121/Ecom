@@ -108,6 +108,9 @@ const Checkout = ({ params }: { params: string }) => {
   const { accessToken, user } = useAuthUser();
   const { getRates, loading } = useAuth();
   const [source, setSource] = useState<boolean>(false);
+  const [repayment, setRepayment] = useState<boolean>(false);
+  const [tranuid, setTranuid] = useState<string>('');
+  const [defadd, setDefadd] = useState<string>('');
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
     "esewa"
   );
@@ -119,10 +122,12 @@ const Checkout = ({ params }: { params: string }) => {
 
   useEffect(() => {
     const data = decryptData(params, router);
-    if (data?.[0]?.source === "cart") {
-      setSource(true);
-    } else {
-      setSource(false);
+    setSource(data?.[0]?.source === "cart");
+    if(data?.[0]?.transactionuid){
+      setRepayment(true);
+      setTranuid(data[0].transactionuid);
+      setSelectedValue("card")
+      if(data?.[0]?.address) setDefadd(data[0].address)
     }
   }, [accessToken, router]);
 
@@ -334,6 +339,7 @@ const Checkout = ({ params }: { params: string }) => {
               redeemData={state.redeemData}
               shipping={state.shipping}
               source={source}
+              tranuid={repayment ? tranuid : undefined}
             />
           )}
         </div>
@@ -363,6 +369,7 @@ const Checkout = ({ params }: { params: string }) => {
               accessToken={accessToken}
               shipping={state.shipping}
               dispatch={dispatch}
+              defadd={defadd}
             />
             <VoucherSkleton loading={loading}>
               {state.cartItemsWithDetails &&
@@ -386,14 +393,14 @@ const Checkout = ({ params }: { params: string }) => {
                       errors.code && "!ring-red-500 !bg-red-500/10"
                     )}
                     placeholder="Enter your code"
-                    disabled={state.redeemData}
+                    disabled={state.redeemData || repayment}
                     {...register("code")}
                   />
                   <Button
                     variant="custom"
                     type="submit"
                     loading={isLoading}
-                    disabled={state.redeemData}
+                    disabled={state.redeemData || repayment}
                   >
                     Apply
                   </Button>
@@ -479,8 +486,8 @@ const Checkout = ({ params }: { params: string }) => {
                     >
                       <div className="flex items-center px-4 text-[15px] justify-between leading-6 hover:no-underline gap-3">
                         <span className="flex items-center gap-2">
-                          <RadioGroupItem value={item.name} />
-                          <AccordionTrigger icon={<> </>}>
+                          <RadioGroupItem disabled={repayment && item.title == "Esewa"} value={item.name} />
+                          <AccordionTrigger disabled={repayment && item.title == "Esewa"} icon={<> </>}>
                             {item.title}
                           </AccordionTrigger>
                         </span>

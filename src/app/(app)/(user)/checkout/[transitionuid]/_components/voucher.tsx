@@ -5,15 +5,18 @@ import { useAuth } from "@/lib/context";
 import { Card, CardContent as CardBody } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useCallback, useDeferredValue, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 
 const Voucher = ({
   data,
   price = true,
   selectedValue,
+  review = false,
 }: {
   data: any;
   price?: boolean;
   selectedValue?: string;
+  review?: boolean;
 }) => {
   const { getRates } = useAuth();
   const cur = selectedValue === "esewa" ? "NPR" : "USD";
@@ -33,7 +36,7 @@ const Voucher = ({
   );
   return (
     <Card className="p-1 w-full rounded-lg shadow-none bg-transparent h-[90px] bg-white dark:bg-neutral-900">
-      <CardBody className="flex justify-between flex-row items-center h-full">
+      <CardBody className="flex justify-between flex-row items-center h-full relative">
         <span className="flex gap-5 items-center h-full">
           <span className="h-full rounded-md w-[80px] dark:bg-zinc-700/50">
             <Image
@@ -81,6 +84,7 @@ const Voucher = ({
             </span>
           </span>
         )}
+        {review && <Button className="-bottom-5">Rewiew</Button>}
       </CardBody>
     </Card>
   );

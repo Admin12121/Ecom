@@ -355,7 +355,6 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
         id: toastId,
         position: "top-center",
       });
-      console.log(error);
     }
   };
 
@@ -385,7 +384,6 @@ const ProductPage = ({ productslug }: { productslug: string }) => {
       toast.error("Failed to delete variant", {
         position: "top-center",
       });
-      console.log(error);
     }
   };
 

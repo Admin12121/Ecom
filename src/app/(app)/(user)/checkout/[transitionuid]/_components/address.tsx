@@ -27,22 +27,30 @@ const Address = ({
   accessToken,
   shipping,
   dispatch,
+  defadd,
 }: {
   accessToken?: string;
   shipping: string;
   dispatch: any;
+  defadd: string;
 }) => {
-  const { data: Address, isLoading, refetch } = useGetshippingQuery(
-    { token: accessToken },
-    { skip: !accessToken }
-  );
+  const {
+    data: Address,
+    isLoading,
+    refetch,
+  } = useGetshippingQuery({ token: accessToken }, { skip: !accessToken });
 
   useEffect(() => {
     if (Address?.results) {
       const defaultAddress = Address.results.find(
         (addr: AddressItem) => addr.default
       );
-      if (defaultAddress) {
+      if (defadd) {
+        dispatch({
+          type: "SET_SHIPPING",
+          payload: defadd.toString(),
+        });
+      } else if (defaultAddress) {
         dispatch({
           type: "SET_SHIPPING",
           payload: defaultAddress.id.toString(),
@@ -55,12 +63,15 @@ const Address = ({
         });
       }
     }
-  }, [Address]);
+  }, [Address, defadd]);
 
   if (!shipping) {
     return (
       <div className="text-left hover:no-underline pl-2 py-3 lg:min-w-[450px] space-y-2 rounded-lg shadow-none bg-white dark:bg-neutral-900 px-2 transition-all ">
-        <h1 className="flex gap-1 items-center font-normal"> <MapPin className="w-4 h-4"/> Add Shipping Address</h1>
+        <h1 className="flex gap-1 items-center font-normal">
+          {" "}
+          <MapPin className="w-4 h-4" /> Add Shipping Address
+        </h1>
         <Shipping refetch={refetch} accessToken={accessToken} />
       </div>
     );

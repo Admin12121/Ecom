@@ -15,6 +15,8 @@ interface Product {
   variant: number;
   pcs: number;
   source?: string;
+  address?: string;
+  transactionuid?: string;
 }
 
 export const decryptData = (

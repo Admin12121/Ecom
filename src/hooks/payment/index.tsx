@@ -7,9 +7,7 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement, loadStripe } from "@stripe/stripe-js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "nextjs-toploader/app";
-import {
-  useClearCartMutation,
-} from "@/lib/store/Service/api";
+import { useClearCartMutation } from "@/lib/store/Service/api";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -33,7 +31,8 @@ export const usePayments = (
   discount?: number,
   products?: any,
   redeemData?: any,
-  shipping?: string
+  shipping?: string,
+  tranuid?: string
 ) => {
   const [clearCart] = useClearCartMutation();
   const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +71,7 @@ export const usePayments = (
     queryFn: () => {
       if (total_amt && products && user) {
         return onGetStripeClientSecret({
-          transactionuid: getValues("transactionuid"),
+          transactionuid: tranuid ? tranuid : getValues("transactionuid"),
           amount: total_amt,
           products,
           user: user,
@@ -108,37 +107,39 @@ export const usePayments = (
         setIsLoading(false);
         return;
       }
-      const actualData = {
-        ...data,
-        payment_method: "Stripe",
-        total_amt,
-        products,
-        redeemData,
-        shipping,
-      };
+      if (!tranuid) {
+        const actualData = {
+          ...data,
+          payment_method: "Stripe",
+          total_amt,
+          products,
+          redeemData,
+          shipping,
+        };
 
-      await delay(500);
-      const encdata = encryptData(actualData, accessToken);
-      const response = await fetch("/api/initiate-payment", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ data: encdata }),
-      });
-      if (response.ok) {
-        toast.success("Products Veryfied", {
-          id: toastId,
-          position: "top-center",
+        await delay(500);
+        const encdata = encryptData(actualData, accessToken);
+        const response = await fetch("/api/initiate-payment", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ data: encdata }),
         });
-      } else {
-        toast.error("Something went wrong!", {
-          id: toastId,
-          position: "top-center",
-        });
-        setIsLoading(false);
-        return;
+        if (response.ok) {
+          toast.success("Products Veryfied", {
+            id: toastId,
+            position: "top-center",
+          });
+        } else {
+          toast.error("Something went wrong!", {
+            id: toastId,
+            position: "top-center",
+          });
+          setIsLoading(false);
+          return;
+        }
       }
       await delay(500);
       toast.loading("Processing Payment", {

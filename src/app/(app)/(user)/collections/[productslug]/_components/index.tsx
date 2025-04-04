@@ -55,6 +55,15 @@ const ProductObject = ({ productslug }: { productslug: string }) => {
   useEffect(() => {
     if (data) {
       setProduct(data);
+      const maxRecent = 4;
+      const key = "recentViewedProducts";
+      const stored = JSON.parse(localStorage.getItem(key) || "[]");
+      const updatedList = stored.filter((p: number) => p !== data.id);
+      updatedList.unshift(data.id);
+      if (updatedList.length > maxRecent) {
+        updatedList.pop();
+      }
+      localStorage.setItem(key, JSON.stringify(updatedList));
     }
   }, [data]);
 

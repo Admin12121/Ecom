@@ -340,7 +340,6 @@ const AddProduct = () => {
         id: toastId,
         position: "top-center",
       });
-      console.log(error);
     }
   };
 

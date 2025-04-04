@@ -9,6 +9,7 @@ type Props = {
   redeemData: any;
   shipping: string;
   source: boolean;
+  tranuid?: string;
 };
 
 const Payment = ({
@@ -19,6 +20,7 @@ const Payment = ({
   redeemData,
   shipping,
   source,
+  tranuid
 }: Props) => {
   const data = {
     user,
@@ -28,6 +30,7 @@ const Payment = ({
     redeemData,
     shipping,
     source,
+    tranuid,
   };
 
   return (

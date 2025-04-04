@@ -32,7 +32,7 @@ import { EllipsisIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface Product {
-  id: string;
+  id: number;
   variants: Array<{ id: string }>;
   categoryname: string;
   description: string;
@@ -46,31 +46,35 @@ interface CartItem {
   qty: number;
   total: number;
   transition: number;
-  product: string;
-  variant: string;
-  categoryname?: string;
-  description?: string;
-  images?: string;
-  product_name?: string;
-  productslug?: string;
+  product: number;
+  variant: number;
+}
+
+interface Shipping {
+  id: number;
+  phone: string;
+  address: string;
+  country: string;
+  city: string;
+  zipcode: string;
+  default: boolean;
+  user: number;
 }
 
 export interface Order {
   id: number;
   products: CartItem[];
   costumer_name: string;
+  shipping: Shipping;
   transactionuid: string;
   status: string;
   total_amt: number;
   sub_total: number;
-  shipping: {
-    city: string;
-    country: string;
-  };
   discount: number;
   payment_method: string;
   redeem_data: any;
   payment_intent_id: any;
+  payment_json: any;
   created: string;
   updated_at: string;
 }
@@ -316,7 +320,7 @@ const ProductCard = ({ data, token, refetch }: { data: Order , token:string , re
       <div className="p-2 pb-0 flex gap-2 flex-col relative">
         <VoucherSkleton loading={isLoading}>
           {productsWithData.map((product: any) => (
-            <Voucher key={product.productslug} data={product} price={false} />
+            <Voucher key={Math.random()} data={product} price={false} review={data.status === "delivered"}/>
           ))}
         </VoucherSkleton>
         <Separator className="mt-1 bg-[hsl(var(--custombg))] h-[2px] relative before:absolute before:w-5 before:h-5 before:bg-[hsl(var(--custombg))] before:rounded-full before:-left-5 before:-bottom-2.5 after:absolute after:w-5 after:h-5 after:bg-[hsl(var(--custombg))] after:rounded-full after:-right-5 after:-bottom-2.5" />
@@ -338,9 +342,7 @@ const ProductCard = ({ data, token, refetch }: { data: Order , token:string , re
           </div>
           {data.status === "unpaid" && (
             <Complete_payment
-              total_amt={data.total_amt}
-              transaction_uid={data.transactionuid}
-              status={data.payment_method}
+              data={data}
             />
           )}
         </div>

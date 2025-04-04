@@ -37,7 +37,7 @@ const reviewSchema = z.object({
 });
 
 const validateFile = (file: File) => {
-  const validTypes = ["image/png"];
+  const validTypes = ["image/png", "image/jpeg", "image/jpg"];
   const maxSize = 5 * 1024 * 1024; // 10MB
   return validTypes.includes(file.type) && file.size <= maxSize;
 };
@@ -236,7 +236,6 @@ const WriteReview = ({ product, link }: any) => {
                 <input
                   type="file"
                   style={{ display: "none" }}
-                  accept="image/png"
                   onChange={handleCategoryImageChange}
                   ref={fileInputRef}
                 />

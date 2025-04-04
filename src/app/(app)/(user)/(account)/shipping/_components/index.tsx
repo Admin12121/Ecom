@@ -164,7 +164,6 @@ const Shipping = () => {
     });
     await delay(500);
     const res = await removeShipping({ id, token: accessToken });
-    console.log(res)
     if (res.data == null) {
       refetch();
       toast.success("Shipping Address Removed", {

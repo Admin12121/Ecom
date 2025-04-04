@@ -76,12 +76,24 @@ interface CartItemWithDetails extends CartProduct {
   variantDetails: Variant;
 }
 
+interface Discount {
+  discount: number;
+  id: number;
+  limit: number;
+  minimum: number;
+  type: "percentage" | "fixed";
+}
+
 export default function Cart() {
   const router = useRouter();
-  const { status } = useAuthUser();
+  const { status, accessToken } = useAuthUser();
   const { convertPrice } = useAuth();
   const { cartdata, totalPieces } = useCart();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const [discountData, setDiscountData] = useState<Discount | null>(null);
+  const [discount, setDiscountAmount] = useState(0);
+  const [total, setTotal] = useState<number>(0);
   const productIds = Array.from(new Set(cartdata.map((item) => item.product)));
   const { data, isLoading, refetch } = useProductsByIdsQuery(
     { ids: productIds },
@@ -168,11 +180,28 @@ export default function Cart() {
     const { totalPrice } = getTotalPrice(availableItems);
     const { convertedPrice, symbol } = convertPrice(totalPrice);
 
+    if (discountData) {
+      const calcDis = () => {
+        if (discountData?.type === "percentage") {
+          return Number(
+            (
+              total *
+              (convertPrice(discountData?.discount).convertedPrice / 100)
+            ).toFixed(2)
+          );
+        } else {
+          return Number(convertPrice(discountData?.discount).convertedPrice);
+        }
+      };
+      setDiscountAmount(calcDis);
+    }
+
+    setTotal(totalPrice);
     setOutOfStockItems(outOfStockItems);
     setCartItemsWithDetails(availableItems);
     setConvertedPrice(convertedPrice);
     setSymbol(symbol);
-  }, [isSheetOpen, cartdata, data, convertPrice]);
+  }, [isSheetOpen, cartdata, data, convertPrice, discountData]);
 
   const handleenc = () => {
     if (status) {
@@ -199,25 +228,15 @@ export default function Cart() {
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     const code = { code: data.code };
-    const res = await redeemCode({ code: code, token: "accessToken" });
+    const res = await redeemCode({ code: code, token: accessToken });
     if (res.data) {
+      if (res.data.minimum < total) {
+        setDiscountData(res.data);
+      }
     } else {
       setError("code", { message: (res.error as any).data?.error });
       return;
     }
-
-    // dispatch({ type: "SET_REDEEM_DATA", payload: res.data });
-    // if (state.totalPrice.price > res.data.minimum) {
-    //   const discountAmount = calculateDiscount(
-    //     state.totalPrice.price,
-    //     res.data
-    //   );
-    //   dispatch({ type: "SET_DISCOUNT", payload: discountAmount });
-    //   applyDiscount(discountAmount);
-    //   handleClick();
-    // } else {
-    //   setError("code", { message: "Minimum purchase amount not met" });
-    // }
   };
 
   return (
@@ -264,7 +283,10 @@ export default function Cart() {
                     </p>
                   </AccordionTrigger>
                   <AccordionContent className="flex gap-2 text-base pt-2 pb-4 px-1">
-                    <form className="flex gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
+                    <form
+                      className="flex gap-3 w-full"
+                      onSubmit={handleSubmit(onSubmit)}
+                    >
                       <Input
                         className={cn(
                           "w-full bg-muted dark:bg-neutral-950 rounded-md",
@@ -273,12 +295,22 @@ export default function Cart() {
                         placeholder="Enter your code"
                         {...register("code")}
                       />
-                      <Button type="submit" variant="custom">Apply</Button>
+                      <Button
+                        type="submit"
+                        variant="custom"
+                        disabled={discount > 0}
+                      >
+                        Apply
+                      </Button>
                     </form>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-              <Card className="min-h-[105px] border !border-zinc-400/50 dark:!border-zinc-800">
+              <Card
+                className={cn(
+                  "border !border-zinc-400/50 dark:!border-zinc-800 pb-1.5"
+                )}
+              >
                 <CardBody className="flex text-sm gap-1 flex-col">
                   <span className="flex w-full justify-between items-center">
                     <p>Subtotal</p>
@@ -286,6 +318,14 @@ export default function Cart() {
                       {symbol} {convertedPrice}
                     </p>
                   </span>
+                  {discount > 0 && (
+                    <span className="flex w-full justify-between items-center">
+                      <p>Discount</p>
+                      <p>
+                        {symbol} {discount}
+                      </p>
+                    </span>
+                  )}
                   <span className="flex w-full justify-between items-center">
                     <p>Shipping </p>
                     <p>Free</p>
@@ -297,7 +337,10 @@ export default function Cart() {
                   <span className="flex w-full justify-between items-center">
                     <p>Total </p>
                     <p>
-                      {symbol} {convertedPrice}
+                      {symbol}{" "}
+                      {discount > 0
+                        ? Number(convertedPrice - discount).toFixed(2)
+                        : convertedPrice}
                     </p>
                   </span>
                 </CardBody>

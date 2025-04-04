@@ -57,7 +57,7 @@ const shipping = [
           attempts, or the date or days available at a carrier pick-up point.
           Please note that delivery estimates are just that. They are not
           guaranteed delivery times and should not be relied upon as such. If
-          your order is late and you don't have any recent update on your
+          your order is late and you don&apos;t have any recent update on your
           tracking number, we kindly ask for you contact our Customer Support
           Team at info@nepalheritagehandicraft.com.
         </p>
@@ -111,7 +111,7 @@ const order = [
               Please note that as our team is constantly making efforts to get
               your order dispatched as quickly as possible, we may not be able
               to cancel your order upon request. Please send an email to
-              contact@nepalheritagehandicraft.com requesting to cancel the order
+              info@nepalheritagehandicraft.com requesting to cancel the order
               and provide us with the name of the person who made the order, the
               email address, and the transactionuid or if your payment failed
               you can cancled your order by yourself.
