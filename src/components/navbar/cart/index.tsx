@@ -256,8 +256,8 @@ export default function Cart() {
           <SheetTitle className="text-base">Cart</SheetTitle>
         </SheetHeader>
         {totalPieces > 0 ? (
-          <div className="relative h-[93.5dvh]">
-            <div className="py-2 flex flex-col gap-3 h-[87dvh] overflow-y-auto">
+          <div className="relative h-[95dvh]">
+            <div className="py-2 flex flex-col gap-3 h-[90dvh] overflow-y-auto">
               <div className="text-neutral-800 dark:text-zinc-400 text-sm bg-white dark:bg-neutral-900 p-3 rounded-md ">
                 Get Free Shipping on your first purchase
               </div>
@@ -360,7 +360,7 @@ export default function Cart() {
                 className="bg-neutral-200 dark:bg-neutral-950 pt-1"
               />
               <Separator
-                className="w-[90%] bg-zinc-800/20 dark:bg-zinc-400/50"
+                className="w-full bg-zinc-800/20 dark:bg-zinc-400/50"
                 orientation="horizontal"
               />
               <SheetClose asChild>

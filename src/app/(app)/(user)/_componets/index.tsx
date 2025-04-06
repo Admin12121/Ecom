@@ -146,6 +146,7 @@ const LandingPage = ({
                       alt="href"
                       className="w-full h-[85vh] object-cover"
                     />
+                    <div className="absolute w-full h-full animate-pulse bg-neutral-800/10 dark:bg-neutral-100/10"/>
                   </Link>
                 </SwiperSlide>
               ))}
@@ -212,7 +213,7 @@ const LandingPage = ({
           >
             <div
               className={cn(
-                "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none",
+                "grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4 transition-opacity motion-reduce:transition-none w-full",
                 loading && "pointer-events-none opacity-50 blur-sm"
               )}
             >
@@ -224,7 +225,7 @@ const LandingPage = ({
                   <ProductCard data={product} base={Math.random() >= 0.5} />
                 </div>
               ))}
-              <div className="product-card justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq h-full">
+              <div className="product-card min-h-[492px] justify-center items-center flex flex-col relative isolate rounded-md group host default elevated-links svelte-18bpazq h-full">
                 <Link
                   href="/collections"
                   className="relative w-full flex gap-5 h-full"

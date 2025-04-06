@@ -20,6 +20,11 @@ export const Links = [
     href: "/users",
   },
   {
+    title: "Chats",
+    icon: MessageCircle,
+    href: "/chats",
+  },
+  {
     title: "Products",
     label: "9",
     collapsible: true,

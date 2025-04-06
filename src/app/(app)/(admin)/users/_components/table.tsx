@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useRouter } from 'nextjs-toploader/app';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "nextjs-toploader/app";
 
 import {
   DropdownMenu as DropdownMenuNext,
@@ -38,6 +38,7 @@ import {
   ArrowRight,
   ChevronDown,
   RotateCcw as IoReload,
+  CircleAlertIcon,
 } from "lucide-react";
 
 import { User } from "./user";
@@ -52,6 +53,7 @@ import { Badge as Chip } from "@/components/ui/badge";
 
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { Label } from "@/components/ui/label";
 
 const statusOptions = [
   { name: "Published", uid: "i_published" },
@@ -89,7 +91,6 @@ interface ApiResponse {
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "USER", uid: "email", sortable: true },
-  { name: "PHONE", uid: "phone", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
   { name: "SOCIAL", uid: "provider", sortable: true },
   { name: "GENDER", uid: "gender", sortable: true },
@@ -125,7 +126,7 @@ export default function UserTable({
   exclude_by: string;
   SetExcludeBy: any;
   isLoading: boolean;
-  searchLoading:boolean,
+  searchLoading: boolean;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   refetch: () => void;
@@ -210,103 +211,105 @@ export default function UserTable({
     });
   }, [sortDescriptor, users, page, statusFilter, exclude_by, filteredItems]);
 
-  const renderCell = React.useCallback((users: Users, columnKey: React.Key) => {
-    const cellValue = users[columnKey as keyof Users];
+  const renderCell = React.useCallback(
+    (users: Users, columnKey: React.Key) => {
+      const cellValue = users[columnKey as keyof Users];
 
-    switch (columnKey) {
-      case "email":
-        return (
-          <User
-            avatarProps={{
-              src: users?.profile as string,
-              name: `${users.username.slice(0, 1)}`,
-              // icon: `${(<AvatarIcon />)}`,
-              classNames: {
-                base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] cursor-pointer",
-                icon: "text-black/80",
-              },
-            }}
-            classNames={{
-              description: "text-default-500",
-              name: "cursor-pointer",
-            }}
-            description={users.email}
-            name={`${users.username}`}
-          />
-        );
-      case "phone":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{users.phone}</p>
-          </div>
-        );
-      case "gender":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {users.gender || ""}
-            </p>
-          </div>
-        );
-      case "state":
-        return (
-          <Chip
-            className={`capitalize border-none gap-1 text-default-600`}
-            variant={users.state ? "secondary" : "outline"}
-          >
-            {users.state}
-          </Chip>
-        );
-      case "provider":
-        return <p>{users.provider || "default"}</p>;
-      case "actions":
-        return (
-          <div className="relative flex items-center justify-center gap-2">
-            <DropdownMenuNext>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-                >
-                  <DotsHorizontalIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/users/${users.username}`)}
-                >
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem>View</DropdownMenuItem>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>State</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuRadioGroup value={users.state}>
-                      {labels.map((label) => (
-                        <DropdownMenuRadioItem
-                          key={label.value}
-                          value={label.value}
-                        >
-                          {label.label}
-                        </DropdownMenuRadioItem>
-                      ))}
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setDeleteModalId(users.id)}>
-                  Delete
-                  <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenuNext>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, [router]);
+      switch (columnKey) {
+        case "email":
+          return (
+            <User
+              avatarProps={{
+                src: users?.profile as string,
+                name: `${users.username.slice(0, 1)}`,
+                // icon: `${(<AvatarIcon />)}`,
+                classNames: {
+                  base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] cursor-pointer",
+                  icon: "text-black/80",
+                },
+              }}
+              classNames={{
+                description: "text-default-500",
+                name: "cursor-pointer",
+              }}
+              description={users.email}
+              name={`${users.username}`}
+            />
+          );
+        case "phone":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">{users.phone}</p>
+            </div>
+          );
+        case "gender":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {users.gender || ""}
+              </p>
+            </div>
+          );
+        case "state":
+          return (
+            <Chip
+              className={`capitalize border-none gap-1 text-default-600`}
+              variant={users.state ? "secondary" : "outline"}
+            >
+              {users.state}
+            </Chip>
+          );
+        case "provider":
+          return <p>{users.provider || "default"}</p>;
+        case "actions":
+          return (
+            <div className="relative flex items-center justify-center gap-2">
+              <DropdownMenuNext>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+                  >
+                    <DotsHorizontalIcon className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[160px]">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => router.push(`/users/${users.username}`)}
+                  >
+                    View
+                  </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>State</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuRadioGroup value={users.state}>
+                        {labels.map((label) => (
+                          <DropdownMenuRadioItem
+                            key={label.value}
+                            value={label.value}
+                          >
+                            {label.label}
+                          </DropdownMenuRadioItem>
+                        ))}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setDeleteModalId(users.id)}>
+                    Delete
+                    <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenuNext>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [router]
+  );
 
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dataperpage(Number(e.target.value));
@@ -471,7 +474,14 @@ export default function UserTable({
         </span>
       </div>
     );
-  }, [selectedKeys, filteredItems.length, page, pages, hasSearchFilter, setPage]);
+  }, [
+    selectedKeys,
+    filteredItems.length,
+    page,
+    pages,
+    hasSearchFilter,
+    setPage,
+  ]);
 
   const classNames = React.useMemo(
     () => ({
@@ -553,6 +563,8 @@ export default function UserTable({
   );
 }
 
+const PROJECT_NAME = "Origin UI";
+
 const DeleteModal = ({
   // DeleteModalId,
   setDeleteModalId,
@@ -560,30 +572,54 @@ const DeleteModal = ({
   DeleteModalId: number;
   setDeleteModalId: React.Dispatch<React.SetStateAction<number | null>>;
 }) => {
+  const [inputValue, setInputValue] = useState("");
+
   return (
-    <section className="flex flex-col fixed w-[100dvw] h-[100dvh] bg-neutral-950/50 z-50 backdrop-blur-sm top-0 left-0 items-center justify-center">
-      <Card className=" rounded-lg min-h-[150px] w-[300px]">
-        <CardHeader className="pb-2">
-          <h1 className="text-lg font-normal">Delete Course</h1>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center gap-2 p-0 pb-2">
-          <p className="text-xs text-default-700 font-normal">
-            Are you sure you want to delete this course?
+    <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg">
+      <div className="flex flex-col items-center gap-2">
+        <div
+          className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+          aria-hidden="true"
+        >
+          <CircleAlertIcon className="opacity-80" size={16} />
+        </div>
+        <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+          <h1 className="text-lg font-semibold leading-none tracking-tight sm:text-center">
+            Final confirmation
+          </h1>
+          <p className="text-sm text-muted-foreground sm:text-center">
+            This action cannot be undone. To confirm, please enter the user
+            name <span className="text-foreground">Origin UI</span>.
           </p>
-        </CardContent>
-        <CardFooter className="flex justify-end gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => setDeleteModalId(null)}
-          >
+        </div>
+      </div>
+
+      <form className="space-y-5">
+        <div className="*:not-first:mt-2">
+          <Label>Delete user</Label>
+          <Input
+            type="text"
+            className="!bg-muted"
+            placeholder="Type Origin UI to confirm"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+          <Button type="button" variant="outline" className="flex-1" onClick={() => setDeleteModalId(null)}>
             Cancel
           </Button>
-          <Button size="sm" variant="secondary" color="danger">
+
+          <Button
+            type="button"
+            className="flex-1"
+            disabled={inputValue !== PROJECT_NAME}
+          >
             Delete
           </Button>
-        </CardFooter>
-      </Card>
-    </section>
+        </div>
+      </form>
+    </div>
   );
 };
+

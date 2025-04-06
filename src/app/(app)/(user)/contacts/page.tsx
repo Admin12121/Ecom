@@ -27,7 +27,7 @@ const supportOptions: SupportOption[] = [
   {
     title: "Chat",
     description: "Speak to a satisfactory representative.",
-    link: "/faq",
+    link: "/contacts/chat",
     buttonLabel: "Chat with us",
     buttonVariant: "default",
   },

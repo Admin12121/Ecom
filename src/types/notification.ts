@@ -22,3 +22,32 @@ export const updateNotificationSchema = z.object({
 export type EmailSchema = z.infer<typeof emailSchema>
 export type JoinNewsletterSchema = z.infer<typeof joinNewsletterSchema>
 export type UpdateNotificationSchema = z.infer<typeof updateNotificationSchema>
+
+export interface Customer {
+  id: string
+  name: string
+  email: string
+  phone: string
+  avatar?: string
+}
+
+export interface Message {
+  id: string
+  content: string
+  sender: "customer" | "admin"
+  timestamp: string
+  read: boolean
+}
+
+export interface Chat {
+  id: string
+  customer: Customer
+  messages: Message[]
+  lastMessage: string
+  lastMessageTime: string
+  unreadCount: number
+  status: "active" | "closed"
+  priority: "low" | "medium" | "high"
+  orderNumber?: string
+}
+
