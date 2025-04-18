@@ -19,10 +19,18 @@ const suggestedQuestions = [
   "Where is my order?",
   "Do you offer any discounts?",
   "What is your return policy?",
+  "How long does delivery take?",
+  "Can I cancel my order?",
+  "Do you ship internationally?",
+  "How can I track my package?",
+  "What payment methods are accepted?",
+  "How do I apply a coupon code?",
+  "Can I change my delivery address?",
 ];
 
 export default function ChatInterface() {
   const { user } = useAuthUser();
+  const [showAllQuestions, setShowAllQuestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
@@ -133,10 +141,8 @@ export default function ChatInterface() {
     return format(date, "hh:mm a");
   };
 
-
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-lg overflow-hidden flex flex-col h-[650px] min-w-[550px] max-w-[600px] my-10 relative">
-
       <div className="px-4 py-3.5 flex justify-between items-center">
         <div className="flex items-center">
           <span className="text-blue-500 mr-2">
@@ -180,7 +186,7 @@ export default function ChatInterface() {
           </div>
           <p className="text-center text-[#a8b0b8] max-w-xs font-light">
             Welcome to {siteConfig.title} chat! <br />
-            I'm here to assist you with any questions or concerns you may have.
+            I&apos;m here to assist you with any questions or concerns you may have.
           </p>
         </div>
 
@@ -188,12 +194,12 @@ export default function ChatInterface() {
           <div
             key={index}
             className={`mb-4 ${
-              message.sender === currentUserId  ? "self-end" : "self-start"
+              message.sender === currentUserId ? "self-end" : "self-start"
             }`}
           >
             <div
               className={`p-3 rounded-lg max-w-xs ${
-                message.sender === currentUserId 
+                message.sender === currentUserId
                   ? "bg-blue-500 text-white rounded-br-none"
                   : "bg-gray-100 text-gray-800 rounded-bl-none"
               }`}
@@ -205,27 +211,34 @@ export default function ChatInterface() {
             </div>
           </div>
         ))}
+        {messages.length === 0 && (
+          <div className="px-4 py-2 flex flex-col items-end gap-2">
+            {(showAllQuestions
+              ? suggestedQuestions
+              : suggestedQuestions.slice(0, 3)
+            ).map((q, idx) => (
+              <button
+                key={idx}
+                className="bg-white text-[#4a5568] border border-[#e2e8f0] rounded-xl text-sm py-2.5 px-5 hover:bg-gray-50 shadow-sm w-fit"
+                onClick={() => handleSendMessage(q)}
+              >
+                {q}
+              </button>
+            ))}
+            {!showAllQuestions && (
+              <div className="w-full text-right mt-1">
+                <button
+                  className="text-[#a8b0b8] text-sm font-normal hover:underline"
+                  onClick={() => setShowAllQuestions(true)}
+                >
+                  Show more
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
-
-      {messages.length === 0 && (
-        <div className="px-4 py-2 flex flex-col items-end gap-2">
-          {suggestedQuestions.map((q, idx) => (
-            <button
-              key={idx}
-              className="bg-white text-[#4a5568] border border-[#e2e8f0] rounded-xl text-sm py-2.5 px-5 hover:bg-gray-50 shadow-sm w-fit"
-              onClick={() => handleSendMessage(q)}
-            >
-              {q}
-            </button>
-          ))}
-          <div className="w-full text-right mt-1">
-            <button className="text-[#a8b0b8] text-sm font-normal">
-              Show more
-            </button>
-          </div>
-        </div>
-      )}
 
       <div className="p-2 z-50">
         <div className="flex flex-col items-center rounded-2xl overflow-hidden border">

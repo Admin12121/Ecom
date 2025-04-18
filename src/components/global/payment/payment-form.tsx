@@ -69,6 +69,7 @@ const PaymentForm = ({ data }: Props) => {
                     },
                   },
                 },
+                hidePostalCode: true,
               }}
               className="dark:bg-themeBlack bg-white border-[1px] dark:border-themeGray outline-none rounded-lg p-3 "
             />

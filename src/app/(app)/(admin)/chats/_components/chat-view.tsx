@@ -39,8 +39,10 @@ export default function ChatView({ chat }: ChatViewProps) {
   }, [messages]);
 
   useEffect(() => {
-    initChat();
-  }, [user]);
+    if (user && chat) {
+      initChat();
+    }
+  }, [user, chat]); 
 
   const initChat = async () => {
     const currentId = await getOrCreateUser(adminEmail);
@@ -153,6 +155,7 @@ export default function ChatView({ chat }: ChatViewProps) {
                     className="rounded-full h-8 w-8 border-border/40"
                   >
                     <User className="h-4 w-4" />
+                    {}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>View Customer Profile</TooltipContent>

@@ -112,7 +112,7 @@ const Checkout = ({ params }: { params: string }) => {
   const [tranuid, setTranuid] = useState<string>('');
   const [defadd, setDefadd] = useState<string>('');
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
-    "esewa"
+    "card"
   );
   const [redeemCode, { isLoading }] = useVerifyRedeemCodeMutation();
   const [state, dispatch] = useReducer(reducer, {
@@ -192,11 +192,12 @@ const Checkout = ({ params }: { params: string }) => {
     );
   };
 
-  const calculateDiscount = (totalPrice: number, discountData: any) => {
+  const calculateDiscount = (totalPrice: number, discountData: any, cur:  "NPR" | "USD") => {
     if (discountData.type === "percentage") {
       return Number((totalPrice * (discountData.discount / 100)).toFixed(2));
     } else if (discountData.type === "amount") {
-      return discountData.discount;
+      const { convertedPrice } = getRates(discountData.discount, cur);
+      return convertedPrice;
     }
     return 0;
   };
@@ -257,10 +258,13 @@ const Checkout = ({ params }: { params: string }) => {
     }
 
     dispatch({ type: "SET_REDEEM_DATA", payload: res.data });
-    if (state.totalPrice.price > res.data.minimum) {
+    const cur = selectedValue === "esewa" ? "NPR" : "USD";
+    const { convertedPrice } = getRates(res.data.minimum, cur);
+    if (state.totalPrice.price > convertedPrice) {
       const discountAmount = calculateDiscount(
         state.totalPrice.price,
-        res.data
+        res.data,
+        cur
       );
       dispatch({ type: "SET_DISCOUNT", payload: discountAmount });
       applyDiscount(discountAmount);
@@ -483,11 +487,14 @@ const Checkout = ({ params }: { params: string }) => {
                       key={index}
                       value={item.name}
                       className="w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 rounded-lg"
+                      onClick={()=> item.title == "Esewa" ? toast.error("Service currently unavailable") : ""}
                     >
                       <div className="flex items-center px-4 text-[15px] justify-between leading-6 hover:no-underline gap-3">
                         <span className="flex items-center gap-2">
-                          <RadioGroupItem disabled={repayment && item.title == "Esewa"} value={item.name} />
-                          <AccordionTrigger disabled={repayment && item.title == "Esewa"} icon={<> </>}>
+                          {/* <RadioGroupItem disabled={repayment && item.title == "Esewa"} value={item.name} />
+                          <AccordionTrigger disabled={repayment && item.title == "Esewa"} icon={<> </>}> */}
+                          <RadioGroupItem disabled={item.title == "Esewa"} value={item.name} />
+                          <AccordionTrigger disabled={item.title == "Esewa"} icon={<> </>}>
                             {item.title}
                           </AccordionTrigger>
                         </span>

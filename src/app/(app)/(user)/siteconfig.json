@@ -45,6 +45,11 @@
       "title": "Free Delivery",
       "description": "Get free delivery on all orders",
       "color": "#ff8300"
+    },
+    {
+      "title": "100%",
+      "description": "this isnre eevent",
+      "color": "#4f46e5"
     }
   ],
   "messages": {
