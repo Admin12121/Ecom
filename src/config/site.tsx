@@ -58,12 +58,12 @@ export const siteConfig = {
       items: [
         {
           title: "Instagram",
-          href: "/",
+          href: "https://www.instagram.com/nepalheritagehandicraft/",
           external: true,
         },
         {
           title: "Facebook",
-          href: "/",
+          href: "https://www.facebook.com/profile.php?id=61556557202990%",
           external: true,
         },
       ],
